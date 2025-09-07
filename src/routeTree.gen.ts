@@ -19,8 +19,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo.table'
 import { Route as AuthExperimentsRouteImport } from './routes/_auth/experiments'
+import { Route as AuthGamesRouteRouteImport } from './routes/_auth/games/route'
+import { Route as AuthGamesIndexRouteImport } from './routes/_auth/games/index'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo.start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo.start.api-request'
+import { Route as AuthGamesShowRouteImport } from './routes/_auth/games/show'
+import { Route as AuthGamesNewRouteImport } from './routes/_auth/games/new'
 import { ServerRoute as ApiDemoTqTodosServerRouteImport } from './routes/api.demo-tq-todos'
 import { ServerRoute as ApiDemoNamesServerRouteImport } from './routes/api.demo-names'
 
@@ -65,6 +69,16 @@ const AuthExperimentsRoute = AuthExperimentsRouteImport.update({
   path: '/experiments',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthGamesRouteRoute = AuthGamesRouteRouteImport.update({
+  id: '/games',
+  path: '/games',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthGamesIndexRoute = AuthGamesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthGamesRouteRoute,
+} as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
   path: '/demo/start/server-funcs',
@@ -74,6 +88,16 @@ const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
   id: '/demo/start/api-request',
   path: '/demo/start/api-request',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthGamesShowRoute = AuthGamesShowRouteImport.update({
+  id: '/show',
+  path: '/show',
+  getParentRoute: () => AuthGamesRouteRoute,
+} as any)
+const AuthGamesNewRoute = AuthGamesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthGamesRouteRoute,
 } as any)
 const ApiDemoTqTodosServerRoute = ApiDemoTqTodosServerRouteImport.update({
   id: '/api/demo-tq-todos',
@@ -91,11 +115,15 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
+  '/games': typeof AuthGamesRouteRouteWithChildren
   '/experiments': typeof AuthExperimentsRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/games/new': typeof AuthGamesNewRoute
+  '/games/show': typeof AuthGamesShowRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/games/': typeof AuthGamesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -105,8 +133,11 @@ export interface FileRoutesByTo {
   '/experiments': typeof AuthExperimentsRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/games/new': typeof AuthGamesNewRoute
+  '/games/show': typeof AuthGamesShowRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/games': typeof AuthGamesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,11 +146,15 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
+  '/_auth/games': typeof AuthGamesRouteRouteWithChildren
   '/_auth/experiments': typeof AuthExperimentsRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/_auth/games/new': typeof AuthGamesNewRoute
+  '/_auth/games/show': typeof AuthGamesShowRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/_auth/games/': typeof AuthGamesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -128,11 +163,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/signup'
+    | '/games'
     | '/experiments'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/games/new'
+    | '/games/show'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/games/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,8 +181,11 @@ export interface FileRouteTypes {
     | '/experiments'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/games/new'
+    | '/games/show'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/games'
   id:
     | '__root__'
     | '/'
@@ -151,11 +193,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/signup'
+    | '/_auth/games'
     | '/_auth/experiments'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/_auth/games/new'
+    | '/_auth/games/show'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/_auth/games/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -253,6 +299,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthExperimentsRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/games': {
+      id: '/_auth/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof AuthGamesRouteRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/games/': {
+      id: '/_auth/games/'
+      path: '/'
+      fullPath: '/games/'
+      preLoaderRoute: typeof AuthGamesIndexRouteImport
+      parentRoute: typeof AuthGamesRouteRoute
+    }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
       path: '/demo/start/server-funcs'
@@ -266,6 +326,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/demo/start/api-request'
       preLoaderRoute: typeof DemoStartApiRequestRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_auth/games/show': {
+      id: '/_auth/games/show'
+      path: '/show'
+      fullPath: '/games/show'
+      preLoaderRoute: typeof AuthGamesShowRouteImport
+      parentRoute: typeof AuthGamesRouteRoute
+    }
+    '/_auth/games/new': {
+      id: '/_auth/games/new'
+      path: '/new'
+      fullPath: '/games/new'
+      preLoaderRoute: typeof AuthGamesNewRouteImport
+      parentRoute: typeof AuthGamesRouteRoute
     }
   }
 }
@@ -288,11 +362,29 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface AuthGamesRouteRouteChildren {
+  AuthGamesNewRoute: typeof AuthGamesNewRoute
+  AuthGamesShowRoute: typeof AuthGamesShowRoute
+  AuthGamesIndexRoute: typeof AuthGamesIndexRoute
+}
+
+const AuthGamesRouteRouteChildren: AuthGamesRouteRouteChildren = {
+  AuthGamesNewRoute: AuthGamesNewRoute,
+  AuthGamesShowRoute: AuthGamesShowRoute,
+  AuthGamesIndexRoute: AuthGamesIndexRoute,
+}
+
+const AuthGamesRouteRouteWithChildren = AuthGamesRouteRoute._addFileChildren(
+  AuthGamesRouteRouteChildren,
+)
+
 interface AuthRouteChildren {
+  AuthGamesRouteRoute: typeof AuthGamesRouteRouteWithChildren
   AuthExperimentsRoute: typeof AuthExperimentsRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthGamesRouteRoute: AuthGamesRouteRouteWithChildren,
   AuthExperimentsRoute: AuthExperimentsRoute,
 }
 
