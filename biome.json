@@ -10,19 +10,51 @@
 		"ignore": ["src/routeTree.gen.ts"],
 		"include": ["src/*", ".vscode/*", "index.html", "vite.config.js"]
 	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab"
-	},
 	"organizeImports": {
 		"enabled": true
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"correctness": {
+				"useExhaustiveDependencies": "warn"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "warn"
+			},
+			"style": {
+				"noNonNullAssertion": "off",
+				"noInferrableTypes": "off"
+			},
+			"complexity": {
+				"noForEach": "off"
+			}
 		}
 	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": true,
+		"indentStyle": "tab",
+		"indentWidth": 4,
+		"lineWidth": 90,
+		"lineEnding": "lf",
+		"ignore": []
+	},
+	"css": {
+		"formatter": {
+			"enabled": true
+		}
+	},
+	"overrides": [
+		{
+			"include": ["*.jsx", "*.tsx"],
+			"formatter": {
+				"indentWidth": 2,
+				"indentStyle": "space"
+			}
+		}
+	],
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"

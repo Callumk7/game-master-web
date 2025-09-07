@@ -11,9 +11,14 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LogoutRouteImport } from './routes/logout'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo.table'
+import { Route as AuthExperimentsRouteImport } from './routes/_auth/experiments'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo.start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo.start.api-request'
 import { ServerRoute as ApiDemoTqTodosServerRouteImport } from './routes/api.demo-tq-todos'
@@ -21,6 +26,25 @@ import { ServerRoute as ApiDemoNamesServerRouteImport } from './routes/api.demo-
 
 const rootServerRouteImport = createServerRootRoute()
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -35,6 +59,11 @@ const DemoTableRoute = DemoTableRouteImport.update({
   id: '/demo/table',
   path: '/demo/table',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthExperimentsRoute = AuthExperimentsRouteImport.update({
+  id: '/experiments',
+  path: '/experiments',
+  getParentRoute: () => AuthRoute,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
@@ -59,6 +88,10 @@ const ApiDemoNamesServerRoute = ApiDemoNamesServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/signup': typeof SignupRoute
+  '/experiments': typeof AuthExperimentsRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -66,6 +99,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/signup': typeof SignupRoute
+  '/experiments': typeof AuthExperimentsRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -74,6 +111,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
+  '/signup': typeof SignupRoute
+  '/_auth/experiments': typeof AuthExperimentsRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -83,6 +125,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/logout'
+    | '/signup'
+    | '/experiments'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/demo/start/api-request'
@@ -90,6 +136,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
+    | '/logout'
+    | '/signup'
+    | '/experiments'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/demo/start/api-request'
@@ -97,6 +147,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_auth'
+    | '/login'
+    | '/logout'
+    | '/signup'
+    | '/_auth/experiments'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/demo/start/api-request'
@@ -105,6 +160,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
+  SignupRoute: typeof SignupRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
@@ -138,6 +197,34 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -158,6 +245,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/demo/table'
       preLoaderRoute: typeof DemoTableRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_auth/experiments': {
+      id: '/_auth/experiments'
+      path: '/experiments'
+      fullPath: '/experiments'
+      preLoaderRoute: typeof AuthExperimentsRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
@@ -194,8 +288,22 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface AuthRouteChildren {
+  AuthExperimentsRoute: typeof AuthExperimentsRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthExperimentsRoute: AuthExperimentsRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRouteWithChildren,
+  LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
+  SignupRoute: SignupRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
