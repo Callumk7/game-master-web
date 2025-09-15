@@ -35,6 +35,8 @@ export interface SmartFormOptions<TData, TError, TMutationData extends TDataShap
 	className?: string;
 	/** Custom submit button text */
 	submitText?: string;
+	/** Initial values for form fields (for edit forms) */
+	initialValues?: Record<string, any>;
 }
 
 export interface HookFormOptions<TData, TError, TMutationData extends TDataShape> {
@@ -48,6 +50,8 @@ export interface HookFormOptions<TData, TError, TMutationData extends TDataShape
 	entityName: string;
 	/** Success callback */
 	onSuccess?: (data: TData) => void;
+	/** Initial values for form fields (for edit forms) */
+	initialValues?: Record<string, any>;
 }
 
 // ===================================
@@ -66,13 +70,14 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 	fieldOverrides = {},
 	className = "space-y-6",
 	submitText = "Submit",
+	initialValues,
 }: SmartFormOptions<TData, TError, TMutationData>) {
 	return function SmartFormComponent() {
 		const queryClient = useQueryClient();
 
 		// Auto-generate fields from schema
 		const fields = generateFieldsFromSchema(schema, fieldOverrides);
-		const defaultValues = extractDefaultValues(schema);
+		const defaultValues = initialValues ?? extractDefaultValues(schema);
 
 		const mutationInstance = useMutation({
 			...mutation(),
@@ -260,9 +265,10 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 	schema,
 	entityName,
 	onSuccess,
+	initialValues,
 }: HookFormOptions<TData, TError, TMutationData>) {
 	const queryClient = useQueryClient();
-	const defaultValues = extractDefaultValues(schema);
+	const defaultValues = initialValues ?? extractDefaultValues(schema);
 
 	const mutationInstance = useMutation({
 		...mutation(),

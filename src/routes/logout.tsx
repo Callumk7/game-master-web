@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { getAppSession } from "~/utils/session";
 import { useEffect } from "react";
+import { getAppSession } from "~/utils/session";
 
 const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
 	const session = await getAppSession();

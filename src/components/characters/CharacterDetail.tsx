@@ -92,6 +92,20 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 						: undefined
 				}
 			/>
+			
+			{character.tags && character.tags.length > 0 && (
+				<div className="space-y-2">
+					<h3 className="text-sm font-medium text-muted-foreground">Tags</h3>
+					<div className="flex flex-wrap gap-2">
+						{character.tags.map((tag) => (
+							<Badge key={tag} variant="secondary">
+								{tag}
+							</Badge>
+						))}
+					</div>
+				</div>
+			)}
+
 			<div className="space-y-4">
 				<h2 className="text-lg font-semibold">Links</h2>
 				<CreateCharacterLink

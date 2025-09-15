@@ -26,6 +26,7 @@ import {
 	SidebarMenuLink,
 } from "~/components/ui/sidebar";
 import { useGetGameLinksQuery } from "~/routes/_auth/games/$gameId/route";
+import { NavUser } from "./user-sidebar";
 
 export function GameSidebar() {
 	const { theme, setTheme } = useTheme();
@@ -70,7 +71,7 @@ export function GameSidebar() {
 					</Button>
 				</div>
 			</SidebarHeader>
-			<SidebarContent className="p-4">
+			<SidebarContent className="p-4 flex flex-col">
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuLink to="/games/$gameId" params={params}>
@@ -205,6 +206,18 @@ export function GameSidebar() {
 						</Link>
 					</div>
 				</div>
+				<div className="flex-1" />
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<NavUser
+							user={{
+								name: "Callum",
+								email: "callum@example.com",
+								avatar: "https://avatars.dicebear.com/api/initials/callum@example.com.svg",
+							}}
+						/>
+					</SidebarMenuItem>
+				</SidebarMenu>
 			</SidebarContent>
 		</Sidebar>
 	);

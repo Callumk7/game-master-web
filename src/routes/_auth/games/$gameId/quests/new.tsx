@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CreateQuestFormV2 } from "~/components/quests/CreateQuestFormV2";
+import { CreateQuestForm } from "~/components/quests/CreateQuestForm";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/new")({
 	component: RouteComponent,
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/new")({
 function RouteComponent() {
 	return (
 		<div>
-			<CreateQuestFormV2 />
+			<CreateQuestForm />
 		</div>
 	);
 }

@@ -173,7 +173,7 @@ export function createSchemaFor() {
 
 		faction: z.object({
 			name: z.string().min(1, "Faction name is required"),
-			description: z.string().optional(),
+			description: z.string(),
 			tags: z.array(z.string()).optional(),
 		}),
 

@@ -9,7 +9,7 @@ interface CreateCharacterSheetProps {
 export function CreateCharacterSheet({ isOpen, setIsOpen }: CreateCharacterSheetProps) {
 	return (
 		<Sheet open={isOpen} onOpenChange={setIsOpen}>
-			<SheetContent>
+			<SheetContent className="p-4 pt-10">
 				<CreateCharacterForm />
 			</SheetContent>
 		</Sheet>
