@@ -1,0 +1,48 @@
+# Route Setup
+
+- login
+- logout
+- signup
+- _auth: setup auth client
+    - games
+        - $id
+            - show
+            - edit
+            - delete?
+            - notes
+                - $id
+                    - show
+                    - edit
+                    - delete
+                - index
+                - new
+            - characters
+                - $id
+                    - show
+                    - edit
+                    - delete
+                - index
+                - new
+            - factions
+                - $id
+                    - show
+                    - edit
+                    - delete
+                - index
+                - new
+            - locations
+                - $id
+                    - show
+                    - edit
+                    - delete
+                - index
+                - new
+            - quests
+                - $id
+                    - show
+                    - edit
+                    - delete
+                - index
+                - new
+        - index
+        - new

@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
@@ -7,18 +7,31 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["src/routeTree.gen.ts"],
-		"include": ["src/*", ".vscode/*", "index.html", "vite.config.js"]
+		"includes": [
+			"src/**/*",
+			"!src/api/**/*",
+			"!src/routeTree.gen.ts",
+			"vite.config.js",
+			"server/*",
+			"index.html"
+		]
 	},
-	"organizeImports": {
-		"enabled": true
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": true,
 			"correctness": {
-				"useExhaustiveDependencies": "warn"
+				"useExhaustiveDependencies": "warn",
+				"useUniqueElementIds": "off",
+				"noUnusedVariables": "off"
 			},
 			"security": {
 				"noDangerouslySetInnerHtml": "warn"
@@ -27,8 +40,8 @@
 				"noNonNullAssertion": "off",
 				"noInferrableTypes": "off"
 			},
-			"complexity": {
-				"noForEach": "off"
+			"suspicious": {
+				"noUnknownAtRules": "off"
 			}
 		}
 	},
@@ -38,8 +51,7 @@
 		"indentStyle": "tab",
 		"indentWidth": 4,
 		"lineWidth": 90,
-		"lineEnding": "lf",
-		"ignore": []
+		"lineEnding": "lf"
 	},
 	"css": {
 		"formatter": {
@@ -48,7 +60,7 @@
 	},
 	"overrides": [
 		{
-			"include": ["*.jsx", "*.tsx"],
+			"includes": ["*.jsx", "*.tsx"],
 			"formatter": {
 				"indentWidth": 2,
 				"indentStyle": "space"

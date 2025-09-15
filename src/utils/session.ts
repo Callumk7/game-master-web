@@ -8,7 +8,7 @@ type Session = {
 	token: string;
 };
 
-export function useAppSession() {
+export function getAppSession() {
 	return useSession<Session>({
 		password: "ChangeThisBeforeShippingToProdOrYouWillBeFired",
 	});

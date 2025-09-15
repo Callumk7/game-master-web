@@ -735,11 +735,7 @@ export const createNoteLink = <ThrowOnError extends boolean = false>(options: Op
             }
         ],
         url: '/api/games/{game_id}/notes/{note_id}/links',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
+        ...options
     });
 };
 
