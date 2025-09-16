@@ -25,8 +25,8 @@ import {
 	SidebarMenuItem,
 	SidebarMenuLink,
 } from "~/components/ui/sidebar";
-import { useGetGameLinksQuery } from "~/routes/_auth/games/$gameId/route";
 import { NavUser } from "./user-sidebar";
+import { useGetGameLinksQuery } from "~/queries/games";
 
 export function GameSidebar() {
 	const { theme, setTheme } = useTheme();

@@ -9,6 +9,7 @@ import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
+import { TagInput } from "~/components/ui/composite/tag-input";
 import { createFormHook } from "~/components/ui/form-tanstack";
 import { Input } from "~/components/ui/input";
 import {
@@ -20,7 +21,6 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { TagInput } from "~/components/ui/composite/tag-input";
 
 // Create form hook outside component
 const { useAppForm } = createFormHook();

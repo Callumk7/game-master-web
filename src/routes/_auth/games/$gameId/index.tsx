@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { toast } from "sonner";
 import { StatCard } from "~/components/StatCard";
 import { Button } from "~/components/ui/button";
-import { useGetGameLinksQuery, useGetGameQuery } from "./route";
+import { useGetGameLinksQuery, useGetGameQuery } from "~/queries/games";
 
 export const Route = createFileRoute("/_auth/games/$gameId/")({
 	component: RouteComponent,
@@ -23,7 +22,6 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-6">
-			<Button onClick={() => toast("Hello")}>Example Toast</Button>
 			{!error && (
 				<>
 					<div className="flex items-center justify-between">

@@ -19,6 +19,7 @@ function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useListFactionsQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [tagFilter, setTagFilter] = useState("");
 
 	const factions = data.data || [];
 	const columns = createColumns(gameId);
@@ -44,6 +45,8 @@ function RouteComponent() {
 				data={factions}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}
+				tagFilter={tagFilter}
+				onTagFilterChange={setTagFilter}
 			/>
 		</div>
 	);

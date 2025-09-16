@@ -19,6 +19,7 @@ function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useListQuestsQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [tagFilter, setTagFilter] = useState("");
 
 	const quests = data.data || [];
 	const columns = createColumns(gameId);
@@ -44,6 +45,8 @@ function RouteComponent() {
 				data={quests}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}
+				tagFilter={tagFilter}
+				onTagFilterChange={setTagFilter}
 			/>
 		</div>
 	);

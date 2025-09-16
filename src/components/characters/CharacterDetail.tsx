@@ -12,6 +12,7 @@ import { DetailTemplate } from "~/components/ui/DetailTemplate";
 import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { CreateCharacterLink } from "./CreateCharacterLink";
+import { useDeleteCharacterMutation } from "~/queries/characters";
 
 interface CharacterDetailProps {
 	character: Character;
@@ -49,24 +50,10 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 		{ label: "Last Updated", value: formatDate(character.updated_at) },
 	];
 
-	const navigate = useNavigate();
-
-	const deleteCharacter = useMutation({
-		...deleteCharacterMutation(),
-		onSuccess: () => {
-			context.queryClient.invalidateQueries({
-				queryKey: listCharactersQueryKey({
-					path: { game_id: gameId },
-				}),
-			});
-			navigate({ to: ".." });
-		},
-	});
+	const deleteCharacter = useDeleteCharacterMutation(gameId);
 
 	const onDelete = () => {
-		deleteCharacter.mutate({
-			path: { game_id: gameId, id: character.id.toString() },
-		});
+		deleteCharacter.mutate({ path: { game_id: gameId, id: character.id } });
 	};
 
 	return (
@@ -92,7 +79,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 						: undefined
 				}
 			/>
-			
+
 			{character.tags && character.tags.length > 0 && (
 				<div className="space-y-2">
 					<h3 className="text-sm font-medium text-muted-foreground">Tags</h3>
@@ -108,10 +95,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 
 			<div className="space-y-4">
 				<h2 className="text-lg font-semibold">Links</h2>
-				<CreateCharacterLink
-					gameId={gameId}
-					characterId={character.id}
-				/>
+				<CreateCharacterLink gameId={gameId} characterId={character.id} />
 				{linksLoading && (
 					<div className="text-muted-foreground">Loading links...</div>
 				)}
@@ -122,7 +106,9 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 				)}
 				{!linksLoading && !linksError && linksResponse && (
 					<EntityLinksTable
-						links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
+						links={flattenLinksForTable(
+							linksResponse as GenericLinksResponse,
+						)}
 						gameId={gameId}
 					/>
 				)}

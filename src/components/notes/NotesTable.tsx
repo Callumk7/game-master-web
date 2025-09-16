@@ -37,6 +37,8 @@ interface NotesTableProps<TData, TValue> {
 	data: TData[];
 	searchQuery: string;
 	onSearchChange: (query: string) => void;
+	tagFilter: string;
+	onTagFilterChange: (tag: string) => void;
 }
 
 export function NotesTable<TData, TValue>({
@@ -44,6 +46,8 @@ export function NotesTable<TData, TValue>({
 	data,
 	searchQuery,
 	onSearchChange,
+	tagFilter,
+	onTagFilterChange,
 }: NotesTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -76,13 +80,26 @@ export function NotesTable<TData, TValue>({
 		table.getColumn("name")?.setFilterValue(searchQuery);
 	}, [searchQuery, table]);
 
+	React.useEffect(() => {
+		const column = table.getColumn("tags");
+		if (column) {
+			column.setFilterValue(tagFilter);
+		}
+	}, [tagFilter, table]);
+
 	return (
 		<div className="w-full">
-			<div className="flex items-center py-4">
+			<div className="flex items-center gap-4 py-4">
 				<Input
 					placeholder="Filter names..."
 					value={searchQuery}
 					onChange={(event) => onSearchChange(event.target.value)}
+					className="max-w-sm"
+				/>
+				<Input
+					placeholder="Filter tags..."
+					value={tagFilter}
+					onChange={(event) => onTagFilterChange(event.target.value)}
 					className="max-w-sm"
 				/>
 				<DropdownMenu>
