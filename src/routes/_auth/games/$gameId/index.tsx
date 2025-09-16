@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { StatCard } from "~/components/StatCard";
 import { Button } from "~/components/ui/button";
+import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import { useGetGameLinksQuery, useGetGameQuery } from "~/queries/games";
 
 export const Route = createFileRoute("/_auth/games/$gameId/")({
@@ -22,6 +23,7 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-6">
+			<MinimalTiptap />
 			{!error && (
 				<>
 					<div className="flex items-center justify-between">
