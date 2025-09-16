@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { StatCard } from "~/components/StatCard";
 import { Button } from "~/components/ui/button";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
+	const [editorContent, setEditorContent] = useState(null);
 
 	const { data: gameData, error } = useGetGameQuery({ id: gameId });
 	const game = gameData.data;
@@ -23,7 +25,19 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-6">
-			<MinimalTiptap />
+			<div className="space-y-4">
+				<MinimalTiptap 
+					content={editorContent}
+					onChange={setEditorContent}
+					placeholder="Start writing your campaign notes..."
+				/>
+				<div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+					<h3 className="text-sm font-semibold mb-2">Debug: Editor JSON</h3>
+					<pre className="text-xs overflow-auto max-h-40 whitespace-pre-wrap">
+						{JSON.stringify(editorContent, null, 2)}
+					</pre>
+				</div>
+			</div>
 			{!error && (
 				<>
 					<div className="flex items-center justify-between">

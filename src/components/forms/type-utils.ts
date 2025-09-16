@@ -73,13 +73,15 @@ export function generateFieldsFromSchema<T extends z.ZodRawShape>(
 				field.type = "text";
 				field.placeholder = "https://example.com";
 			}
-			// Check for long strings (description, etc.)
+			// Check for rich text editor fields (complex content)
 			else if (
-				key.includes("description") ||
 				key.includes("content") ||
-				key.includes("notes")
+				key.includes("description") ||
+				key.includes("notes") ||
+				key.includes("body") ||
+				key.includes("message")
 			) {
-				field.type = "textarea";
+				field.type = "editor";
 			}
 			// Check for password fields
 			else if (key.includes("password")) {

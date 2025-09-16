@@ -77,7 +77,10 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 
 		// Auto-generate fields from schema
 		const fields = generateFieldsFromSchema(schema, fieldOverrides);
-		const defaultValues = initialValues ?? extractDefaultValues(schema);
+		const defaultValues = processInitialValues(
+			initialValues ?? extractDefaultValues(schema),
+			fields,
+		);
 
 		const mutationInstance = useMutation({
 			...mutation(),
@@ -91,7 +94,9 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 			defaultValues,
 			onSubmit: async ({ value }) => {
 				try {
-					const validatedData = schema.parse(value);
+					// Convert editor objects to strings before validation
+					const processedValue = processFormValuesForSubmission(value, fields);
+					const validatedData = schema.parse(processedValue);
 					const fullData = {
 						body: { [entityName]: validatedData },
 					} as unknown as Options<TMutationData>;
@@ -144,11 +149,20 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 								name={fieldConfig.name}
 								validators={{
 									onChange: ({ value }) => {
+										// Skip validation for editor fields during editing
+										if (fieldConfig.type === 'editor') {
+											return undefined;
+										}
+										
 										// Use Zod for real-time validation, but be lenient during typing
 										const fieldSchema = (schema.shape as any)[
 											fieldConfig.name
 										];
-										if (fieldSchema && value !== undefined && value !== "") {
+										if (
+											fieldSchema &&
+											value !== undefined &&
+											value !== ""
+										) {
 											const result = fieldSchema.safeParse(value);
 											if (!result.success) {
 												return (
@@ -268,7 +282,13 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 	initialValues,
 }: HookFormOptions<TData, TError, TMutationData>) {
 	const queryClient = useQueryClient();
-	const defaultValues = initialValues ?? extractDefaultValues(schema);
+	
+	// Auto-generate fields from schema (needed for processing)
+	const fields = generateFieldsFromSchema(schema, {});
+	const defaultValues = processInitialValues(
+		initialValues ?? extractDefaultValues(schema),
+		fields,
+	);
 
 	const mutationInstance = useMutation({
 		...mutation(),
@@ -282,7 +302,9 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		defaultValues,
 		onSubmit: async ({ value }) => {
 			try {
-				const validatedData = schema.parse(value);
+				// Convert editor objects to strings before validation
+				const processedValue = processFormValuesForSubmission(value, fields);
+				const validatedData = schema.parse(processedValue);
 				const fullData = {
 					body: { [entityName]: validatedData },
 				} as unknown as Options<TMutationData>;
@@ -340,6 +362,11 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 					name={fieldName}
 					validators={{
 						onChange: ({ value }) => {
+							// Skip validation for editor fields during editing
+							if (fieldConfig.type === 'editor') {
+								return undefined;
+							}
+							
 							const fieldSchema = (schema.shape as any)[fieldName];
 							if (fieldSchema && value !== undefined && value !== "") {
 								const result = fieldSchema.safeParse(value);
@@ -380,3 +407,77 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		},
 	};
 }
+
+const processInitialValues = (
+	initialValues: Record<string, any>,
+	fields: FieldConfig[],
+) => {
+	if (!initialValues) return initialValues;
+
+	const processed = { ...initialValues };
+
+	fields.forEach((field) => {
+		if (field.type === "editor" && typeof processed[field.name] === "string") {
+			const stringValue = processed[field.name] as string;
+			
+			// Try to parse as JSON first
+			try {
+				const parsed = JSON.parse(stringValue);
+				// Verify it's a valid TipTap document structure
+				if (parsed && typeof parsed === "object" && parsed.type) {
+					processed[field.name] = parsed;
+					return;
+				}
+			} catch {
+				// Not JSON, continue to plain text handling
+			}
+			
+			// Handle as plain text - convert to TipTap document structure
+			if (stringValue.trim()) {
+				processed[field.name] = {
+					type: "doc",
+					content: [
+						{
+							type: "paragraph",
+							content: [
+								{
+									type: "text",
+									text: stringValue,
+								},
+							],
+						},
+					],
+				};
+			} else {
+				// Empty string becomes null
+				processed[field.name] = null;
+			}
+		}
+	});
+
+	return processed;
+};
+
+const processFormValuesForSubmission = (
+	value: Record<string, any>,
+	fields: FieldConfig[],
+) => {
+	const processed = { ...value };
+
+	fields.forEach((field) => {
+		const fieldValue = processed[field.name];
+
+		// Only stringify if it's an object and not null
+		if (
+			field.type === "editor" &&
+			typeof fieldValue === "object" &&
+			fieldValue !== null
+		) {
+			processed[field.name] = JSON.stringify(fieldValue);
+		}
+		// If it's already a string, leave it as is
+		// If it's null/undefined, leave it as is
+	});
+
+	return processed;
+};

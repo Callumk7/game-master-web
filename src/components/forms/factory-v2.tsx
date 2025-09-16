@@ -21,6 +21,7 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
+import { MinimalTiptap } from "../ui/shadcn-io/minimal-tiptap";
 
 // Create form hook outside component
 const { useAppForm } = createFormHook();
@@ -51,6 +52,7 @@ export interface FieldConfig {
 		| "text"
 		| "number"
 		| "textarea"
+		| "editor"
 		| "select"
 		| "checkbox"
 		| "email"
@@ -108,6 +110,17 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 					placeholder={field.placeholder}
 					onChange={(e) => fieldApi.handleChange(e.target.value)}
 					rows={4}
+				/>
+			);
+
+		case "editor":
+			return (
+				<MinimalTiptap
+					content={fieldApi.state.value ?? null}
+					onChange={fieldApi.handleChange}
+					placeholder={field.placeholder}
+					editable={!field.disabled}
+					className={field.className}
 				/>
 			);
 
