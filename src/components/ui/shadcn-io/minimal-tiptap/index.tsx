@@ -22,15 +22,15 @@ import { Toggle } from "../../toggle";
 import "src/components/ui/shadcn-io/minimal-tiptap/tiptap.css";
 
 interface MinimalTiptapProps {
-	content?: string;
-	onChange?: (content: string) => void;
+	content?: object | null;
+	onChange?: (content: object) => void;
 	placeholder?: string;
 	editable?: boolean;
 	className?: string;
 }
 
 function MinimalTiptap({
-	content = "",
+	content = null,
 	onChange,
 	placeholder = "Start typing...",
 	editable = true,
@@ -52,7 +52,7 @@ function MinimalTiptap({
 		content,
 		editable,
 		onUpdate: ({ editor }) => {
-			onChange?.(editor.getHTML());
+			onChange?.(editor.getJSON());
 		},
 		editorProps: {
 			attributes: {
@@ -208,4 +208,3 @@ function MinimalTiptap({
 }
 
 export { MinimalTiptap, type MinimalTiptapProps };
-
