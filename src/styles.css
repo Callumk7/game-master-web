@@ -53,6 +53,36 @@
 	--shadow-2xl: 0 10px 15px 0px hsl(0 0% 0% / 0.12);
 	--tracking-normal: 0em;
 	--spacing: 0.25rem;
+
+	/* Editor-specific variables */
+	--editor-text-brown: hsl(25 95% 53%);
+	--editor-text-orange: hsl(24 95% 53%);
+	--editor-text-yellow: hsl(48 96% 53%);
+	--editor-text-green: hsl(142 71% 45%);
+	--editor-text-purple: hsl(269 97% 85%);
+	--editor-text-pink: hsl(336 80% 58%);
+
+	--editor-highlight-brown: hsl(43 96% 96%);
+	--editor-highlight-orange: hsl(33 100% 96%);
+	--editor-highlight-yellow: hsl(54 100% 96%);
+	--editor-highlight-green: hsl(142 71% 96%);
+	--editor-highlight-blue: hsl(217 91% 96%);
+	--editor-highlight-purple: hsl(269 97% 96%);
+	--editor-highlight-pink: hsl(336 80% 96%);
+	--editor-highlight-red: hsl(0 84% 96%);
+
+	--editor-spacing-1: 0.25rem;
+	--editor-spacing-2: 0.5rem;
+	--editor-spacing-3: 0.75rem;
+	--editor-spacing-4: 1rem;
+	--editor-spacing-6: 1.5rem;
+	--editor-spacing-8: 2rem;
+	--editor-spacing-12: 3rem;
+	--editor-spacing-16: 4rem;
+
+	--editor-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	--editor-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	--editor-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark {
@@ -103,6 +133,16 @@
 	--shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
 	--shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
 	--shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
+	/* Editor-specific dark mode variables */
+	--editor-highlight-brown: hsl(43 96% 10%);
+	--editor-highlight-orange: hsl(33 100% 10%);
+	--editor-highlight-yellow: hsl(54 100% 10%);
+	--editor-highlight-green: hsl(142 71% 10%);
+	--editor-highlight-blue: hsl(217 91% 10%);
+	--editor-highlight-purple: hsl(269 97% 10%);
+	--editor-highlight-pink: hsl(336 80% 10%);
+	--editor-highlight-red: hsl(0 84% 10%);
 }
 
 @theme inline {
