@@ -1,18 +1,15 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useRouteContext } from "@tanstack/react-router";
 import { User } from "lucide-react";
-import {
-	deleteCharacterMutation,
-	getCharacterLinksOptions,
-	listCharactersQueryKey,
-} from "~/api/@tanstack/react-query.gen";
+import { getCharacterLinksOptions } from "~/api/@tanstack/react-query.gen";
 import type { Character } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { DetailTemplate } from "~/components/ui/DetailTemplate";
 import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
+import { MinimalTiptapViewer } from "~/components/ui/shadcn-io/minimal-tiptap";
+import { useDeleteCharacterMutation } from "~/queries/characters";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { CreateCharacterLink } from "./CreateCharacterLink";
-import { useDeleteCharacterMutation } from "~/queries/characters";
 
 interface CharacterDetailProps {
 	character: Character;
@@ -23,6 +20,36 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 	const formatDate = (dateString?: string) => {
 		if (!dateString) return "Unknown";
 		return new Date(dateString).toLocaleDateString();
+	};
+
+	const parseDescriptionForEditor = (description?: string) => {
+		if (!description) return null;
+
+		// Try to parse as JSON first (TipTap format)
+		try {
+			const parsed = JSON.parse(description);
+			if (parsed && typeof parsed === "object" && parsed.type) {
+				return parsed;
+			}
+		} catch {
+			// Not JSON, continue to plain text handling
+		}
+
+		// Handle as plain text - convert to TipTap document structure
+		return {
+			type: "doc",
+			content: [
+				{
+					type: "paragraph",
+					content: [
+						{
+							type: "text",
+							text: description,
+						},
+					],
+				},
+			],
+		};
 	};
 
 	const context = useRouteContext({ from: "/_auth/games/$gameId/characters/$id" });
@@ -74,7 +101,15 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 					character.description
 						? {
 								title: "Description",
-								value: character.description,
+								value: (
+									<MinimalTiptapViewer
+										key={`${character.id}-${character.updated_at}`}
+										content={parseDescriptionForEditor(
+											character.description,
+										)}
+										className="p-0"
+									/>
+								),
 							}
 						: undefined
 				}

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
+	getCharacterOptions,
 	listCharactersOptions,
 	listCharactersQueryKey,
 } from "~/api/@tanstack/react-query.gen";
@@ -12,6 +13,12 @@ import {
 
 export const useListCharactersQuery = (gameId: string) => {
 	return useSuspenseQuery({ ...listCharactersOptions({ path: { game_id: gameId } }) });
+};
+
+export const useCharacterQuery = (gameId: string, id: string) => {
+	return useSuspenseQuery({
+		...getCharacterOptions({ path: { game_id: gameId, id } }),
+	});
 };
 
 ////////////////////////////////////////////////////////////////////////////////

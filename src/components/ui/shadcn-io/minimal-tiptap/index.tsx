@@ -58,10 +58,11 @@ function MinimalTiptap({
 			attributes: {
 				class: cn(
 					"prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mx-auto focus:outline-none",
-					"min-h-[200px] p-4 border-0",
+					"min-h-[200px] px-3 pt-1 pb-2 border-0",
 				),
 			},
 		},
+		immediatelyRender: false,
 	});
 
 	if (!editor) {
@@ -70,7 +71,7 @@ function MinimalTiptap({
 
 	return (
 		<div className={cn("border rounded-lg overflow-hidden", className)}>
-			<div className="border-b p-2 flex flex-wrap items-center gap-1">
+			<div className="border-b px-3 py-1.5 flex flex-wrap items-center gap-1">
 				<Toggle
 					size="sm"
 					pressed={editor.isActive("bold")}
@@ -208,3 +209,4 @@ function MinimalTiptap({
 }
 
 export { MinimalTiptap, type MinimalTiptapProps };
+export { MinimalTiptapViewer, type MinimalTiptapViewerProps } from "./viewer";

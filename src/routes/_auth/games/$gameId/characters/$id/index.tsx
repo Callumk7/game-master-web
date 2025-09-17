@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getCharacterOptions } from "~/api/@tanstack/react-query.gen";
 import { CharacterDetail } from "~/components/characters/CharacterDetail";
+import { useCharacterQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 	component: RouteComponent,
@@ -24,10 +24,3 @@ function RouteComponent() {
 
 	return <CharacterDetail character={data.data} gameId={gameId} />;
 }
-
-export const useCharacterQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getCharacterOptions({ path: { game_id: gameId, id } }),
-	});
-};
-
