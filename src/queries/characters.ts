@@ -3,8 +3,10 @@ import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
 	getCharacterOptions,
+	getCharacterQueryKey,
 	listCharactersOptions,
 	listCharactersQueryKey,
+	updateCharacterMutation,
 } from "~/api/@tanstack/react-query.gen";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,6 +39,20 @@ export const useDeleteCharacterMutation = (gameId: string) => {
 				}),
 			});
 			navigate({ to: ".." });
+		},
+	});
+};
+
+export const useUpdateCharacterMutation = (gameId: string, characterId: string) => {
+	const client = useQueryClient();
+	return useMutation({
+		...updateCharacterMutation(),
+		onSuccess: () => {
+			client.invalidateQueries({
+				queryKey: getCharacterQueryKey({
+					path: { game_id: gameId, id: characterId },
+				}),
+			});
 		},
 	});
 };

@@ -99,7 +99,9 @@ export function DetailTemplate({
 				{content?.value && (
 					<Card className="p-6">
 						<h2 className="text-xl font-semibold mb-4">{content.title}</h2>
-						<div className="text-base whitespace-pre-wrap">{content.value}</div>
+						<div className="text-base whitespace-pre-wrap">
+							{content.value}
+						</div>
 					</Card>
 				)}
 			</div>

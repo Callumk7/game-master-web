@@ -82,20 +82,6 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			),
 		},
 		{
-			accessorKey: "description",
-			header: "Description",
-			cell: ({ row }) => {
-				const description = row.getValue("description") as string;
-				const content = row.original.content;
-				const text = description || content;
-				return (
-					<div className="max-w-md truncate text-muted-foreground">
-						{text || "No description"}
-					</div>
-				);
-			},
-		},
-		{
 			accessorKey: "updated_at",
 			header: "Last Updated",
 			cell: ({ row }) => {

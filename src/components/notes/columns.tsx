@@ -44,26 +44,15 @@ export const createColumns = (gameId: string): ColumnDef<Note>[] => [
 		},
 	},
 	{
-		accessorKey: "content",
-		header: "Content",
-		cell: ({ row }) => {
-			const content = row.getValue("content") as string;
-			return (
-				<div className="max-w-[300px] truncate">
-					{content || (
-						<span className="text-muted-foreground italic">No content</span>
-					)}
-				</div>
-			);
-		},
-	},
-	{
 		accessorKey: "tags",
 		header: "Tags",
 		filterFn: (row, columnId, value) => {
 			if (!value) return true;
 			const tags = row.getValue(columnId) as string[];
-			return tags?.some(tag => tag.toLowerCase().includes(value.toLowerCase())) ?? false;
+			return (
+				tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ??
+				false
+			);
 		},
 		cell: ({ row }) => {
 			const tags = row.getValue("tags") as string[];
@@ -170,4 +159,3 @@ export const createColumns = (gameId: string): ColumnDef<Note>[] => [
 		},
 	},
 ];
-

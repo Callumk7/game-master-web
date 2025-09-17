@@ -162,7 +162,11 @@ export const createCharacter = <ThrowOnError extends boolean = false>(options: O
             }
         ],
         url: '/api/games/{game_id}/characters',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -264,7 +268,11 @@ export const updateCharacter = <ThrowOnError extends boolean = false>(options: O
             }
         ],
         url: '/api/games/{game_id}/characters/{id}',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -298,7 +306,11 @@ export const createFaction = <ThrowOnError extends boolean = false>(options: Opt
             }
         ],
         url: '/api/games/{game_id}/factions',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -400,7 +412,11 @@ export const updateFaction = <ThrowOnError extends boolean = false>(options: Opt
             }
         ],
         url: '/api/games/{game_id}/factions/{id}',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -451,7 +467,11 @@ export const createLocation = <ThrowOnError extends boolean = false>(options: Op
             }
         ],
         url: '/api/games/{game_id}/locations',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -502,7 +522,11 @@ export const updateLocation = <ThrowOnError extends boolean = false>(options: Op
             }
         ],
         url: '/api/games/{game_id}/locations/{id}',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -786,7 +810,11 @@ export const createQuest = <ThrowOnError extends boolean = false>(options: Optio
             }
         ],
         url: '/api/games/{game_id}/quests',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -837,7 +865,11 @@ export const updateQuest = <ThrowOnError extends boolean = false>(options: Optio
             }
         ],
         url: '/api/games/{game_id}/quests/{id}',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 

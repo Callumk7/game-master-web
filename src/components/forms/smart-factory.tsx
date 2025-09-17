@@ -150,10 +150,10 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 								validators={{
 									onChange: ({ value }) => {
 										// Skip validation for editor fields during editing
-										if (fieldConfig.type === 'editor') {
+										if (fieldConfig.type === "editor") {
 											return undefined;
 										}
-										
+
 										// Use Zod for real-time validation, but be lenient during typing
 										const fieldSchema = (schema.shape as any)[
 											fieldConfig.name
@@ -282,7 +282,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 	initialValues,
 }: HookFormOptions<TData, TError, TMutationData>) {
 	const queryClient = useQueryClient();
-	
+
 	// Auto-generate fields from schema (needed for processing)
 	const fields = generateFieldsFromSchema(schema, {});
 	const defaultValues = processInitialValues(
@@ -363,10 +363,10 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 					validators={{
 						onChange: ({ value }) => {
 							// Skip validation for editor fields during editing
-							if (fieldConfig.type === 'editor') {
+							if (fieldConfig.type === "editor") {
 								return undefined;
 							}
-							
+
 							const fieldSchema = (schema.shape as any)[fieldName];
 							if (fieldSchema && value !== undefined && value !== "") {
 								const result = fieldSchema.safeParse(value);
@@ -419,7 +419,7 @@ const processInitialValues = (
 	fields.forEach((field) => {
 		if (field.type === "editor" && typeof processed[field.name] === "string") {
 			const stringValue = processed[field.name] as string;
-			
+
 			// Try to parse as JSON first
 			try {
 				const parsed = JSON.parse(stringValue);
@@ -431,7 +431,7 @@ const processInitialValues = (
 			} catch {
 				// Not JSON, continue to plain text handling
 			}
-			
+
 			// Handle as plain text - convert to TipTap document structure
 			if (stringValue.trim()) {
 				processed[field.name] = {

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getCharacterOptions } from "~/api/@tanstack/react-query.gen";
 import { EditCharacterForm } from "~/components/characters/EditCharacterForm";
-import { useCharacterQuery } from ".";
+import { useCharacterQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/edit")({
 	component: RouteComponent,
