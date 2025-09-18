@@ -1,18 +1,12 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
 import { EntityHeader } from "~/components/EntityHeader";
 import { createColumns } from "~/components/factions/columns";
 import { FactionsTable } from "~/components/factions/FactionsTable";
+import { useListFactionsQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 	component: RouteComponent,
-	loader: ({ params, context }) => {
-		context.queryClient.ensureQueryData(
-			listFactionsOptions({ path: { game_id: params.gameId } }),
-		);
-	},
 });
 
 function RouteComponent() {
@@ -51,7 +45,3 @@ function RouteComponent() {
 		</div>
 	);
 }
-
-const useListFactionsQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listFactionsOptions({ path: { game_id: gameId } }) });
-};

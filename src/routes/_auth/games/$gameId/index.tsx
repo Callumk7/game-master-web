@@ -12,6 +12,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const [editorContent, setEditorContent] = useState(null);
+	const [editorText, setEditorText] = useState("");
 
 	const { data: gameData, error } = useGetGameQuery({ id: gameId });
 	const game = gameData.data;
@@ -28,14 +29,25 @@ function RouteComponent() {
 			<div className="space-y-4">
 				<MinimalTiptap 
 					content={editorContent}
-					onChange={setEditorContent}
+					onChange={(content) => {
+						setEditorContent(content.json);
+						setEditorText(content.text);
+					}}
 					placeholder="Start writing your campaign notes..."
 				/>
-				<div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-					<h3 className="text-sm font-semibold mb-2">Debug: Editor JSON</h3>
-					<pre className="text-xs overflow-auto max-h-40 whitespace-pre-wrap">
-						{JSON.stringify(editorContent, null, 2)}
-					</pre>
+				<div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4">
+					<div>
+						<h3 className="text-sm font-semibold mb-2">Debug: Editor JSON</h3>
+						<pre className="text-xs overflow-auto max-h-40 whitespace-pre-wrap">
+							{JSON.stringify(editorContent, null, 2)}
+						</pre>
+					</div>
+					<div>
+						<h3 className="text-sm font-semibold mb-2">Debug: Plain Text</h3>
+						<pre className="text-xs overflow-auto max-h-40 whitespace-pre-wrap">
+							{editorText}
+						</pre>
+					</div>
 				</div>
 			</div>
 			{!error && (

@@ -65,6 +65,18 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 		cell: ({ row }) => <div className="text-center">{row.getValue("level")}</div>,
 	},
 	{
+		accessorKey: "description_plain_text",
+		header: "Description",
+		cell: ({ row }) => {
+			const description = row.getValue("description_plain_text") as string;
+			return (
+				<div className="max-w-xs truncate text-sm text-muted-foreground">
+					{description || <span className="italic">No description</span>}
+				</div>
+			);
+		},
+	},
+	{
 		accessorKey: "tags",
 		header: "Tags",
 		filterFn: (row, columnId, value) => {

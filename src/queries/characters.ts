@@ -1,7 +1,13 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
+	getCharacterLinksOptions,
 	getCharacterOptions,
 	getCharacterQueryKey,
 	listCharactersOptions,
@@ -21,6 +27,14 @@ export const useCharacterQuery = (gameId: string, id: string) => {
 	return useSuspenseQuery({
 		...getCharacterOptions({ path: { game_id: gameId, id } }),
 	});
+};
+
+export const useGetCharacterLinks = (gameId: string, characterId: string) => {
+	return useQuery(
+		getCharacterLinksOptions({
+			path: { game_id: gameId, character_id: characterId },
+		}),
+	);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

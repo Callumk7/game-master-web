@@ -23,7 +23,7 @@ import "src/components/ui/shadcn-io/minimal-tiptap/tiptap.css";
 
 interface MinimalTiptapProps {
 	content?: object | null;
-	onChange?: (content: object) => void;
+	onChange?: (content: { json: object; text: string }) => void;
 	placeholder?: string;
 	editable?: boolean;
 	className?: string;
@@ -52,7 +52,10 @@ function MinimalTiptap({
 		content,
 		editable,
 		onUpdate: ({ editor }) => {
-			onChange?.(editor.getJSON());
+			onChange?.({
+				json: editor.getJSON(),
+				text: editor.getText()
+			});
 		},
 		editorProps: {
 			attributes: {

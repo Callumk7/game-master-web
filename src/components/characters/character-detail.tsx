@@ -1,16 +1,14 @@
 import * as React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getCharacterLinksOptions } from "~/api/@tanstack/react-query.gen";
 import type { Character } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteCharacterMutation,
+	useGetCharacterLinks,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
-import { Card, CardContent } from "../ui/card";
 import { Link } from "../ui/link";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
@@ -29,17 +27,26 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 	} = useGetCharacterLinks(gameId, character.id);
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
-	const [updatedContent, setUpdatedContent] = React.useState<object>({});
+	const [updatedContent, setUpdatedContent] = React.useState<{
+		json: object;
+		text: string;
+	}>({ json: {}, text: "" });
 	const updateCharacter = useUpdateCharacterMutation(gameId, character.id);
 
-	const onChange = (newContent: object) => {
+	const onChange = (newContent: { json: object; text: string }) => {
 		setUpdatedContent(newContent);
 		setIsUpdated(true);
 	};
 
 	const handleSave = () => {
+		const payload = {
+			character: {
+				description: JSON.stringify(updatedContent.json),
+				description_plain_text: updatedContent.text,
+			},
+		};
 		updateCharacter.mutate({
-			body: { character: { description: JSON.stringify(updatedContent) } },
+			body: payload,
 			path: { game_id: gameId, id: character.id },
 		});
 		setIsUpdated(false);
@@ -55,13 +62,18 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 
 	return (
 		<div className="space-y-6 mt-12">
-			<Link
-				variant={"outline"}
-				to="/games/$gameId/characters/$id/edit"
-				params={{ gameId, id: character.id }}
-			>
-				Edit
-			</Link>
+			<div className="flex gap-4">
+				<Link
+					variant={"outline"}
+					to="/games/$gameId/characters/$id/edit"
+					params={{ gameId, id: character.id }}
+				>
+					Edit
+				</Link>
+				<Button variant={"destructive"} onClick={onDelete}>
+					Delete
+				</Button>
+			</div>
 			<h2 className="font-bold text-3xl">{character.name}</h2>
 
 			{/* Badges and Tags */}
@@ -82,7 +94,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 				)}
 			</div>
 
-			<Tabs>
+			<Tabs defaultValue={"description"}>
 				<TabsList>
 					<TabsTrigger value="description">Description</TabsTrigger>
 					<TabsTrigger value="links">Links</TabsTrigger>
@@ -126,25 +138,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 	);
 }
 
-export const useGetCharacterLinks = (gameId: string, characterId: string) => {
-	return useQuery(
-		getCharacterLinksOptions({
-			path: { game_id: gameId, character_id: characterId },
-		}),
-	);
-};
-
-function CharacterData({ character }: { character: Character }) {
-	return (
-		<Card>
-			<CardContent>
-				<div>
-					<Badge>{character.class}</Badge>
-				</div>
-			</CardContent>
-		</Card>
-	);
-}
+// Utilities
 
 const parseDescriptionForEditor = (description?: string) => {
 	if (!description) return null;

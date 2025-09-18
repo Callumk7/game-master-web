@@ -53,6 +53,7 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 	const [searchQuery, setSearchQuery] = React.useState("");
+	const [typeFilter, setTypeFilter] = React.useState<string>("all");
 
 	const columns: ColumnDef<EntityLink>[] = [
 		{
@@ -113,19 +114,60 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 		},
 	});
 
+	const uniqueTypes = React.useMemo(() => {
+		const types = [...new Set(links.map((link) => link.type))];
+		return types.sort();
+	}, [links]);
+
 	React.useEffect(() => {
 		table.getColumn("name")?.setFilterValue(searchQuery);
 	}, [searchQuery, table]);
 
+	React.useEffect(() => {
+		table.getColumn("type")?.setFilterValue(typeFilter === "all" ? "" : typeFilter);
+	}, [typeFilter, table]);
+
 	return (
 		<div className="w-full">
-			<div className="flex items-center py-4">
+			<div className="flex items-center gap-4 py-4">
 				<Input
 					placeholder="Filter links..."
 					value={searchQuery}
 					onChange={(event) => setSearchQuery(event.target.value)}
 					className="max-w-sm"
 				/>
+				<DropdownMenu>
+					<DropdownMenuTrigger
+						render={
+							<Button variant="outline">
+								Type: {typeFilter === "all" ? "All" : typeFilter}
+								<ChevronDown className="ml-2 h-4 w-4" />
+							</Button>
+						}
+					></DropdownMenuTrigger>
+					<DropdownMenuPortal>
+						<DropdownMenuPositioner>
+							<DropdownMenuContent>
+								<DropdownMenuCheckboxItem
+									checked={typeFilter === "all"}
+									onCheckedChange={() => setTypeFilter("all")}
+								>
+									All Types
+								</DropdownMenuCheckboxItem>
+								{uniqueTypes.map((type) => (
+									<DropdownMenuCheckboxItem
+										key={type}
+										checked={typeFilter === type}
+										onCheckedChange={() => setTypeFilter(type)}
+										className="capitalize"
+									>
+										{type}
+									</DropdownMenuCheckboxItem>
+								))}
+							</DropdownMenuContent>
+						</DropdownMenuPositioner>
+					</DropdownMenuPortal>
+				</DropdownMenu>
 				<DropdownMenu>
 					<DropdownMenuTrigger
 						render={

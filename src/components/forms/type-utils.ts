@@ -188,8 +188,8 @@ export function createSchemaFor() {
 
 		note: z.object({
 			name: z.string().min(1, "Note name is required"),
-			content: z.string().min(1, "Note content is required"),
 			tags: z.array(z.string()).optional(),
+			content: z.string().min(1, "Note content is required"),
 		}),
 
 		quest: z.object({

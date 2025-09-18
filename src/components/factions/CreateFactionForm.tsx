@@ -5,14 +5,13 @@ import {
 	listFactionsQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm } from "~/components/forms/smart-factory";
-import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { schemas } from "../forms/type-utils";
 
 export function CreateFactionForm() {
-	const { gameId } = useParams({ from: "/_auth/games/$gameId/factions/new" });
+	const { gameId } = useParams({ from: "/_auth/games/$gameId/factions" });
 	const context = useRouteContext({
-		from: "/_auth/games/$gameId/factions/new",
+		from: "/_auth/games/$gameId/factions",
 	});
 	const navigate = useNavigate();
 

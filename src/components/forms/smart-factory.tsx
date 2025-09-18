@@ -390,7 +390,29 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 							</field.Label>
 
 							<field.Control>
-								<FormFieldControl field={fieldConfig} fieldApi={field} />
+								{fieldConfig.type === "editor" ? (
+									<FormFieldControl 
+										field={{
+											...fieldConfig,
+											// Don't override onChange here, let the control handle it
+										}} 
+										fieldApi={{
+											...field,
+											// Wrap handleChange to process editor data correctly
+											handleChange: (value: any) => {
+												if (value && typeof value === "object" && "json" in value && "text" in value) {
+													// New MinimalTiptap interface - store the full object
+													field.handleChange(value);
+												} else {
+													// Backward compatibility
+													field.handleChange(value);
+												}
+											}
+										}} 
+									/>
+								) : (
+									<FormFieldControl field={fieldConfig} fieldApi={field} />
+								)}
 							</field.Control>
 
 							{fieldConfig.description && (
@@ -467,12 +489,24 @@ const processFormValuesForSubmission = (
 	fields.forEach((field) => {
 		const fieldValue = processed[field.name];
 
-		// Only stringify if it's an object and not null
+		// Handle new editor format with both JSON and text
 		if (
+			field.type === "editor" &&
+			typeof fieldValue === "object" &&
+			fieldValue !== null &&
+			"json" in fieldValue &&
+			"text" in fieldValue
+		) {
+			// Set the main field to the JSON string
+			processed[field.name] = JSON.stringify(fieldValue.json);
+			// Set the plain text field
+			processed[`${field.name}_plain_text`] = fieldValue.text;
+		} else if (
 			field.type === "editor" &&
 			typeof fieldValue === "object" &&
 			fieldValue !== null
 		) {
+			// Backward compatibility: if it's just a TipTap object
 			processed[field.name] = JSON.stringify(fieldValue);
 		}
 		// If it's already a string, leave it as is
