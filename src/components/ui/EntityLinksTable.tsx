@@ -23,7 +23,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
-import { Link } from "~/components/ui/link";
+import { EntityLinkButton } from "~/components/ui/EntityLinkButton";
 import {
 	Table,
 	TableBody,
@@ -38,7 +38,9 @@ export interface EntityLink {
 	name: string;
 	type: string;
 	description?: string;
+	description_plain_text?: string;
 	content?: string;
+	content_plain_text?: string;
 	created_at: string;
 	updated_at: string;
 }
@@ -60,16 +62,7 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			accessorKey: "name",
 			header: "Name",
 			cell: ({ row }) => {
-				const type = row.original.type;
-				const id = row.original.id;
-				return (
-					<Link
-						to={`/games/${gameId}/${type}s/${id}` as string}
-						className="font-medium hover:underline"
-					>
-						{row.getValue("name")}
-					</Link>
-				);
+				return <EntityLinkButton entity={row.original} />;
 			},
 			filterFn: "includesString",
 		},

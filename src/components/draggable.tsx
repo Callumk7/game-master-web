@@ -15,6 +15,7 @@ interface DraggableWindowProps {
 	minHeight?: number;
 	className?: string;
 	contentClassName?: string;
+	initialOffset?: { x: number; y: number };
 }
 
 const DraggableWindow: React.FC<DraggableWindowProps> = ({
@@ -28,6 +29,7 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 	minHeight = 150,
 	className = "",
 	contentClassName = "",
+	initialOffset = { x: 0, y: 0 },
 }) => {
 	const popupRef = React.useRef<HTMLDivElement>(null);
 	const dragDataRef = React.useRef({
@@ -174,17 +176,21 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 			const centerX = Math.max(0, (window.innerWidth - data.currentWidth) / 2);
 			const centerY = Math.max(0, (window.innerHeight - data.currentHeight) / 2);
 
-			data.currentX = centerX;
-			data.currentY = centerY;
+			// Apply initial offset for staggered positioning
+			const finalX = Math.max(0, Math.min(window.innerWidth - data.currentWidth, centerX + initialOffset.x));
+			const finalY = Math.max(0, Math.min(window.innerHeight - data.currentHeight, centerY + initialOffset.y));
+
+			data.currentX = finalX;
+			data.currentY = finalY;
 
 			const popup = popupRef.current;
 			popup.style.left = "0px";
 			popup.style.top = "0px";
-			popup.style.transform = `translate(${centerX}px, ${centerY}px)`;
+			popup.style.transform = `translate(${finalX}px, ${finalY}px)`;
 			popup.style.width = `${data.currentWidth}px`;
 			popup.style.height = `${data.currentHeight}px`;
 		}
-	}, [isOpen]);
+	}, [isOpen, initialOffset.x, initialOffset.y]);
 
 	React.useEffect(() => {
 		if (isOpen) {
@@ -204,13 +210,13 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 	}, [handleMouseMove, handleMouseUp]);
 
 	return (
-		<Dialog.Root open={isOpen} onOpenChange={onOpenChange} modal={false}>
+		<Dialog.Root 
+			open={isOpen} 
+			onOpenChange={onOpenChange} 
+			modal={false}
+			dismissible={false}
+		>
 			<Dialog.Portal>
-				<Dialog.Backdrop
-					className={cn(
-						"data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:animation-duration-[200ms] fixed inset-0 z-50 bg-black/50",
-					)}
-				/>
 				<Dialog.Popup
 					ref={popupRef}
 					className={cn(
