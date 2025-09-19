@@ -13,6 +13,7 @@ import {
 } from "~/queries/characters";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
+import { CreateCharacterLink } from "./CreateCharacterLink";
 
 interface CharacterDetailProps {
 	character: Character;
@@ -86,11 +87,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 				content={parseContentForEditor(character.description)}
 				onChange={onChange}
 			/>
-			<Button
-				variant={"secondary"}
-				onClick={handleSave}
-				disabled={!isUpdated}
-			>
+			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
 				Save
 			</Button>
 		</div>
@@ -99,6 +96,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 	const linksTab = (
 		<div className="space-y-4">
 			<h2 className="text-lg font-semibold">Links</h2>
+			<CreateCharacterLink gameId={gameId} characterId={character.id} />
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
 			)}
@@ -109,9 +107,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 			)}
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
-					links={flattenLinksForTable(
-						linksResponse as GenericLinksResponse,
-					)}
+					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
 				/>
 			)}

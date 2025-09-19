@@ -11,7 +11,6 @@ export function CreateCharacterLink({ gameId, characterId }: CreateCharacterLink
 			gameId={gameId}
 			sourceEntityType="character"
 			sourceEntityId={characterId}
-			excludeTypes={["character"]} // Prevent character-to-character links if desired
 		/>
 	);
 }

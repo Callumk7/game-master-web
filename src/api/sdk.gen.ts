@@ -200,7 +200,11 @@ export const createCharacterLink = <ThrowOnError extends boolean = false>(option
             }
         ],
         url: '/api/games/{game_id}/characters/{character_id}/links',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -344,7 +348,11 @@ export const createFactionLink = <ThrowOnError extends boolean = false>(options:
             }
         ],
         url: '/api/games/{game_id}/factions/{faction_id}/links',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -560,7 +568,11 @@ export const createLocationLink = <ThrowOnError extends boolean = false>(options
             }
         ],
         url: '/api/games/{game_id}/locations/{location_id}/links',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -759,7 +771,11 @@ export const createNoteLink = <ThrowOnError extends boolean = false>(options: Op
             }
         ],
         url: '/api/games/{game_id}/notes/{note_id}/links',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -903,7 +919,11 @@ export const createQuestLink = <ThrowOnError extends boolean = false>(options: O
             }
         ],
         url: '/api/games/{game_id}/quests/{quest_id}/links',
-        ...options
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 

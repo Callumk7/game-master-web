@@ -2,9 +2,9 @@ import { Edit, Eye, Plus, Trash2 } from "lucide-react";
 import type { Character, Faction, Location, Note, Quest } from "~/api/types.gen";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import type { EntityType } from "~/types";
 
 export type Entity = Character | Faction | Location | Note | Quest;
-export type EntityType = "character" | "faction" | "location" | "note" | "quest";
 
 interface EntityGridProps<T extends Entity> {
 	entities: T[];

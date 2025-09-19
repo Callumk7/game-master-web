@@ -6,6 +6,7 @@ import {
 	createNoteLinkMutation,
 	createQuestLinkMutation,
 } from "~/api/@tanstack/react-query.gen";
+import type { LinkRequest } from "~/api/types.gen";
 import type { CreateLinkParams } from "../types";
 
 export function useCreateLink(onSuccess?: () => void, onError?: (error: Error) => void) {
@@ -16,8 +17,13 @@ export function useCreateLink(onSuccess?: () => void, onError?: (error: Error) =
 			gameId,
 			sourceType,
 			sourceId,
-			targetType,
-			targetId,
+			entity_type,
+			entity_id,
+			description,
+			metadata,
+			is_active,
+			relationship_type,
+			strength,
 		}: CreateLinkParams) => {
 			// For UUIDs, no validation needed - they're already strings
 
@@ -25,12 +31,6 @@ export function useCreateLink(onSuccess?: () => void, onError?: (error: Error) =
 			const pathParam = {
 				game_id: gameId,
 				[`${sourceType}_id`]: sourceId,
-			};
-
-			// Create the query parameter for the target entity
-			const queryParam = {
-				entity_type: targetType,
-				entity_id: targetId,
 			};
 
 			// Select the appropriate mutation based on source type
@@ -49,7 +49,15 @@ export function useCreateLink(onSuccess?: () => void, onError?: (error: Error) =
 
 			return mutation.mutationFn({
 				path: pathParam as any,
-				query: queryParam,
+				body: {
+					entity_type,
+					entity_id,
+					relationship_type,
+					description,
+					metadata,
+					is_active,
+					strength,
+				} as LinkRequest,
 			});
 		},
 		onSuccess: () => {

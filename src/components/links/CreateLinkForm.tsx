@@ -10,10 +10,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
+import type { EntityType } from "~/types";
 import { Button } from "../ui/button";
+import { FormField } from "../ui/composite/form-field";
 import { useCreateLink } from "./hooks/useCreateLink";
 import { useGameEntities } from "./hooks/useGameEntities";
-import type { CreateLinkFormProps, EntityType } from "./types";
+import type { CreateLinkFormProps } from "./types";
 
 export function CreateLinkForm({
 	gameId,
@@ -25,6 +27,9 @@ export function CreateLinkForm({
 	excludeIds = [],
 }: CreateLinkFormProps) {
 	const [selectedValue, setSelectedValue] = React.useState("");
+	const [relationshipValue, setRelationshipValue] = React.useState<string | undefined>(
+		undefined,
+	);
 
 	// Exclude self-referencing
 	const finalExcludeIds = [...excludeIds, `${sourceEntityType}:${sourceEntityId}`];
@@ -57,8 +62,9 @@ export function CreateLinkForm({
 			gameId,
 			sourceType: sourceEntityType,
 			sourceId: sourceEntityId,
-			targetType: targetType as EntityType,
-			targetId,
+			entity_type: targetType as EntityType,
+			entity_id: targetId,
+			relationship_type: relationshipValue,
 		});
 	};
 
@@ -113,6 +119,13 @@ export function CreateLinkForm({
 					</SelectContent>
 				</SelectPositioner>
 			</Select>
+
+			<FormField
+				label="Relationship"
+				id="relationship"
+				value={relationshipValue}
+				onInput={(e) => setRelationshipValue(e.currentTarget.value)}
+			/>
 
 			<Button type="submit" disabled={!selectedValue || createLink.isPending}>
 				{createLink.isPending ? "Creating Link..." : "Create Link"}
