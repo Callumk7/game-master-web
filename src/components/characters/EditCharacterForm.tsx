@@ -1,16 +1,16 @@
 import { useNavigate, useParams, useRouteContext } from "@tanstack/react-router";
 import { toast } from "sonner";
+import type { CharacterUpdateParams } from "~/api";
 import {
 	getCharacterQueryKey,
 	listCharactersQueryKey,
 	updateCharacterMutation,
 } from "~/api/@tanstack/react-query.gen";
-import type { CharacterParams } from "~/api/types.gen";
 import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditCharacterFormProps {
-	initialData?: Partial<CharacterParams>;
+	initialData?: Partial<CharacterUpdateParams>;
 }
 
 export function EditCharacterForm({ initialData }: EditCharacterFormProps) {

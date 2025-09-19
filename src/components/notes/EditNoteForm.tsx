@@ -1,5 +1,5 @@
 import { useParams, useRouteContext } from "@tanstack/react-router";
-import type { NoteParams } from "~/api";
+import type { NoteUpdateParams } from "~/api";
 import {
 	getNoteQueryKey,
 	listNotesQueryKey,
@@ -9,7 +9,7 @@ import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditNoteFormProps {
-	initialData?: Partial<NoteParams>;
+	initialData?: Partial<NoteUpdateParams>;
 }
 
 export function EditNoteForm({ initialData }: EditNoteFormProps) {

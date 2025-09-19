@@ -1,6 +1,7 @@
+import { SquareArrowDownRight } from "lucide-react";
 import * as React from "react";
-import { Button } from "~/components/ui/button";
 import DraggableWindow from "~/components/draggable";
+import { Button } from "~/components/ui/button";
 import type { EntityLink } from "./EntityLinksTable";
 
 interface EntityLinkButtonProps {
@@ -18,16 +19,15 @@ export function EntityLinkButton({ entity }: EntityLinkButtonProps) {
 		return { x: offset, y: offset };
 	});
 
-	const displayContent = entity.content_plain_text || entity.description_plain_text || entity.content || entity.description || "No content available";
+	const displayContent =
+		entity.content_plain_text ||
+		entity.description_plain_text ||
+		"No content available";
 
 	return (
 		<>
-			<Button
-				variant="ghost"
-				className="font-medium hover:underline p-0 h-auto justify-start"
-				onClick={() => setIsOpen(true)}
-			>
-				{entity.name}
+			<Button variant="ghost" onClick={() => setIsOpen(true)}>
+				<SquareArrowDownRight className="h-4 w-4" />
 			</Button>
 			<DraggableWindow
 				isOpen={isOpen}

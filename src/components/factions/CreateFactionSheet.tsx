@@ -9,7 +9,7 @@ interface CreateFactionSheetProps {
 export function CreateFactionSheet({ isOpen, setIsOpen }: CreateFactionSheetProps) {
 	return (
 		<Sheet open={isOpen} onOpenChange={setIsOpen}>
-			<SheetContent className="p-4 pt-10">
+			<SheetContent className="p-4 pt-10" width="lg">
 				<CreateFactionForm />
 			</SheetContent>
 		</Sheet>

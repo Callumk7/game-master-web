@@ -1,38 +1,43 @@
+import { MapPin } from "lucide-react";
 import * as React from "react";
-import { Users } from "lucide-react";
-import type { Character } from "~/api/types.gen";
+import type { Location } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { DetailTemplate } from "~/components/ui/DetailTemplate";
 import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
-	useDeleteCharacterMutation,
-	useGetCharacterLinks,
-	useUpdateCharacterMutation,
-} from "~/queries/characters";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
+	useDeleteLocationMutation,
+	useGetLocationLinks,
+	useUpdateLocationMutation,
+} from "~/queries/locations";
 import { parseContentForEditor } from "~/utils/editorHelpers";
+import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
+import { CreateLocationLink } from "./CreateLocationLink";
 
-interface CharacterDetailProps {
-	character: Character;
+interface LocationDetailProps {
+	location: Location;
 	gameId: string;
 }
 
-export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
+export function LocationDetail({ location, gameId }: LocationDetailProps) {
+	const formatType = (type: string) => {
+		return type.charAt(0).toUpperCase() + type.slice(1);
+	};
+
 	const {
 		data: linksResponse,
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetCharacterLinks(gameId, character.id);
+	} = useGetLocationLinks(gameId, location.id);
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
 	const [updatedContent, setUpdatedContent] = React.useState<{
 		json: object;
 		text: string;
 	}>({ json: {}, text: "" });
-	const updateCharacter = useUpdateCharacterMutation(gameId, character.id);
+	const updateLocation = useUpdateLocationMutation(gameId, location.id);
 
 	const onChange = (newContent: { json: object; text: string }) => {
 		setUpdatedContent(newContent);
@@ -41,56 +46,36 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 
 	const handleSave = () => {
 		const payload = {
-			character: {
+			location: {
 				description: JSON.stringify(updatedContent.json),
 				description_plain_text: updatedContent.text,
 			},
 		};
-		updateCharacter.mutate({
+		updateLocation.mutate({
 			body: payload,
-			path: { game_id: gameId, id: character.id },
+			path: { game_id: gameId, id: location.id },
 		});
 		setIsUpdated(false);
 	};
 
-	const deleteCharacter = useDeleteCharacterMutation(gameId);
+	const deleteLocation = useDeleteLocationMutation(gameId);
 
 	const onDelete = () => {
-		deleteCharacter.mutate({
-			path: { game_id: gameId, id: character.id },
+		deleteLocation.mutate({
+			path: { game_id: gameId, id: location.id },
 		});
 	};
 
-	const badges = (
-		<>
-			<div className="flex flex-wrap gap-2">
-				<Badge>{character.class}</Badge>
-				<Badge>Level: {character.level}</Badge>
-			</div>
-
-			{character.tags && character.tags.length > 0 && (
-				<div className="flex flex-wrap gap-2">
-					{character.tags.map((tag) => (
-						<Badge key={tag} variant="secondary">
-							{tag}
-						</Badge>
-					))}
-				</div>
-			)}
-		</>
-	);
+	const badges = <Badge variant="secondary">{formatType(location.type)}</Badge>;
 
 	const descriptionTab = (
 		<div className="space-y-4">
+			<h2 className="text-lg font-semibold">Description</h2>
 			<MinimalTiptap
-				content={parseContentForEditor(character.description)}
+				content={parseContentForEditor(location.description)}
 				onChange={onChange}
 			/>
-			<Button
-				variant={"secondary"}
-				onClick={handleSave}
-				disabled={!isUpdated}
-			>
+			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
 				Save
 			</Button>
 		</div>
@@ -98,6 +83,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 
 	const linksTab = (
 		<div className="space-y-4">
+			<CreateLocationLink gameId={gameId} locationId={location.id.toString()} />
 			<h2 className="text-lg font-semibold">Links</h2>
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
@@ -109,9 +95,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 			)}
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
-					links={flattenLinksForTable(
-						linksResponse as GenericLinksResponse,
-					)}
+					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
 				/>
 			)}
@@ -120,13 +104,13 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 
 	return (
 		<DetailTemplate
-			title={character.name}
-			icon={Users}
-			iconColor="text-green-600"
+			title={location.name}
+			icon={MapPin}
+			iconColor="text-blue-600"
 			badges={badges}
-			editPath="/games/$gameId/characters/$id/edit"
+			editPath="/games/$gameId/locations/$id/edit"
 			gameId={gameId}
-			entityId={character.id}
+			entityId={location.id.toString()}
 			onDelete={onDelete}
 			tabs={[
 				{ id: "description", label: "Description", content: descriptionTab },

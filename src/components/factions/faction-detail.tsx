@@ -1,38 +1,40 @@
 import * as React from "react";
-import { ScrollText } from "lucide-react";
-import type { Quest } from "~/api/types.gen";
+import { Shield } from "lucide-react";
+import type { Faction } from "~/api/types.gen";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { DetailTemplate } from "~/components/ui/DetailTemplate";
 import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
+import { FactionLinkForm } from "../links/usage-examples";
 import {
-	useDeleteQuestMutation,
-	useGetQuestLinks,
-	useUpdateQuestMutation,
-} from "~/queries/quests";
+	useDeleteFactionMutation,
+	useGetFactionLinks,
+	useUpdateFactionMutation,
+} from "~/queries/factions";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
-import { CreateQuestLink } from "./CreateQuestLink";
 
-interface QuestDetailProps {
-	quest: Quest;
+interface FactionDetailProps {
+	faction: Faction;
 	gameId: string;
 }
 
-export function QuestDetail({ quest, gameId }: QuestDetailProps) {
+export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 	const {
 		data: linksResponse,
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetQuestLinks(gameId, quest.id);
+	} = useGetFactionLinks(gameId, faction.id);
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
 	const [updatedContent, setUpdatedContent] = React.useState<{
 		json: object;
 		text: string;
 	}>({ json: {}, text: "" });
-	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
+
+	const updateFaction = useUpdateFactionMutation(gameId, faction.id);
 
 	const onChange = (newContent: { json: object; text: string }) => {
 		setUpdatedContent(newContent);
@@ -41,30 +43,41 @@ export function QuestDetail({ quest, gameId }: QuestDetailProps) {
 
 	const handleSave = () => {
 		const payload = {
-			quest: {
-				content: JSON.stringify(updatedContent.json),
-				content_plain_text: updatedContent.text,
+			faction: {
+				description: JSON.stringify(updatedContent.json),
+				description_plain_text: updatedContent.text,
 			},
 		};
-		updateQuest.mutate({
+		updateFaction.mutate({
 			body: payload,
-			path: { game_id: gameId, id: quest.id },
+			path: { game_id: gameId, id: faction.id },
 		});
 		setIsUpdated(false);
 	};
 
-	const deleteQuest = useDeleteQuestMutation(gameId);
+	const deleteFaction = useDeleteFactionMutation(gameId);
 
 	const onDelete = () => {
-		deleteQuest.mutate({
-			path: { game_id: gameId, id: quest.id },
+		deleteFaction.mutate({
+			path: { game_id: gameId, id: faction.id },
 		});
 	};
 
-	const contentTab = (
+	const badges = faction.tags && faction.tags.length > 0 && (
+		<div className="flex flex-wrap gap-2">
+			{faction.tags.map((tag) => (
+				<Badge key={tag} variant="secondary">
+					{tag}
+				</Badge>
+			))}
+		</div>
+	);
+
+	const descriptionTab = (
 		<div className="space-y-4">
+			<h2 className="text-lg font-semibold">Description</h2>
 			<MinimalTiptap
-				content={parseContentForEditor(quest.content)}
+				content={parseContentForEditor(faction.description)}
 				onChange={onChange}
 			/>
 			<Button
@@ -79,7 +92,6 @@ export function QuestDetail({ quest, gameId }: QuestDetailProps) {
 
 	const linksTab = (
 		<div className="space-y-4">
-			<CreateQuestLink gameId={gameId} questId={quest.id.toString()} />
 			<h2 className="text-lg font-semibold">Links</h2>
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
@@ -90,30 +102,37 @@ export function QuestDetail({ quest, gameId }: QuestDetailProps) {
 				</div>
 			)}
 			{!linksLoading && !linksError && linksResponse && (
-				<EntityLinksTable
-					links={flattenLinksForTable(
-						linksResponse as GenericLinksResponse,
-					)}
-					gameId={gameId}
-				/>
+				<>
+					<FactionLinkForm
+						factionId={faction.id.toString()}
+						gameId={gameId}
+					/>
+					<EntityLinksTable
+						links={flattenLinksForTable(
+							linksResponse as GenericLinksResponse,
+						)}
+						gameId={gameId}
+					/>
+				</>
 			)}
 		</div>
 	);
 
 	return (
 		<DetailTemplate
-			title={quest.name}
-			icon={ScrollText}
-			iconColor="text-purple-600"
-			editPath="/games/$gameId/quests/$id/edit"
+			title={faction.name}
+			icon={Shield}
+			iconColor="text-red-600"
+			badges={badges}
+			editPath="/games/$gameId/factions/$id/edit"
 			gameId={gameId}
-			entityId={quest.id.toString()}
+			entityId={faction.id}
 			onDelete={onDelete}
 			tabs={[
-				{ id: "content", label: "Content", content: contentTab },
+				{ id: "description", label: "Description", content: descriptionTab },
 				{ id: "links", label: "Links", content: linksTab },
 			]}
-			defaultTab="content"
+			defaultTab="description"
 		/>
 	);
 }

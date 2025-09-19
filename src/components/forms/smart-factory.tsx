@@ -96,7 +96,18 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 				try {
 					// Convert editor objects to strings before validation
 					const processedValue = processFormValuesForSubmission(value, fields);
-					const validatedData = schema.parse(processedValue);
+					
+					// Auto-extend schema to include _plain_text fields for editor fields
+					const extendedSchema = fields.reduce((acc, field) => {
+						if (field.type === "editor") {
+							return acc.extend({
+								[`${field.name}_plain_text`]: z.string().optional()
+							});
+						}
+						return acc;
+					}, schema);
+					
+					const validatedData = extendedSchema.parse(processedValue);
 					const fullData = {
 						body: { [entityName]: validatedData },
 					} as unknown as Options<TMutationData>;
@@ -304,7 +315,18 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 			try {
 				// Convert editor objects to strings before validation
 				const processedValue = processFormValuesForSubmission(value, fields);
-				const validatedData = schema.parse(processedValue);
+				
+				// Auto-extend schema to include _plain_text fields for editor fields
+				const extendedSchema = fields.reduce((acc, field) => {
+					if (field.type === "editor") {
+						return acc.extend({
+							[`${field.name}_plain_text`]: z.string().optional()
+						});
+					}
+					return acc;
+				}, schema);
+				
+				const validatedData = extendedSchema.parse(processedValue);
 				const fullData = {
 					body: { [entityName]: validatedData },
 				} as unknown as Options<TMutationData>;

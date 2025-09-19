@@ -1,10 +1,10 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
 	getFactionLinksOptions,
 	getFactionOptions,
 } from "~/api/@tanstack/react-query.gen";
-import { FactionDetail } from "~/components/factions/FactionDetail";
+import { FactionDetail } from "~/components/factions/faction-detail";
+import { useFactionQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/")({
 	component: RouteComponent,
@@ -42,11 +42,3 @@ function RouteComponent() {
 		</div>
 	);
 }
-
-export const useFactionQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getFactionOptions({
-			path: { game_id: gameId, id },
-		}),
-	});
-};

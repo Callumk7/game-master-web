@@ -11,7 +11,6 @@ export function CreateLocationLink({ gameId, locationId }: CreateLocationLinkPro
 			gameId={gameId}
 			sourceEntityType="location"
 			sourceEntityId={locationId}
-			excludeTypes={["location"]}
 		/>
 	);
 }

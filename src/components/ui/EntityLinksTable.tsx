@@ -22,8 +22,8 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Input } from "~/components/ui/input";
 import { EntityLinkButton } from "~/components/ui/EntityLinkButton";
+import { Input } from "~/components/ui/input";
 import {
 	Table,
 	TableBody,
@@ -32,6 +32,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import { Link } from "./link";
 
 export interface EntityLink {
 	id: string;
@@ -62,9 +63,17 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			accessorKey: "name",
 			header: "Name",
 			cell: ({ row }) => {
-				return <EntityLinkButton entity={row.original} />;
+				const type = row.original.type;
+				const id = row.original.id;
+				return (
+					<Link
+						to={`/games/${gameId}/${type}s/${id}` as string}
+						className="font-medium hover:underline"
+					>
+						{row.getValue("name")}
+					</Link>
+				);
 			},
-			filterFn: "includesString",
 		},
 		{
 			accessorKey: "type",
@@ -81,6 +90,13 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			cell: ({ row }) => {
 				const date = new Date(row.getValue("updated_at"));
 				return <div className="text-sm">{date.toLocaleDateString()}</div>;
+			},
+		},
+		{
+			id: "actions",
+			enableHiding: false,
+			cell: ({ row }) => {
+				return <EntityLinkButton entity={row.original} />;
 			},
 		},
 	];

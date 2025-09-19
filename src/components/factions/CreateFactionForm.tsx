@@ -5,7 +5,6 @@ import {
 	listFactionsQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm } from "~/components/forms/smart-factory";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { schemas } from "../forms/type-utils";
 
 export function CreateFactionForm() {
@@ -33,14 +32,5 @@ export function CreateFactionForm() {
 		},
 	});
 
-	return (
-		<Card className="max-w-2xl mx-auto">
-			<CardHeader>
-				<CardTitle>Create New Faction</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<FormComponent />
-			</CardContent>
-		</Card>
-	);
+	return <FormComponent />;
 }

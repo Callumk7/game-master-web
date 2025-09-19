@@ -168,22 +168,22 @@ export function createSchemaFor() {
 				.number()
 				.min(1, "Level must be at least 1")
 				.max(100, "Level cannot exceed 100"),
-			description: z.string().optional(),
 			image_url: z.union([z.url(), z.literal("")]).optional(),
 			tags: z.array(z.string()).optional(),
+			description: z.string().optional(),
 		}),
 
 		faction: z.object({
 			name: z.string().min(1, "Faction name is required"),
-			description: z.string(),
 			tags: z.array(z.string()).optional(),
+			description: z.string(),
 		}),
 
 		// Add more schemas as needed
 		game: z.object({
 			name: z.string().min(1, "Game name is required"),
-			description: z.string().optional(),
 			setting: z.string().optional(),
+			description: z.string().optional(),
 		}),
 
 		note: z.object({
@@ -194,13 +194,12 @@ export function createSchemaFor() {
 
 		quest: z.object({
 			name: z.string().min(1, "Quest name is required"),
-			content: z.string().min(1, "Quest content is required"),
 			tags: z.array(z.string()).optional(),
+			content: z.string().min(1, "Quest content is required"),
 		}),
 
 		location: z.object({
 			name: z.string().min(1, "Location name is required"),
-			description: z.string().optional(),
 			type: z.enum([
 				"continent",
 				"nation",
@@ -212,6 +211,7 @@ export function createSchemaFor() {
 			]),
 			parent_id: z.string().optional(),
 			tags: z.array(z.string()).optional(),
+			description: z.string().optional(),
 		}),
 	};
 }
