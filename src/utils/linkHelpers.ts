@@ -1,29 +1,21 @@
 import type {
-	EntityCharacter,
-	EntityFaction,
-	EntityLocation,
-	EntityNote,
-	EntityQuest,
+	LinkedCharacter,
+	LinkedFaction,
+	LinkedLocation,
+	LinkedNote,
+	LinkedQuest,
 } from "~/api/types.gen";
 import type { EntityLink } from "~/components/ui/EntityLinksTable";
 
 export interface GenericLinksResponse {
 	data: {
 		links: {
-			characters: EntityCharacter[];
-			factions: EntityFaction[];
-			notes: EntityNote[];
-			locations: EntityLocation[];
-			quests: EntityQuest[];
+			characters: LinkedCharacter[];
+			factions: LinkedFaction[];
+			notes: LinkedNote[];
+			locations: LinkedLocation[];
+			quests: LinkedQuest[];
 		};
-	};
-}
-
-// Deprecated - use GenericLinksResponse instead
-export interface LinksResponse extends GenericLinksResponse {
-	data: GenericLinksResponse["data"] & {
-		character_id: number;
-		character_name: string;
 	};
 }
 
@@ -37,23 +29,24 @@ export function flattenLinksForTable(linksResponse: GenericLinksResponse): Entit
 				id: entity.id,
 				name: entity.name,
 				type: type.slice(0, -1), // Remove 's' from plural (factions -> faction)
+				relationship_type: entity.relationship_type,
 				description: "description" in entity ? entity.description : undefined,
 				description_plain_text:
 					"description_plain_text" in entity
 						? entity.description_plain_text
 						: undefined,
-				content: "content" in entity ? entity.content : undefined,
+				content:
+					"content" in entity && typeof entity.content === "string"
+						? entity.content
+						: undefined,
 				content_plain_text:
-					"content_plain_text" in entity
+					"content_plain_text" in entity &&
+					typeof entity.content_plain_text === "string"
 						? entity.content_plain_text
 						: undefined,
-				created_at: entity.created_at || "",
-				updated_at: entity.updated_at || "",
 			});
 		});
 	});
 
-	return flattenedLinks.sort(
-		(a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
-	);
+	return flattenedLinks;
 }

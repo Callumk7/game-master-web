@@ -6,7 +6,6 @@ import { Button } from "~/components/ui/button";
 import { DetailTemplate } from "~/components/ui/DetailTemplate";
 import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import { FactionLinkForm } from "../links/usage-examples";
 import {
 	useDeleteFactionMutation,
 	useGetFactionLinks,
@@ -14,6 +13,7 @@ import {
 } from "~/queries/factions";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
+import { CreateFactionLink } from "./CreateFactionLink";
 
 interface FactionDetailProps {
 	faction: Faction;
@@ -80,11 +80,7 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 				content={parseContentForEditor(faction.description)}
 				onChange={onChange}
 			/>
-			<Button
-				variant={"secondary"}
-				onClick={handleSave}
-				disabled={!isUpdated}
-			>
+			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
 				Save
 			</Button>
 		</div>
@@ -103,7 +99,7 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 			)}
 			{!linksLoading && !linksError && linksResponse && (
 				<>
-					<FactionLinkForm
+					<CreateFactionLink
 						factionId={faction.id.toString()}
 						gameId={gameId}
 					/>

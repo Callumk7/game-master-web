@@ -42,8 +42,7 @@ export interface EntityLink {
 	description_plain_text?: string;
 	content?: string;
 	content_plain_text?: string;
-	created_at: string;
-	updated_at: string;
+	relationship_type?: string;
 }
 
 interface EntityLinksTableProps {
@@ -85,11 +84,10 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			),
 		},
 		{
-			accessorKey: "updated_at",
-			header: "Last Updated",
+			accessorKey: "relationship_type",
+			header: "Relationship",
 			cell: ({ row }) => {
-				const date = new Date(row.getValue("updated_at"));
-				return <div className="text-sm">{date.toLocaleDateString()}</div>;
+				return <div className="text-sm">{row.getValue("relationship_type")}</div>;
 			},
 		},
 		{
