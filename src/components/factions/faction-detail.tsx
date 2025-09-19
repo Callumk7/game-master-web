@@ -89,6 +89,7 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 	const linksTab = (
 		<div className="space-y-4">
 			<h2 className="text-lg font-semibold">Links</h2>
+			<CreateFactionLink gameId={gameId} factionId={faction.id} />
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
 			)}
@@ -98,18 +99,10 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 				</div>
 			)}
 			{!linksLoading && !linksError && linksResponse && (
-				<>
-					<CreateFactionLink
-						factionId={faction.id.toString()}
-						gameId={gameId}
-					/>
-					<EntityLinksTable
-						links={flattenLinksForTable(
-							linksResponse as GenericLinksResponse,
-						)}
-						gameId={gameId}
-					/>
-				</>
+				<EntityLinksTable
+					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
+					gameId={gameId}
+				/>
 			)}
 		</div>
 	);

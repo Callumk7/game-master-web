@@ -1,4 +1,11 @@
 import { CreateLinkForm } from "../links";
+import { Button } from "../ui/button";
+import {
+	Popover,
+	PopoverContent,
+	PopoverPositioner,
+	PopoverTrigger,
+} from "../ui/popover";
 
 interface CreateFactionLinkProps {
 	gameId: string;
@@ -7,10 +14,17 @@ interface CreateFactionLinkProps {
 
 export function CreateFactionLink({ gameId, factionId }: CreateFactionLinkProps) {
 	return (
-		<CreateLinkForm
-			gameId={gameId}
-			sourceEntityType="faction"
-			sourceEntityId={factionId}
-		/>
+		<Popover>
+			<PopoverTrigger render={<Button />}>Create Link</PopoverTrigger>
+			<PopoverPositioner align="start">
+				<PopoverContent>
+					<CreateLinkForm
+						gameId={gameId}
+						sourceEntityType="faction"
+						sourceEntityId={factionId}
+					/>
+				</PopoverContent>
+			</PopoverPositioner>
+		</Popover>
 	);
 }

@@ -32,18 +32,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import type { EntityLink } from "~/utils/linkHelpers";
 import { Link } from "./link";
-
-export interface EntityLink {
-	id: string;
-	name: string;
-	type: string;
-	description?: string;
-	description_plain_text?: string;
-	content?: string;
-	content_plain_text?: string;
-	relationship_type?: string;
-}
 
 interface EntityLinksTableProps {
 	links: EntityLink[];
@@ -84,10 +74,28 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			),
 		},
 		{
+			accessorKey: "description_meta",
+			header: "Description",
+			cell: ({ row }) => {
+				return <div className="text-sm">{row.getValue("description_meta")}</div>;
+			},
+		},
+		{
 			accessorKey: "relationship_type",
 			header: "Relationship",
 			cell: ({ row }) => {
 				return <div className="text-sm">{row.getValue("relationship_type")}</div>;
+			},
+		},
+		{
+			accessorKey: "is_active",
+			header: "Active",
+			cell: ({ row }) => {
+				return (
+					<div className="text-sm">
+						{row.getValue("is_active") ? "Yes" : "No"}
+					</div>
+				);
 			},
 		},
 		{

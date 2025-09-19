@@ -5,7 +5,24 @@ import type {
 	LinkedNote,
 	LinkedQuest,
 } from "~/api/types.gen";
-import type { EntityLink } from "~/components/ui/EntityLinksTable";
+
+export interface EntityLink {
+	id: string;
+	name: string;
+	type: string;
+	description?: string;
+	description_plain_text?: string;
+	content?: string;
+	content_plain_text?: string;
+	relationship_type?: string;
+	is_active?: boolean;
+	description_meta?: string;
+	metadata?: {
+		[key: string]: unknown;
+	};
+	strength?: number;
+	tags?: Array<unknown>;
+}
 
 export interface GenericLinksResponse {
 	data: {
@@ -44,6 +61,11 @@ export function flattenLinksForTable(linksResponse: GenericLinksResponse): Entit
 					typeof entity.content_plain_text === "string"
 						? entity.content_plain_text
 						: undefined,
+				is_active: entity.is_active,
+				metadata: entity.metadata,
+				strength: entity.strength,
+				tags: entity.tags,
+				description_meta: entity.description_meta,
 			});
 		});
 	});

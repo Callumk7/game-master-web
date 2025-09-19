@@ -1,15 +1,15 @@
 import { useParams, useRouteContext } from "@tanstack/react-router";
+import type { Faction } from "~/api";
 import {
 	getFactionQueryKey,
 	listFactionsQueryKey,
 	updateFactionMutation,
 } from "~/api/@tanstack/react-query.gen";
-import type { FactionParams } from "~/api/types.gen";
 import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditFactionFormProps {
-	initialData?: Partial<FactionParams>;
+	initialData?: Partial<Faction>;
 }
 
 export function EditFactionForm({ initialData }: EditFactionFormProps) {
@@ -47,4 +47,3 @@ export function EditFactionForm({ initialData }: EditFactionFormProps) {
 
 	return <FormWithContext />;
 }
-

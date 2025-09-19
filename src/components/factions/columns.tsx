@@ -13,6 +13,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Link } from "../ui/link";
+import { useDeleteFactionMutation } from "~/queries/factions";
 
 export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 	{
@@ -103,6 +104,7 @@ export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 		enableHiding: false,
 		cell: ({ row }) => {
 			const faction = row.original;
+			const deleteFaction = useDeleteFactionMutation(gameId);
 
 			return (
 				<DropdownMenu>
@@ -150,7 +152,14 @@ export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 								>
 									Edit faction
 								</DropdownMenuItem>
-								<DropdownMenuItem variant="destructive">
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={() => {
+										deleteFaction.mutate({
+											path: { game_id: gameId, id: faction.id },
+										});
+									}}
+								>
 									Delete faction
 								</DropdownMenuItem>
 							</DropdownMenuContent>
