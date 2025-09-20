@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteFactionMutation,
@@ -15,7 +15,7 @@ import {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const useListFactionsQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listFactionsOptions({ path: { game_id: gameId } }) });
+	return useQuery({ ...listFactionsOptions({ path: { game_id: gameId } }) });
 };
 
 export const useFactionQuery = (gameId: string, id: string) => {

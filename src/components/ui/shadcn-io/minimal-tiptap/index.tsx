@@ -15,6 +15,7 @@ import {
 	Strikethrough,
 	Undo,
 } from "lucide-react";
+import * as React from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "../../button";
 import { Separator } from "../../separator";
@@ -36,6 +37,9 @@ function MinimalTiptap({
 	editable = true,
 	className,
 }: MinimalTiptapProps) {
+	const initialContentRef = React.useRef(content);
+	const isInternalUpdate = React.useRef(false);
+
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -52,9 +56,10 @@ function MinimalTiptap({
 		content,
 		editable,
 		onUpdate: ({ editor }) => {
+			isInternalUpdate.current = true;
 			onChange?.({
 				json: editor.getJSON(),
-				text: editor.getText()
+				text: editor.getText(),
 			});
 		},
 		editorProps: {
@@ -67,6 +72,16 @@ function MinimalTiptap({
 		},
 		immediatelyRender: false,
 	});
+
+	React.useEffect(() => {
+		if (editor && content !== null && !isInternalUpdate.current) {
+			if (initialContentRef.current !== content) {
+				editor.commands.setContent(content);
+				initialContentRef.current = content;
+			}
+		}
+		isInternalUpdate.current = false;
+	}, [editor, content]);
 
 	if (!editor) {
 		return null;

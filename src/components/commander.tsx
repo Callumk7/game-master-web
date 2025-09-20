@@ -19,12 +19,12 @@ export function Commander({ gameId }: { gameId: string }) {
 
 	const navigate = useNavigate();
 
-	const { data: links } = useGetGameLinksQuery({ id: gameId });
-	const characters = links.data?.entities?.characters;
-	const factions = links.data?.entities?.factions;
-	const locations = links.data?.entities?.locations;
-	const notes = links.data?.entities?.notes;
-	const quests = links.data?.entities?.quests;
+	const { data: links, isLoading: linksLoading } = useGetGameLinksQuery({ id: gameId });
+	const characters = links?.data?.entities?.characters;
+	const factions = links?.data?.entities?.factions;
+	const locations = links?.data?.entities?.locations;
+	const notes = links?.data?.entities?.notes;
+	const quests = links?.data?.entities?.quests;
 
 	React.useEffect(() => {
 		const down = (e: KeyboardEvent) => {
@@ -43,94 +43,104 @@ export function Commander({ gameId }: { gameId: string }) {
 			<CommandInput placeholder="Type a command or search..." />
 			<CommandList>
 				<CommandEmpty>No results found.</CommandEmpty>
-				<CommandGroup heading="Characters">
-					<CommandItem
-						onSelect={() =>
-							navigate({
-								to: "/games/$gameId/characters/new",
-								params: { gameId },
-							})
-						}
-					>
-						<User />
-						<span>New Character</span>
-						<CommandShortcut>⌘C</CommandShortcut>
-					</CommandItem>
-					{characters?.map((character) => (
-						<CommandItem
-							key={character.id}
-							onSelect={() =>
-								navigate({
-									to: "/games/$gameId/characters/$id",
-									params: { gameId, id: character.id },
-								})
-							}
-						>
-							<User />
-							<span>{character.name}</span>
+				{linksLoading ? (
+					<CommandGroup heading="Loading...">
+						<CommandItem disabled>
+							<span>Loading entities...</span>
 						</CommandItem>
-					))}
-				</CommandGroup>
-				<CommandSeparator />
-				<CommandGroup heading="Factions">
-					{factions?.map((faction) => (
-						<CommandItem key={faction.id}>
-							<User />
-							<span>{faction.name}</span>
-						</CommandItem>
-					))}
-				</CommandGroup>
-				<CommandSeparator />
-				<CommandGroup heading="Locations">
-					{locations?.map((location) => (
-						<CommandItem
-							key={location.id}
-							onSelect={() =>
-								navigate({
-									to: "/games/$gameId/locations/$id",
-									params: { gameId, id: location.id },
-								})
-							}
-						>
-							<User />
-							<span>{location.name}</span>
-						</CommandItem>
-					))}
-				</CommandGroup>
-				<CommandSeparator />
-				<CommandGroup heading="Notes">
-					{notes?.map((note) => (
-						<CommandItem
-							key={note.id}
-							onSelect={() =>
-								navigate({
-									to: "/games/$gameId/notes/$id",
-									params: { gameId, id: note.id },
-								})
-							}
-						>
-							<User />
-							<span>{note.name}</span>
-						</CommandItem>
-					))}
-				</CommandGroup>
-				<CommandSeparator />
-				<CommandGroup heading="Quests">
-					{quests?.map((quest) => (
-						<CommandItem
-							key={quest.id}
-							onSelect={() =>
-								navigate({
-									to: "/games/$gameId/quests/$id",
-									params: { gameId, id: quest.id },
-								})
-							}
-						>
-							<User />
-							<span>{quest.name}</span>
-						</CommandItem>
-					))}
-				</CommandGroup>
+					</CommandGroup>
+				) : (
+					<>
+						<CommandGroup heading="Characters">
+							<CommandItem
+								onSelect={() =>
+									navigate({
+										to: "/games/$gameId/characters/new",
+										params: { gameId },
+									})
+								}
+							>
+								<User />
+								<span>New Character</span>
+								<CommandShortcut>⌘C</CommandShortcut>
+							</CommandItem>
+							{characters?.map((character) => (
+								<CommandItem
+									key={character.id}
+									onSelect={() =>
+										navigate({
+											to: "/games/$gameId/characters/$id",
+											params: { gameId, id: character.id },
+										})
+									}
+								>
+									<User />
+									<span>{character.name}</span>
+								</CommandItem>
+							))}
+						</CommandGroup>
+						<CommandSeparator />
+						<CommandGroup heading="Factions">
+							{factions?.map((faction) => (
+								<CommandItem key={faction.id}>
+									<User />
+									<span>{faction.name}</span>
+								</CommandItem>
+							))}
+						</CommandGroup>
+						<CommandSeparator />
+						<CommandGroup heading="Locations">
+							{locations?.map((location) => (
+								<CommandItem
+									key={location.id}
+									onSelect={() =>
+										navigate({
+											to: "/games/$gameId/locations/$id",
+											params: { gameId, id: location.id },
+										})
+									}
+								>
+									<User />
+									<span>{location.name}</span>
+								</CommandItem>
+							))}
+						</CommandGroup>
+						<CommandSeparator />
+						<CommandGroup heading="Notes">
+							{notes?.map((note) => (
+								<CommandItem
+									key={note.id}
+									onSelect={() =>
+										navigate({
+											to: "/games/$gameId/notes/$id",
+											params: { gameId, id: note.id },
+										})
+									}
+								>
+									<User />
+									<span>{note.name}</span>
+								</CommandItem>
+							))}
+						</CommandGroup>
+						<CommandSeparator />
+						<CommandGroup heading="Quests">
+							{quests?.map((quest) => (
+								<CommandItem
+									key={quest.id}
+									onSelect={() =>
+										navigate({
+											to: "/games/$gameId/quests/$id",
+											params: { gameId, id: quest.id },
+										})
+									}
+								>
+									<User />
+									<span>{quest.name}</span>
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</>
+				)}
 			</CommandList>
 		</CommandDialog>
 	);

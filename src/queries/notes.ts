@@ -20,7 +20,7 @@ import {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const useListNotesQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listNotesOptions({ path: { game_id: gameId } }) });
+	return useQuery({ ...listNotesOptions({ path: { game_id: gameId } }) });
 };
 
 export const useNoteQuery = (gameId: string, id: string) => {

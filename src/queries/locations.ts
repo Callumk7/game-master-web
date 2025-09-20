@@ -10,6 +10,7 @@ import {
 	getLocationLinksOptions,
 	getLocationOptions,
 	getLocationQueryKey,
+	getLocationTreeOptions,
 	listLocationsOptions,
 	listLocationsQueryKey,
 	updateLocationMutation,
@@ -20,7 +21,7 @@ import {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const useListLocationsQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listLocationsOptions({ path: { game_id: gameId } }) });
+	return useQuery({ ...listLocationsOptions({ path: { game_id: gameId } }) });
 };
 
 export const useLocationQuery = (gameId: string, id: string) => {
@@ -35,6 +36,10 @@ export const useGetLocationLinks = (gameId: string, locationId: string) => {
 			path: { game_id: gameId, location_id: locationId },
 		}),
 	);
+};
+
+export const useGetLocationTree = (gameId: string) => {
+	return useQuery(getLocationTreeOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,3 +75,4 @@ export const useUpdateLocationMutation = (gameId: string, locationId: string) =>
 		},
 	});
 };
+

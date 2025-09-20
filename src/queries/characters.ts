@@ -20,7 +20,7 @@ import {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const useListCharactersQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listCharactersOptions({ path: { game_id: gameId } }) });
+	return useQuery({ ...listCharactersOptions({ path: { game_id: gameId } }) });
 };
 
 export const useCharacterQuery = (gameId: string, id: string) => {

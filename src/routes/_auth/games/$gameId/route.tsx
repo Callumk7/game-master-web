@@ -1,6 +1,11 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { getGameOptions, listGameEntitiesOptions } from "~/api/@tanstack/react-query.gen";
+import {
+	getGameOptions,
+	getLocationTreeOptions,
+	getQuestTreeOptions,
+	listGameEntitiesOptions,
+} from "~/api/@tanstack/react-query.gen";
 import { Commander } from "~/components/commander";
 import { GameSidebar } from "~/components/layout/game-sidebar";
 import { Input } from "~/components/ui/input";
@@ -15,6 +20,12 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 		});
 		context.queryClient.ensureQueryData(
 			listGameEntitiesOptions({ path: { game_id: gameId } }),
+		);
+		context.queryClient.ensureQueryData(
+			getLocationTreeOptions({ path: { game_id: gameId } }),
+		);
+		context.queryClient.ensureQueryData(
+			getQuestTreeOptions({ path: { game_id: gameId } }),
 		);
 	},
 });

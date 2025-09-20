@@ -1,5 +1,5 @@
-import * as React from "react";
 import { Shield } from "lucide-react";
+import * as React from "react";
 import type { Faction } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -11,8 +11,8 @@ import {
 	useGetFactionLinks,
 	useUpdateFactionMutation,
 } from "~/queries/factions";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
+import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { CreateFactionLink } from "./CreateFactionLink";
 
 interface FactionDetailProps {

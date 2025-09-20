@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useListCharactersQuery(gameId);
-	const characters = data.data || [];
+	const characters = data?.data || [];
 
 	const [sheetOpen, setSheetOpen] = React.useState(false);
 

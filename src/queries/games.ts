@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getGameOptions, listGameEntitiesOptions } from "~/api/@tanstack/react-query.gen";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -10,5 +10,5 @@ export const useGetGameQuery = ({ id }: { id: string }) => {
 };
 
 export const useGetGameLinksQuery = ({ id }: { id: string }) => {
-	return useSuspenseQuery(listGameEntitiesOptions({ path: { game_id: id } }));
+	return useQuery(listGameEntitiesOptions({ path: { game_id: id } }));
 };

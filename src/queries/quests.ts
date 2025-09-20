@@ -10,6 +10,7 @@ import {
 	getQuestLinksOptions,
 	getQuestOptions,
 	getQuestQueryKey,
+	getQuestTreeOptions,
 	listQuestsOptions,
 	listQuestsQueryKey,
 	updateQuestMutation,
@@ -20,7 +21,7 @@ import {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const useListQuestsQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listQuestsOptions({ path: { game_id: gameId } }) });
+	return useQuery({ ...listQuestsOptions({ path: { game_id: gameId } }) });
 };
 
 export const useQuestQuery = (gameId: string, id: string) => {
@@ -35,6 +36,10 @@ export const useGetQuestLinks = (gameId: string, questId: string) => {
 			path: { game_id: gameId, quest_id: questId },
 		}),
 	);
+};
+
+export const useGetQuestTree = (gameId: string) => {
+	return useQuery(getQuestTreeOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,3 +75,4 @@ export const useUpdateQuestMutation = (gameId: string, questId: string) => {
 		},
 	});
 };
+

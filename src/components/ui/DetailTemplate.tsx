@@ -54,21 +54,7 @@ export function DetailTemplate({
 }: DetailTemplateProps) {
 	if (tabs) {
 		return (
-			<div className="space-y-6 mt-12">
-				<div className="flex gap-4">
-					<Link
-						variant="outline"
-						to={editPath}
-						params={{ gameId, id: entityId }}
-					>
-						Edit
-					</Link>
-					{onDelete && (
-						<Button variant="destructive" onClick={onDelete}>
-							Delete
-						</Button>
-					)}
-				</div>
+			<div className="space-y-6 mt-4">
 				<h2 className="font-bold text-3xl">{title}</h2>
 
 				{badges && <div className="flex justify-between">{badges}</div>}

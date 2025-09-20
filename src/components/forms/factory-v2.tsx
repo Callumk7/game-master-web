@@ -90,11 +90,11 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 	field,
 	fieldApi,
 }) => {
-	const hasErrors = fieldApi.state.meta.errors?.length > 0;
+	const hasErrors = fieldApi.state?.meta?.errors?.length > 0;
 
 	const commonProps = {
 		name: fieldApi.name,
-		value: fieldApi.state.value ?? "",
+		value: fieldApi.state?.value ?? "",
 		onBlur: fieldApi.handleBlur,
 		disabled: field.disabled,
 		required: field.required,
@@ -116,7 +116,7 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 		case "editor":
 			return (
 				<MinimalTiptap
-					content={fieldApi.state.value ?? null}
+					content={fieldApi.state?.value ?? null}
 					onChange={fieldApi.handleChange}
 					placeholder={field.placeholder}
 					editable={!field.disabled}
@@ -127,7 +127,7 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 		case "select":
 			return (
 				<Select
-					value={fieldApi.state.value ?? ""}
+					value={fieldApi.state?.value ?? ""}
 					onValueChange={fieldApi.handleChange}
 					disabled={field.disabled}
 					required={field.required}
@@ -152,7 +152,7 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 		case "checkbox":
 			return (
 				<Checkbox
-					checked={fieldApi.state.value ?? false}
+					checked={fieldApi.state?.value ?? false}
 					onCheckedChange={(checked) => fieldApi.handleChange(checked)}
 					disabled={field.disabled}
 					required={field.required}
@@ -195,7 +195,7 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 		case "tags":
 			return (
 				<TagInput
-					value={fieldApi.state.value ?? []}
+					value={fieldApi.state?.value ?? []}
 					onChange={fieldApi.handleChange}
 					placeholder={field.placeholder}
 					disabled={field.disabled}

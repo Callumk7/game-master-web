@@ -16,10 +16,14 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data } = useListCharactersQuery(gameId);
-	const characters = data.data || [];
+	const { data, isLoading } = useListCharactersQuery(gameId);
+	const characters = data?.data || [];
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
+
+	if (isLoading) {
+		return <div className="text-muted-foreground">Loading characters...</div>;
+	}
 
 	return (
 		<div className="space-y-4">

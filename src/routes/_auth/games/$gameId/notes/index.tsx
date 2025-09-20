@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
@@ -17,11 +17,15 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data } = useListNotesQuery(gameId);
+	const { data, isLoading } = useListNotesQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
 
-	const notes = data.data || [];
+	const notes = data?.data || [];
+
+	if (isLoading) {
+		return <div className="text-muted-foreground">Loading notes...</div>;
+	}
 	const columns = createColumns(gameId);
 
 	const navigate = Route.useNavigate();
@@ -53,5 +57,5 @@ function RouteComponent() {
 }
 
 const useListNotesQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listNotesOptions({ path: { game_id: gameId } }) });
+	return useQuery({ ...listNotesOptions({ path: { game_id: gameId } }) });
 };

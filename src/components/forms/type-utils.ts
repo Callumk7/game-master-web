@@ -189,11 +189,16 @@ export function createSchemaFor() {
 		note: z.object({
 			name: z.string().min(1, "Note name is required"),
 			tags: z.array(z.string()).optional(),
+			parent_id: z.string().optional(),
+			parent_type: z
+				.enum(["note", "quest", "location", "character", "faction"])
+				.optional(),
 			content: z.string().min(1, "Note content is required"),
 		}),
 
 		quest: z.object({
 			name: z.string().min(1, "Quest name is required"),
+			parent_id: z.string().optional(),
 			tags: z.array(z.string()).optional(),
 			content: z.string().min(1, "Quest content is required"),
 		}),

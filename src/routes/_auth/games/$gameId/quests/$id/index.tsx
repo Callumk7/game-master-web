@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
 import { QuestDetail } from "~/components/quests/QuestDetail";
+import { useQuestQuery } from "~/queries/quests";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/")({
 	component: RouteComponent,
@@ -31,11 +31,3 @@ function RouteComponent() {
 		</div>
 	);
 }
-
-export const useQuestQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getQuestOptions({
-			path: { game_id: gameId, id },
-		}),
-	});
-};

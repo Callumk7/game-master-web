@@ -10,11 +10,15 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data } = useListFactionsQuery(gameId);
+	const { data, isLoading } = useListFactionsQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
 
-	const factions = data.data || [];
+	const factions = data?.data || [];
+
+	if (isLoading) {
+		return <div className="text-muted-foreground">Loading factions...</div>;
+	}
 	const columns = createColumns(gameId);
 
 	return (

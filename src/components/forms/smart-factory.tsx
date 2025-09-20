@@ -368,15 +368,49 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		 * Render a field with auto-generated configuration
 		 */
 		renderSmartField: (fieldName: string, overrides: Partial<FieldConfig> = {}) => {
-			const fieldConfig: FieldConfig = {
+			// Start with basic field config
+			let fieldConfig: FieldConfig = {
 				name: fieldName,
 				label: fieldName
 					.replace(/([A-Z])/g, " $1")
 					.replace(/^./, (str) => str.toUpperCase()),
 				type: "text",
 				required: !(schema.shape as any)[fieldName]?.isOptional?.(),
-				...overrides,
 			};
+
+			// Apply smart field type detection
+			const zodField = (schema.shape as any)[fieldName];
+			const actualType = zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
+
+			if (actualType instanceof z.ZodString) {
+				// Check for rich text editor fields (complex content)
+				if (
+					fieldName.includes("content") ||
+					fieldName.includes("description") ||
+					fieldName.includes("notes") ||
+					fieldName.includes("body") ||
+					fieldName.includes("message")
+				) {
+					fieldConfig.type = "editor";
+				}
+			} else if (actualType instanceof z.ZodEnum) {
+				fieldConfig.type = "select";
+				const def = actualType._def;
+				const enumValues = def?.values || Object.keys(def?.entries || {});
+				fieldConfig.options = enumValues.map((value: string) => ({
+					value,
+					label: value.charAt(0).toUpperCase() + value.slice(1),
+				}));
+			} else if (actualType instanceof z.ZodArray) {
+				// Check if it's an array of strings, likely for tags
+				const elementType = actualType._def?.element;
+				if (elementType instanceof z.ZodString) {
+					fieldConfig.type = "tags";
+				}
+			}
+
+			// Apply any overrides
+			fieldConfig = { ...fieldConfig, ...overrides };
 
 			return (
 				<form.AppField
@@ -412,29 +446,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 							</field.Label>
 
 							<field.Control>
-								{fieldConfig.type === "editor" ? (
-									<FormFieldControl 
-										field={{
-											...fieldConfig,
-											// Don't override onChange here, let the control handle it
-										}} 
-										fieldApi={{
-											...field,
-											// Wrap handleChange to process editor data correctly
-											handleChange: (value: any) => {
-												if (value && typeof value === "object" && "json" in value && "text" in value) {
-													// New MinimalTiptap interface - store the full object
-													field.handleChange(value);
-												} else {
-													// Backward compatibility
-													field.handleChange(value);
-												}
-											}
-										}} 
-									/>
-								) : (
-									<FormFieldControl field={fieldConfig} fieldApi={field} />
-								)}
+								<FormFieldControl field={fieldConfig} fieldApi={field} />
 							</field.Control>
 
 							{fieldConfig.description && (
