@@ -70,3 +70,4 @@ export const useUpdateNoteMutation = (gameId: string, noteId: string) => {
 		},
 	});
 };
+

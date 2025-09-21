@@ -5,8 +5,8 @@ import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 export function CreateNoteForm() {
-	const { gameId } = useParams({ from: "/_auth/games/$gameId/notes/new" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/notes/new" });
+	const { gameId } = useParams({ from: "/_auth/games/$gameId/notes" });
+	const context = useRouteContext({ from: "/_auth/games/$gameId/notes" });
 	const navigate = useNavigate();
 
 	const FormComponent = createSmartForm({

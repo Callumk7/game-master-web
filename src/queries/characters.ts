@@ -8,6 +8,7 @@ import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
 	getCharacterLinksOptions,
+	getCharacterNotesTreeOptions,
 	getCharacterOptions,
 	getCharacterQueryKey,
 	listCharactersOptions,
@@ -33,6 +34,14 @@ export const useGetCharacterLinks = (gameId: string, characterId: string) => {
 	return useQuery(
 		getCharacterLinksOptions({
 			path: { game_id: gameId, character_id: characterId },
+		}),
+	);
+};
+
+export const useGetCharacterNoteTree = (gameId: string, characterId: string) => {
+	return useQuery(
+		getCharacterNotesTreeOptions({
+			path: { game_id: gameId, id: characterId },
 		}),
 	);
 };

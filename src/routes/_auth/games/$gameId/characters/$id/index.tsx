@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getCharacterOptions } from "~/api/@tanstack/react-query.gen";
+import {
+	getCharacterNotesTreeOptions,
+	getCharacterOptions,
+} from "~/api/@tanstack/react-query.gen";
 import { CharacterDetail } from "~/components/characters/character-detail";
 import { useCharacterQuery } from "~/queries/characters";
 
@@ -8,6 +11,11 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 	loader: ({ context, params }) => {
 		context.queryClient.ensureQueryData(
 			getCharacterOptions({
+				path: { game_id: params.gameId, id: params.id },
+			}),
+		);
+		context.queryClient.ensureQueryData(
+			getCharacterNotesTreeOptions({
 				path: { game_id: params.gameId, id: params.id },
 			}),
 		);
@@ -22,5 +30,9 @@ function RouteComponent() {
 		return <div>Character not found</div>;
 	}
 
-	return <CharacterDetail character={data.data} gameId={gameId} />;
+	return (
+		<div>
+			<CharacterDetail character={data.data} gameId={gameId} />
+		</div>
+	);
 }

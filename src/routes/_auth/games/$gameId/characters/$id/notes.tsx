@@ -1,11 +1,35 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import type { NoteTreeNode } from "~/api";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { useGetCharacterNoteTree } from "~/queries/characters";
 
-export const Route = createFileRoute(
-  '/_auth/games/$gameId/characters/$id/notes',
-)({
-  component: RouteComponent,
-})
+export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/notes")({
+	component: RouteComponent,
+});
 
 function RouteComponent() {
-  return <div>Hello "/_auth/games/$gameId/characters/$id/notes"!</div>
+	const { gameId, id } = Route.useParams();
+	const { data: notes } = useGetCharacterNoteTree(gameId, id);
+
+	return (
+		<div>
+			<h1>Notes</h1>
+			{notes?.data?.notes_tree?.map((node) => (
+				<NoteCard key={node.id} note={node} />
+			))}
+		</div>
+	);
+}
+
+function NoteCard({ note }: { note: NoteTreeNode }) {
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle>{note.name}</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<p>{note.content_plain_text}</p>
+			</CardContent>
+		</Card>
+	);
 }

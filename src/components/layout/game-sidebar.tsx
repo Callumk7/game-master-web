@@ -112,6 +112,9 @@ export function GameSidebar() {
 							<SidebarMenuLink
 								to="/games/$gameId/characters"
 								params={params}
+								activeProps={{
+									className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+								}}
 							>
 								<Users className="w-4 h-4" />
 								Characters
@@ -122,7 +125,13 @@ export function GameSidebar() {
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
-							<SidebarMenuLink to="/games/$gameId/factions" params={params}>
+							<SidebarMenuLink
+								to="/games/$gameId/factions"
+								params={params}
+								activeProps={{
+									className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+								}}
+							>
 								<div className="w-4 h-4 flex items-center justify-center text-sm">
 									⚔
 								</div>
@@ -137,6 +146,9 @@ export function GameSidebar() {
 							<SidebarMenuLink
 								to="/games/$gameId/locations"
 								params={params}
+								activeProps={{
+									className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+								}}
 							>
 								<MapPin className="w-4 h-4" />
 								Locations
@@ -147,7 +159,13 @@ export function GameSidebar() {
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
-							<SidebarMenuLink to="/games/$gameId/quests" params={params}>
+							<SidebarMenuLink
+								to="/games/$gameId/quests"
+								params={params}
+								activeProps={{
+									className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+								}}
+							>
 								<Gem className="w-4 h-4" />
 								Quests
 								<Badge variant="secondary" className="ml-auto">
@@ -157,7 +175,13 @@ export function GameSidebar() {
 						</SidebarMenuItem>
 
 						<SidebarMenuItem>
-							<SidebarMenuLink to="/games/$gameId/notes" params={params}>
+							<SidebarMenuLink
+								to="/games/$gameId/notes"
+								params={params}
+								activeProps={{
+									className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+								}}
+							>
 								<Scroll className="w-4 h-4" />
 								Notes
 								<Badge variant="secondary" className="ml-auto">
@@ -215,6 +239,9 @@ export function GameSidebar() {
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
+							activeProps={{
+								className: "w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Note
@@ -225,6 +252,9 @@ export function GameSidebar() {
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
+							activeProps={{
+								className: "w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Character
@@ -235,6 +265,9 @@ export function GameSidebar() {
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
+							activeProps={{
+								className: "w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Faction
@@ -245,6 +278,9 @@ export function GameSidebar() {
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
+							activeProps={{
+								className: "w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Location
@@ -255,6 +291,9 @@ export function GameSidebar() {
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
+							activeProps={{
+								className: "w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Quest
@@ -289,6 +328,9 @@ function LocationTree({ item, gameId }: { item: LocationTreeNode; gameId: string
 						to="/games/$gameId/locations/$id"
 						params={{ gameId, id: item.id }}
 						className="w-full pl-6 min-w-0"
+						activeProps={{
+							className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+						}}
 					>
 						<span className="truncate">{item.name}</span>
 					</SidebarMenuLink>
@@ -312,6 +354,9 @@ function LocationTree({ item, gameId }: { item: LocationTreeNode; gameId: string
 						to="/games/$gameId/locations/$id"
 						params={{ gameId, id: item.id }}
 						className="w-full pl-6 min-w-0"
+						activeProps={{
+							className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+						}}
 					>
 						<span className="truncate">{item.name}</span>
 					</SidebarMenuLink>
@@ -356,6 +401,9 @@ function QuestTree({ item, gameId }: { item: QuestTreeNode; gameId: string }) {
 						to="/games/$gameId/quests/$id"
 						params={{ gameId, id: item.id }}
 						className="w-full pl-6 min-w-0"
+						activeProps={{
+							className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+						}}
 					>
 						<span className="truncate">{item.name}</span>
 					</SidebarMenuLink>
@@ -379,6 +427,9 @@ function QuestTree({ item, gameId }: { item: QuestTreeNode; gameId: string }) {
 						to="/games/$gameId/quests/$id"
 						params={{ gameId, id: item.id }}
 						className="w-full pl-6 min-w-0"
+						activeProps={{
+							className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+						}}
 					>
 						<span className="truncate">{item.name}</span>
 					</SidebarMenuLink>
