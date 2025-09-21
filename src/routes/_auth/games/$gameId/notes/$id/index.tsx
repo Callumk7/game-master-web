@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getNoteOptions } from "~/api/@tanstack/react-query.gen";
+import { useAddTab } from "~/components/entity-tabs";
 import { NoteDetail } from "~/components/notes/NoteDetail";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/")({
@@ -18,8 +19,16 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data } = useNoteQuery(gameId, id);
+
+	useAddTab({
+		id,
+		label: data?.data?.name ?? "Note",
+		path: Route.fullPath,
+		params,
+	});
 
 	if (!data?.data) {
 		return <div>Note not found</div>;

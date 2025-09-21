@@ -13,7 +13,6 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-4">
-			<h1>Notes</h1>
 			{notes?.data?.notes_tree?.map((node) => (
 				<NoteCard key={node.id} note={node} />
 			))}

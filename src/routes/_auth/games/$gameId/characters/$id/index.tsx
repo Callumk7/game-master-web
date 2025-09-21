@@ -4,6 +4,7 @@ import {
 	getCharacterOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterDetail } from "~/components/characters/character-detail";
+import { useAddTab } from "~/components/entity-tabs";
 import { useCharacterQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
@@ -23,8 +24,16 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data } = useCharacterQuery(gameId, id);
+
+	useAddTab({
+		id,
+		label: data?.data?.name ?? "Character",
+		path: Route.fullPath,
+		params,
+	});
 
 	if (!data?.data) {
 		return <div>Character not found</div>;
