@@ -4,10 +4,10 @@ import {
 	createLocationMutation,
 	listLocationsQueryKey,
 } from "~/api/@tanstack/react-query.gen";
+import { Button } from "~/components/ui/button";
+import { useListLocationsQuery } from "~/queries/locations";
 import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
-import { useListLocationsQuery } from "~/queries/locations";
-import { Button } from "~/components/ui/button";
 import { ParentLocationSelect } from "./ParentLocationSelect";
 
 export function CreateLocationForm() {
@@ -16,7 +16,8 @@ export function CreateLocationForm() {
 	const navigate = useNavigate();
 
 	// Fetch existing locations for parent selection
-	const { data: locationsData, isLoading: locationsLoading } = useListLocationsQuery(gameId);
+	const { data: locationsData, isLoading: locationsLoading } =
+		useListLocationsQuery(gameId);
 	const locations = locationsData?.data || [];
 
 	const { form, mutation, renderSmartField } = useSmartForm({
@@ -62,17 +63,17 @@ export function CreateLocationForm() {
 							],
 							placeholder: "Select location type",
 						})}
-						
+
 						{/* Custom parent location selector */}
 						<form.AppField name="parent_id">
 							{(field) => (
 								<form.Item>
-									<field.Label>
-										Parent Location
-									</field.Label>
+									<field.Label>Parent Location</field.Label>
 									<field.Control>
 										{locationsLoading ? (
-											<div className="text-muted-foreground text-sm p-2">Loading locations...</div>
+											<div className="text-muted-foreground text-sm p-2">
+												Loading locations...
+											</div>
 										) : (
 											<ParentLocationSelect
 												locations={locations}
@@ -84,15 +85,16 @@ export function CreateLocationForm() {
 										)}
 									</field.Control>
 									<field.Description>
-										Choose a parent location to create a hierarchical structure. Leave empty for top-level locations.
+										Choose a parent location to create a hierarchical
+										structure. Leave empty for top-level locations.
 									</field.Description>
 									<field.Message />
 								</form.Item>
 							)}
 						</form.AppField>
-						
+
 						{renderSmartField("tags")}
-						{renderSmartField("description")}
+						{renderSmartField("content")}
 
 						<div className="flex gap-2">
 							<Button type="submit" disabled={mutation.isPending}>
@@ -105,7 +107,9 @@ export function CreateLocationForm() {
 								onClick={() => {
 									if (
 										form.state.isDirty &&
-										!confirm("Are you sure? All unsaved changes will be lost.")
+										!confirm(
+											"Are you sure? All unsaved changes will be lost.",
+										)
 									) {
 										return;
 									}

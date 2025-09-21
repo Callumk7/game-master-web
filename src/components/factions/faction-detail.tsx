@@ -44,8 +44,8 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 	const handleSave = () => {
 		const payload = {
 			faction: {
-				description: JSON.stringify(updatedContent.json),
-				description_plain_text: updatedContent.text,
+				content: JSON.stringify(updatedContent.json),
+				content_plain_text: updatedContent.text,
 			},
 		};
 		updateFaction.mutate({
@@ -75,9 +75,9 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 
 	const descriptionTab = (
 		<div className="space-y-4">
-			<h2 className="text-lg font-semibold">Description</h2>
+			<h2 className="text-lg font-semibold">Content</h2>
 			<MinimalTiptap
-				content={parseContentForEditor(faction.description)}
+				content={parseContentForEditor(faction.content)}
 				onChange={onChange}
 			/>
 			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
@@ -118,7 +118,7 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 			entityId={faction.id}
 			onDelete={onDelete}
 			tabs={[
-				{ id: "description", label: "Description", content: descriptionTab },
+				{ id: "content", label: "Content", content: descriptionTab },
 				{ id: "links", label: "Links", content: linksTab },
 			]}
 			defaultTab="description"

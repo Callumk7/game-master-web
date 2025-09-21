@@ -21,7 +21,6 @@ export function EntityLinkButton({ entity }: EntityLinkButtonProps) {
 
 	const displayContent =
 		entity.content_plain_text ||
-		entity.description_plain_text ||
 		"No content available";
 
 	return (

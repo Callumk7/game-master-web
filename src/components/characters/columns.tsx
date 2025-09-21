@@ -65,13 +65,13 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 		cell: ({ row }) => <div className="text-center">{row.getValue("level")}</div>,
 	},
 	{
-		accessorKey: "description_plain_text",
-		header: "Description",
+		accessorKey: "content_plain_text",
+		header: "Content",
 		cell: ({ row }) => {
-			const description = row.getValue("description_plain_text") as string;
+			const content = row.getValue("content_plain_text") as string;
 			return (
 				<div className="max-w-xs truncate text-sm text-muted-foreground">
-					{description || <span className="italic">No description</span>}
+					{content || <span className="italic">No content</span>}
 				</div>
 			);
 		},

@@ -47,8 +47,8 @@ export function LocationDetail({ location, gameId }: LocationDetailProps) {
 	const handleSave = () => {
 		const payload = {
 			location: {
-				description: JSON.stringify(updatedContent.json),
-				description_plain_text: updatedContent.text,
+				content: JSON.stringify(updatedContent.json),
+				content_plain_text: updatedContent.text,
 			},
 		};
 		updateLocation.mutate({
@@ -70,9 +70,9 @@ export function LocationDetail({ location, gameId }: LocationDetailProps) {
 
 	const descriptionTab = (
 		<div className="space-y-4">
-			<h2 className="text-lg font-semibold">Description</h2>
+			<h2 className="text-lg font-semibold">Content</h2>
 			<MinimalTiptap
-				content={parseContentForEditor(location.description)}
+				content={parseContentForEditor(location.content)}
 				onChange={onChange}
 			/>
 			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
@@ -113,7 +113,7 @@ export function LocationDetail({ location, gameId }: LocationDetailProps) {
 			entityId={location.id.toString()}
 			onDelete={onDelete}
 			tabs={[
-				{ id: "description", label: "Description", content: descriptionTab },
+				{ id: "content", label: "Content", content: descriptionTab },
 				{ id: "links", label: "Links", content: linksTab },
 			]}
 			defaultTab="description"

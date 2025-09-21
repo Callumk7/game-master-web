@@ -83,14 +83,9 @@ export function EntityGrid<T extends Entity>({
 						{getEntitySpecificInfo?.(entity)}
 					</CardHeader>
 					<CardContent>
-						{("content" in entity && entity.content) ||
-						("description" in entity && entity.description) ? (
+						{"content" in entity && entity.content ? (
 							<p className="text-sm text-muted-foreground line-clamp-3 mb-3">
-								{(
-									("content" in entity && entity.content) ||
-									("description" in entity && entity.description) ||
-									""
-								)
+								{(("content" in entity && entity.content) || "")
 									.replace(/[#*`[\]]/g, "")
 									.substring(0, 150)}
 								...

@@ -11,7 +11,6 @@ export interface EntityLink {
 	name: string;
 	type: string;
 	description?: string;
-	description_plain_text?: string;
 	content?: string;
 	content_plain_text?: string;
 	relationship_type?: string;
@@ -48,10 +47,6 @@ export function flattenLinksForTable(linksResponse: GenericLinksResponse): Entit
 				type: type.slice(0, -1), // Remove 's' from plural (factions -> faction)
 				relationship_type: entity.relationship_type,
 				description: "description" in entity ? entity.description : undefined,
-				description_plain_text:
-					"description_plain_text" in entity
-						? entity.description_plain_text
-						: undefined,
 				content:
 					"content" in entity && typeof entity.content === "string"
 						? entity.content

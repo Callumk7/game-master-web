@@ -69,7 +69,16 @@ export function CharacterMenu({ onEditDetails, onDelete }: CharacterMenuProps) {
 									</MenubarItem>
 								</MenubarContent>
 							</MenubarPositioner>
-							<MenubarItem>View</MenubarItem>
+							<MenubarItem
+								render={
+									<Link
+										to="/games/$gameId/characters/$id/notes"
+										params={params}
+									/>
+								}
+							>
+								Notes
+							</MenubarItem>
 						</MenubarSub>
 						<MenubarItem>Create</MenubarItem>
 					</MenubarContent>

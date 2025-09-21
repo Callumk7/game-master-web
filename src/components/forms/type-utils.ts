@@ -170,20 +170,20 @@ export function createSchemaFor() {
 				.max(100, "Level cannot exceed 100"),
 			image_url: z.union([z.url(), z.literal("")]).optional(),
 			tags: z.array(z.string()).optional(),
-			description: z.string().optional(),
+			content: z.string().optional(),
 		}),
 
 		faction: z.object({
 			name: z.string().min(1, "Faction name is required"),
 			tags: z.array(z.string()).optional(),
-			description: z.string(),
+			content: z.string(),
 		}),
 
 		// Add more schemas as needed
 		game: z.object({
 			name: z.string().min(1, "Game name is required"),
 			setting: z.string().optional(),
-			description: z.string().optional(),
+			content: z.string().optional(),
 		}),
 
 		note: z.object({
@@ -216,7 +216,7 @@ export function createSchemaFor() {
 			]),
 			parent_id: z.string().optional(),
 			tags: z.array(z.string()).optional(),
-			description: z.string().optional(),
+			content: z.string().optional(),
 		}),
 	};
 }

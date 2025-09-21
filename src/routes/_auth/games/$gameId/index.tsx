@@ -56,7 +56,7 @@ function RouteComponent() {
 						<div>
 							<h1 className="text-3xl font bold">Campaign Dashboard</h1>
 							<p>
-								{game?.name} - {game?.description || "A TTRPG campaign"}
+								{game?.name} - {game?.content || "A TTRPG campaign"}
 							</p>
 						</div>
 						<Button>View Graph</Button>

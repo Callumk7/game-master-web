@@ -12,7 +12,7 @@ function RouteComponent() {
 	const { data: notes } = useGetCharacterNoteTree(gameId, id);
 
 	return (
-		<div>
+		<div className="space-y-4">
 			<h1>Notes</h1>
 			{notes?.data?.notes_tree?.map((node) => (
 				<NoteCard key={node.id} note={node} />

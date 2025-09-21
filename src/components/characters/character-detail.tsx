@@ -43,8 +43,8 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 	const handleSave = () => {
 		const payload = {
 			character: {
-				description: JSON.stringify(updatedContent.json),
-				description_plain_text: updatedContent.text,
+				content: JSON.stringify(updatedContent.json),
+				content_plain_text: updatedContent.text,
 			},
 		};
 		updateCharacter.mutate({
@@ -84,7 +84,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 	const descriptionTab = (
 		<div className="space-y-4">
 			<MinimalTiptap
-				content={parseContentForEditor(character.description)}
+				content={parseContentForEditor(character.content)}
 				onChange={onChange}
 			/>
 			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
@@ -125,7 +125,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 			entityId={character.id}
 			onDelete={onDelete}
 			tabs={[
-				{ id: "description", label: "Description", content: descriptionTab },
+				{ id: "content", label: "Content", content: descriptionTab },
 				{ id: "links", label: "Links", content: linksTab },
 			]}
 			defaultTab="description"
