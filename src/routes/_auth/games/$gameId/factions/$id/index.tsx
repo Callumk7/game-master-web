@@ -3,6 +3,7 @@ import {
 	getFactionLinksOptions,
 	getFactionOptions,
 } from "~/api/@tanstack/react-query.gen";
+import { useAddTab } from "~/components/entity-tabs";
 import { FactionDetail } from "~/components/factions/faction-detail";
 import { useFactionQuery } from "~/queries/factions";
 
@@ -29,8 +30,16 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data } = useFactionQuery(gameId, id);
+
+	useAddTab({
+		id,
+		label: data?.data?.name ?? "Character",
+		path: Route.fullPath,
+		params,
+	});
 
 	if (!data?.data) {
 		return <div>Faction not found</div>;

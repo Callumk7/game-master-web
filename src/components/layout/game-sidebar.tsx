@@ -45,16 +45,15 @@ export function GameSidebar() {
 	const gameId = params.gameId;
 
 	// TODO: This needs to be cleaned up, and probably extracted to a hook / function
-	const { data: links, isLoading: linksLoading } = useGetGameLinksQuery({ id: gameId });
+	const { data: links } = useGetGameLinksQuery({ id: gameId });
 	const characters = links?.data?.entities?.characters;
 	const factions = links?.data?.entities?.factions;
 	const locations = links?.data?.entities?.locations;
 	const notes = links?.data?.entities?.notes;
 	const quests = links?.data?.entities?.quests;
 
-	const { data: locationTree, isLoading: locationTreeLoading } =
-		useGetLocationTree(gameId);
-	const { data: questTree, isLoading: questTreeLoading } = useGetQuestTree(gameId);
+	const { data: locationTree } = useGetLocationTree(gameId);
+	const { data: questTree } = useGetQuestTree(gameId);
 
 	React.useEffect(() => {
 		setMounted(true);
@@ -120,9 +119,7 @@ export function GameSidebar() {
 								<Users className="w-4 h-4" />
 								Characters
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: characters?.length.toString() || "0"}
+									{characters?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -141,9 +138,7 @@ export function GameSidebar() {
 								</div>
 								Factions
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: factions?.length.toString() || "0"}
+									{factions?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -160,9 +155,7 @@ export function GameSidebar() {
 								<MapPin className="w-4 h-4" />
 								Locations
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: locations?.length.toString() || "0"}
+									{locations?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -179,9 +172,7 @@ export function GameSidebar() {
 								<Gem className="w-4 h-4" />
 								Quests
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: quests?.length.toString() || "0"}
+									{quests?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -198,9 +189,7 @@ export function GameSidebar() {
 								<Scroll className="w-4 h-4" />
 								Notes
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: notes?.length.toString() || "0"}
+									{notes?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -210,19 +199,13 @@ export function GameSidebar() {
 						<SidebarGroupLabel>Locations</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								{locationTreeLoading ? (
-									<div className="text-muted-foreground text-sm p-2">
-										Loading locations...
-									</div>
-								) : (
-									locationTree?.data?.map((item) => (
-										<LocationTree
-											gameId={gameId}
-											key={item.id}
-											item={item}
-										/>
-									))
-								)}
+								{locationTree?.data?.map((item) => (
+									<LocationTree
+										gameId={gameId}
+										key={item.id}
+										item={item}
+									/>
+								))}
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
@@ -230,19 +213,13 @@ export function GameSidebar() {
 						<SidebarGroupLabel>Quests</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								{questTreeLoading ? (
-									<div className="text-muted-foreground text-sm p-2">
-										Loading quests...
-									</div>
-								) : (
-									questTree?.data?.map((item) => (
-										<QuestTree
-											gameId={gameId}
-											key={item.id}
-											item={item}
-										/>
-									))
-								)}
+								{questTree?.data?.map((item) => (
+									<QuestTree
+										gameId={gameId}
+										key={item.id}
+										item={item}
+									/>
+								))}
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>

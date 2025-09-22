@@ -39,7 +39,7 @@ export const useGetQuestLinks = (gameId: string, questId: string) => {
 };
 
 export const useGetQuestTree = (gameId: string) => {
-	return useQuery(getQuestTreeOptions({ path: { game_id: gameId } }));
+	return useSuspenseQuery(getQuestTreeOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,4 +75,3 @@ export const useUpdateQuestMutation = (gameId: string, questId: string) => {
 		},
 	});
 };
-

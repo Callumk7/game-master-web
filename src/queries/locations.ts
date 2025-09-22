@@ -39,7 +39,7 @@ export const useGetLocationLinks = (gameId: string, locationId: string) => {
 };
 
 export const useGetLocationTree = (gameId: string) => {
-	return useQuery(getLocationTreeOptions({ path: { game_id: gameId } }));
+	return useSuspenseQuery(getLocationTreeOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,4 +75,3 @@ export const useUpdateLocationMutation = (gameId: string, locationId: string) =>
 		},
 	});
 };
-

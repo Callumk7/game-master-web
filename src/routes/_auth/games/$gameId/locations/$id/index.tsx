@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getLocationOptions } from "~/api/@tanstack/react-query.gen";
+import { useAddTab } from "~/components/entity-tabs";
 import { LocationDetail } from "~/components/locations/location-detail";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/")({
@@ -15,8 +16,16 @@ export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data } = useLocationQuery(gameId, id);
+
+	useAddTab({
+		id,
+		label: data?.data?.name ?? "Character",
+		path: Route.fullPath,
+		params,
+	});
 
 	if (!data?.data) {
 		return <div>Location not found</div>;

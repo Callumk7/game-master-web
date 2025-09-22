@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
+import { useAddTab } from "~/components/entity-tabs";
 import { QuestDetail } from "~/components/quests/QuestDetail";
 import { useQuestQuery } from "~/queries/quests";
 
@@ -18,8 +19,16 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data } = useQuestQuery(gameId, id);
+
+	useAddTab({
+		id,
+		label: data?.data?.name ?? "Character",
+		path: Route.fullPath,
+		params,
+	});
 
 	if (!data?.data) {
 		return <div>Quest not found</div>;
