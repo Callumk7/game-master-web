@@ -187,27 +187,29 @@ export function EntityTabs() {
 
 	// TODO: Add pin button
 	return (
-		<nav className="flex gap-2 flex-wrap">
-			<DndContext
-				sensors={sensors}
-				collisionDetection={closestCenter}
-				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
-			>
-				<SortableContext
-					items={tabList.map((tab) => tab.id)}
-					strategy={horizontalListSortingStrategy}
+		<div className="flex w-full justify-between">
+			<nav className="flex gap-2 flex-wrap">
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCenter}
+					onDragStart={handleDragStart}
+					onDragEnd={handleDragEnd}
 				>
-					{tabList.map((tab) => (
-						<SortableTab
-							key={tab.id}
-							tab={tab}
-							onRemove={removeTab}
-							isDragActive={isDragActive}
-						/>
-					))}
-				</SortableContext>
-			</DndContext>
-		</nav>
+					<SortableContext
+						items={tabList.map((tab) => tab.id)}
+						strategy={horizontalListSortingStrategy}
+					>
+						{tabList.map((tab) => (
+							<SortableTab
+								key={tab.id}
+								tab={tab}
+								onRemove={removeTab}
+								isDragActive={isDragActive}
+							/>
+						))}
+					</SortableContext>
+				</DndContext>
+			</nav>
+		</div>
 	);
 }

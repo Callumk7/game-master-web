@@ -17,7 +17,6 @@ import * as React from "react";
 import type { LocationTreeNode, QuestTreeNode } from "~/api";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Link } from "~/components/ui/link";
 import {
 	Sidebar,
 	SidebarContent,
@@ -37,7 +36,21 @@ import { useGetQuestTree } from "~/queries/quests";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { NavUser } from "./user-sidebar";
 
-export function GameSidebar() {
+interface GameSidebarProps {
+	setNewCharSheetOpen: (isOpen: boolean) => void;
+	setNewFactionSheetOpen: (isOpen: boolean) => void;
+	setNewLocationSheetOpen: (isOpen: boolean) => void;
+	setNewNoteSheetOpen: (isOpen: boolean) => void;
+	setNewQuestSheetOpen: (isOpen: boolean) => void;
+}
+
+export function GameSidebar({
+	setNewCharSheetOpen,
+	setNewFactionSheetOpen,
+	setNewLocationSheetOpen,
+	setNewNoteSheetOpen,
+	setNewQuestSheetOpen,
+}: GameSidebarProps) {
 	const { theme, setTheme } = useTheme();
 	const [mounted, setMounted] = React.useState(false);
 
@@ -225,76 +238,51 @@ export function GameSidebar() {
 					</SidebarGroup>
 
 					<div className="mt-4 space-y-2">
-						<Link
-							to="/games/$gameId/notes/new"
-							params={params}
+						<Button
+							onClick={() => setNewNoteSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Note
-						</Link>
-						<Link
-							to="/games/$gameId/characters/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewCharSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Character
-						</Link>
-						<Link
-							to="/games/$gameId/factions/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewFactionSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Faction
-						</Link>
-						<Link
-							to="/games/$gameId/locations/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewLocationSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Location
-						</Link>
-						<Link
-							to="/games/$gameId/quests/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewQuestSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Quest
-						</Link>
+						</Button>
 					</div>
 				</div>
 				<div className="flex-1" />

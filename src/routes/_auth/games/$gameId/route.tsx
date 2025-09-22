@@ -1,3 +1,4 @@
+import * as React from "react";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import {
@@ -6,11 +7,14 @@ import {
 	getQuestTreeOptions,
 	listGameEntitiesOptions,
 } from "~/api/@tanstack/react-query.gen";
+import { CreateCharacterSheet } from "~/components/characters/CreateCharacterSheet";
 import { Commander } from "~/components/commander";
 import { EntityTabs, EntityTabsProvider } from "~/components/entity-tabs";
 import { GameSidebar } from "~/components/layout/game-sidebar";
 import { Input } from "~/components/ui/input";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
+import { CreateFactionSheet } from "~/components/factions/CreateFactionSheet";
+import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
 	component: RouteComponent,
@@ -34,11 +38,24 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 // Games Layout
 function RouteComponent() {
 	const { gameId } = Route.useParams();
+
+	const [newCharSheetOpen, setNewCharSheetOpen] = React.useState(false);
+	const [newFactionSheetOpen, setNewFactionSheetOpen] = React.useState(false);
+	const [newLocationSheetOpen, setNewLocationSheetOpen] = React.useState(false);
+	const [newNoteSheetOpen, setNewNoteSheetOpen] = React.useState(false);
+	const [newQuestSheetOpen, setNewQuestSheetOpen] = React.useState(false);
+
 	return (
 		<EntityTabsProvider>
 			<SidebarProvider>
 				<div className="flex h-screen w-full">
-					<GameSidebar />
+					<GameSidebar
+						setNewCharSheetOpen={setNewCharSheetOpen}
+						setNewFactionSheetOpen={setNewFactionSheetOpen}
+						setNewLocationSheetOpen={setNewLocationSheetOpen}
+						setNewNoteSheetOpen={setNewNoteSheetOpen}
+						setNewQuestSheetOpen={setNewQuestSheetOpen}
+					/>
 					{/* Main Content */}
 					<div className="flex-1 flex flex-col">
 						<header className="border-b p-4 flex items-center gap-4">
@@ -59,6 +76,18 @@ function RouteComponent() {
 							<EntityTabs />
 							<Outlet />
 						</main>
+						<CreateCharacterSheet
+							isOpen={newCharSheetOpen}
+							setIsOpen={setNewCharSheetOpen}
+						/>
+						<CreateFactionSheet
+							isOpen={newFactionSheetOpen}
+							setIsOpen={setNewFactionSheetOpen}
+						/>
+						<CreateNoteSheet
+							isOpen={newNoteSheetOpen}
+							setIsOpen={setNewNoteSheetOpen}
+						/>
 					</div>
 				</div>
 			</SidebarProvider>
