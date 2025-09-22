@@ -368,8 +368,6 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		 * Render a field with auto-generated configuration
 		 */
 		renderSmartField: (fieldName: string, overrides: Partial<FieldConfig> = {}) => {
-			console.log(`[smart-factory] renderSmartField called for: ${fieldName}`, { overrides });
-			
 			// Start with basic field config
 			let fieldConfig: FieldConfig = {
 				name: fieldName,
@@ -397,19 +395,12 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 					fieldConfig.type = "editor";
 				}
 			} else if (actualType instanceof z.ZodEnum) {
-				console.log(`[smart-factory] ZodEnum detected for field: ${fieldName}`, {
-					actualType,
-					options: actualType.options,
-					_def: actualType._def
-				});
 				fieldConfig.type = "select";
 				const enumValues = actualType.options || [];
-				console.log(`[smart-factory] Enum values for ${fieldName}:`, enumValues);
 				fieldConfig.options = enumValues.map((value) => ({
 					value: String(value),
 					label: String(value).charAt(0).toUpperCase() + String(value).slice(1),
 				}));
-				console.log(`[smart-factory] Generated options for ${fieldName}:`, fieldConfig.options);
 			} else if (actualType instanceof z.ZodArray) {
 				// Check if it's an array of strings, likely for tags
 				const elementType = actualType._def?.element;
@@ -420,13 +411,6 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 
 			// Apply any overrides
 			fieldConfig = { ...fieldConfig, ...overrides };
-			
-			console.log(`[smart-factory] Final fieldConfig for ${fieldName}:`, fieldConfig);
-			console.log(`[smart-factory] Disabled state for ${fieldName}:`, {
-				disabled: fieldConfig.disabled,
-				overrides,
-				fieldConfigKeys: Object.keys(fieldConfig)
-			});
 
 			return (
 				<form.AppField

@@ -31,6 +31,9 @@ export function extractDefaultValues<T extends z.ZodRawShape>(
 				defaults[key] = false;
 			} else if (zodType instanceof z.ZodArray) {
 				defaults[key] = [];
+			} else if (zodType instanceof z.ZodEnum) {
+				// For enum fields (selects), default to empty string to maintain controlled state
+				defaults[key] = "";
 			}
 		}
 	}
@@ -60,13 +63,6 @@ export function generateFieldsFromSchema<T extends z.ZodRawShape>(
 		// Detect field type from Zod type
 		const actualType =
 			zodType instanceof z.ZodOptional ? (zodType as any)._def.innerType : zodType;
-
-		console.log(`[type-utils] Processing field "${key}":`, {
-			zodType: zodType.constructor.name,
-			actualType: actualType.constructor.name,
-			isZodEnum: actualType instanceof z.ZodEnum,
-			actualTypeDetails: actualType,
-		});
 
 		if (actualType instanceof z.ZodString) {
 			const checks = (actualType as any)._def?.checks || [];
@@ -128,19 +124,12 @@ export function generateFieldsFromSchema<T extends z.ZodRawShape>(
 		} else if (actualType instanceof z.ZodBoolean) {
 			field.type = "checkbox";
 		} else if (actualType instanceof z.ZodEnum) {
-			console.log(`[type-utils] ZodEnum detected for field: ${key}`, {
-				actualType,
-				options: actualType.options,
-				_def: actualType._def,
-			});
 			field.type = "select";
 			const enumValues = actualType.options || [];
-			console.log(`[type-utils] Enum values for ${key}:`, enumValues);
 			field.options = enumValues.map((value) => ({
 				value: String(value),
 				label: titleCase(String(value)),
 			}));
-			console.log(`[type-utils] Generated options for ${key}:`, field.options);
 		} else if (actualType instanceof z.ZodDate) {
 			field.type = "date";
 		} else if (actualType instanceof z.ZodArray) {

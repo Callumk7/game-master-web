@@ -50,7 +50,6 @@ export function CreateLocationForm() {
 						{renderSmartField("name")}
 						{renderSmartField("type", {
 							label: "Location Type",
-							placeholder: "Select location type",
 						})}
 
 						{/* Custom parent location selector */}
