@@ -17,10 +17,15 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data } = useListQuestsQuery(gameId);
+	const { data, isLoading } = useListQuestsQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [tagFilter, setTagFilter] = useState("");
 
-	const quests = data.data || [];
+	const quests = data?.data || [];
+
+	if (isLoading) {
+		return <div className="text-muted-foreground">Loading quests...</div>;
+	}
 	const columns = createColumns(gameId);
 
 	const navigate = Route.useNavigate();
@@ -44,6 +49,8 @@ function RouteComponent() {
 				data={quests}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}
+				tagFilter={tagFilter}
+				onTagFilterChange={setTagFilter}
 			/>
 		</div>
 	);

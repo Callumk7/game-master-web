@@ -1,46 +1,48 @@
 import { useNavigate, useParams, useRouteContext } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { z } from "zod";
-import type { NoteParams } from "~/api";
 import { createNoteMutation, listNotesQueryKey } from "~/api/@tanstack/react-query.gen";
-import { createFormComponent } from "~/components/forms/factory-v2";
+import { Button } from "~/components/ui/button";
+import { useSmartForm } from "../forms/smart-factory";
+import { schemas } from "../forms/type-utils";
 
-// Schema for validation
-const noteSchema = z.object({
-	name: z.string().min(1, "Note name is required"),
-	content: z.string().min(1, "Note content is required"),
-});
+interface CreateNoteFormProps {
+	/** Optional parent entity ID */
+	parentId?: string;
+	/** Optional parent entity type */
+	parentType?: 'character' | 'quest' | 'location' | 'faction';
+	/** Custom CSS class for form container */
+	className?: string;
+	/** Custom submit button text */
+	submitText?: string;
+	/** Custom success callback (overrides default navigation) */
+	onSuccess?: () => void;
+}
 
-// Field configuration
-const noteFields = [
-	{
-		name: "name",
-		label: "Note Name",
-		type: "text" as const,
-		placeholder: "Enter note name",
-		required: true,
-	},
-	{
-		name: "content",
-		label: "Note Content",
-		type: "textarea" as const,
-		placeholder: "Write your note content...",
-		required: true,
-		description: "The main content of your note",
-	},
-];
-
-export function CreateNoteForm() {
-	const { gameId } = useParams({ from: "/_auth/games/$gameId/notes/new" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/notes/new" });
+export function CreateNoteForm({
+	parentId,
+	parentType,
+	className = "space-y-6",
+	submitText = "Create Note",
+	onSuccess: customOnSuccess,
+}: CreateNoteFormProps = {}) {
+	const { gameId } = useParams({ from: "/_auth/games/$gameId/notes" });
+	const context = useRouteContext({ from: "/_auth/games/$gameId/notes" });
 	const navigate = useNavigate();
 
-	// Create form component with proper context handling
-	const FormWithContext = createFormComponent({
-		mutationOptions: () =>
+	// Prepare initial values with parent info if provided
+	const initialValues = {
+		...(parentId && { parent_id: parentId }),
+		...(parentType && { parent_type: parentType }),
+	};
+
+	const { form, mutation, renderSmartField } = useSmartForm({
+		mutation: () =>
 			createNoteMutation({
 				path: { game_id: gameId },
 			}),
+		schema: schemas.note,
+		entityName: "note",
+		initialValues,
 		onSuccess: async () => {
 			toast("Note created successfully!");
 			await context.queryClient.refetchQueries({
@@ -48,17 +50,75 @@ export function CreateNoteForm() {
 					path: { game_id: gameId },
 				}),
 			});
-			navigate({ to: ".." });
+			
+			if (customOnSuccess) {
+				customOnSuccess();
+			} else {
+				navigate({ to: ".." });
+			}
 		},
-		schema: noteSchema,
-		fields: noteFields,
-		defaultValues: {
-			name: "",
-			content: "",
-		} satisfies NoteParams,
-		className: "max-w-2xl mx-auto bg-card p-6 rounded-lg shadow-md",
-		entityName: "note",
 	});
 
-	return <FormWithContext />;
+	return (
+		<div className={className}>
+			<form.AppForm>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<div className="space-y-6">
+						{renderSmartField("name")}
+						{renderSmartField("tags")}
+						
+						{/* Only show parent fields if not pre-filled via props */}
+						{!parentId && renderSmartField("parent_id", {
+							label: "Parent Entity ID",
+							description: "Optional ID of the parent entity this note belongs to",
+						})}
+						
+						{!parentType && renderSmartField("parent_type", {
+							label: "Parent Entity Type",
+							description: "Type of the parent entity",
+						})}
+						
+						{renderSmartField("content")}
+
+						<div className="flex gap-2">
+							<Button type="submit" disabled={mutation.isPending}>
+								{mutation.isPending ? "Creating..." : submitText}
+							</Button>
+
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => {
+									if (
+										form.state.isDirty &&
+										!confirm(
+											"Are you sure? All unsaved changes will be lost.",
+										)
+									) {
+										return;
+									}
+									form.reset();
+								}}
+							>
+								Reset
+							</Button>
+						</div>
+					</div>
+				</form>
+			</form.AppForm>
+
+			{mutation.isError && (
+				<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
+					<p className="text-sm">
+						{(mutation.error as any)?.message || "Something went wrong"}
+					</p>
+				</div>
+			)}
+		</div>
+	);
 }

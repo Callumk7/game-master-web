@@ -1,15 +1,17 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import * as React from "react";
 import { ScrollText } from "lucide-react";
-import {
-	deleteQuestMutation,
-	getQuestLinksOptions,
-	listQuestsQueryKey,
-} from "~/api/@tanstack/react-query.gen";
 import type { Quest } from "~/api/types.gen";
+import { Button } from "~/components/ui/button";
 import { DetailTemplate } from "~/components/ui/DetailTemplate";
 import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
+import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
+import {
+	useDeleteQuestMutation,
+	useGetQuestLinks,
+	useUpdateQuestMutation,
+} from "~/queries/quests";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
+import { parseContentForEditor } from "~/utils/editorHelpers";
 import { CreateQuestLink } from "./CreateQuestLink";
 
 interface QuestDetailProps {
@@ -18,44 +20,40 @@ interface QuestDetailProps {
 }
 
 export function QuestDetail({ quest, gameId }: QuestDetailProps) {
-	const formatDate = (dateString?: string) => {
-		if (!dateString) return "Unknown";
-		return new Date(dateString).toLocaleDateString();
-	};
-
-	const context = useRouteContext({ from: "/_auth/games/$gameId/quests/$id" });
-
 	const {
 		data: linksResponse,
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useQuery(
-		getQuestLinksOptions({
-			path: { game_id: gameId, quest_id: quest.id },
-		}),
-	);
+	} = useGetQuestLinks(gameId, quest.id);
 
-	const fields = [
-		{ label: "Name", value: quest.name },
-		{ label: "ID", value: <span className="font-mono">#{quest.id}</span> },
-		{ label: "Created", value: formatDate(quest.created_at) },
-		{ label: "Last Updated", value: formatDate(quest.updated_at) },
-	];
+	const [isUpdated, setIsUpdated] = React.useState(false);
+	const [updatedContent, setUpdatedContent] = React.useState<{
+		json: object;
+		text: string;
+	}>({ json: {}, text: "" });
+	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
 
-	const navigate = useNavigate();
+	const onChange = (newContent: { json: object; text: string }) => {
+		setUpdatedContent(newContent);
+		setIsUpdated(true);
+	};
 
-	const deleteQuest = useMutation({
-		...deleteQuestMutation(),
-		onSuccess: () => {
-			context.queryClient.invalidateQueries({
-				queryKey: listQuestsQueryKey({
-					path: { game_id: gameId },
-				}),
-			});
-			navigate({ to: ".." });
-		},
-	});
+	const handleSave = () => {
+		const payload = {
+			quest: {
+				content: JSON.stringify(updatedContent.json),
+				content_plain_text: updatedContent.text,
+			},
+		};
+		updateQuest.mutate({
+			body: payload,
+			path: { game_id: gameId, id: quest.id },
+		});
+		setIsUpdated(false);
+	};
+
+	const deleteQuest = useDeleteQuestMutation(gameId);
 
 	const onDelete = () => {
 		deleteQuest.mutate({
@@ -63,46 +61,59 @@ export function QuestDetail({ quest, gameId }: QuestDetailProps) {
 		});
 	};
 
-	return (
-		<div className="space-y-6">
-			<DetailTemplate
-				title={quest.name}
-				icon={ScrollText}
-				iconColor="text-purple-600"
-				editPath="/games/$gameId/quests/$id/edit"
-				gameId={gameId}
-				entityId={quest.id.toString()}
-				fields={fields}
-				onDelete={onDelete}
-				content={
-					quest.content
-						? {
-								title: "Content",
-								value: quest.content,
-							}
-						: undefined
-				}
+	const contentTab = (
+		<div className="space-y-4">
+			<MinimalTiptap
+				content={parseContentForEditor(quest.content)}
+				onChange={onChange}
 			/>
-			<CreateQuestLink gameId={gameId} questId={quest.id.toString()} />
-			<div className="space-y-4">
-				<h2 className="text-lg font-semibold">Links</h2>
-				{linksLoading && (
-					<div className="text-muted-foreground">Loading links...</div>
-				)}
-				{linksError && (
-					<div className="text-destructive">
-						Error loading links: {linksQueryError?.message}
-					</div>
-				)}
-				{!linksLoading && !linksError && linksResponse && (
-					<EntityLinksTable
-						links={flattenLinksForTable(
-							linksResponse as GenericLinksResponse,
-						)}
-						gameId={gameId}
-					/>
-				)}
-			</div>
+			<Button
+				variant={"secondary"}
+				onClick={handleSave}
+				disabled={!isUpdated}
+			>
+				Save
+			</Button>
 		</div>
+	);
+
+	const linksTab = (
+		<div className="space-y-4">
+			<CreateQuestLink gameId={gameId} questId={quest.id.toString()} />
+			<h2 className="text-lg font-semibold">Links</h2>
+			{linksLoading && (
+				<div className="text-muted-foreground">Loading links...</div>
+			)}
+			{linksError && (
+				<div className="text-destructive">
+					Error loading links: {linksQueryError?.message}
+				</div>
+			)}
+			{!linksLoading && !linksError && linksResponse && (
+				<EntityLinksTable
+					links={flattenLinksForTable(
+						linksResponse as GenericLinksResponse,
+					)}
+					gameId={gameId}
+				/>
+			)}
+		</div>
+	);
+
+	return (
+		<DetailTemplate
+			title={quest.name}
+			icon={ScrollText}
+			iconColor="text-purple-600"
+			editPath="/games/$gameId/quests/$id/edit"
+			gameId={gameId}
+			entityId={quest.id.toString()}
+			onDelete={onDelete}
+			tabs={[
+				{ id: "content", label: "Content", content: contentTab },
+				{ id: "links", label: "Links", content: linksTab },
+			]}
+			defaultTab="content"
+		/>
 	);
 }

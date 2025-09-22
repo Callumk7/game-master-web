@@ -1,24 +1,37 @@
-import type { EntityLink } from "~/components/ui/EntityLinksTable";
+import type {
+	LinkedCharacter,
+	LinkedFaction,
+	LinkedLocation,
+	LinkedNote,
+	LinkedQuest,
+} from "~/api/types.gen";
 
-import type { EntityCharacter, EntityFaction, EntityLocation, EntityNote, EntityQuest } from "~/api/types.gen";
+export interface EntityLink {
+	id: string;
+	name: string;
+	type: string;
+	description?: string;
+	content?: string;
+	content_plain_text?: string;
+	relationship_type?: string;
+	is_active?: boolean;
+	description_meta?: string;
+	metadata?: {
+		[key: string]: unknown;
+	};
+	strength?: number;
+	tags?: Array<unknown>;
+}
 
 export interface GenericLinksResponse {
 	data: {
 		links: {
-			characters: EntityCharacter[];
-			factions: EntityFaction[];
-			notes: EntityNote[];
-			locations: EntityLocation[];
-			quests: EntityQuest[];
+			characters: LinkedCharacter[];
+			factions: LinkedFaction[];
+			notes: LinkedNote[];
+			locations: LinkedLocation[];
+			quests: LinkedQuest[];
 		};
-	};
-}
-
-// Deprecated - use GenericLinksResponse instead
-export interface LinksResponse extends GenericLinksResponse {
-	data: GenericLinksResponse["data"] & {
-		character_id: number;
-		character_name: string;
 	};
 }
 
@@ -32,16 +45,25 @@ export function flattenLinksForTable(linksResponse: GenericLinksResponse): Entit
 				id: entity.id,
 				name: entity.name,
 				type: type.slice(0, -1), // Remove 's' from plural (factions -> faction)
+				relationship_type: entity.relationship_type,
 				description: "description" in entity ? entity.description : undefined,
-				content: "content" in entity ? entity.content : undefined,
-				created_at: entity.created_at || "",
-				updated_at: entity.updated_at || "",
+				content:
+					"content" in entity && typeof entity.content === "string"
+						? entity.content
+						: undefined,
+				content_plain_text:
+					"content_plain_text" in entity &&
+					typeof entity.content_plain_text === "string"
+						? entity.content_plain_text
+						: undefined,
+				is_active: entity.is_active,
+				metadata: entity.metadata,
+				strength: entity.strength,
+				tags: entity.tags,
+				description_meta: entity.description_meta,
 			});
 		});
 	});
 
-	return flattenedLinks.sort(
-		(a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
-	);
+	return flattenedLinks;
 }
-

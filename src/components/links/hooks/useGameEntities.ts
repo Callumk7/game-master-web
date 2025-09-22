@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useGetGameLinksQuery } from "~/routes/_auth/games/$gameId/route";
+import { useGetGameLinksQuery } from "~/queries/games";
 import type { EntityOption, EntityType } from "../types";
 
 export function useGameEntities(

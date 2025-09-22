@@ -1,5 +1,7 @@
+import { Link as RouterLink } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
 import type { Location } from "~/api/types.gen";
 import { Button } from "~/components/ui/button";
 import {
@@ -50,15 +52,32 @@ export const createColumns = (gameId: string): ColumnDef<Location>[] => [
 		},
 	},
 	{
-		accessorKey: "description",
-		header: "Description",
-		cell: ({ row }) => {
-			const description = row.getValue("description") as string;
+		accessorKey: "tags",
+		header: "Tags",
+		filterFn: (row, columnId, value) => {
+			if (!value) return true;
+			const tags = row.getValue(columnId) as string[];
 			return (
-				<div className="max-w-[250px] truncate">
-					{description || (
-						<span className="text-muted-foreground italic">
-							No description
+				tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ??
+				false
+			);
+		},
+		cell: ({ row }) => {
+			const tags = row.getValue("tags") as string[];
+			return (
+				<div className="flex flex-wrap gap-1">
+					{tags && tags.length > 0 ? (
+						tags.map((tag) => (
+							<span
+								key={tag}
+								className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+							>
+								{tag}
+							</span>
+						))
+					) : (
+						<span className="text-muted-foreground italic text-xs">
+							No tags
 						</span>
 					)}
 				</div>
@@ -107,16 +126,38 @@ export const createColumns = (gameId: string): ColumnDef<Location>[] => [
 						<DropdownMenuPositioner>
 							<DropdownMenuContent>
 								<DropdownMenuItem
-									onClick={() =>
+									onClick={() => {
 										navigator.clipboard.writeText(
 											location.id.toString(),
-										)
-									}
+										);
+										toast("Location ID copied to clipboard!");
+									}}
 								>
 									Copy location ID
 								</DropdownMenuItem>
-								<DropdownMenuItem>View location</DropdownMenuItem>
-								<DropdownMenuItem>Edit location</DropdownMenuItem>
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/locations/$id"
+											params={{
+												gameId,
+												id: location.id,
+											}}
+										/>
+									}
+								>
+									View location
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/locations/$id/edit"
+											params={{ gameId, id: location.id }}
+										/>
+									}
+								>
+									Edit location
+								</DropdownMenuItem>
 								<DropdownMenuItem variant="destructive">
 									Delete location
 								</DropdownMenuItem>

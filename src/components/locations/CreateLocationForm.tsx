@@ -1,99 +1,135 @@
-import { useParams, useRouteContext } from "@tanstack/react-router";
-import z from "zod";
+import { useNavigate, useParams, useRouteContext } from "@tanstack/react-router";
+import { toast } from "sonner";
 import {
 	createLocationMutation,
 	listLocationsQueryKey,
 } from "~/api/@tanstack/react-query.gen";
-import type { LocationParams } from "~/api/types.gen";
-import { createFormComponent } from "../forms/factory-v2";
-
-const locationSchema = z.object({
-	name: z.string().min(1, "Location name is required"),
-	description: z.string().optional(),
-	type: z.enum([
-		"continent",
-		"nation", 
-		"region",
-		"city",
-		"settlement",
-		"building",
-		"complex",
-	]),
-	parent_id: z.string().optional(),
-});
-
-const locationFields = [
-	{
-		name: "name",
-		label: "Location Name",
-		type: "text" as const,
-		placeholder: "Enter location name",
-		required: true,
-	},
-	{
-		name: "type",
-		label: "Location Type",
-		type: "select" as const,
-		options: [
-			{ value: "continent", label: "Continent" },
-			{ value: "nation", label: "Nation" },
-			{ value: "region", label: "Region" },
-			{ value: "city", label: "City" },
-			{ value: "settlement", label: "Settlement" },
-			{ value: "building", label: "Building" },
-			{ value: "complex", label: "Complex" },
-		],
-		placeholder: "Select location type",
-		required: true,
-	},
-	{
-		name: "description",
-		label: "Location Description",
-		type: "textarea" as const,
-		placeholder: "Describe the location's features, history, and notable characteristics...",
-		required: false,
-		description: "Optional description of the location",
-	},
-	{
-		name: "parent_id",
-		label: "Parent Location ID",
-		type: "text" as const,
-		placeholder: "Enter parent location ID (optional)",
-		required: false,
-		description: "ID of the parent location (e.g., city for a building)",
-	},
-];
+import { Button } from "~/components/ui/button";
+import { useListLocationsQuery } from "~/queries/locations";
+import { useSmartForm } from "../forms/smart-factory";
+import { schemas } from "../forms/type-utils";
+import { ParentLocationSelect } from "./ParentLocationSelect";
 
 export function CreateLocationForm() {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId/locations/new" });
 	const context = useRouteContext({ from: "/_auth/games/$gameId/locations/new" });
+	const navigate = useNavigate();
 
-	const FormWithContext = createFormComponent({
-		mutationOptions: () => {
-			const baseMutation = createLocationMutation({
+	// Fetch existing locations for parent selection
+	const { data: locationsData, isLoading: locationsLoading } =
+		useListLocationsQuery(gameId);
+	const locations = locationsData?.data || [];
+
+	const { form, mutation, renderSmartField } = useSmartForm({
+		mutation: () =>
+			createLocationMutation({
 				path: { game_id: gameId },
-			});
-			return {
-				...baseMutation,
-				onSuccess: () => {
-					context.queryClient.invalidateQueries({
-						queryKey: listLocationsQueryKey({
-							path: { game_id: gameId },
-						}),
-					});
-				},
-			};
-		},
-		schema: locationSchema,
-		fields: locationFields,
-		defaultValues: {
-			name: "",
-			description: "",
-			type: "city",
-			parent_id: undefined,
-		} satisfies LocationParams,
+			}),
+		schema: schemas.location,
 		entityName: "location",
+		onSuccess: async () => {
+			toast("Location created successfully!");
+			await context.queryClient.refetchQueries({
+				queryKey: listLocationsQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			navigate({ to: ".." });
+		},
 	});
 
-	return <FormWithContext />;
+	return (
+		<div className="space-y-6">
+			<form.AppForm>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<div className="space-y-6">
+						{renderSmartField("name")}
+						{renderSmartField("type", {
+							type: "select",
+							label: "Location Type",
+							options: [
+								{ value: "continent", label: "Continent" },
+								{ value: "nation", label: "Nation" },
+								{ value: "region", label: "Region" },
+								{ value: "city", label: "City" },
+								{ value: "settlement", label: "Settlement" },
+								{ value: "building", label: "Building" },
+								{ value: "complex", label: "Complex" },
+							],
+							placeholder: "Select location type",
+						})}
+
+						{/* Custom parent location selector */}
+						<form.AppField name="parent_id">
+							{(field) => (
+								<form.Item>
+									<field.Label>Parent Location</field.Label>
+									<field.Control>
+										{locationsLoading ? (
+											<div className="text-muted-foreground text-sm p-2">
+												Loading locations...
+											</div>
+										) : (
+											<ParentLocationSelect
+												locations={locations}
+												value={field.state.value}
+												onChange={field.handleChange}
+												currentType={form.getFieldValue("type")}
+												placeholder="Select parent location (optional)"
+											/>
+										)}
+									</field.Control>
+									<field.Description>
+										Choose a parent location to create a hierarchical
+										structure. Leave empty for top-level locations.
+									</field.Description>
+									<field.Message />
+								</form.Item>
+							)}
+						</form.AppField>
+
+						{renderSmartField("tags")}
+						{renderSmartField("content")}
+
+						<div className="flex gap-2">
+							<Button type="submit" disabled={mutation.isPending}>
+								{mutation.isPending ? "Creating..." : "Create Location"}
+							</Button>
+
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => {
+									if (
+										form.state.isDirty &&
+										!confirm(
+											"Are you sure? All unsaved changes will be lost.",
+										)
+									) {
+										return;
+									}
+									form.reset();
+								}}
+							>
+								Reset
+							</Button>
+						</div>
+					</div>
+				</form>
+			</form.AppForm>
+
+			{mutation.isError && (
+				<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
+					<p className="text-sm">
+						{(mutation.error as any)?.message || "Something went wrong"}
+					</p>
+				</div>
+			)}
+		</div>
+	);
 }

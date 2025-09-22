@@ -35,6 +35,8 @@ export interface SmartFormOptions<TData, TError, TMutationData extends TDataShap
 	className?: string;
 	/** Custom submit button text */
 	submitText?: string;
+	/** Initial values for form fields (for edit forms) */
+	initialValues?: Record<string, any>;
 }
 
 export interface HookFormOptions<TData, TError, TMutationData extends TDataShape> {
@@ -48,6 +50,8 @@ export interface HookFormOptions<TData, TError, TMutationData extends TDataShape
 	entityName: string;
 	/** Success callback */
 	onSuccess?: (data: TData) => void;
+	/** Initial values for form fields (for edit forms) */
+	initialValues?: Record<string, any>;
 }
 
 // ===================================
@@ -66,13 +70,17 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 	fieldOverrides = {},
 	className = "space-y-6",
 	submitText = "Submit",
+	initialValues,
 }: SmartFormOptions<TData, TError, TMutationData>) {
 	return function SmartFormComponent() {
 		const queryClient = useQueryClient();
 
 		// Auto-generate fields from schema
 		const fields = generateFieldsFromSchema(schema, fieldOverrides);
-		const defaultValues = extractDefaultValues(schema);
+		const defaultValues = processInitialValues(
+			initialValues ?? extractDefaultValues(schema),
+			fields,
+		);
 
 		const mutationInstance = useMutation({
 			...mutation(),
@@ -86,7 +94,20 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 			defaultValues,
 			onSubmit: async ({ value }) => {
 				try {
-					const validatedData = schema.parse(value);
+					// Convert editor objects to strings before validation
+					const processedValue = processFormValuesForSubmission(value, fields);
+					
+					// Auto-extend schema to include _plain_text fields for editor fields
+					const extendedSchema = fields.reduce((acc, field) => {
+						if (field.type === "editor") {
+							return acc.extend({
+								[`${field.name}_plain_text`]: z.string().optional()
+							});
+						}
+						return acc;
+					}, schema);
+					
+					const validatedData = extendedSchema.parse(processedValue);
 					const fullData = {
 						body: { [entityName]: validatedData },
 					} as unknown as Options<TMutationData>;
@@ -139,11 +160,20 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 								name={fieldConfig.name}
 								validators={{
 									onChange: ({ value }) => {
+										// Skip validation for editor fields during editing
+										if (fieldConfig.type === "editor") {
+											return undefined;
+										}
+
 										// Use Zod for real-time validation, but be lenient during typing
 										const fieldSchema = (schema.shape as any)[
 											fieldConfig.name
 										];
-										if (fieldSchema && value !== undefined && value !== "") {
+										if (
+											fieldSchema &&
+											value !== undefined &&
+											value !== ""
+										) {
 											const result = fieldSchema.safeParse(value);
 											if (!result.success) {
 												return (
@@ -260,9 +290,16 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 	schema,
 	entityName,
 	onSuccess,
+	initialValues,
 }: HookFormOptions<TData, TError, TMutationData>) {
 	const queryClient = useQueryClient();
-	const defaultValues = extractDefaultValues(schema);
+
+	// Auto-generate fields from schema (needed for processing)
+	const fields = generateFieldsFromSchema(schema, {});
+	const defaultValues = processInitialValues(
+		initialValues ?? extractDefaultValues(schema),
+		fields,
+	);
 
 	const mutationInstance = useMutation({
 		...mutation(),
@@ -276,7 +313,20 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		defaultValues,
 		onSubmit: async ({ value }) => {
 			try {
-				const validatedData = schema.parse(value);
+				// Convert editor objects to strings before validation
+				const processedValue = processFormValuesForSubmission(value, fields);
+				
+				// Auto-extend schema to include _plain_text fields for editor fields
+				const extendedSchema = fields.reduce((acc, field) => {
+					if (field.type === "editor") {
+						return acc.extend({
+							[`${field.name}_plain_text`]: z.string().optional()
+						});
+					}
+					return acc;
+				}, schema);
+				
+				const validatedData = extendedSchema.parse(processedValue);
 				const fullData = {
 					body: { [entityName]: validatedData },
 				} as unknown as Options<TMutationData>;
@@ -318,15 +368,49 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		 * Render a field with auto-generated configuration
 		 */
 		renderSmartField: (fieldName: string, overrides: Partial<FieldConfig> = {}) => {
-			const fieldConfig: FieldConfig = {
+			// Start with basic field config
+			let fieldConfig: FieldConfig = {
 				name: fieldName,
 				label: fieldName
 					.replace(/([A-Z])/g, " $1")
 					.replace(/^./, (str) => str.toUpperCase()),
 				type: "text",
 				required: !(schema.shape as any)[fieldName]?.isOptional?.(),
-				...overrides,
 			};
+
+			// Apply smart field type detection
+			const zodField = (schema.shape as any)[fieldName];
+			const actualType = zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
+
+			if (actualType instanceof z.ZodString) {
+				// Check for rich text editor fields (complex content)
+				if (
+					fieldName.includes("content") ||
+					fieldName.includes("description") ||
+					fieldName.includes("notes") ||
+					fieldName.includes("body") ||
+					fieldName.includes("message")
+				) {
+					fieldConfig.type = "editor";
+				}
+			} else if (actualType instanceof z.ZodEnum) {
+				fieldConfig.type = "select";
+				const def = actualType._def;
+				const enumValues = def?.values || Object.keys(def?.entries || {});
+				fieldConfig.options = enumValues.map((value: string) => ({
+					value,
+					label: value.charAt(0).toUpperCase() + value.slice(1),
+				}));
+			} else if (actualType instanceof z.ZodArray) {
+				// Check if it's an array of strings, likely for tags
+				const elementType = actualType._def?.element;
+				if (elementType instanceof z.ZodString) {
+					fieldConfig.type = "tags";
+				}
+			}
+
+			// Apply any overrides
+			fieldConfig = { ...fieldConfig, ...overrides };
 
 			return (
 				<form.AppField
@@ -334,6 +418,11 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 					name={fieldName}
 					validators={{
 						onChange: ({ value }) => {
+							// Skip validation for editor fields during editing
+							if (fieldConfig.type === "editor") {
+								return undefined;
+							}
+
 							const fieldSchema = (schema.shape as any)[fieldName];
 							if (fieldSchema && value !== undefined && value !== "") {
 								const result = fieldSchema.safeParse(value);
@@ -374,3 +463,89 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		},
 	};
 }
+
+const processInitialValues = (
+	initialValues: Record<string, any>,
+	fields: FieldConfig[],
+) => {
+	if (!initialValues) return initialValues;
+
+	const processed = { ...initialValues };
+
+	fields.forEach((field) => {
+		if (field.type === "editor" && typeof processed[field.name] === "string") {
+			const stringValue = processed[field.name] as string;
+
+			// Try to parse as JSON first
+			try {
+				const parsed = JSON.parse(stringValue);
+				// Verify it's a valid TipTap document structure
+				if (parsed && typeof parsed === "object" && parsed.type) {
+					processed[field.name] = parsed;
+					return;
+				}
+			} catch {
+				// Not JSON, continue to plain text handling
+			}
+
+			// Handle as plain text - convert to TipTap document structure
+			if (stringValue.trim()) {
+				processed[field.name] = {
+					type: "doc",
+					content: [
+						{
+							type: "paragraph",
+							content: [
+								{
+									type: "text",
+									text: stringValue,
+								},
+							],
+						},
+					],
+				};
+			} else {
+				// Empty string becomes null
+				processed[field.name] = null;
+			}
+		}
+	});
+
+	return processed;
+};
+
+const processFormValuesForSubmission = (
+	value: Record<string, any>,
+	fields: FieldConfig[],
+) => {
+	const processed = { ...value };
+
+	fields.forEach((field) => {
+		const fieldValue = processed[field.name];
+
+		// Handle new editor format with both JSON and text
+		if (
+			field.type === "editor" &&
+			typeof fieldValue === "object" &&
+			fieldValue !== null &&
+			"json" in fieldValue &&
+			"text" in fieldValue
+		) {
+			// Set the main field to the JSON string
+			processed[field.name] = JSON.stringify(fieldValue.json);
+			// Set the plain text field
+			processed[`${field.name}_plain_text`] = fieldValue.text;
+		} else if (
+			field.type === "editor" &&
+			typeof fieldValue === "object" &&
+			fieldValue !== null
+		) {
+			// Backward compatibility: if it's just a TipTap object
+			processed[field.name] = JSON.stringify(fieldValue);
+		}
+		// If it's already a string, leave it as is
+		// If it's null/undefined, leave it as is
+	});
+
+	return processed;
+};

@@ -1,9 +1,9 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import * as React from "react";
 import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterSheet } from "~/components/characters/CreateCharacterSheet";
 import { EntityHeader } from "~/components/EntityHeader";
+import { useListCharactersQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters")({
 	component: RouteComponent,
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useListCharactersQuery(gameId);
-	const characters = data.data || [];
+	const characters = data?.data || [];
 
 	const [sheetOpen, setSheetOpen] = React.useState(false);
 
@@ -39,7 +39,3 @@ function RouteComponent() {
 		</div>
 	);
 }
-
-export const useListCharactersQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listCharactersOptions({ path: { game_id: gameId } }) });
-};

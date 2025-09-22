@@ -1,77 +1,47 @@
 import { useParams, useRouteContext } from "@tanstack/react-router";
-import z from "zod";
+import type { Faction } from "~/api";
 import {
 	getFactionQueryKey,
 	listFactionsQueryKey,
 	updateFactionMutation,
 } from "~/api/@tanstack/react-query.gen";
-import type { FactionParams } from "~/api/types.gen";
-import { createFormComponent } from "../forms/factory-v2";
-
-const factionSchema = z.object({
-	name: z.string().min(1, "Faction name is required"),
-	description: z.string().min(1, "Faction description is required"),
-});
-
-const factionFields = [
-	{
-		name: "name",
-		label: "Faction Name",
-		type: "text" as const,
-		placeholder: "Enter faction name",
-		required: true,
-	},
-	{
-		name: "description",
-		label: "Faction Description",
-		type: "textarea" as const,
-		placeholder: "Describe your faction...",
-		required: true,
-		description: "Optional description of your faction",
-	},
-];
+import { createSmartForm } from "../forms/smart-factory";
+import { schemas } from "../forms/type-utils";
 
 interface EditFactionFormProps {
-	initialData?: Partial<FactionParams>;
+	initialData?: Partial<Faction>;
 }
 
 export function EditFactionForm({ initialData }: EditFactionFormProps) {
 	const { gameId, id } = useParams({ from: "/_auth/games/$gameId/factions/$id/edit" });
 	const context = useRouteContext({ from: "/_auth/games/$gameId/factions/$id/edit" });
 
-	const FormWithContext = createFormComponent({
-		mutationOptions: () => {
-			const baseMutation = updateFactionMutation({
+	const FormWithContext = createSmartForm({
+		mutation: () =>
+			updateFactionMutation({
 				path: {
 					game_id: gameId,
 					id: id,
 				},
+			}),
+
+		onSuccess: async () => {
+			context.queryClient.invalidateQueries({
+				queryKey: listFactionsQueryKey({
+					path: { game_id: gameId },
+				}),
 			});
-			return {
-				...baseMutation,
-				onSuccess: () => {
-					context.queryClient.invalidateQueries({
-						queryKey: listFactionsQueryKey({
-							path: { game_id: gameId },
-						}),
-					});
-					context.queryClient.invalidateQueries({
-						queryKey: getFactionQueryKey({
-							path: {
-								game_id: gameId,
-								id: id,
-							},
-						}),
-					});
-				},
-			};
+			context.queryClient.invalidateQueries({
+				queryKey: getFactionQueryKey({
+					path: {
+						game_id: gameId,
+						id: id,
+					},
+				}),
+			});
 		},
-		schema: factionSchema,
-		fields: factionFields,
-		defaultValues: {
-			name: initialData?.name || "",
-			description: initialData?.description || "",
-		} satisfies FactionParams,
+		schema: schemas.faction,
+		initialValues: initialData,
 		entityName: "faction",
 	});
 

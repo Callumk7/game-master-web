@@ -1,5 +1,7 @@
+import { Link as RouterLink } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
 import type { Note } from "~/api/types.gen";
 import { Button } from "~/components/ui/button";
 import {
@@ -42,14 +44,33 @@ export const createColumns = (gameId: string): ColumnDef<Note>[] => [
 		},
 	},
 	{
-		accessorKey: "content",
-		header: "Content",
-		cell: ({ row }) => {
-			const content = row.getValue("content") as string;
+		accessorKey: "tags",
+		header: "Tags",
+		filterFn: (row, columnId, value) => {
+			if (!value) return true;
+			const tags = row.getValue(columnId) as string[];
 			return (
-				<div className="max-w-[300px] truncate">
-					{content || (
-						<span className="text-muted-foreground italic">No content</span>
+				tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ??
+				false
+			);
+		},
+		cell: ({ row }) => {
+			const tags = row.getValue("tags") as string[];
+			return (
+				<div className="flex flex-wrap gap-1">
+					{tags && tags.length > 0 ? (
+						tags.map((tag) => (
+							<span
+								key={tag}
+								className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+							>
+								{tag}
+							</span>
+						))
+					) : (
+						<span className="text-muted-foreground italic text-xs">
+							No tags
+						</span>
 					)}
 				</div>
 			);
@@ -97,14 +118,36 @@ export const createColumns = (gameId: string): ColumnDef<Note>[] => [
 						<DropdownMenuPositioner>
 							<DropdownMenuContent>
 								<DropdownMenuItem
-									onClick={() =>
-										navigator.clipboard.writeText(note.id.toString())
-									}
+									onClick={() => {
+										navigator.clipboard.writeText(note.id.toString());
+										toast("Note ID copied to clipboard!");
+									}}
 								>
 									Copy note ID
 								</DropdownMenuItem>
-								<DropdownMenuItem>View note</DropdownMenuItem>
-								<DropdownMenuItem>Edit note</DropdownMenuItem>
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/notes/$id"
+											params={{
+												gameId,
+												id: note.id,
+											}}
+										/>
+									}
+								>
+									View note
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/notes/$id/edit"
+											params={{ gameId, id: note.id }}
+										/>
+									}
+								>
+									Edit note
+								</DropdownMenuItem>
 								<DropdownMenuItem variant="destructive">
 									Delete note
 								</DropdownMenuItem>
@@ -116,4 +159,3 @@ export const createColumns = (gameId: string): ColumnDef<Note>[] => [
 		},
 	},
 ];
-

@@ -10,10 +10,16 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
+import type { EntityType } from "~/types";
 import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
+import { FormField } from "../ui/composite/form-field";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 import { useCreateLink } from "./hooks/useCreateLink";
 import { useGameEntities } from "./hooks/useGameEntities";
-import type { CreateLinkFormProps, EntityType } from "./types";
+import type { CreateLinkFormProps } from "./types";
 
 export function CreateLinkForm({
 	gameId,
@@ -25,6 +31,12 @@ export function CreateLinkForm({
 	excludeIds = [],
 }: CreateLinkFormProps) {
 	const [selectedValue, setSelectedValue] = React.useState("");
+	const [relationshipValue, setRelationshipValue] = React.useState<string | undefined>(
+		undefined,
+	);
+	const [active, setActive] = React.useState(false);
+	const [description, setDescription] = React.useState("");
+	const [strength, setStrength] = React.useState(1);
 
 	// Exclude self-referencing
 	const finalExcludeIds = [...excludeIds, `${sourceEntityType}:${sourceEntityId}`];
@@ -57,8 +69,12 @@ export function CreateLinkForm({
 			gameId,
 			sourceType: sourceEntityType,
 			sourceId: sourceEntityId,
-			targetType: targetType as EntityType,
-			targetId,
+			entity_type: targetType as EntityType,
+			entity_id: targetId,
+			relationship_type: relationshipValue,
+			is_active: active,
+			description,
+			strength,
 		});
 	};
 
@@ -73,50 +89,84 @@ export function CreateLinkForm({
 	const hasEntities = Object.values(entities).some((group) => group.length > 0);
 
 	return (
-		<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-			<Select
-				disabled={isLoading || !hasEntities}
-				value={selectedValue}
-				onValueChange={(value) => setSelectedValue(value as string)}
-			>
-				<SelectTrigger className="w-full max-w-xs">
-					<SelectValue
-						placeholder={
-							isLoading
-								? "Loading entities..."
-								: !hasEntities
-									? "No entities available"
-									: "Select an entity to link"
-						}
-					/>
-				</SelectTrigger>
-				<SelectPositioner alignItemWithTrigger>
-					<SelectContent>
-						{Object.entries(entities).map(
-							([type, items]) =>
-								items.length > 0 && (
-									<SelectGroup key={type}>
-										<SelectLabel className="capitalize">
-											{type}
-										</SelectLabel>
-										{items.map((item) => (
-											<SelectItem
-												key={item.value}
-												value={item.value}
-											>
-												{item.label}
-											</SelectItem>
-										))}
-									</SelectGroup>
-								),
-						)}
-					</SelectContent>
-				</SelectPositioner>
-			</Select>
+		<form onSubmit={handleSubmit}>
+			<div className="flex flex-col gap-4">
+				<div className="space-y-1">
+					<Label>Target Link</Label>
+					<Select
+						disabled={isLoading || !hasEntities}
+						value={selectedValue}
+						onValueChange={(value) => setSelectedValue(value as string)}
+					>
+						<SelectTrigger className="w-full">
+							<SelectValue
+								placeholder={
+									isLoading
+										? "Loading entities..."
+										: !hasEntities
+											? "No entities available"
+											: "Select an entity to link"
+								}
+							/>
+						</SelectTrigger>
+						<SelectPositioner alignItemWithTrigger>
+							<SelectContent>
+								{Object.entries(entities).map(
+									([type, items]) =>
+										items.length > 0 && (
+											<SelectGroup key={type}>
+												<SelectLabel className="capitalize">
+													{type}
+												</SelectLabel>
+												{items.map((item) => (
+													<SelectItem
+														key={item.value}
+														value={item.value}
+													>
+														{item.label}
+													</SelectItem>
+												))}
+											</SelectGroup>
+										),
+								)}
+							</SelectContent>
+						</SelectPositioner>
+					</Select>
+				</div>
 
-			<Button type="submit" disabled={!selectedValue || createLink.isPending}>
-				{createLink.isPending ? "Creating Link..." : "Create Link"}
-			</Button>
+				<div className="flex items-center gap-3">
+					<Checkbox id="active" checked={active} onCheckedChange={setActive} />
+					<Label htmlFor="active">Link Active?</Label>
+				</div>
+
+				<FormField
+					label="Relationship"
+					id="relationship"
+					value={relationshipValue}
+					onInput={(e) => setRelationshipValue(e.currentTarget.value)}
+				/>
+
+				<FormField
+					type="number"
+					label="Strength"
+					id="strength"
+					value={strength}
+					onInput={(e) => setStrength(Number(e.currentTarget.value))}
+				/>
+
+				<div className="space-y-1">
+					<Label htmlFor="description">Description of connection</Label>
+					<Textarea
+						id="description"
+						value={description}
+						onInput={(e) => setDescription(e.currentTarget.value)}
+					/>
+				</div>
+
+				<Button type="submit" disabled={!selectedValue || createLink.isPending}>
+					{createLink.isPending ? "Creating Link..." : "Create Link"}
+				</Button>
+			</div>
 		</form>
 	);
 }

@@ -9,7 +9,7 @@ export const schemas = {
 			name: z.string().min(1, "Name is required"),
 			class: z.string().min(1, "Class is required"),
 			level: z.number().min(1).max(20),
-			description: z.string().optional(),
+			content: z.string().optional(),
 			image_url: z.url().optional().or(z.literal("")),
 		}),
 	}),
@@ -18,7 +18,7 @@ export const schemas = {
 	faction: z.object({
 		faction: z.object({
 			name: z.string().min(1, "Name is required"),
-			description: z.string().min(1, "Description is required"),
+			content: z.string().min(1, "Content is required"),
 		}),
 	}),
 
@@ -35,7 +35,7 @@ export const schemas = {
 				"building",
 				"complex",
 			]),
-			description: z.string().optional(),
+			content: z.string().optional(),
 			parent_id: z.string().optional(),
 		}),
 	}),
@@ -60,7 +60,7 @@ export const schemas = {
 	game: z.object({
 		game: z.object({
 			name: z.string().min(1, "Name is required"),
-			description: z.string().optional(),
+			content: z.string().optional(),
 			setting: z.string().optional(),
 		}),
 	}),
@@ -100,8 +100,8 @@ export const fieldConfigs = {
 			required: true,
 		},
 		{
-			name: "character.description",
-			label: "Description",
+			name: "character.content",
+			label: "Content",
 			type: "textarea" as const,
 		},
 		{ name: "character.image_url", label: "Image URL", type: "text" as const },
@@ -110,8 +110,8 @@ export const fieldConfigs = {
 	faction: [
 		{ name: "faction.name", label: "Name", type: "text" as const, required: true },
 		{
-			name: "faction.description",
-			label: "Description",
+			name: "faction.content",
+			label: "Content",
 			type: "textarea" as const,
 			required: true,
 		},
@@ -134,7 +134,7 @@ export const fieldConfigs = {
 				{ value: "complex", label: "Complex" },
 			],
 		},
-		{ name: "location.description", label: "Description", type: "textarea" as const },
+		{ name: "location.content", label: "Content", type: "textarea" as const },
 		{
 			name: "location.parent_id",
 			label: "Parent Location ID",
@@ -164,7 +164,7 @@ export const fieldConfigs = {
 
 	game: [
 		{ name: "game.name", label: "Name", type: "text" as const, required: true },
-		{ name: "game.description", label: "Description", type: "textarea" as const },
+		{ name: "game.content", label: "Content", type: "textarea" as const },
 		{ name: "game.setting", label: "Setting", type: "text" as const },
 	],
 

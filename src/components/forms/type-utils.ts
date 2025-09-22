@@ -73,13 +73,15 @@ export function generateFieldsFromSchema<T extends z.ZodRawShape>(
 				field.type = "text";
 				field.placeholder = "https://example.com";
 			}
-			// Check for long strings (description, etc.)
+			// Check for rich text editor fields (complex content)
 			else if (
-				key.includes("description") ||
 				key.includes("content") ||
-				key.includes("notes")
+				key.includes("description") ||
+				key.includes("notes") ||
+				key.includes("body") ||
+				key.includes("message")
 			) {
-				field.type = "textarea";
+				field.type = "editor";
 			}
 			// Check for password fields
 			else if (key.includes("password")) {
@@ -166,39 +168,43 @@ export function createSchemaFor() {
 				.number()
 				.min(1, "Level must be at least 1")
 				.max(100, "Level cannot exceed 100"),
-			description: z.string().optional(),
 			image_url: z.union([z.url(), z.literal("")]).optional(),
 			tags: z.array(z.string()).optional(),
+			content: z.string().optional(),
 		}),
 
 		faction: z.object({
 			name: z.string().min(1, "Faction name is required"),
-			description: z.string().optional(),
 			tags: z.array(z.string()).optional(),
+			content: z.string(),
 		}),
 
 		// Add more schemas as needed
 		game: z.object({
 			name: z.string().min(1, "Game name is required"),
-			description: z.string().optional(),
 			setting: z.string().optional(),
+			content: z.string().optional(),
 		}),
 
 		note: z.object({
 			name: z.string().min(1, "Note name is required"),
-			content: z.string().min(1, "Note content is required"),
 			tags: z.array(z.string()).optional(),
+			parent_id: z.string().optional(),
+			parent_type: z
+				.enum(["note", "quest", "location", "character", "faction"])
+				.optional(),
+			content: z.string().min(1, "Note content is required"),
 		}),
 
 		quest: z.object({
 			name: z.string().min(1, "Quest name is required"),
-			content: z.string().min(1, "Quest content is required"),
+			parent_id: z.string().optional(),
 			tags: z.array(z.string()).optional(),
+			content: z.string().min(1, "Quest content is required"),
 		}),
 
 		location: z.object({
 			name: z.string().min(1, "Location name is required"),
-			description: z.string().optional(),
 			type: z.enum([
 				"continent",
 				"nation",
@@ -210,6 +216,7 @@ export function createSchemaFor() {
 			]),
 			parent_id: z.string().optional(),
 			tags: z.array(z.string()).optional(),
+			content: z.string().optional(),
 		}),
 	};
 }

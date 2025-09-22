@@ -22,8 +22,8 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { EntityLinkButton } from "~/components/ui/EntityLinkButton";
 import { Input } from "~/components/ui/input";
-import { Link } from "~/components/ui/link";
 import {
 	Table,
 	TableBody,
@@ -32,16 +32,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
-
-export interface EntityLink {
-	id: string;
-	name: string;
-	type: string;
-	description?: string;
-	content?: string;
-	created_at: string;
-	updated_at: string;
-}
+import type { EntityLink } from "~/utils/linkHelpers";
+import { Link } from "./link";
 
 interface EntityLinksTableProps {
 	links: EntityLink[];
@@ -53,6 +45,7 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 	const [searchQuery, setSearchQuery] = React.useState("");
+	const [typeFilter, setTypeFilter] = React.useState<string>("all");
 
 	const columns: ColumnDef<EntityLink>[] = [
 		{
@@ -70,7 +63,6 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 					</Link>
 				);
 			},
-			filterFn: "includesString",
 		},
 		{
 			accessorKey: "type",
@@ -82,25 +74,35 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			),
 		},
 		{
-			accessorKey: "description",
+			accessorKey: "description_meta",
 			header: "Description",
 			cell: ({ row }) => {
-				const description = row.getValue("description") as string;
-				const content = row.original.content;
-				const text = description || content;
+				return <div className="text-sm">{row.getValue("description_meta")}</div>;
+			},
+		},
+		{
+			accessorKey: "relationship_type",
+			header: "Relationship",
+			cell: ({ row }) => {
+				return <div className="text-sm">{row.getValue("relationship_type")}</div>;
+			},
+		},
+		{
+			accessorKey: "is_active",
+			header: "Active",
+			cell: ({ row }) => {
 				return (
-					<div className="max-w-md truncate text-muted-foreground">
-						{text || "No description"}
+					<div className="text-sm">
+						{row.getValue("is_active") ? "Yes" : "No"}
 					</div>
 				);
 			},
 		},
 		{
-			accessorKey: "updated_at",
-			header: "Last Updated",
+			id: "actions",
+			enableHiding: false,
 			cell: ({ row }) => {
-				const date = new Date(row.getValue("updated_at"));
-				return <div className="text-sm">{date.toLocaleDateString()}</div>;
+				return <EntityLinkButton entity={row.original} />;
 			},
 		},
 	];
@@ -127,19 +129,60 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 		},
 	});
 
+	const uniqueTypes = React.useMemo(() => {
+		const types = [...new Set(links.map((link) => link.type))];
+		return types.sort();
+	}, [links]);
+
 	React.useEffect(() => {
 		table.getColumn("name")?.setFilterValue(searchQuery);
 	}, [searchQuery, table]);
 
+	React.useEffect(() => {
+		table.getColumn("type")?.setFilterValue(typeFilter === "all" ? "" : typeFilter);
+	}, [typeFilter, table]);
+
 	return (
 		<div className="w-full">
-			<div className="flex items-center py-4">
+			<div className="flex items-center gap-4 py-4">
 				<Input
 					placeholder="Filter links..."
 					value={searchQuery}
 					onChange={(event) => setSearchQuery(event.target.value)}
 					className="max-w-sm"
 				/>
+				<DropdownMenu>
+					<DropdownMenuTrigger
+						render={
+							<Button variant="outline">
+								Type: {typeFilter === "all" ? "All" : typeFilter}
+								<ChevronDown className="ml-2 h-4 w-4" />
+							</Button>
+						}
+					></DropdownMenuTrigger>
+					<DropdownMenuPortal>
+						<DropdownMenuPositioner>
+							<DropdownMenuContent>
+								<DropdownMenuCheckboxItem
+									checked={typeFilter === "all"}
+									onCheckedChange={() => setTypeFilter("all")}
+								>
+									All Types
+								</DropdownMenuCheckboxItem>
+								{uniqueTypes.map((type) => (
+									<DropdownMenuCheckboxItem
+										key={type}
+										checked={typeFilter === type}
+										onCheckedChange={() => setTypeFilter(type)}
+										className="capitalize"
+									>
+										{type}
+									</DropdownMenuCheckboxItem>
+								))}
+							</DropdownMenuContent>
+						</DropdownMenuPositioner>
+					</DropdownMenuPortal>
+				</DropdownMenu>
 				<DropdownMenu>
 					<DropdownMenuTrigger
 						render={

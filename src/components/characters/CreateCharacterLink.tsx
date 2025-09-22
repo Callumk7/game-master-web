@@ -1,4 +1,11 @@
 import { CreateLinkForm } from "../links";
+import { Button } from "../ui/button";
+import {
+	Popover,
+	PopoverContent,
+	PopoverPositioner,
+	PopoverTrigger,
+} from "../ui/popover";
 
 interface CreateCharacterLinkProps {
 	gameId: string;
@@ -7,11 +14,17 @@ interface CreateCharacterLinkProps {
 
 export function CreateCharacterLink({ gameId, characterId }: CreateCharacterLinkProps) {
 	return (
-		<CreateLinkForm
-			gameId={gameId}
-			sourceEntityType="character"
-			sourceEntityId={characterId}
-			excludeTypes={["character"]} // Prevent character-to-character links if desired
-		/>
+		<Popover>
+			<PopoverTrigger render={<Button />}>Create Link</PopoverTrigger>
+			<PopoverPositioner align="start">
+				<PopoverContent>
+					<CreateLinkForm
+						gameId={gameId}
+						sourceEntityType="character"
+						sourceEntityId={characterId}
+					/>
+				</PopoverContent>
+			</PopoverPositioner>
+		</Popover>
 	);
 }

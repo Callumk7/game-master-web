@@ -9,6 +9,7 @@ import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
+import { TagInput } from "~/components/ui/composite/tag-input";
 import { createFormHook } from "~/components/ui/form-tanstack";
 import { Input } from "~/components/ui/input";
 import {
@@ -20,7 +21,7 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { TagInput } from "~/components/ui/composite/tag-input";
+import { MinimalTiptap } from "../ui/shadcn-io/minimal-tiptap";
 
 // Create form hook outside component
 const { useAppForm } = createFormHook();
@@ -51,6 +52,7 @@ export interface FieldConfig {
 		| "text"
 		| "number"
 		| "textarea"
+		| "editor"
 		| "select"
 		| "checkbox"
 		| "email"
@@ -88,11 +90,11 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 	field,
 	fieldApi,
 }) => {
-	const hasErrors = fieldApi.state.meta.errors?.length > 0;
+	const hasErrors = fieldApi.state?.meta?.errors?.length > 0;
 
 	const commonProps = {
 		name: fieldApi.name,
-		value: fieldApi.state.value ?? "",
+		value: fieldApi.state?.value ?? "",
 		onBlur: fieldApi.handleBlur,
 		disabled: field.disabled,
 		required: field.required,
@@ -111,10 +113,21 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 				/>
 			);
 
+		case "editor":
+			return (
+				<MinimalTiptap
+					content={fieldApi.state?.value ?? null}
+					onChange={fieldApi.handleChange}
+					placeholder={field.placeholder}
+					editable={!field.disabled}
+					className={field.className}
+				/>
+			);
+
 		case "select":
 			return (
 				<Select
-					value={fieldApi.state.value ?? ""}
+					value={fieldApi.state?.value ?? ""}
 					onValueChange={fieldApi.handleChange}
 					disabled={field.disabled}
 					required={field.required}
@@ -139,7 +152,7 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 		case "checkbox":
 			return (
 				<Checkbox
-					checked={fieldApi.state.value ?? false}
+					checked={fieldApi.state?.value ?? false}
 					onCheckedChange={(checked) => fieldApi.handleChange(checked)}
 					disabled={field.disabled}
 					required={field.required}
@@ -182,7 +195,7 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 		case "tags":
 			return (
 				<TagInput
-					value={fieldApi.state.value ?? []}
+					value={fieldApi.state?.value ?? []}
 					onChange={fieldApi.handleChange}
 					placeholder={field.placeholder}
 					disabled={field.disabled}

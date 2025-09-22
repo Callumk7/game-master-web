@@ -1,7 +1,11 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { getCharacterOptions } from "~/api/@tanstack/react-query.gen";
-import { CharacterDetail } from "~/components/characters/CharacterDetail";
+import {
+	getCharacterNotesTreeOptions,
+	getCharacterOptions,
+} from "~/api/@tanstack/react-query.gen";
+import { CharacterDetail } from "~/components/characters/character-detail";
+import { useAddTab } from "~/components/entity-tabs";
+import { useCharacterQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 	component: RouteComponent,
@@ -11,23 +15,33 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 				path: { game_id: params.gameId, id: params.id },
 			}),
 		);
+		context.queryClient.ensureQueryData(
+			getCharacterNotesTreeOptions({
+				path: { game_id: params.gameId, id: params.id },
+			}),
+		);
 	},
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data } = useCharacterQuery(gameId, id);
+
+	useAddTab({
+		id,
+		label: data?.data?.name ?? "Character",
+		path: Route.fullPath,
+		params,
+	});
 
 	if (!data?.data) {
 		return <div>Character not found</div>;
 	}
 
-	return <CharacterDetail character={data.data} gameId={gameId} />;
+	return (
+		<div>
+			<CharacterDetail character={data.data} gameId={gameId} />
+		</div>
+	);
 }
-
-export const useCharacterQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getCharacterOptions({ path: { game_id: gameId, id } }),
-	});
-};
-

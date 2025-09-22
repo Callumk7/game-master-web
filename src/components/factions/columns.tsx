@@ -1,5 +1,7 @@
+import { Link as RouterLink } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
 import type { Faction } from "~/api/types.gen";
 import { Button } from "~/components/ui/button";
 import {
@@ -11,6 +13,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Link } from "../ui/link";
+import { useDeleteFactionMutation } from "~/queries/factions";
 
 export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 	{
@@ -42,15 +45,32 @@ export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 		},
 	},
 	{
-		accessorKey: "description",
-		header: "Description",
-		cell: ({ row }) => {
-			const description = row.getValue("description") as string;
+		accessorKey: "tags",
+		header: "Tags",
+		filterFn: (row, columnId, value) => {
+			if (!value) return true;
+			const tags = row.getValue(columnId) as string[];
 			return (
-				<div className="max-w-[300px] truncate">
-					{description || (
-						<span className="text-muted-foreground italic">
-							No description
+				tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ??
+				false
+			);
+		},
+		cell: ({ row }) => {
+			const tags = row.getValue("tags") as string[];
+			return (
+				<div className="flex flex-wrap gap-1">
+					{tags && tags.length > 0 ? (
+						tags.map((tag) => (
+							<span
+								key={tag}
+								className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+							>
+								{tag}
+							</span>
+						))
+					) : (
+						<span className="text-muted-foreground italic text-xs">
+							No tags
 						</span>
 					)}
 				</div>
@@ -84,6 +104,7 @@ export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 		enableHiding: false,
 		cell: ({ row }) => {
 			const faction = row.original;
+			const deleteFaction = useDeleteFactionMutation(gameId);
 
 			return (
 				<DropdownMenu>
@@ -99,17 +120,46 @@ export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 						<DropdownMenuPositioner>
 							<DropdownMenuContent>
 								<DropdownMenuItem
-									onClick={() =>
+									onClick={() => {
 										navigator.clipboard.writeText(
 											faction.id.toString(),
-										)
-									}
+										);
+										toast("Faction ID copied to clipboard!");
+									}}
 								>
 									Copy faction ID
 								</DropdownMenuItem>
-								<DropdownMenuItem>View faction</DropdownMenuItem>
-								<DropdownMenuItem>Edit faction</DropdownMenuItem>
-								<DropdownMenuItem variant="destructive">
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/factions/$id"
+											params={{
+												gameId,
+												id: faction.id,
+											}}
+										/>
+									}
+								>
+									View faction
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/factions/$id/edit"
+											params={{ gameId, id: faction.id }}
+										/>
+									}
+								>
+									Edit faction
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={() => {
+										deleteFaction.mutate({
+											path: { game_id: gameId, id: faction.id },
+										});
+									}}
+								>
 									Delete faction
 								</DropdownMenuItem>
 							</DropdownMenuContent>

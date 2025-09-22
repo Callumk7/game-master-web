@@ -1,54 +1,36 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
-import { EntityHeader } from "~/components/EntityHeader";
 import { createColumns } from "~/components/factions/columns";
 import { FactionsTable } from "~/components/factions/FactionsTable";
+import { useListFactionsQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 	component: RouteComponent,
-	loader: ({ params, context }) => {
-		context.queryClient.ensureQueryData(
-			listFactionsOptions({ path: { game_id: params.gameId } }),
-		);
-	},
 });
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data } = useListFactionsQuery(gameId);
+	const { data, isLoading } = useListFactionsQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [tagFilter, setTagFilter] = useState("");
 
-	const factions = data.data || [];
+	const factions = data?.data || [];
+
+	if (isLoading) {
+		return <div className="text-muted-foreground">Loading factions...</div>;
+	}
 	const columns = createColumns(gameId);
-
-	const navigate = Route.useNavigate();
-
-	const handleCreateNew = () => {
-		navigate({ to: "new" });
-	};
 
 	return (
 		<div className="space-y-4">
-			<EntityHeader
-				icon="⚔"
-				title="Factions"
-				count={factions.length}
-				entityType="faction"
-				onCreateNew={handleCreateNew}
-			/>
-
 			<FactionsTable
 				columns={columns}
 				data={factions}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}
+				tagFilter={tagFilter}
+				onTagFilterChange={setTagFilter}
 			/>
 		</div>
 	);
 }
-
-const useListFactionsQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listFactionsOptions({ path: { game_id: gameId } }) });
-};

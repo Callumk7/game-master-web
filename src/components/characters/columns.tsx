@@ -1,5 +1,7 @@
+import { Link as RouterLink } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
 import type { Character } from "~/api/types.gen";
 import { Button } from "~/components/ui/button";
 import {
@@ -10,6 +12,7 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { useDeleteCharacterMutation } from "~/queries/characters";
 import { Link } from "../ui/link";
 
 export const createColumns = (gameId: string): ColumnDef<Character>[] => [
@@ -62,15 +65,44 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 		cell: ({ row }) => <div className="text-center">{row.getValue("level")}</div>,
 	},
 	{
-		accessorKey: "description",
-		header: "Description",
+		accessorKey: "content_plain_text",
+		header: "Content",
 		cell: ({ row }) => {
-			const description = row.getValue("description") as string;
+			const content = row.getValue("content_plain_text") as string;
 			return (
-				<div className="max-w-[200px] truncate">
-					{description || (
-						<span className="text-muted-foreground italic">
-							No description
+				<div className="max-w-xs truncate text-sm text-muted-foreground">
+					{content || <span className="italic">No content</span>}
+				</div>
+			);
+		},
+	},
+	{
+		accessorKey: "tags",
+		header: "Tags",
+		filterFn: (row, columnId, value) => {
+			if (!value) return true;
+			const tags = row.getValue(columnId) as string[];
+			return (
+				tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ??
+				false
+			);
+		},
+		cell: ({ row }) => {
+			const tags = row.getValue("tags") as string[];
+			return (
+				<div className="flex flex-wrap gap-1">
+					{tags && tags.length > 0 ? (
+						tags.map((tag) => (
+							<span
+								key={tag}
+								className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+							>
+								{tag}
+							</span>
+						))
+					) : (
+						<span className="text-muted-foreground italic text-xs">
+							No tags
 						</span>
 					)}
 				</div>
@@ -104,6 +136,7 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 		enableHiding: false,
 		cell: ({ row }) => {
 			const character = row.original;
+			const deleteCharacter = useDeleteCharacterMutation(gameId);
 
 			return (
 				<DropdownMenu>
@@ -119,17 +152,46 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 						<DropdownMenuPositioner>
 							<DropdownMenuContent>
 								<DropdownMenuItem
-									onClick={() =>
+									onClick={() => {
 										navigator.clipboard.writeText(
 											character.id.toString(),
-										)
-									}
+										);
+										toast("Character ID copied to clipboard!");
+									}}
 								>
 									Copy character ID
 								</DropdownMenuItem>
-								<DropdownMenuItem>View character</DropdownMenuItem>
-								<DropdownMenuItem>Edit character</DropdownMenuItem>
-								<DropdownMenuItem variant="destructive">
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/characters/$id"
+											params={{
+												gameId,
+												id: character.id,
+											}}
+										/>
+									}
+								>
+									View character
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									render={
+										<RouterLink
+											to="/games/$gameId/characters/$id/edit"
+											params={{ gameId, id: character.id }}
+										/>
+									}
+								>
+									Edit character
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={() => {
+										deleteCharacter.mutate({
+											path: { id: character.id, game_id: gameId },
+										});
+									}}
+								>
 									Delete character
 								</DropdownMenuItem>
 							</DropdownMenuContent>

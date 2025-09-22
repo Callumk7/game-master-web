@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getLocationOptions } from "~/api/@tanstack/react-query.gen";
-import { LocationDetail } from "~/components/locations/LocationDetail";
+import { LocationDetail } from "~/components/locations/location-detail";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/")({
 	component: RouteComponent,

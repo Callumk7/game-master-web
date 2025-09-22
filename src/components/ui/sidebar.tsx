@@ -1,19 +1,19 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { PanelLeft } from "lucide-react";
-import { useIsMobile } from "~/hooks/useMobile";
-import { cn } from "~/utils/cn";
-import { Sheet, SheetContent } from "../ui/sheet";
-import { Button } from "../ui/button";
 import { useRender } from "@base-ui-components/react/use-render";
 import { createLink } from "@tanstack/react-router";
+import { cva, type VariantProps } from "class-variance-authority";
+import { PanelLeft } from "lucide-react";
+import * as React from "react";
+import { useIsMobile } from "~/hooks/useMobile";
+import { cn } from "~/utils/cn";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent } from "../ui/sheet";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
-const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+const SIDEBAR_KEYBOARD_SHORTCUT = "/";
 
 type SidebarContext = {
 	state: "open" | "closed";
@@ -66,6 +66,7 @@ const SidebarProvider = ({
 			}
 
 			// This sets the cookie to keep the sidebar state.
+			// biome-ignore lint/suspicious/noDocumentCookie: This is fine, a cookie is used for persistence
 			document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
 		},
 		[setOpenProp, open],
@@ -74,7 +75,7 @@ const SidebarProvider = ({
 	// Helper to toggle the sidebar.
 	const toggleSidebar = React.useCallback(() => {
 		return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
-	}, [isMobile, setOpen, setOpenMobile]);
+	}, [isMobile, setOpen]);
 
 	// Adds a keyboard shortcut to toggle the sidebar.
 	React.useEffect(() => {
@@ -106,7 +107,7 @@ const SidebarProvider = ({
 			setOpenMobile,
 			toggleSidebar,
 		}),
-		[state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+		[state, open, setOpen, isMobile, openMobile, toggleSidebar],
 	);
 
 	return (
@@ -364,6 +365,147 @@ SidebarMenuButton.displayName = "SidebarMenuButton";
 
 const SidebarMenuLink = createLink(SidebarMenuButton);
 
+const SidebarGroup = ({ className, ...props }: React.ComponentProps<"div">) => {
+	return (
+		<div
+			data-sidebar="group"
+			className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+			{...props}
+		/>
+	);
+};
+
+const SidebarMenuAction = ({
+	className,
+	showOnHover = false,
+	ref,
+	...props
+}: React.ComponentProps<"button"> & {
+	showOnHover?: boolean;
+}) => {
+	return (
+		<button
+			ref={ref}
+			data-sidebar="menu-action"
+			className={cn(
+				"absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 peer-hover/menu-button:text-sidebar-accent-foreground [&>svg]:size-4 [&>svg]:shrink-0",
+				// Increases the hit area of the button on mobile.
+				"after:absolute after:-inset-2 after:md:hidden",
+				"peer-data-[size=sm]/menu-button:top-1",
+				"peer-data-[size=default]/menu-button:top-1.5",
+				"peer-data-[size=lg]/menu-button:top-2.5",
+				"group-data-[collapsible=icon]:hidden",
+				showOnHover &&
+					"group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
+				className,
+			)}
+			{...props}
+		/>
+	);
+};
+SidebarMenuAction.displayName = "SidebarMenuAction";
+
+const SidebarGroupLabel = ({ className, ...props }: React.ComponentProps<"div">) => {
+	return (
+		<div
+			data-sidebar="group-label"
+			className={cn(
+				"flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+				"group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
+				className,
+			)}
+			{...props}
+		/>
+	);
+};
+
+const SidebarGroupAction = ({ className, ...props }: React.ComponentProps<"button">) => {
+	return (
+		<button
+			data-sidebar="group-action"
+			className={cn(
+				"absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+				// Increases the hit area of the button on mobile.
+				"after:absolute after:-inset-2 after:md:hidden",
+				"group-data-[collapsible=icon]:hidden",
+				className,
+			)}
+			{...props}
+		/>
+	);
+};
+
+const SidebarGroupContent = ({ className, ...props }: React.ComponentProps<"div">) => (
+	<div
+		data-sidebar="group-content"
+		className={cn("w-full text-sm", className)}
+		{...props}
+	/>
+);
+
+const SidebarMenuBadge = ({ className, ...props }: React.ComponentProps<"div">) => (
+	<div
+		data-sidebar="menu-badge"
+		className={cn(
+			"pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums text-sidebar-foreground",
+			"peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
+			"peer-data-[size=sm]/menu-button:top-1",
+			"peer-data-[size=default]/menu-button:top-1.5",
+			"peer-data-[size=lg]/menu-button:top-2.5",
+			"group-data-[collapsible=icon]:hidden",
+			className,
+		)}
+		{...props}
+	/>
+);
+SidebarMenuBadge.displayName = "SidebarMenuBadge";
+
+const SidebarMenuSub = ({ className, ...props }: React.ComponentProps<"ul">) => (
+	<ul
+		data-sidebar="menu-sub"
+		className={cn(
+			"mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5",
+			"group-data-[collapsible=icon]:hidden",
+			className,
+		)}
+		{...props}
+	/>
+);
+SidebarMenuSub.displayName = "SidebarMenuSub";
+
+const SidebarMenuSubItem = ({ ...props }: React.ComponentProps<"li">) => (
+	<li {...props} />
+);
+SidebarMenuSubItem.displayName = "SidebarMenuSubItem";
+
+const SidebarMenuSubButton = ({
+	size = "md",
+	isActive,
+	className,
+	...props
+}: React.ComponentProps<"a"> & {
+	size?: "sm" | "md";
+	isActive?: boolean;
+}) => {
+	return (
+		<a
+			data-sidebar="menu-sub-button"
+			data-size={size}
+			data-active={isActive}
+			className={cn(
+				"flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
+				"data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
+				size === "sm" && "text-xs",
+				size === "md" && "text-sm",
+				"group-data-[collapsible=icon]:hidden",
+				className,
+			)}
+			{...props}
+		/>
+	);
+};
+SidebarMenuSubButton.displayName = "SidebarMenuSubButton";
+
 export {
 	Sidebar,
 	SidebarContent,
@@ -372,7 +514,16 @@ export {
 	SidebarMenuButton,
 	SidebarMenuLink,
 	SidebarMenuItem,
+	SidebarMenuAction,
 	SidebarProvider,
 	SidebarTrigger,
+	SidebarGroup,
+	SidebarGroupLabel,
+	SidebarGroupAction,
+	SidebarGroupContent,
+	SidebarMenuBadge,
+	SidebarMenuSub,
+	SidebarMenuSubItem,
+	SidebarMenuSubButton,
 	useSidebar,
 };

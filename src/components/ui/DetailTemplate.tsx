@@ -1,12 +1,19 @@
-import { Link } from "@tanstack/react-router";
 import { Edit, type LucideIcon, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Link } from "./link";
 
 interface DetailField {
 	label: string;
 	value: ReactNode;
+}
+
+interface TabContent {
+	id: string;
+	label: string;
+	content: ReactNode;
 }
 
 interface DetailTemplateProps {
@@ -19,11 +26,13 @@ interface DetailTemplateProps {
 	entityId: string;
 	imageUrl?: string;
 	imageAlt?: string;
-	fields: DetailField[];
+	fields?: DetailField[];
 	content?: {
 		title: string;
-		value: string;
+		value: ReactNode;
 	};
+	tabs?: TabContent[];
+	defaultTab?: string;
 	onDelete?: () => void;
 }
 
@@ -39,8 +48,35 @@ export function DetailTemplate({
 	imageAlt,
 	fields,
 	content,
+	tabs,
+	defaultTab,
 	onDelete,
 }: DetailTemplateProps) {
+	if (tabs) {
+		return (
+			<div className="space-y-6 mt-4">
+				<h2 className="font-bold text-3xl">{title}</h2>
+
+				{badges && <div className="flex justify-between">{badges}</div>}
+
+				<Tabs defaultValue={defaultTab || tabs[0]?.id}>
+					<TabsList>
+						{tabs.map((tab) => (
+							<TabsTrigger key={tab.id} value={tab.id}>
+								{tab.label}
+							</TabsTrigger>
+						))}
+					</TabsList>
+					{tabs.map((tab) => (
+						<TabsContent key={tab.id} value={tab.id}>
+							{tab.content}
+						</TabsContent>
+					))}
+				</Tabs>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
@@ -82,24 +118,28 @@ export function DetailTemplate({
 			)}
 
 			<div className="grid gap-6">
-				<Card className="p-6">
-					<h2 className="text-xl font-semibold mb-4">Details</h2>
-					<dl className="grid gap-4 sm:grid-cols-2">
-						{fields.map((field) => (
-							<div key={field.label}>
-								<dt className="text-sm font-medium text-muted-foreground">
-									{field.label}
-								</dt>
-								<dd className="text-base">{field.value}</dd>
-							</div>
-						))}
-					</dl>
-				</Card>
+				{fields && (
+					<Card className="p-6">
+						<h2 className="text-xl font-semibold mb-4">Details</h2>
+						<dl className="grid gap-4 sm:grid-cols-2">
+							{fields.map((field) => (
+								<div key={field.label}>
+									<dt className="text-sm font-medium text-muted-foreground">
+										{field.label}
+									</dt>
+									<dd className="text-base">{field.value}</dd>
+								</div>
+							))}
+						</dl>
+					</Card>
+				)}
 
 				{content?.value && (
 					<Card className="p-6">
 						<h2 className="text-xl font-semibold mb-4">{content.title}</h2>
-						<p className="text-base whitespace-pre-wrap">{content.value}</p>
+						<div className="text-base whitespace-pre-wrap">
+							{content.value}
+						</div>
 					</Card>
 				)}
 			</div>

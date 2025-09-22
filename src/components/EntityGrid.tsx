@@ -2,9 +2,9 @@ import { Edit, Eye, Plus, Trash2 } from "lucide-react";
 import type { Character, Faction, Location, Note, Quest } from "~/api/types.gen";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import type { EntityType } from "~/types";
 
 export type Entity = Character | Faction | Location | Note | Quest;
-export type EntityType = "character" | "faction" | "location" | "note" | "quest";
 
 interface EntityGridProps<T extends Entity> {
 	entities: T[];
@@ -83,14 +83,9 @@ export function EntityGrid<T extends Entity>({
 						{getEntitySpecificInfo?.(entity)}
 					</CardHeader>
 					<CardContent>
-						{("content" in entity && entity.content) ||
-						("description" in entity && entity.description) ? (
+						{"content" in entity && entity.content ? (
 							<p className="text-sm text-muted-foreground line-clamp-3 mb-3">
-								{(
-									("content" in entity && entity.content) ||
-									("description" in entity && entity.description) ||
-									""
-								)
+								{(("content" in entity && entity.content) || "")
 									.replace(/[#*`[\]]/g, "")
 									.substring(0, 150)}
 								...
