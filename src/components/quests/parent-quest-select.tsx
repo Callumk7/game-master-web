@@ -18,24 +18,25 @@ interface ParentQuestSelectProps {
 
 function buildQuestHierarchy(quests: Quest[]): Map<string, Quest[]> {
 	const hierarchy = new Map<string, Quest[]>();
-	
+
 	// Create a map for quick lookup
-	const questMap = new Map(quests.map(quest => [quest.id, quest]));
-	
+	const questMap = new Map(quests.map((quest) => [quest.id, quest]));
+
 	// Build hierarchy by following parent_id chains
-	quests.forEach(quest => {
+	quests.forEach((quest) => {
 		const path: Quest[] = [];
 		let current: Quest | undefined = quest;
-		
+
 		// Traverse up the hierarchy to build the full path
-		while (current && path.length < 10) { // Prevent infinite loops
+		while (current && path.length < 10) {
+			// Prevent infinite loops
 			path.unshift(current);
 			current = current.parent_id ? questMap.get(current.parent_id) : undefined;
 		}
-		
+
 		hierarchy.set(quest.id, path);
 	});
-	
+
 	return hierarchy;
 }
 
@@ -43,9 +44,9 @@ function formatQuestLabel(quest: Quest, hierarchy: Quest[]): string {
 	if (hierarchy.length <= 1) {
 		return quest.name;
 	}
-	
+
 	// Show hierarchy: "Main Quest > Sub Quest > Current Quest"
-	const pathNames = hierarchy.slice(0, -1).map(q => q.name);
+	const pathNames = hierarchy.slice(0, -1).map((q) => q.name);
 	return `${quest.name} (${pathNames.join(" > ")})`;
 }
 
@@ -58,7 +59,7 @@ export function ParentQuestSelect({
 }: ParentQuestSelectProps) {
 	// Build hierarchy for display
 	const hierarchy = buildQuestHierarchy(quests);
-	
+
 	// Sort quests alphabetically by name
 	const sortedQuests = [...quests].sort((a, b) => a.name.localeCompare(b.name));
 
@@ -71,9 +72,9 @@ export function ParentQuestSelect({
 	};
 
 	// Find the selected quest to display its name
-	const selectedQuest = value ? quests.find(quest => quest.id === value) : null;
+	const selectedQuest = value ? quests.find((quest) => quest.id === value) : null;
 	const displayValue = value || "none";
-	
+
 	// Get the display name for the selected quest
 	const getSelectedDisplayName = () => {
 		if (!selectedQuest) return undefined;
@@ -97,20 +98,24 @@ export function ParentQuestSelect({
 							<span>{getSelectedDisplayName()}</span>
 						</div>
 					) : displayValue === "none" ? (
-						<span className="text-muted-foreground">No parent (main quest)</span>
+						<span className="text-muted-foreground">
+							No parent (main quest)
+						</span>
 					) : null}
 				</SelectValue>
 			</SelectTrigger>
 			<SelectPositioner>
 				<SelectContent>
 					<SelectItem value="none">
-						<span className="text-muted-foreground">No parent (main quest)</span>
+						<span className="text-muted-foreground">
+							No parent (main quest)
+						</span>
 					</SelectItem>
-					
+
 					{sortedQuests.map((quest) => {
 						const questHierarchy = hierarchy.get(quest.id) || [quest];
 						const label = formatQuestLabel(quest, questHierarchy);
-						
+
 						return (
 							<SelectItem key={quest.id} value={quest.id}>
 								<div className="flex items-center gap-2">
@@ -122,7 +127,7 @@ export function ParentQuestSelect({
 							</SelectItem>
 						);
 					})}
-					
+
 					{sortedQuests.length === 0 && (
 						<SelectItem value="disabled" disabled>
 							<span className="text-muted-foreground">

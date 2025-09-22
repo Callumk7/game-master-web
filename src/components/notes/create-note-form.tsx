@@ -1,4 +1,5 @@
-import { useNavigate, useParams, useRouteContext } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { createNoteMutation, listNotesQueryKey } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
@@ -9,7 +10,7 @@ interface CreateNoteFormProps {
 	/** Optional parent entity ID */
 	parentId?: string;
 	/** Optional parent entity type */
-	parentType?: 'character' | 'quest' | 'location' | 'faction';
+	parentType?: "character" | "quest" | "location" | "faction";
 	/** Custom CSS class for form container */
 	className?: string;
 	/** Custom submit button text */
@@ -25,9 +26,8 @@ export function CreateNoteForm({
 	submitText = "Create Note",
 	onSuccess: customOnSuccess,
 }: CreateNoteFormProps = {}) {
-	const { gameId } = useParams({ from: "/_auth/games/$gameId/notes" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/notes" });
-	const navigate = useNavigate();
+	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
+	const queryClient = useQueryClient();
 
 	// Prepare initial values with parent info if provided
 	const initialValues = {
@@ -45,16 +45,15 @@ export function CreateNoteForm({
 		initialValues,
 		onSuccess: async () => {
 			toast("Note created successfully!");
-			await context.queryClient.refetchQueries({
+			await queryClient.refetchQueries({
 				queryKey: listNotesQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
-			
+
 			if (customOnSuccess) {
 				customOnSuccess();
 			} else {
-				navigate({ to: ".." });
 			}
 		},
 	});
@@ -71,18 +70,21 @@ export function CreateNoteForm({
 					<div className="space-y-6">
 						{renderSmartField("name")}
 						{renderSmartField("tags")}
-						
+
 						{/* Only show parent fields if not pre-filled via props */}
-						{!parentId && renderSmartField("parent_id", {
-							label: "Parent Entity ID",
-							description: "Optional ID of the parent entity this note belongs to",
-						})}
-						
-						{!parentType && renderSmartField("parent_type", {
-							label: "Parent Entity Type",
-							description: "Type of the parent entity",
-						})}
-						
+						{!parentId &&
+							renderSmartField("parent_id", {
+								label: "Parent Entity ID",
+								description:
+									"Optional ID of the parent entity this note belongs to",
+							})}
+
+						{!parentType &&
+							renderSmartField("parent_type", {
+								label: "Parent Entity Type",
+								description: "Type of the parent entity",
+							})}
+
 						{renderSmartField("content")}
 
 						<div className="flex gap-2">

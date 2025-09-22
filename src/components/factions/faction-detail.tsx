@@ -3,8 +3,8 @@ import * as React from "react";
 import type { Faction } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { DetailTemplate } from "~/components/ui/DetailTemplate";
-import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
+import { DetailTemplate } from "~/components/ui/detail-template";
+import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteFactionMutation,
@@ -13,7 +13,7 @@ import {
 } from "~/queries/factions";
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
-import { CreateFactionLink } from "./CreateFactionLink";
+import { CreateFactionLink } from "./create-faction-link";
 
 interface FactionDetailProps {
 	faction: Faction;

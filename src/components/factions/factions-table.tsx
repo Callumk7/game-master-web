@@ -33,7 +33,7 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 
-interface CharacterTableProps<TData, TValue> {
+interface FactionsTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	searchQuery: string;
@@ -42,14 +42,14 @@ interface CharacterTableProps<TData, TValue> {
 	onTagFilterChange: (tag: string) => void;
 }
 
-export function CharacterTable<TData, TValue>({
+export function FactionsTable<TData, TValue>({
 	columns,
 	data,
 	searchQuery,
 	onSearchChange,
 	tagFilter,
 	onTagFilterChange,
-}: CharacterTableProps<TData, TValue>) {
+}: FactionsTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -188,7 +188,7 @@ export function CharacterTable<TData, TValue>({
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
 				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} character(s) total.
+					{table.getFilteredRowModel().rows.length} faction(s) total.
 				</div>
 				<div className="space-x-2">
 					<Button
@@ -212,4 +212,3 @@ export function CharacterTable<TData, TValue>({
 		</div>
 	);
 }
-

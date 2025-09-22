@@ -3,8 +3,8 @@ import { StickyNote } from "lucide-react";
 import type { Note } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { DetailTemplate } from "~/components/ui/DetailTemplate";
-import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
+import { DetailTemplate } from "~/components/ui/detail-template";
+import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteNoteMutation,
@@ -13,7 +13,7 @@ import {
 } from "~/queries/notes";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
-import { CreateNoteLink } from "./CreateNoteLink";
+import { CreateNoteLink } from "./create-note-link";
 
 interface NoteDetailProps {
 	note: Note;
@@ -78,11 +78,7 @@ export function NoteDetail({ note, gameId }: NoteDetailProps) {
 				content={parseContentForEditor(note.content)}
 				onChange={onChange}
 			/>
-			<Button
-				variant={"secondary"}
-				onClick={handleSave}
-				disabled={!isUpdated}
-			>
+			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
 				Save
 			</Button>
 		</div>
@@ -102,9 +98,7 @@ export function NoteDetail({ note, gameId }: NoteDetailProps) {
 			)}
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
-					links={flattenLinksForTable(
-						linksResponse as GenericLinksResponse,
-					)}
+					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
 				/>
 			)}

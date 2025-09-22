@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
-import { CharacterTable } from "~/components/characters/CharacterTable";
+import { CharacterTable } from "~/components/characters/character-table";
 import { createColumns } from "~/components/characters/columns";
 import { useListCharactersQuery } from "~/queries/characters";
 

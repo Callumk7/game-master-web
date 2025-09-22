@@ -1,4 +1,5 @@
-import { useNavigate, useParams, useRouteContext } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
 	createLocationMutation,
@@ -8,12 +9,11 @@ import { Button } from "~/components/ui/button";
 import { useListLocationsQuery } from "~/queries/locations";
 import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
-import { ParentLocationSelect } from "./ParentLocationSelect";
+import { ParentLocationSelect } from "./parent-location-select";
 
 export function CreateLocationForm() {
-	const { gameId } = useParams({ from: "/_auth/games/$gameId/locations/new" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/locations/new" });
-	const navigate = useNavigate();
+	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
+	const queryClient = useQueryClient();
 
 	// Fetch existing locations for parent selection
 	const { data: locationsData, isLoading: locationsLoading } =
@@ -29,12 +29,11 @@ export function CreateLocationForm() {
 		entityName: "location",
 		onSuccess: async () => {
 			toast("Location created successfully!");
-			await context.queryClient.refetchQueries({
+			await queryClient.refetchQueries({
 				queryKey: listLocationsQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
-			navigate({ to: ".." });
 		},
 	});
 
@@ -50,17 +49,7 @@ export function CreateLocationForm() {
 					<div className="space-y-6">
 						{renderSmartField("name")}
 						{renderSmartField("type", {
-							type: "select",
 							label: "Location Type",
-							options: [
-								{ value: "continent", label: "Continent" },
-								{ value: "nation", label: "Nation" },
-								{ value: "region", label: "Region" },
-								{ value: "city", label: "City" },
-								{ value: "settlement", label: "Settlement" },
-								{ value: "building", label: "Building" },
-								{ value: "complex", label: "Complex" },
-							],
 							placeholder: "Select location type",
 						})}
 

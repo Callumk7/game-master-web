@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { StatCard } from "~/components/StatCard";
+import { StatCard } from "~/components/stat-card";
 import { Button } from "~/components/ui/button";
 import { useGetGameLinksQuery, useGetGameQuery } from "~/queries/games";
 

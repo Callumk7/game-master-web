@@ -3,8 +3,8 @@ import * as React from "react";
 import type { Location } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { DetailTemplate } from "~/components/ui/DetailTemplate";
-import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
+import { DetailTemplate } from "~/components/ui/detail-template";
+import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteLocationMutation,
@@ -13,7 +13,7 @@ import {
 } from "~/queries/locations";
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
-import { CreateLocationLink } from "./CreateLocationLink";
+import { CreateLocationLink } from "./create-location-link";
 
 interface LocationDetailProps {
 	location: Location;

@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { signupUser } from "~/api";
-import { Auth } from "~/components/Auth";
+import { Auth } from "~/components/auth";
 import { useMutationLite } from "~/hooks/useMutationLite";
 import { parseApiError } from "~/utils/error-parser";
 import { getAppSession } from "~/utils/session";

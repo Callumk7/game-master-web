@@ -42,4 +42,3 @@ function MinimalTiptapViewer({ content, className }: MinimalTiptapViewerProps) {
 }
 
 export { MinimalTiptapViewer, type MinimalTiptapViewerProps };
-

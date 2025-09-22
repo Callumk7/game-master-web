@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
 import { createColumns } from "~/components/locations/columns";
-import { LocationsTable } from "~/components/locations/LocationsTable";
+import { LocationsTable } from "~/components/locations/locations-table";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/")({
 	component: RouteComponent,

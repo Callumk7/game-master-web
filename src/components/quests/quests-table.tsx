@@ -33,7 +33,7 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 
-interface LocationsTableProps<TData, TValue> {
+interface QuestsTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	searchQuery: string;
@@ -42,14 +42,14 @@ interface LocationsTableProps<TData, TValue> {
 	onTagFilterChange: (tag: string) => void;
 }
 
-export function LocationsTable<TData, TValue>({
+export function QuestsTable<TData, TValue>({
 	columns,
 	data,
 	searchQuery,
 	onSearchChange,
 	tagFilter,
 	onTagFilterChange,
-}: LocationsTableProps<TData, TValue>) {
+}: QuestsTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -188,7 +188,7 @@ export function LocationsTable<TData, TValue>({
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
 				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} location(s) total.
+					{table.getFilteredRowModel().rows.length} quest(s) total.
 				</div>
 				<div className="space-x-2">
 					<Button

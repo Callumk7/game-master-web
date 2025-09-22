@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthenticatedLayout } from "~/components/AuthenticatedLayout";
-import { Login } from "~/components/Login";
+import { AuthenticatedLayout } from "~/components/authenticated-layout";
+import { Login } from "~/components/login";
 import {
 	Card,
 	CardContent,

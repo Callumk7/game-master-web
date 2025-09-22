@@ -2,7 +2,7 @@ import { SquareArrowDownRight } from "lucide-react";
 import * as React from "react";
 import DraggableWindow from "~/components/draggable";
 import { Button } from "~/components/ui/button";
-import type { EntityLink } from "./EntityLinksTable";
+import type { EntityLink } from "./entity-links-table";
 
 interface EntityLinkButtonProps {
 	entity: EntityLink;
@@ -19,9 +19,7 @@ export function EntityLinkButton({ entity }: EntityLinkButtonProps) {
 		return { x: offset, y: offset };
 	});
 
-	const displayContent =
-		entity.content_plain_text ||
-		"No content available";
+	const displayContent = entity.content_plain_text || "No content available";
 
 	return (
 		<>

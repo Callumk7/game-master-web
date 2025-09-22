@@ -1,19 +1,16 @@
-import { useNavigate, useParams, useRouteContext } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
-import {
-	createQuestMutation,
-	listQuestsQueryKey,
-} from "~/api/@tanstack/react-query.gen";
+import { createQuestMutation, listQuestsQueryKey } from "~/api/@tanstack/react-query.gen";
+import { Button } from "~/components/ui/button";
+import { useListQuestsQuery } from "~/queries/quests";
 import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
-import { useListQuestsQuery } from "~/queries/quests";
-import { Button } from "~/components/ui/button";
-import { ParentQuestSelect } from "./ParentQuestSelect";
+import { ParentQuestSelect } from "./parent-quest-select";
 
 export function CreateQuestForm() {
-	const { gameId } = useParams({ from: "/_auth/games/$gameId/quests/new" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/quests/new" });
-	const navigate = useNavigate();
+	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
+	const queryClient = useQueryClient();
 
 	// Fetch existing quests for parent selection
 	const { data: questsData, isLoading: questsLoading } = useListQuestsQuery(gameId);
@@ -25,12 +22,11 @@ export function CreateQuestForm() {
 		entityName: "quest",
 		onSuccess: async () => {
 			toast("Quest created successfully!");
-			await context.queryClient.refetchQueries({
+			await queryClient.refetchQueries({
 				queryKey: listQuestsQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
-			navigate({ to: ".." });
 		},
 	});
 
@@ -45,17 +41,17 @@ export function CreateQuestForm() {
 				>
 					<div className="space-y-6">
 						{renderSmartField("name")}
-						
+
 						{/* Custom parent quest selector */}
 						<form.AppField name="parent_id">
 							{(field) => (
 								<form.Item>
-									<field.Label>
-										Parent Quest
-									</field.Label>
+									<field.Label>Parent Quest</field.Label>
 									<field.Control>
 										{questsLoading ? (
-											<div className="text-muted-foreground text-sm p-2">Loading quests...</div>
+											<div className="text-muted-foreground text-sm p-2">
+												Loading quests...
+											</div>
 										) : (
 											<ParentQuestSelect
 												quests={quests}
@@ -66,13 +62,14 @@ export function CreateQuestForm() {
 										)}
 									</field.Control>
 									<field.Description>
-										Choose a parent quest to create a hierarchical quest structure. Leave empty for main quests.
+										Choose a parent quest to create a hierarchical
+										quest structure. Leave empty for main quests.
 									</field.Description>
 									<field.Message />
 								</form.Item>
 							)}
 						</form.AppField>
-						
+
 						{renderSmartField("tags")}
 						{renderSmartField("content")}
 
@@ -87,7 +84,9 @@ export function CreateQuestForm() {
 								onClick={() => {
 									if (
 										form.state.isDirty &&
-										!confirm("Are you sure? All unsaved changes will be lost.")
+										!confirm(
+											"Are you sure? All unsaved changes will be lost.",
+										)
 									) {
 										return;
 									}

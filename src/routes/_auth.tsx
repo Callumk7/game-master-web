@@ -2,7 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useLayoutEffect } from "react";
 import { loginUser } from "~/api";
-import { Login } from "~/components/Login";
+import { Login } from "~/components/login";
 import { clearApiAuth, updateApiAuth } from "~/utils/api-client";
 import { getAppSession } from "~/utils/session";
 

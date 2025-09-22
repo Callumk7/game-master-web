@@ -12,9 +12,8 @@ import {
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
-
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -23,6 +22,7 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import { Input } from "~/components/ui/input";
 import {
 	Table,
@@ -32,30 +32,83 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import type { EntityLink } from "~/utils/linkHelpers";
+import { Link } from "./link";
 
-interface FactionsTableProps<TData, TValue> {
-	columns: ColumnDef<TData, TValue>[];
-	data: TData[];
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
+interface EntityLinksTableProps {
+	links: EntityLink[];
+	gameId: string;
 }
 
-export function FactionsTable<TData, TValue>({
-	columns,
-	data,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
-}: FactionsTableProps<TData, TValue>) {
+export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+	const [searchQuery, setSearchQuery] = React.useState("");
+	const [typeFilter, setTypeFilter] = React.useState<string>("all");
+
+	const columns: ColumnDef<EntityLink>[] = [
+		{
+			accessorKey: "name",
+			header: "Name",
+			cell: ({ row }) => {
+				const type = row.original.type;
+				const id = row.original.id;
+				return (
+					<Link
+						to={`/games/${gameId}/${type}s/${id}` as string}
+						className="font-medium hover:underline"
+					>
+						{row.getValue("name")}
+					</Link>
+				);
+			},
+		},
+		{
+			accessorKey: "type",
+			header: "Type",
+			cell: ({ row }) => (
+				<Badge variant="secondary" className="capitalize">
+					{row.getValue("type")}
+				</Badge>
+			),
+		},
+		{
+			accessorKey: "description_meta",
+			header: "Description",
+			cell: ({ row }) => {
+				return <div className="text-sm">{row.getValue("description_meta")}</div>;
+			},
+		},
+		{
+			accessorKey: "relationship_type",
+			header: "Relationship",
+			cell: ({ row }) => {
+				return <div className="text-sm">{row.getValue("relationship_type")}</div>;
+			},
+		},
+		{
+			accessorKey: "is_active",
+			header: "Active",
+			cell: ({ row }) => {
+				return (
+					<div className="text-sm">
+						{row.getValue("is_active") ? "Yes" : "No"}
+					</div>
+				);
+			},
+		},
+		{
+			id: "actions",
+			enableHiding: false,
+			cell: ({ row }) => {
+				return <EntityLinkButton entity={row.original} />;
+			},
+		},
+	];
 
 	const table = useReactTable({
-		data,
+		data: links,
 		columns,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
@@ -69,40 +122,67 @@ export function FactionsTable<TData, TValue>({
 			columnFilters,
 			columnVisibility,
 		},
-		filterFns: {
-			fuzzy: (row, columnId, value) => {
-				const itemValue = row.getValue(columnId) as string;
-				return itemValue?.toLowerCase().includes(value.toLowerCase()) ?? false;
+		initialState: {
+			pagination: {
+				pageSize: 5,
 			},
 		},
 	});
+
+	const uniqueTypes = React.useMemo(() => {
+		const types = [...new Set(links.map((link) => link.type))];
+		return types.sort();
+	}, [links]);
 
 	React.useEffect(() => {
 		table.getColumn("name")?.setFilterValue(searchQuery);
 	}, [searchQuery, table]);
 
 	React.useEffect(() => {
-		const column = table.getColumn("tags");
-		if (column) {
-			column.setFilterValue(tagFilter);
-		}
-	}, [tagFilter, table]);
+		table.getColumn("type")?.setFilterValue(typeFilter === "all" ? "" : typeFilter);
+	}, [typeFilter, table]);
 
 	return (
 		<div className="w-full">
 			<div className="flex items-center gap-4 py-4">
 				<Input
-					placeholder="Filter names..."
+					placeholder="Filter links..."
 					value={searchQuery}
-					onChange={(event) => onSearchChange(event.target.value)}
+					onChange={(event) => setSearchQuery(event.target.value)}
 					className="max-w-sm"
 				/>
-				<Input
-					placeholder="Filter tags..."
-					value={tagFilter}
-					onChange={(event) => onTagFilterChange(event.target.value)}
-					className="max-w-sm"
-				/>
+				<DropdownMenu>
+					<DropdownMenuTrigger
+						render={
+							<Button variant="outline">
+								Type: {typeFilter === "all" ? "All" : typeFilter}
+								<ChevronDown className="ml-2 h-4 w-4" />
+							</Button>
+						}
+					></DropdownMenuTrigger>
+					<DropdownMenuPortal>
+						<DropdownMenuPositioner>
+							<DropdownMenuContent>
+								<DropdownMenuCheckboxItem
+									checked={typeFilter === "all"}
+									onCheckedChange={() => setTypeFilter("all")}
+								>
+									All Types
+								</DropdownMenuCheckboxItem>
+								{uniqueTypes.map((type) => (
+									<DropdownMenuCheckboxItem
+										key={type}
+										checked={typeFilter === type}
+										onCheckedChange={() => setTypeFilter(type)}
+										className="capitalize"
+									>
+										{type}
+									</DropdownMenuCheckboxItem>
+								))}
+							</DropdownMenuContent>
+						</DropdownMenuPositioner>
+					</DropdownMenuPortal>
+				</DropdownMenu>
 				<DropdownMenu>
 					<DropdownMenuTrigger
 						render={
@@ -179,7 +259,7 @@ export function FactionsTable<TData, TValue>({
 									colSpan={columns.length}
 									className="h-24 text-center"
 								>
-									No results.
+									No links found.
 								</TableCell>
 							</TableRow>
 						)}
@@ -188,7 +268,7 @@ export function FactionsTable<TData, TValue>({
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
 				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} faction(s) total.
+					{table.getFilteredRowModel().rows.length} link(s) total.
 				</div>
 				<div className="space-x-2">
 					<Button

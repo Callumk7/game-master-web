@@ -96,17 +96,17 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 				try {
 					// Convert editor objects to strings before validation
 					const processedValue = processFormValuesForSubmission(value, fields);
-					
+
 					// Auto-extend schema to include _plain_text fields for editor fields
 					const extendedSchema = fields.reduce((acc, field) => {
 						if (field.type === "editor") {
 							return acc.extend({
-								[`${field.name}_plain_text`]: z.string().optional()
+								[`${field.name}_plain_text`]: z.string().optional(),
 							});
 						}
 						return acc;
 					}, schema);
-					
+
 					const validatedData = extendedSchema.parse(processedValue);
 					const fullData = {
 						body: { [entityName]: validatedData },
@@ -315,17 +315,17 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 			try {
 				// Convert editor objects to strings before validation
 				const processedValue = processFormValuesForSubmission(value, fields);
-				
+
 				// Auto-extend schema to include _plain_text fields for editor fields
 				const extendedSchema = fields.reduce((acc, field) => {
 					if (field.type === "editor") {
 						return acc.extend({
-							[`${field.name}_plain_text`]: z.string().optional()
+							[`${field.name}_plain_text`]: z.string().optional(),
 						});
 					}
 					return acc;
 				}, schema);
-				
+
 				const validatedData = extendedSchema.parse(processedValue);
 				const fullData = {
 					body: { [entityName]: validatedData },
@@ -368,6 +368,8 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		 * Render a field with auto-generated configuration
 		 */
 		renderSmartField: (fieldName: string, overrides: Partial<FieldConfig> = {}) => {
+			console.log(`[smart-factory] renderSmartField called for: ${fieldName}`, { overrides });
+			
 			// Start with basic field config
 			let fieldConfig: FieldConfig = {
 				name: fieldName,
@@ -380,7 +382,8 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 
 			// Apply smart field type detection
 			const zodField = (schema.shape as any)[fieldName];
-			const actualType = zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
+			const actualType =
+				zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
 
 			if (actualType instanceof z.ZodString) {
 				// Check for rich text editor fields (complex content)
@@ -394,13 +397,19 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 					fieldConfig.type = "editor";
 				}
 			} else if (actualType instanceof z.ZodEnum) {
+				console.log(`[smart-factory] ZodEnum detected for field: ${fieldName}`, {
+					actualType,
+					options: actualType.options,
+					_def: actualType._def
+				});
 				fieldConfig.type = "select";
-				const def = actualType._def;
-				const enumValues = def?.values || Object.keys(def?.entries || {});
-				fieldConfig.options = enumValues.map((value: string) => ({
-					value,
-					label: value.charAt(0).toUpperCase() + value.slice(1),
+				const enumValues = actualType.options || [];
+				console.log(`[smart-factory] Enum values for ${fieldName}:`, enumValues);
+				fieldConfig.options = enumValues.map((value) => ({
+					value: String(value),
+					label: String(value).charAt(0).toUpperCase() + String(value).slice(1),
 				}));
+				console.log(`[smart-factory] Generated options for ${fieldName}:`, fieldConfig.options);
 			} else if (actualType instanceof z.ZodArray) {
 				// Check if it's an array of strings, likely for tags
 				const elementType = actualType._def?.element;
@@ -411,6 +420,13 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 
 			// Apply any overrides
 			fieldConfig = { ...fieldConfig, ...overrides };
+			
+			console.log(`[smart-factory] Final fieldConfig for ${fieldName}:`, fieldConfig);
+			console.log(`[smart-factory] Disabled state for ${fieldName}:`, {
+				disabled: fieldConfig.disabled,
+				overrides,
+				fieldConfigKeys: Object.keys(fieldConfig)
+			});
 
 			return (
 				<form.AppField

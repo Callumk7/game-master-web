@@ -47,7 +47,9 @@ export function CreateGameFormV2() {
 			return {
 				...baseMutation,
 				onSuccess: () => {
-					context.queryClient.invalidateQueries({ queryKey: listGamesQueryKey() });
+					context.queryClient.invalidateQueries({
+						queryKey: listGamesQueryKey(),
+					});
 				},
 			};
 		},
@@ -64,4 +66,3 @@ export function CreateGameFormV2() {
 
 	return <FormWithContext />;
 }
-

@@ -7,14 +7,16 @@ import {
 	getQuestTreeOptions,
 	listGameEntitiesOptions,
 } from "~/api/@tanstack/react-query.gen";
-import { CreateCharacterSheet } from "~/components/characters/CreateCharacterSheet";
+import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { Commander } from "~/components/commander";
 import { EntityTabs, EntityTabsProvider } from "~/components/entity-tabs";
 import { GameSidebar } from "~/components/layout/game-sidebar";
 import { Input } from "~/components/ui/input";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { CreateFactionSheet } from "~/components/factions/CreateFactionSheet";
+import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
+import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
+import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
 	component: RouteComponent,
@@ -87,6 +89,14 @@ function RouteComponent() {
 						<CreateNoteSheet
 							isOpen={newNoteSheetOpen}
 							setIsOpen={setNewNoteSheetOpen}
+						/>
+						<CreateLocationSheet
+							isOpen={newLocationSheetOpen}
+							setIsOpen={setNewLocationSheetOpen}
+						/>
+						<CreateQuestSheet
+							isOpen={newQuestSheetOpen}
+							setIsOpen={setNewQuestSheetOpen}
 						/>
 					</div>
 				</div>

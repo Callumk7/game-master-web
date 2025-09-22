@@ -5,7 +5,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
-import { ThemeProvider } from "~/components/ThemeProvider";
+import { ThemeProvider } from "~/components/theme-provider";
 import { initializeApiClient } from "~/utils/api-client";
 import { getAppSession } from "~/utils/session";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";

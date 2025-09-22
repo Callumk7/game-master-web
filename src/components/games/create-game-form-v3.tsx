@@ -1,9 +1,6 @@
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { toast } from "sonner";
-import {
-	createGameMutation,
-	listGamesQueryKey,
-} from "~/api/@tanstack/react-query.gen";
+import { createGameMutation, listGamesQueryKey } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm } from "~/components/forms/smart-factory";
 import { schemas } from "~/components/forms/type-utils";
 

@@ -127,12 +127,19 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 		case "select":
 			return (
 				<Select
-					value={fieldApi.state?.value ?? ""}
-					onValueChange={fieldApi.handleChange}
+					value={fieldApi.state?.value || undefined}
+					onValueChange={(value) => {
+						console.log(`[DEBUG] onValueChange fired with:`, value);
+						fieldApi.handleChange(value);
+					}}
 					disabled={field.disabled}
 					required={field.required}
 				>
-					<SelectTrigger className="w-full" aria-invalid={hasErrors}>
+					<SelectTrigger 
+						className="w-full" 
+						aria-invalid={hasErrors}
+						onClick={() => console.log(`[DEBUG] Trigger clicked!`)}
+					>
 						<SelectValue
 							placeholder={field.placeholder || `Select ${field.label}`}
 						/>

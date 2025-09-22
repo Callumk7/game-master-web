@@ -5,7 +5,7 @@ import {
 	PopoverPositioner,
 	PopoverTrigger,
 } from "../ui/popover";
-import { CreateCharacterLink } from "./CreateCharacterLink";
+import { CreateCharacterLink } from "./create-character-link";
 
 interface CharacterLinksProps {
 	gameId: string;

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { createColumns } from "~/components/factions/columns";
-import { FactionsTable } from "~/components/factions/FactionsTable";
+import { FactionsTable } from "~/components/factions/factions-table";
 import { useListFactionsQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/")({

@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getNoteOptions } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
-import { NoteDetail } from "~/components/notes/NoteDetail";
+import { NoteDetail } from "~/components/notes/note-detail";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/")({
 	component: RouteComponent,

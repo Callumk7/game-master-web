@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CreateGameFormV2 } from "~/components/games/CreateGameFormV2";
-import { CreateGameFormV3 } from "~/components/games/CreateGameFormV3";
+import { CreateGameFormV2 } from "~/components/games/create-game-form-v2";
+import { CreateGameFormV3 } from "~/components/games/create-game-form-v3";
 
 export const Route = createFileRoute("/_auth/games/new")({
 	component: RouteComponent,

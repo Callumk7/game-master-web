@@ -3,8 +3,8 @@ import { Users } from "lucide-react";
 import type { Character } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { DetailTemplate } from "~/components/ui/DetailTemplate";
-import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
+import { DetailTemplate } from "~/components/ui/detail-template";
+import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteCharacterMutation,
@@ -13,7 +13,7 @@ import {
 } from "~/queries/characters";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
-import { CreateCharacterLink } from "./CreateCharacterLink";
+import { CreateCharacterLink } from "./create-character-link";
 
 interface CharacterDetailProps {
 	character: Character;

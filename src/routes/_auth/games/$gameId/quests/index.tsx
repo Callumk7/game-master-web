@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listQuestsOptions } from "~/api/@tanstack/react-query.gen";
 import { createColumns } from "~/components/quests/columns";
-import { QuestsTable } from "~/components/quests/QuestsTable";
+import { QuestsTable } from "~/components/quests/quests-table";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/")({
 	component: RouteComponent,

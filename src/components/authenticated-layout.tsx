@@ -28,4 +28,3 @@ export function AuthenticatedLayout({ user, children }: AuthenticatedLayoutProps
 		</div>
 	);
 }
-

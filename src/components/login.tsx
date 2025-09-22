@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { signupFn } from "~/routes/signup";
 import { useMutationLite } from "../hooks/useMutationLite";
 import { loginFn } from "../routes/_auth";
-import { Auth } from "./Auth";
+import { Auth } from "./auth";
 import { Button } from "./ui/button";
 
 export function Login() {

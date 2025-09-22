@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
 import { createColumns } from "~/components/notes/columns";
-import { NotesTable } from "~/components/notes/NotesTable";
+import { NotesTable } from "~/components/notes/notes-table";
 import { useListNotesQuery } from "~/queries/notes";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/")({

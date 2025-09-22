@@ -177,8 +177,20 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 			const centerY = Math.max(0, (window.innerHeight - data.currentHeight) / 2);
 
 			// Apply initial offset for staggered positioning
-			const finalX = Math.max(0, Math.min(window.innerWidth - data.currentWidth, centerX + initialOffset.x));
-			const finalY = Math.max(0, Math.min(window.innerHeight - data.currentHeight, centerY + initialOffset.y));
+			const finalX = Math.max(
+				0,
+				Math.min(
+					window.innerWidth - data.currentWidth,
+					centerX + initialOffset.x,
+				),
+			);
+			const finalY = Math.max(
+				0,
+				Math.min(
+					window.innerHeight - data.currentHeight,
+					centerY + initialOffset.y,
+				),
+			);
 
 			data.currentX = finalX;
 			data.currentY = finalY;
@@ -210,9 +222,9 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 	}, [handleMouseMove, handleMouseUp]);
 
 	return (
-		<Dialog.Root 
-			open={isOpen} 
-			onOpenChange={onOpenChange} 
+		<Dialog.Root
+			open={isOpen}
+			onOpenChange={onOpenChange}
 			modal={false}
 			dismissible={false}
 		>

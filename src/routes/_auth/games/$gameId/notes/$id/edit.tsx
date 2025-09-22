@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getNoteOptions } from "~/api/@tanstack/react-query.gen";
-import { EditNoteForm } from "~/components/notes/EditNoteForm";
+import { EditNoteForm } from "~/components/notes/edit-note-form";
 import { useNoteQuery } from ".";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/edit")({

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
-import { QuestDetail } from "~/components/quests/QuestDetail";
+import { QuestDetail } from "~/components/quests/quest-detail";
 import { useQuestQuery } from "~/queries/quests";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/")({

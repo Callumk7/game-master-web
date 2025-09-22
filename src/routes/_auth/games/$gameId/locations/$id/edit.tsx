@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getLocationOptions } from "~/api/@tanstack/react-query.gen";
-import { EditLocationForm } from "~/components/locations/EditLocationForm";
+import { EditLocationForm } from "~/components/locations/edit-location-form";
 import { useLocationQuery } from ".";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/edit")({

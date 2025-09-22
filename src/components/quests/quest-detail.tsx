@@ -2,8 +2,8 @@ import * as React from "react";
 import { ScrollText } from "lucide-react";
 import type { Quest } from "~/api/types.gen";
 import { Button } from "~/components/ui/button";
-import { DetailTemplate } from "~/components/ui/DetailTemplate";
-import { EntityLinksTable } from "~/components/ui/EntityLinksTable";
+import { DetailTemplate } from "~/components/ui/detail-template";
+import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteQuestMutation,
@@ -12,7 +12,7 @@ import {
 } from "~/queries/quests";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
-import { CreateQuestLink } from "./CreateQuestLink";
+import { CreateQuestLink } from "./create-quest-link";
 
 interface QuestDetailProps {
 	quest: Quest;
@@ -67,11 +67,7 @@ export function QuestDetail({ quest, gameId }: QuestDetailProps) {
 				content={parseContentForEditor(quest.content)}
 				onChange={onChange}
 			/>
-			<Button
-				variant={"secondary"}
-				onClick={handleSave}
-				disabled={!isUpdated}
-			>
+			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
 				Save
 			</Button>
 		</div>
@@ -91,9 +87,7 @@ export function QuestDetail({ quest, gameId }: QuestDetailProps) {
 			)}
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
-					links={flattenLinksForTable(
-						linksResponse as GenericLinksResponse,
-					)}
+					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
 				/>
 			)}

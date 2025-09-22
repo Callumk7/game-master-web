@@ -1,16 +1,16 @@
 import { Sheet, SheetContent } from "../ui/sheet";
-import { CreateNoteForm } from "./create-note-form";
+import { CreateLocationForm } from "./create-location-form";
 
-interface CreateNoteSheetProps {
+interface CreateLocationSheetProps {
 	isOpen: boolean;
 	setIsOpen: (isOpen: boolean) => void;
 }
 
-export function CreateNoteSheet({ isOpen, setIsOpen }: CreateNoteSheetProps) {
+export function CreateLocationSheet({ isOpen, setIsOpen }: CreateLocationSheetProps) {
 	return (
 		<Sheet open={isOpen} onOpenChange={setIsOpen}>
 			<SheetContent className="p-4 pt-10" width="lg">
-				<CreateNoteForm />
+				<CreateLocationForm />
 			</SheetContent>
 		</Sheet>
 	);
