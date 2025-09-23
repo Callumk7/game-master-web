@@ -1,10 +1,13 @@
 import * as React from "react";
+import type { Optional } from "~/types";
 import { Button } from "./ui/button";
 import { Link } from "./ui/link";
 
 export interface Tab {
-	id: string; // A unique identifier, e.g., 'character-456'
-	label: string; // The text to display, e.g., 'Character 456'
+	data: {
+		id: string;
+		name: string;
+	};
 	path: string; // The URL path, e.g., '/games/123/characters/456'
 	params: {
 		gameId: string;
@@ -29,7 +32,7 @@ export const EntityTabsProvider = ({ children }: { children: React.ReactNode }) 
 	const addTab = React.useCallback((newTab: Tab) => {
 		setTabList((prevTabs) => {
 			// Check if a tab with the same ID already exists
-			if (prevTabs.some((tab) => tab.id === newTab.id)) {
+			if (prevTabs.some((tab) => tab.data.id === newTab.data.id)) {
 				return prevTabs; // If so, return the existing list
 			}
 			return [...prevTabs, newTab]; // Otherwise, add the new tab
@@ -37,7 +40,7 @@ export const EntityTabsProvider = ({ children }: { children: React.ReactNode }) 
 	}, []);
 
 	const removeTab = React.useCallback((tabId: string) => {
-		setTabList((prevTabs) => prevTabs.filter((t) => t.id !== tabId));
+		setTabList((prevTabs) => prevTabs.filter((t) => t.data.id !== tabId));
 	}, []);
 
 	const value = { tabList, addTab, removeTab };
@@ -55,11 +58,11 @@ export const useEntityTabs = () => {
 	return context;
 };
 
-export const useAddTab = (tab: Tab) => {
+export const useAddTab = (tab: Optional<Tab, "data">) => {
 	const { addTab } = useEntityTabs();
 	React.useEffect(() => {
-		if (tab.id) {
-			addTab(tab);
+		if (tab.data) {
+			addTab(tab as Tab);
 		}
 	}, [tab, addTab]);
 };
@@ -72,7 +75,7 @@ export function EntityTabs() {
 		<nav className="flex gap-2 flex-wrap">
 			{tabList.map((tab) => (
 				<Link
-					key={tab.id}
+					key={tab.data.id}
 					to={tab.path}
 					params={tab.params}
 					variant={"ghost"}
@@ -82,7 +85,7 @@ export function EntityTabs() {
 						variant: "outline",
 					}}
 				>
-					{tab.label}
+					{tab.data.name}
 					<Button
 						variant={"ghost"}
 						size={"icon"}
@@ -90,7 +93,7 @@ export function EntityTabs() {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							removeTab(tab.id);
+							removeTab(tab.data.id);
 						}}
 					>
 						&times;

@@ -1,11 +1,9 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import * as React from "react";
 import {
 	getCharacterLinksOptions,
 	getCharacterNotesTreeOptions,
 	getCharacterOptions,
 } from "~/api/@tanstack/react-query.gen";
-import { EditCharacterDetailsDialog } from "~/components/characters/edit-details-dialog";
 import { BasicErrorComponent } from "~/components/error";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
@@ -31,18 +29,5 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
-	const [editDetailsOpen, setEditDetailsOpen] = React.useState(false);
-
-	return (
-		<div>
-			<Outlet />
-			<EditCharacterDetailsDialog
-				gameId={gameId}
-				characterId={id}
-				open={editDetailsOpen}
-				setOpen={setEditDetailsOpen}
-			/>
-		</div>
-	);
+	return <Outlet />;
 }
