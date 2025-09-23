@@ -39,7 +39,6 @@
 	/* background-color: var(--editor-bg-default); */
 	color: var(--editor-text-default);
 	transition: all var(--editor-transition-normal);
-	min-height: auto;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

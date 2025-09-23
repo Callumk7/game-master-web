@@ -121,7 +121,7 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 				{ id: "content", label: "Content", content: descriptionTab },
 				{ id: "links", label: "Links", content: linksTab },
 			]}
-			defaultTab="description"
+			defaultTab="content"
 		/>
 	);
 }

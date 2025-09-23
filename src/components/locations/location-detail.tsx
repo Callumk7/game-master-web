@@ -116,7 +116,7 @@ export function LocationDetail({ location, gameId }: LocationDetailProps) {
 				{ id: "content", label: "Content", content: descriptionTab },
 				{ id: "links", label: "Links", content: linksTab },
 			]}
-			defaultTab="description"
+			defaultTab="content"
 		/>
 	);
 }

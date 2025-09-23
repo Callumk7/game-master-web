@@ -1,7 +1,6 @@
 import { useParams } from "@tanstack/react-router";
 import {
 	BookOpen,
-	ChevronRight,
 	Gem,
 	Home,
 	MapPin,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
-import type { LocationTreeNode, QuestTreeNode } from "~/api";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -28,12 +26,11 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuLink,
-	SidebarMenuSub,
 } from "~/components/ui/sidebar";
 import { useGetGameLinksQuery } from "~/queries/games";
 import { useGetLocationTree } from "~/queries/locations";
 import { useGetQuestTree } from "~/queries/quests";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { SidebarTree } from "./tree";
 import { NavUser } from "./user-sidebar";
 
 interface GameSidebarProps {
@@ -213,10 +210,11 @@ export function GameSidebar({
 						<SidebarGroupContent>
 							<SidebarMenu>
 								{locationTree?.data?.map((item) => (
-									<LocationTree
+									<SidebarTree
 										gameId={gameId}
 										key={item.id}
-										item={item}
+										parentNode={item}
+										type="location"
 									/>
 								))}
 							</SidebarMenu>
@@ -227,10 +225,11 @@ export function GameSidebar({
 						<SidebarGroupContent>
 							<SidebarMenu>
 								{questTree?.data?.map((item) => (
-									<QuestTree
+									<SidebarTree
 										gameId={gameId}
 										key={item.id}
-										item={item}
+										parentNode={item}
+										type="quest"
 									/>
 								))}
 							</SidebarMenu>
@@ -299,151 +298,5 @@ export function GameSidebar({
 				</SidebarMenu>
 			</SidebarContent>
 		</Sidebar>
-	);
-}
-
-function LocationTree({ item, gameId }: { item: LocationTreeNode; gameId: string }) {
-	const [isOpen, setIsOpen] = React.useState(true);
-
-	if (!item.children?.length) {
-		return (
-			<SidebarMenuItem>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/locations/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center">
-						<div className="h-1 w-1 rounded-full bg-muted-foreground/40" />
-					</div>
-				</div>
-			</SidebarMenuItem>
-		);
-	}
-
-	return (
-		<SidebarMenuItem>
-			<Collapsible
-				open={isOpen}
-				onOpenChange={setIsOpen}
-				className="group/collapsible"
-			>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/locations/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<CollapsibleTrigger
-						render={
-							<Button
-								variant="ghost"
-								size="icon"
-								className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-sidebar-accent z-10"
-							>
-								<ChevronRight
-									className={`h-3 w-3 transition-transform ${isOpen ? "rotate-90" : ""}`}
-								/>
-							</Button>
-						}
-					/>
-				</div>
-				<CollapsibleContent>
-					<SidebarMenuSub className="mx-0 px-0 ml-2">
-						{item.children?.map((subItem) => (
-							<LocationTree
-								gameId={gameId}
-								key={subItem.id}
-								item={subItem}
-							/>
-						))}
-					</SidebarMenuSub>
-				</CollapsibleContent>
-			</Collapsible>
-		</SidebarMenuItem>
-	);
-}
-
-function QuestTree({ item, gameId }: { item: QuestTreeNode; gameId: string }) {
-	const [isOpen, setIsOpen] = React.useState(true);
-
-	if (!item.children?.length) {
-		return (
-			<SidebarMenuItem>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/quests/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center">
-						<div className="h-1 w-1 rounded-full bg-muted-foreground/40" />
-					</div>
-				</div>
-			</SidebarMenuItem>
-		);
-	}
-
-	return (
-		<SidebarMenuItem>
-			<Collapsible
-				open={isOpen}
-				onOpenChange={setIsOpen}
-				className="group/collapsible"
-			>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/quests/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<CollapsibleTrigger
-						render={
-							<Button
-								variant="ghost"
-								size="icon"
-								className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-sidebar-accent z-10"
-							>
-								<ChevronRight
-									className={`h-3 w-3 transition-transform ${isOpen ? "rotate-90" : ""}`}
-								/>
-							</Button>
-						}
-					/>
-				</div>
-				<CollapsibleContent>
-					<SidebarMenuSub className="mx-0 px-0 pl-2">
-						{item.children?.map((subItem) => (
-							<QuestTree gameId={gameId} key={subItem.id} item={subItem} />
-						))}
-					</SidebarMenuSub>
-				</CollapsibleContent>
-			</Collapsible>
-		</SidebarMenuItem>
 	);
 }

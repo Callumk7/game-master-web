@@ -6,13 +6,13 @@ import {
 	SelectGroup,
 	SelectItem,
 	SelectLabel,
+	SelectPortal,
 	SelectPositioner,
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
 import type { EntityType } from "~/types";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import { FormField } from "../ui/composite/form-field";
 import { Label } from "../ui/label";
@@ -109,28 +109,30 @@ export function CreateLinkForm({
 								}
 							/>
 						</SelectTrigger>
-						<SelectPositioner alignItemWithTrigger>
-							<SelectContent>
-								{Object.entries(entities).map(
-									([type, items]) =>
-										items.length > 0 && (
-											<SelectGroup key={type}>
-												<SelectLabel className="capitalize">
-													{type}
-												</SelectLabel>
-												{items.map((item) => (
-													<SelectItem
-														key={item.value}
-														value={item.value}
-													>
-														{item.label}
-													</SelectItem>
-												))}
-											</SelectGroup>
-										),
-								)}
-							</SelectContent>
-						</SelectPositioner>
+						<SelectPortal>
+							<SelectPositioner>
+								<SelectContent>
+									{Object.entries(entities).map(
+										([type, items]) =>
+											items.length > 0 && (
+												<SelectGroup key={type}>
+													<SelectLabel className="capitalize">
+														{type}
+													</SelectLabel>
+													{items.map((item) => (
+														<SelectItem
+															key={item.value}
+															value={item.value}
+														>
+															{item.label}
+														</SelectItem>
+													))}
+												</SelectGroup>
+											),
+									)}
+								</SelectContent>
+							</SelectPositioner>
+						</SelectPortal>
 					</Select>
 				</div>
 

@@ -39,9 +39,5 @@ function RouteComponent() {
 		return <div>Character not found</div>;
 	}
 
-	return (
-		<div>
-			<CharacterDetail character={data.data} gameId={gameId} />
-		</div>
-	);
+	return <CharacterDetail character={data.data} gameId={gameId} />;
 }

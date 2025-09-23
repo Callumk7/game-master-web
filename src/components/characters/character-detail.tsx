@@ -1,5 +1,5 @@
-import * as React from "react";
 import { Users } from "lucide-react";
+import * as React from "react";
 import type { Character } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -11,8 +11,8 @@ import {
 	useGetCharacterLinks,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
+import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { CreateCharacterLink } from "./create-character-link";
 
 interface CharacterDetailProps {
@@ -128,7 +128,7 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 				{ id: "content", label: "Content", content: descriptionTab },
 				{ id: "links", label: "Links", content: linksTab },
 			]}
-			defaultTab="description"
+			defaultTab="content"
 		/>
 	);
 }

@@ -1,20 +1,3 @@
-import {
-	closestCenter,
-	DndContext,
-	type DragEndEvent,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-} from "@dnd-kit/core";
-import {
-	arrayMove,
-	horizontalListSortingStrategy,
-	SortableContext,
-	sortableKeyboardCoordinates,
-	useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import * as React from "react";
 import { Button } from "./ui/button";
 import { Link } from "./ui/link";
@@ -34,7 +17,6 @@ interface EntityTabsContextType {
 	tabList: Tab[];
 	addTab: (tab: Tab) => void;
 	removeTab: (tabId: string) => void;
-	reorderTabs: (activeId: string, overId: string) => void;
 }
 
 const EntityTabsContext = React.createContext<EntityTabsContextType | undefined>(
@@ -58,20 +40,7 @@ export const EntityTabsProvider = ({ children }: { children: React.ReactNode }) 
 		setTabList((prevTabs) => prevTabs.filter((t) => t.id !== tabId));
 	}, []);
 
-	const reorderTabs = React.useCallback((activeId: string, overId: string) => {
-		setTabList((prevTabs) => {
-			const oldIndex = prevTabs.findIndex((tab) => tab.id === activeId);
-			const newIndex = prevTabs.findIndex((tab) => tab.id === overId);
-
-			if (oldIndex === -1 || newIndex === -1) {
-				return prevTabs;
-			}
-
-			return arrayMove(prevTabs, oldIndex, newIndex);
-		});
-	}, []);
-
-	const value = { tabList, addTab, removeTab, reorderTabs };
+	const value = { tabList, addTab, removeTab };
 
 	return (
 		<EntityTabsContext.Provider value={value}>{children}</EntityTabsContext.Provider>
@@ -95,121 +64,39 @@ export const useAddTab = (tab: Tab) => {
 	}, [tab, addTab]);
 };
 
-interface SortableTabProps {
-	tab: Tab;
-	onRemove: (id: string) => void;
-	isDragActive: boolean;
-}
-
-function SortableTab({ tab, onRemove, isDragActive }: SortableTabProps) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-		useSortable({ id: tab.id });
-
-	const style = {
-		transform: CSS.Transform.toString(transform),
-		transition,
-		opacity: isDragging ? 0.7 : 1,
-	};
-
-	const handleClick = (e: React.MouseEvent) => {
-		if (isDragActive) {
-			e.preventDefault();
-			e.stopPropagation();
-		}
-	};
-
-	return (
-		<Link
-			ref={setNodeRef}
-			style={style}
-			{...attributes}
-			{...listeners}
-			to={tab.path}
-			params={tab.params}
-			variant={"outline"}
-			size={"sm"}
-			className="mr-0 pr-0 cursor-grab active:cursor-grabbing"
-			onClick={handleClick}
-		>
-			{tab.label}
-			<Button
-				variant={"ghost"}
-				size={"icon"}
-				className="ml-auto mr-0"
-				onClick={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					onRemove(tab.id);
-				}}
-			>
-				&times;
-			</Button>
-		</Link>
-	);
-}
-
 export function EntityTabs() {
-	const { tabList, removeTab, reorderTabs } = useEntityTabs();
-	const [isDragActive, setIsDragActive] = React.useState(false);
-
-	const sensors = useSensors(
-		useSensor(PointerSensor, {
-			activationConstraint: {
-				distance: 8,
-			},
-		}),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		}),
-	);
-
-	function handleDragStart() {
-		setIsDragActive(true);
-	}
-
-	function handleDragEnd(event: DragEndEvent) {
-		const { active, over } = event;
-
-		// Only reorder if we have a valid drop target that is actually a tab
-		if (over?.id && active.id !== over.id) {
-			const isValidTab = tabList.some((tab) => tab.id === over.id);
-			if (isValidTab) {
-				reorderTabs(String(active.id), String(over.id));
-			}
-			// If over.id exists but is not a valid tab (dropped outside), do nothing
-		}
-		// If over is null (dropped outside valid area), do nothing
-		// The drag library will automatically return the item to its original position
-
-		// Delay clearing the drag state to prevent the click from firing
-		setTimeout(() => setIsDragActive(false), 100);
-	}
-
+	const { tabList, removeTab } = useEntityTabs();
 	// TODO: Add pin button
+	// TODO: Add drag to reorder
 	return (
-		<div className="flex w-full justify-between">
-			<nav className="flex gap-2 flex-wrap">
-				<DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragStart={handleDragStart}
-					onDragEnd={handleDragEnd}
+		<nav className="flex gap-2 flex-wrap">
+			{tabList.map((tab) => (
+				<Link
+					key={tab.id}
+					to={tab.path}
+					params={tab.params}
+					variant={"ghost"}
+					size={"sm"}
+					className="mr-0 pr-0"
+					activeProps={{
+						variant: "outline",
+					}}
 				>
-					<SortableContext
-						items={tabList.map((tab) => tab.id)}
-						strategy={horizontalListSortingStrategy}
+					{tab.label}
+					<Button
+						variant={"ghost"}
+						size={"icon"}
+						className="ml-auto mr-0"
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							removeTab(tab.id);
+						}}
 					>
-						{tabList.map((tab) => (
-							<SortableTab
-								key={tab.id}
-								tab={tab}
-								onRemove={removeTab}
-								isDragActive={isDragActive}
-							/>
-						))}
-					</SortableContext>
-				</DndContext>
-			</nav>
-		</div>
+						&times;
+					</Button>
+				</Link>
+			))}
+		</nav>
 	);
 }
