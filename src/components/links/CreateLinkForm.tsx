@@ -31,9 +31,7 @@ export function CreateLinkForm({
 	excludeIds = [],
 }: CreateLinkFormProps) {
 	const [selectedValue, setSelectedValue] = React.useState("");
-	const [relationshipValue, setRelationshipValue] = React.useState<string | undefined>(
-		undefined,
-	);
+	const [relationshipValue, setRelationshipValue] = React.useState("");
 	const [active, setActive] = React.useState(false);
 	const [description, setDescription] = React.useState("");
 	const [strength, setStrength] = React.useState(1);

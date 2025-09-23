@@ -14,6 +14,8 @@ import {
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { CreateCharacterLink } from "./create-character-link";
+import { CharacterLinksDrawer } from "./character-links-drawer";
+import { EntityViewHeader } from "../entity-view";
 
 interface CharacterDetailProps {
 	character: Character;
@@ -115,20 +117,23 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 	);
 
 	return (
-		<DetailTemplate
-			title={character.name}
-			icon={Users}
-			iconColor="text-green-600"
-			badges={badges}
-			editPath="/games/$gameId/characters/$id/edit"
-			gameId={gameId}
-			entityId={character.id}
-			onDelete={onDelete}
-			tabs={[
-				{ id: "content", label: "Content", content: descriptionTab },
-				{ id: "links", label: "Links", content: linksTab },
-			]}
-			defaultTab="content"
-		/>
+		<div>
+			<EntityViewHeader name={character.name} badges={badges} />
+			<DetailTemplate
+				title={character.name}
+				icon={Users}
+				iconColor="text-green-600"
+				badges={badges}
+				editPath="/games/$gameId/characters/$id/edit"
+				gameId={gameId}
+				entityId={character.id}
+				onDelete={onDelete}
+				tabs={[
+					{ id: "content", label: "Content", content: descriptionTab },
+					{ id: "links", label: "Links", content: linksTab },
+				]}
+				defaultTab="content"
+			/>
+		</div>
 	);
 }

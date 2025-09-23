@@ -1,26 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-	getCharacterNotesTreeOptions,
-	getCharacterOptions,
-} from "~/api/@tanstack/react-query.gen";
 import { CharacterDetail } from "~/components/characters/character-detail";
 import { useAddTab } from "~/components/entity-tabs";
 import { useCharacterQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 	component: RouteComponent,
-	loader: ({ context, params }) => {
-		context.queryClient.ensureQueryData(
-			getCharacterOptions({
-				path: { game_id: params.gameId, id: params.id },
-			}),
-		);
-		context.queryClient.ensureQueryData(
-			getCharacterNotesTreeOptions({
-				path: { game_id: params.gameId, id: params.id },
-			}),
-		);
-	},
 });
 
 function RouteComponent() {

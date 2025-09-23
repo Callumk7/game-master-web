@@ -9,7 +9,7 @@ interface TreeNode {
 	children?: Array<TreeNode>;
 	id: string;
 	name: string;
-	entityType: EntityType;
+	entity_type: EntityType;
 }
 
 interface TreeProps {
@@ -27,7 +27,7 @@ export function SidebarTree({ parentNode, gameId }: TreeProps) {
 			<SidebarMenuItem>
 				<div className="relative">
 					<SidebarMenuLink
-						to={`/games/$gameId/${parentNode.entityType}s/$id` as string}
+						to={`/games/$gameId/${parentNode.entity_type}s/$id` as string}
 						params={{ gameId, id: parentNode.id }}
 						className="w-full pl-6 min-w-0"
 						activeProps={{
@@ -54,7 +54,7 @@ export function SidebarTree({ parentNode, gameId }: TreeProps) {
 			>
 				<div className="relative">
 					<SidebarMenuLink
-						to={`/games/$gameId/${parentNode.entityType}s/$id` as string}
+						to={`/games/$gameId/${parentNode.entity_type}s/$id` as string}
 						params={{ gameId, id: parentNode.id }}
 						className="w-full pl-6 min-w-0"
 						activeProps={{
