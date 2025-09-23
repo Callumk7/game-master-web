@@ -1,21 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { QuestDetail } from "~/components/quests/quest-detail";
 import { useGetQuestSuspenseQuery } from "~/queries/quests";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/")({
 	component: RouteComponent,
-	loader: ({ context, params }) => {
-		context.queryClient.ensureQueryData(
-			getQuestOptions({
-				path: {
-					game_id: params.gameId,
-					id: params.id,
-				},
-			}),
-		);
-	},
 });
 
 function RouteComponent() {

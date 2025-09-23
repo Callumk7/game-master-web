@@ -1,11 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
 import { createColumns } from "~/components/factions/columns";
 import { FactionsTable } from "~/components/factions/factions-table";
 import { useListFactionsSuspenseQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 	component: RouteComponent,
+	loader: async ({ context, params }) => {
+		await context.queryClient.ensureQueryData(
+			listFactionsOptions({ path: { game_id: params.gameId } }),
+		);
+	},
 });
 
 function RouteComponent() {

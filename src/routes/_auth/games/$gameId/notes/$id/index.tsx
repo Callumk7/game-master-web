@@ -6,16 +6,6 @@ import { NoteDetail } from "~/components/notes/note-detail";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/")({
 	component: RouteComponent,
-	loader: ({ context, params }) => {
-		context.queryClient.ensureQueryData(
-			getNoteOptions({
-				path: {
-					game_id: params.gameId,
-					id: params.id,
-				},
-			}),
-		);
-	},
 });
 
 function RouteComponent() {

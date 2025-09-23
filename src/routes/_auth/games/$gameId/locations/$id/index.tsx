@@ -2,17 +2,24 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getLocationOptions } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
+import { BasicErrorComponent } from "~/components/error";
 import { LocationDetail } from "~/components/locations/location-detail";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/")({
 	component: RouteComponent,
-	loader: ({ context, params }) => {
+	loader: async ({ context, params }) => {
+		await context.queryClient.ensureQueryData(
+			getLocationOptions({
+				path: { game_id: params.gameId, id: params.id },
+			}),
+		);
 		context.queryClient.ensureQueryData(
 			getLocationOptions({
 				path: { game_id: params.gameId, id: params.id },
 			}),
 		);
 	},
+	errorComponent: BasicErrorComponent,
 });
 
 function RouteComponent() {

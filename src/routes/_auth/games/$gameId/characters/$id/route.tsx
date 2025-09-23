@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import * as React from "react";
 import {
+	getCharacterLinksOptions,
 	getCharacterNotesTreeOptions,
 	getCharacterOptions,
 } from "~/api/@tanstack/react-query.gen";
@@ -18,6 +19,11 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 		context.queryClient.ensureQueryData(
 			getCharacterNotesTreeOptions({
 				path: { game_id: params.gameId, id: params.id },
+			}),
+		);
+		context.queryClient.ensureQueryData(
+			getCharacterLinksOptions({
+				path: { game_id: params.gameId, character_id: params.id },
 			}),
 		);
 	},
