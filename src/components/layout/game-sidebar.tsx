@@ -27,9 +27,9 @@ import {
 	SidebarMenuItem,
 	SidebarMenuLink,
 } from "~/components/ui/sidebar";
-import { useGetGameLinksQuery } from "~/queries/games";
-import { useGetLocationTree } from "~/queries/locations";
-import { useGetQuestTree } from "~/queries/quests";
+import { useGetGameLinksSuspenseQuery } from "~/queries/games";
+import { useGetLocationTreeSuspenseQuery } from "~/queries/locations";
+import { useGetQuestTreeSuspenseQuery } from "~/queries/quests";
 import { SidebarTree } from "./tree";
 import { NavUser } from "./user-sidebar";
 
@@ -55,15 +55,15 @@ export function GameSidebar({
 	const gameId = params.gameId;
 
 	// TODO: This needs to be cleaned up, and probably extracted to a hook / function
-	const { data: links } = useGetGameLinksQuery({ id: gameId });
+	const { data: links } = useGetGameLinksSuspenseQuery({ id: gameId });
 	const characters = links?.data?.entities?.characters;
 	const factions = links?.data?.entities?.factions;
 	const locations = links?.data?.entities?.locations;
 	const notes = links?.data?.entities?.notes;
 	const quests = links?.data?.entities?.quests;
 
-	const { data: locationTree } = useGetLocationTree(gameId);
-	const { data: questTree } = useGetQuestTree(gameId);
+	const { data: locationTree } = useGetLocationTreeSuspenseQuery(gameId);
+	const { data: questTree } = useGetQuestTreeSuspenseQuery(gameId);
 
 	React.useEffect(() => {
 		setMounted(true);
@@ -214,7 +214,6 @@ export function GameSidebar({
 										gameId={gameId}
 										key={item.id}
 										parentNode={item}
-										type="location"
 									/>
 								))}
 							</SidebarMenu>
@@ -229,7 +228,6 @@ export function GameSidebar({
 										gameId={gameId}
 										key={item.id}
 										parentNode={item}
-										type="quest"
 									/>
 								))}
 							</SidebarMenu>
@@ -291,7 +289,7 @@ export function GameSidebar({
 							user={{
 								name: "Callum",
 								email: "callum@example.com",
-								avatar: "https://avatars.dicebear.com/api/initials/callum@example.com.svg",
+								avatar: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages-wixmp-ed30a86b8c4ca887773594c2.wixmp.com%2Ff%2Fc3f6f733-7289-4186-bc20-1a811747f37f%2Fdj8mxhn-ad79f500-0b82-4a44-9545-b7b3c345971f.jpg%2Fv1%2Ffill%2Fw_894%2Ch_894%2Cq_70%2Cstrp%2Fbilbo_baggins_in_the_civil_war_by_houndhobbit_dj8mxhn-pre.jpg%3Ftoken%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcL2MzZjZmNzMzLTcyODktNDE4Ni1iYzIwLTFhODExNzQ3ZjM3ZlwvZGo4bXhobi1hZDc5ZjUwMC0wYjgyLTRhNDQtOTU0NS1iN2IzYzM0NTk3MWYuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.daP_x5eECE26Uo4ui9uvt-de5gOkOQbwAj0W3oxvj7c&f=1&nofb=1&ipt=e47750affbcaf6d843dee0e65f5a2f9499b02d76adc2352d92c0c6c02c21b495",
 							}}
 						/>
 					</SidebarMenuItem>

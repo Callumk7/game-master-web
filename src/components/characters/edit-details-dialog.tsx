@@ -1,4 +1,4 @@
-import { useCharacterQuery } from "~/queries/characters";
+import { useGetCharacterQuery } from "~/api/@tanstack/react-query.gen";
 import { FormField } from "../ui/composite/form-field";
 import { Dialog, DialogContent } from "../ui/dialog";
 
@@ -15,7 +15,7 @@ export function EditCharacterDetailsDialog({
 	open,
 	setOpen,
 }: EditCharacterDetailsDialogProps) {
-	const { data } = useCharacterQuery(gameId, characterId);
+	const { data } = useGetCharacterQuery({ path: { game_id: gameId, id: characterId } });
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogContent className={"max-w-md"}>

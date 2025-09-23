@@ -5,9 +5,5 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes")({
 });
 
 function RouteComponent() {
-	return (
-		<div className="flex flex-col">
-			<Outlet />
-		</div>
-	);
+	return <Outlet />;
 }

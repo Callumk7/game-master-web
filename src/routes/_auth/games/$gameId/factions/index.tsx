@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { createColumns } from "~/components/factions/columns";
 import { FactionsTable } from "~/components/factions/factions-table";
-import { useListFactionsQuery } from "~/queries/factions";
+import { useListFactionsSuspenseQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 	component: RouteComponent,
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListFactionsQuery(gameId);
+	const { data, isLoading } = useListFactionsSuspenseQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
 

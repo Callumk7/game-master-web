@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CharacterDetail } from "~/components/characters/character-detail";
 import { useAddTab } from "~/components/entity-tabs";
-import { useCharacterQuery } from "~/queries/characters";
+import { useGetCharacterSuspenseQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 	component: RouteComponent,
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 function RouteComponent() {
 	const params = Route.useParams();
 	const { gameId, id } = params;
-	const { data } = useCharacterQuery(gameId, id);
+	const { data } = useGetCharacterSuspenseQuery(gameId, id);
 
 	useAddTab({
 		id,

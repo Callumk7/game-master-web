@@ -1,9 +1,9 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
 import { createColumns } from "~/components/locations/columns";
 import { LocationsTable } from "~/components/locations/locations-table";
+import { useListLocationsSuspenseQuery } from "~/queries/locations";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/")({
 	component: RouteComponent,
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/locations/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListLocationsQuery(gameId);
+	const { data, isLoading } = useListLocationsSuspenseQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
 
@@ -40,7 +40,3 @@ function RouteComponent() {
 		</div>
 	);
 }
-
-const useListLocationsQuery = (gameId: string) => {
-	return useSuspenseQuery({ ...listLocationsOptions({ path: { game_id: gameId } }) });
-};

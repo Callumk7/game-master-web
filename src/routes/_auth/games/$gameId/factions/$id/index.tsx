@@ -5,7 +5,7 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { FactionDetail } from "~/components/factions/faction-detail";
-import { useFactionQuery } from "~/queries/factions";
+import { useFactionSuspenseQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/")({
 	component: RouteComponent,
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/")({
 function RouteComponent() {
 	const params = Route.useParams();
 	const { gameId, id } = params;
-	const { data } = useFactionQuery(gameId, id);
+	const { data } = useFactionSuspenseQuery(gameId, id);
 
 	useAddTab({
 		id,

@@ -5,14 +5,11 @@ import { Button } from "~/components/ui/button";
 import { DetailTemplate } from "~/components/ui/detail-template";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import {
-	useDeleteQuestMutation,
-	useGetQuestLinks,
-	useUpdateQuestMutation,
-} from "~/queries/quests";
+import { useDeleteQuestMutation, useUpdateQuestMutation } from "~/queries/quests";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { CreateQuestLink } from "./create-quest-link";
+import { useGetQuestLinksQuery } from "~/api/@tanstack/react-query.gen";
 
 interface QuestDetailProps {
 	quest: Quest;
@@ -25,7 +22,7 @@ export function QuestDetail({ quest, gameId }: QuestDetailProps) {
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetQuestLinks(gameId, quest.id);
+	} = useGetQuestLinksQuery({ path: { game_id: gameId, quest_id: quest.id } });
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
 	const [updatedContent, setUpdatedContent] = React.useState<{

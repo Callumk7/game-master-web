@@ -17,8 +17,6 @@ interface TreeProps {
 	gameId: string;
 }
 
-// TODO: We need to actually account for types per node
-
 export function SidebarTree({ parentNode, gameId }: TreeProps) {
 	const [isOpen, setIsOpen] = React.useState(true);
 

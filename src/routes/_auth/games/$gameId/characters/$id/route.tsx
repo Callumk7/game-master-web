@@ -5,13 +5,12 @@ import {
 	getCharacterOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { EditCharacterDetailsDialog } from "~/components/characters/edit-details-dialog";
-import { EntityViewHeader } from "~/components/entity-view";
-import { useCharacterQuery } from "~/queries/characters";
+import { BasicErrorComponent } from "~/components/error";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 	component: RouteComponent,
-	loader: ({ context, params }) => {
-		context.queryClient.ensureQueryData(
+	loader: async ({ context, params }) => {
+		await context.queryClient.ensureQueryData(
 			getCharacterOptions({
 				path: { game_id: params.gameId, id: params.id },
 			}),
@@ -22,20 +21,13 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 			}),
 		);
 	},
+	errorComponent: BasicErrorComponent,
 });
 
 function RouteComponent() {
 	const { gameId, id } = Route.useParams();
-	const { data, status, error } = useCharacterQuery(gameId, id);
 	const [editDetailsOpen, setEditDetailsOpen] = React.useState(false);
 
-	if (error) {
-		return (
-			<div>
-				Error: <pre>{JSON.stringify(error, null, 2)}</pre>
-			</div>
-		);
-	}
 	return (
 		<div>
 			<Outlet />

@@ -5,10 +5,10 @@ import { getGameOptions, listGameEntitiesOptions } from "~/api/@tanstack/react-q
 //                                QUERIES
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useGetGameQuery = ({ id }: { id: string }) => {
+export const useGetGameSuspenseQuery = ({ id }: { id: string }) => {
 	return useSuspenseQuery(getGameOptions({ path: { id } }));
 };
 
-export const useGetGameLinksQuery = ({ id }: { id: string }) => {
+export const useGetGameLinksSuspenseQuery = ({ id }: { id: string }) => {
 	return useSuspenseQuery(listGameEntitiesOptions({ path: { game_id: id } }));
 };

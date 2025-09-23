@@ -8,12 +8,12 @@ import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteLocationMutation,
-	useGetLocationLinks,
 	useUpdateLocationMutation,
 } from "~/queries/locations";
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { CreateLocationLink } from "./create-location-link";
+import { useGetLocationLinksQuery } from "~/api/@tanstack/react-query.gen";
 
 interface LocationDetailProps {
 	location: Location;
@@ -30,7 +30,7 @@ export function LocationDetail({ location, gameId }: LocationDetailProps) {
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetLocationLinks(gameId, location.id);
+	} = useGetLocationLinksQuery({ path: { game_id: gameId, location_id: location.id } });
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
 	const [updatedContent, setUpdatedContent] = React.useState<{

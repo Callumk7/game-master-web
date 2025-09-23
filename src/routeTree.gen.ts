@@ -16,7 +16,6 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthGamesRouteRouteImport } from './routes/_auth/games/route'
 import { Route as AuthGamesIndexRouteImport } from './routes/_auth/games/index'
-import { Route as AuthGamesShowRouteImport } from './routes/_auth/games/show'
 import { Route as AuthGamesNewRouteImport } from './routes/_auth/games/new'
 import { Route as AuthGamesGameIdRouteRouteImport } from './routes/_auth/games/$gameId/route'
 import { Route as AuthGamesGameIdIndexRouteImport } from './routes/_auth/games/$gameId/index'
@@ -83,11 +82,6 @@ const AuthGamesRouteRoute = AuthGamesRouteRouteImport.update({
 const AuthGamesIndexRoute = AuthGamesIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthGamesRouteRoute,
-} as any)
-const AuthGamesShowRoute = AuthGamesShowRouteImport.update({
-  id: '/show',
-  path: '/show',
   getParentRoute: () => AuthGamesRouteRoute,
 } as any)
 const AuthGamesNewRoute = AuthGamesNewRouteImport.update({
@@ -292,7 +286,6 @@ export interface FileRoutesByFullPath {
   '/games': typeof AuthGamesRouteRouteWithChildren
   '/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/games/new': typeof AuthGamesNewRoute
-  '/games/show': typeof AuthGamesShowRoute
   '/games/': typeof AuthGamesIndexRoute
   '/games/$gameId/factions': typeof AuthGamesGameIdFactionsRouteRouteWithChildren
   '/games/$gameId/locations': typeof AuthGamesGameIdLocationsRouteRouteWithChildren
@@ -332,7 +325,6 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/games/new': typeof AuthGamesNewRoute
-  '/games/show': typeof AuthGamesShowRoute
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/games/$gameId': typeof AuthGamesGameIdIndexRoute
@@ -368,7 +360,6 @@ export interface FileRoutesById {
   '/_auth/games': typeof AuthGamesRouteRouteWithChildren
   '/_auth/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/_auth/games/new': typeof AuthGamesNewRoute
-  '/_auth/games/show': typeof AuthGamesShowRoute
   '/_auth/games/': typeof AuthGamesIndexRoute
   '/_auth/games/$gameId/factions': typeof AuthGamesGameIdFactionsRouteRouteWithChildren
   '/_auth/games/$gameId/locations': typeof AuthGamesGameIdLocationsRouteRouteWithChildren
@@ -412,7 +403,6 @@ export interface FileRouteTypes {
     | '/games'
     | '/games/$gameId'
     | '/games/new'
-    | '/games/show'
     | '/games/'
     | '/games/$gameId/factions'
     | '/games/$gameId/locations'
@@ -452,7 +442,6 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/games/new'
-    | '/games/show'
     | '/games'
     | '/games/$gameId/edit'
     | '/games/$gameId'
@@ -487,7 +476,6 @@ export interface FileRouteTypes {
     | '/_auth/games'
     | '/_auth/games/$gameId'
     | '/_auth/games/new'
-    | '/_auth/games/show'
     | '/_auth/games/'
     | '/_auth/games/$gameId/factions'
     | '/_auth/games/$gameId/locations'
@@ -579,13 +567,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/games/'
       preLoaderRoute: typeof AuthGamesIndexRouteImport
-      parentRoute: typeof AuthGamesRouteRoute
-    }
-    '/_auth/games/show': {
-      id: '/_auth/games/show'
-      path: '/show'
-      fullPath: '/games/show'
-      preLoaderRoute: typeof AuthGamesShowRouteImport
       parentRoute: typeof AuthGamesRouteRoute
     }
     '/_auth/games/new': {
@@ -1000,14 +981,12 @@ const AuthGamesGameIdRouteRouteWithChildren =
 interface AuthGamesRouteRouteChildren {
   AuthGamesGameIdRouteRoute: typeof AuthGamesGameIdRouteRouteWithChildren
   AuthGamesNewRoute: typeof AuthGamesNewRoute
-  AuthGamesShowRoute: typeof AuthGamesShowRoute
   AuthGamesIndexRoute: typeof AuthGamesIndexRoute
 }
 
 const AuthGamesRouteRouteChildren: AuthGamesRouteRouteChildren = {
   AuthGamesGameIdRouteRoute: AuthGamesGameIdRouteRouteWithChildren,
   AuthGamesNewRoute: AuthGamesNewRoute,
-  AuthGamesShowRoute: AuthGamesShowRoute,
   AuthGamesIndexRoute: AuthGamesIndexRoute,
 }
 

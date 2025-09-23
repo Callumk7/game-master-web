@@ -4,9 +4,9 @@ import { toast } from "sonner";
 import {
 	createLocationMutation,
 	listLocationsQueryKey,
+	useListLocationsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
-import { useListLocationsQuery } from "~/queries/locations";
 import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 import { ParentLocationSelect } from "./parent-location-select";
@@ -16,8 +16,9 @@ export function CreateLocationForm() {
 	const queryClient = useQueryClient();
 
 	// Fetch existing locations for parent selection
-	const { data: locationsData, isLoading: locationsLoading } =
-		useListLocationsQuery(gameId);
+	const { data: locationsData, isLoading: locationsLoading } = useListLocationsQuery({
+		path: { game_id: gameId },
+	});
 	const locations = locationsData?.data || [];
 
 	const { form, mutation, renderSmartField } = useSmartForm({

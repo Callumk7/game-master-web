@@ -6,14 +6,11 @@ import { Button } from "~/components/ui/button";
 import { DetailTemplate } from "~/components/ui/detail-template";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import {
-	useDeleteFactionMutation,
-	useGetFactionLinks,
-	useUpdateFactionMutation,
-} from "~/queries/factions";
+import { useDeleteFactionMutation, useUpdateFactionMutation } from "~/queries/factions";
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { CreateFactionLink } from "./create-faction-link";
+import { useGetFactionLinksQuery } from "~/api/@tanstack/react-query.gen";
 
 interface FactionDetailProps {
 	faction: Faction;
@@ -26,7 +23,7 @@ export function FactionDetail({ faction, gameId }: FactionDetailProps) {
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetFactionLinks(gameId, faction.id);
+	} = useGetFactionLinksQuery({ path: { game_id: gameId, faction_id: faction.id } });
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
 	const [updatedContent, setUpdatedContent] = React.useState<{

@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
+import {
+	listCharactersOptions,
+	useListCharactersQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
 import { createColumns } from "~/components/characters/columns";
-import { useListCharactersQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 	component: RouteComponent,
@@ -16,7 +18,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListCharactersQuery(gameId);
+	const { data, isLoading } = useListCharactersQuery({ path: { game_id: gameId } });
 	const characters = data?.data || [];
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");

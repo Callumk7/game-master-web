@@ -1,5 +1,6 @@
 import { Users } from "lucide-react";
 import * as React from "react";
+import { useGetCharacterLinksQuery } from "~/api/@tanstack/react-query.gen";
 import type { Character } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -8,14 +9,12 @@ import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import {
 	useDeleteCharacterMutation,
-	useGetCharacterLinks,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
-import { CreateCharacterLink } from "./create-character-link";
-import { CharacterLinksDrawer } from "./character-links-drawer";
 import { EntityViewHeader } from "../entity-view";
+import { CreateCharacterLink } from "./create-character-link";
 
 interface CharacterDetailProps {
 	character: Character;
@@ -28,7 +27,9 @@ export function CharacterDetail({ character, gameId }: CharacterDetailProps) {
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetCharacterLinks(gameId, character.id);
+	} = useGetCharacterLinksQuery({
+		path: { game_id: gameId, character_id: character.id },
+	});
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
 	const [updatedContent, setUpdatedContent] = React.useState<{

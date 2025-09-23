@@ -12,14 +12,16 @@ import {
 	CommandSeparator,
 	CommandShortcut,
 } from "~/components/ui/command";
-import { useGetGameLinksQuery } from "~/queries/games";
+import { useGetGameLinksSuspenseQuery } from "~/queries/games";
 
 export function Commander({ gameId }: { gameId: string }) {
 	const [open, setOpen] = React.useState(false);
 
 	const navigate = useNavigate();
 
-	const { data: links, isLoading: linksLoading } = useGetGameLinksQuery({ id: gameId });
+	const { data: links, isLoading: linksLoading } = useGetGameLinksSuspenseQuery({
+		id: gameId,
+	});
 	const characters = links?.data?.entities?.characters;
 	const factions = links?.data?.entities?.factions;
 	const locations = links?.data?.entities?.locations;

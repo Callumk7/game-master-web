@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { StatCard } from "~/components/stat-card";
 import { Button } from "~/components/ui/button";
-import { useGetGameLinksQuery, useGetGameQuery } from "~/queries/games";
+import { useGetGameLinksSuspenseQuery, useGetGameSuspenseQuery } from "~/queries/games";
 
 export const Route = createFileRoute("/_auth/games/$gameId/")({
 	component: RouteComponent,
@@ -10,10 +10,12 @@ export const Route = createFileRoute("/_auth/games/$gameId/")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 
-	const { data: gameData } = useGetGameQuery({ id: gameId });
+	const { data: gameData } = useGetGameSuspenseQuery({ id: gameId });
 	const game = gameData.data;
 
-	const { data: links, isLoading: linksLoading } = useGetGameLinksQuery({ id: gameId });
+	const { data: links, isLoading: linksLoading } = useGetGameLinksSuspenseQuery({
+		id: gameId,
+	});
 	const characters = links?.data?.entities?.characters;
 	const factions = links?.data?.entities?.factions;
 	const locations = links?.data?.entities?.locations;

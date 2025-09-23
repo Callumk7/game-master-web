@@ -1,9 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { createQuestMutation, listQuestsQueryKey } from "~/api/@tanstack/react-query.gen";
+import {
+	createQuestMutation,
+	listQuestsQueryKey,
+	useListQuestsQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
-import { useListQuestsQuery } from "~/queries/quests";
 import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 import { ParentQuestSelect } from "./parent-quest-select";
@@ -13,7 +16,9 @@ export function CreateQuestForm() {
 	const queryClient = useQueryClient();
 
 	// Fetch existing quests for parent selection
-	const { data: questsData, isLoading: questsLoading } = useListQuestsQuery(gameId);
+	const { data: questsData, isLoading: questsLoading } = useListQuestsQuery({
+		path: { game_id: gameId },
+	});
 	const quests = questsData?.data || [];
 
 	const { form, mutation, renderSmartField } = useSmartForm({

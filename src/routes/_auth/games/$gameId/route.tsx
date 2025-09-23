@@ -1,6 +1,6 @@
-import * as React from "react";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Search } from "lucide-react";
+import * as React from "react";
 import {
 	getGameOptions,
 	getLocationTreeOptions,
@@ -10,19 +10,20 @@ import {
 import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { Commander } from "~/components/commander";
 import { EntityTabs, EntityTabsProvider } from "~/components/entity-tabs";
+import { BasicErrorComponent } from "~/components/error";
+import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
 import { GameSidebar } from "~/components/layout/game-sidebar";
+import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
+import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
+import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
 import { Input } from "~/components/ui/input";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
-import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
-import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
-import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
 	component: RouteComponent,
-	loader: ({ params, context }) => {
+	loader: async ({ params, context }) => {
 		const gameId = params.gameId;
-		context.queryClient.ensureQueryData({
+		await context.queryClient.ensureQueryData({
 			...getGameOptions({ path: { id: gameId } }),
 		});
 		context.queryClient.ensureQueryData(
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 			getQuestTreeOptions({ path: { game_id: gameId } }),
 		);
 	},
+	errorComponent: BasicErrorComponent,
 });
 
 // Games Layout

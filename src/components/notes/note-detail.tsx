@@ -6,14 +6,11 @@ import { Button } from "~/components/ui/button";
 import { DetailTemplate } from "~/components/ui/detail-template";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import {
-	useDeleteNoteMutation,
-	useGetNoteLinks,
-	useUpdateNoteMutation,
-} from "~/queries/notes";
+import { useDeleteNoteMutation, useUpdateNoteMutation } from "~/queries/notes";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 import { parseContentForEditor } from "~/utils/editorHelpers";
 import { CreateNoteLink } from "./create-note-link";
+import { useGetNoteLinksQuery } from "~/api/@tanstack/react-query.gen";
 
 interface NoteDetailProps {
 	note: Note;
@@ -26,7 +23,7 @@ export function NoteDetail({ note, gameId }: NoteDetailProps) {
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetNoteLinks(gameId, note.id);
+	} = useGetNoteLinksQuery({ path: { game_id: gameId, note_id: note.id } });
 
 	const [isUpdated, setIsUpdated] = React.useState(false);
 	const [updatedContent, setUpdatedContent] = React.useState<{
