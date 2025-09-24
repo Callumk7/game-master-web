@@ -5,16 +5,29 @@ import type { Character } from "~/api";
 import {
 	getFactionOptions,
 	useGetCharacterLinksQuery,
+	useGetCharacterNotesTreeQuery,
 	useListFactionsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
 import { SelectFactionCombobox } from "~/components/characters/select-faction-combobox";
+import { SelectNoteCombobox } from "~/components/characters/select-note-combobox";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "~/components/ui/card";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
+import { Link } from "~/components/ui/link";
+import {
+	MinimalTiptap,
+	MinimalTiptapViewer,
+} from "~/components/ui/shadcn-io/minimal-tiptap";
 import { useEditorContentActions } from "~/components/ui/shadcn-io/minimal-tiptap/hooks";
 import { parseContentForEditor } from "~/components/ui/shadcn-io/minimal-tiptap/utils";
 import {
@@ -138,7 +151,7 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		{
 			id: "notes",
 			label: "Notes",
-			content: <div>Notes tabs tbc</div>,
+			content: <CharacterNotesView gameId={gameId} characterId={character.id} />,
 		},
 		{
 			id: "faction",
@@ -212,6 +225,43 @@ function CharacterFactionView({
 					</div>
 				</div>
 			)}
+		</div>
+	);
+}
+
+interface CharacterNotesViewProps {
+	gameId: string;
+	characterId: string;
+}
+
+function CharacterNotesView({ gameId, characterId }: CharacterNotesViewProps) {
+	const { data: noteTree } = useGetCharacterNotesTreeQuery({
+		path: { game_id: gameId, id: characterId },
+	});
+	return (
+		<div className="space-y-4">
+			<SelectNoteCombobox gameId={gameId} characterId={characterId} />
+			<div className="grid grid-cols-3 gap-2">
+				{noteTree?.data?.notes_tree?.map((note) => (
+					<Card key={note.id}>
+						<CardHeader>
+							<CardTitle>{note.name}</CardTitle>
+							<CardDescription>
+								<Link
+									to="/games/$gameId/notes/$id"
+									params={{ gameId, id: note.id }}
+									className="pl-0"
+								>
+									Go to note
+								</Link>
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<MinimalTiptapViewer content={note.content} />
+						</CardContent>
+					</Card>
+				))}
+			</div>
 		</div>
 	);
 }

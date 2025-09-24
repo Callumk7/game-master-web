@@ -1,9 +1,10 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { cn } from "~/utils/cn";
+import { parseContentForEditor } from "./utils";
 
 interface MinimalTiptapViewerProps {
-	content?: object | null;
+	content?: string;
 	className?: string;
 }
 
@@ -21,7 +22,7 @@ function MinimalTiptapViewer({ content, className }: MinimalTiptapViewerProps) {
 				},
 			}),
 		],
-		content,
+		content: parseContentForEditor(content),
 		editable: false,
 		editorProps: {
 			attributes: {
