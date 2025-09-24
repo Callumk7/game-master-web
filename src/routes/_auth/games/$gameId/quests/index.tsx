@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listQuestsOptions } from "~/api/@tanstack/react-query.gen";
+import { PageHeader } from "~/components/page-header";
 import { createColumns } from "~/components/quests/columns";
 import { QuestsTable } from "~/components/quests/quests-table";
 import { useListQuestsSuspenseQuery } from "~/queries/quests";
@@ -28,7 +29,11 @@ function RouteComponent() {
 	const columns = createColumns(gameId);
 
 	return (
-		<div className="space-y-4">
+		<div className="container mx-auto py-8">
+			<PageHeader
+				title="All Quests"
+				description="Browse all quests in your game."
+			/>
 			<QuestsTable
 				columns={columns}
 				data={quests}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
 import { createColumns } from "~/components/factions/columns";
 import { FactionsTable } from "~/components/factions/factions-table";
+import { PageHeader } from "~/components/page-header";
 import { useListFactionsSuspenseQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
@@ -28,7 +29,11 @@ function RouteComponent() {
 	const columns = createColumns(gameId);
 
 	return (
-		<div className="space-y-4">
+		<div className="container mx-auto py-8">
+			<PageHeader
+				title="All Factions"
+				description="Browse all factions in your game."
+			/>
 			<FactionsTable
 				columns={columns}
 				data={factions}

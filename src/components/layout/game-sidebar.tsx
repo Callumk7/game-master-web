@@ -2,6 +2,7 @@ import { useParams } from "@tanstack/react-router";
 import {
 	BookOpen,
 	Gem,
+	Globe,
 	Home,
 	MapPin,
 	Moon,
@@ -69,6 +70,8 @@ export function GameSidebar({
 		setMounted(true);
 	}, []);
 
+	const totalEntityCount = (characters?.length || 0) + (factions?.length || 0) + (locations?.length || 0) + (notes?.length || 0) + (quests?.length || 0);
+
 	return (
 		<Sidebar>
 			<SidebarHeader className="border-b p-4">
@@ -118,6 +121,21 @@ export function GameSidebar({
 
 					<SidebarMenu>
 						<SidebarMenuItem>
+							<SidebarMenuLink 
+								to={"/games/$gameId/all"} 
+								params={params}
+								activeProps={{
+									className: "bg-secondary text-secondary-foreground",
+								}}
+							>
+								<Globe className="w-4 h-4" />
+								All
+								<Badge variant="secondary" className="ml-auto">
+									{totalEntityCount.toString()}
+								</Badge>
+							</SidebarMenuLink>
+						</SidebarMenuItem>
+						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/characters"
 								params={params}
@@ -133,26 +151,6 @@ export function GameSidebar({
 							</SidebarMenuLink>
 						</SidebarMenuItem>
 
-						<div className="pl-2 border-l">
-							{characters.map((char) => (
-								<SidebarMenuItem key={char.id}>
-									<SidebarMenuLink
-										to="/games/$gameId/characters/$id"
-										params={{ gameId, id: char.id }}
-										className="text-xs"
-										activeProps={{
-											className:
-												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-										}}
-									>
-										{char.name}
-									</SidebarMenuLink>
-								</SidebarMenuItem>
-							))}
-						</div>
-					</SidebarMenu>
-
-					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/factions"
@@ -170,61 +168,20 @@ export function GameSidebar({
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
-						<div className="pl-2 border-l">
-							{factions.map((faction) => (
-								<SidebarMenuItem key={faction.id}>
-									<SidebarMenuLink
-										to="/games/$gameId/factions/$id"
-										params={{ gameId, id: faction.id }}
-										className="text-xs"
-										activeProps={{
-											className:
-												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-										}}
-									>
-										{faction.name}
-									</SidebarMenuLink>
-								</SidebarMenuItem>
-							))}
-						</div>
-					</SidebarMenu>
 
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<SidebarMenuLink
-								to="/games/$gameId/locations"
-								params={params}
-								activeProps={{
-									className: "bg-secondary text-secondary-foreground",
-								}}
-							>
-								<MapPin className="w-4 h-4" />
-								Locations
-								<Badge variant="secondary" className="ml-auto">
-									{locations?.length.toString() || "0"}
-								</Badge>
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-						<div className="pl-2 border-l">
-							{locations.map((location) => (
-								<SidebarMenuItem key={location.id}>
-									<SidebarMenuLink
-										to="/games/$gameId/locations/$id"
-										params={{ gameId, id: location.id }}
-										className="text-xs"
-										activeProps={{
-											className:
-												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-										}}
-									>
-										{location.name}
-									</SidebarMenuLink>
-								</SidebarMenuItem>
-							))}
-						</div>
-					</SidebarMenu>
-
-					<SidebarMenu>
+						<SidebarMenuLink
+							to="/games/$gameId/locations"
+							params={params}
+							activeProps={{
+								className: "bg-secondary text-secondary-foreground",
+							}}
+						>
+							<MapPin className="w-4 h-4" />
+							Locations
+							<Badge variant="secondary" className="ml-auto">
+								{locations?.length.toString() || "0"}
+							</Badge>
+						</SidebarMenuLink>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/quests"
@@ -240,26 +197,7 @@ export function GameSidebar({
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
-						<div className="pl-2 border-l">
-							{quests.map((quest) => (
-								<SidebarMenuItem key={quest.id}>
-									<SidebarMenuLink
-										to="/games/$gameId/quests/$id"
-										params={{ gameId, id: quest.id }}
-										className="text-xs"
-										activeProps={{
-											className:
-												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-										}}
-									>
-										{quest.name}
-									</SidebarMenuLink>
-								</SidebarMenuItem>
-							))}
-						</div>
-					</SidebarMenu>
 
-					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/notes"
@@ -275,23 +213,6 @@ export function GameSidebar({
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
-						<div className="pl-2 border-l">
-							{notes.map((note) => (
-								<SidebarMenuItem key={note.id}>
-									<SidebarMenuLink
-										to="/games/$gameId/notes/$id"
-										params={{ gameId, id: note.id }}
-										className="text-xs"
-										activeProps={{
-											className:
-												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-										}}
-									>
-										{note.name}
-									</SidebarMenuLink>
-								</SidebarMenuItem>
-							))}
-						</div>
 					</SidebarMenu>
 
 					<SidebarGroup>

@@ -6,6 +6,7 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
 import { createColumns } from "~/components/characters/columns";
+import { PageHeader } from "~/components/page-header";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 	component: RouteComponent,
@@ -28,7 +29,11 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="container mx-auto py-8">
+			<PageHeader
+				title="All Characters"
+				description="Browse all characters in your game."
+			/>
 			<CharacterTable
 				columns={createColumns(gameId)}
 				data={characters}
