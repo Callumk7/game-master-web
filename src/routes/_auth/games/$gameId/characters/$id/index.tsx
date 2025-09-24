@@ -143,18 +143,28 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		{
 			id: "faction",
 			label: "Faction",
-			content: <CharacterFactionView gameId={gameId} />,
+			content: <CharacterFactionView gameId={gameId} characterId={character.id} />,
 		},
 	];
 
-	return <EntityView name={character.name} badges={badges} tabs={tabs} />;
+	return (
+		<>
+			<div>{character.member_of_faction_id || "no faction"}</div>
+			<EntityView name={character.name} badges={badges} tabs={tabs} />
+		</>
+	);
 }
 
 interface CharacterFactionViewProps {
 	gameId: string;
+	characterId: string;
 	primaryFactionId?: string;
 }
-function CharacterFactionView({ gameId, primaryFactionId }: CharacterFactionViewProps) {
+function CharacterFactionView({
+	gameId,
+	characterId,
+	primaryFactionId,
+}: CharacterFactionViewProps) {
 	// Fetch the primary faction if it exists
 	const { data: factionData, isEnabled } = useQuery({
 		...getFactionOptions({ path: { game_id: gameId, id: primaryFactionId! } }),
@@ -177,7 +187,11 @@ function CharacterFactionView({ gameId, primaryFactionId }: CharacterFactionView
 				{isFactionListLoading ? (
 					<div>Loading factions...</div>
 				) : (
-					<SelectFactionCombobox factions={factions} />
+					<SelectFactionCombobox
+						gameId={gameId}
+						characterId={characterId}
+						factions={factions}
+					/>
 				)}
 			</div>
 		);

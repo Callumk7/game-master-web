@@ -1,6 +1,8 @@
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
 import type { Faction } from "~/api";
+import { useUpdateCharacterMutation } from "~/queries/characters";
+import { Button } from "../ui/button";
 import {
 	Combobox,
 	ComboboxClear,
@@ -13,13 +15,36 @@ import {
 	ComboboxPositioner,
 	ComboboxTrigger,
 } from "../ui/combobox";
+import { FormField } from "../ui/composite/form-field";
 
 interface SelectFactionComboboxProps {
+	gameId: string;
+	characterId: string;
 	factions: Faction[];
 }
-export function SelectFactionCombobox({ factions }: SelectFactionComboboxProps) {
+export function SelectFactionCombobox({
+	gameId,
+	characterId,
+	factions,
+}: SelectFactionComboboxProps) {
 	const id = React.useId();
 	const [selectedFaction, setSelectedFaction] = React.useState<Faction | null>(null);
+	const [role, setRole] = React.useState<string>("");
+
+	const updateCharacter = useUpdateCharacterMutation(gameId, characterId);
+
+	const handleSave = () => {
+		updateCharacter.mutateAsync({
+			body: {
+				character: {
+					member_of_faction_id: selectedFaction?.id,
+					faction_role: role,
+				},
+			},
+			path: { game_id: gameId, id: characterId },
+		});
+	};
+
 	return (
 		<div className="max-w-3xs w-full">
 			<Combobox
@@ -55,6 +80,20 @@ export function SelectFactionCombobox({ factions }: SelectFactionComboboxProps) 
 					</ComboboxPopup>
 				</ComboboxPositioner>
 			</Combobox>
+
+			<FormField
+				label="Role"
+				id="role"
+				value={role}
+				onInput={(e) => setRole(e.currentTarget.value)}
+			/>
+			<Button
+				variant={"secondary"}
+				onClick={handleSave}
+				disabled={!selectedFaction}
+			>
+				Save
+			</Button>
 		</div>
 	);
 }
