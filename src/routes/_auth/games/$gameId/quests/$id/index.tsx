@@ -25,8 +25,8 @@ function RouteComponent() {
 
 	useAddTab({
 		data: quest,
-		path: Route.fullPath,
-		params,
+		entityType: "quests",
+		gameId,
 	});
 
 	if (!quest) {

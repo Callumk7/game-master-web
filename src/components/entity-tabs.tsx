@@ -8,11 +8,8 @@ export interface Tab {
 		id: string;
 		name: string;
 	};
-	path: string; // The URL path, e.g., '/games/123/characters/456'
-	params: {
-		gameId: string;
-		id: string;
-	};
+	entityType: string; // e.g., 'characters', 'factions', 'notes'
+	gameId: string;
 }
 
 // Define the shape of the context's value
@@ -73,33 +70,39 @@ export function EntityTabs() {
 	// TODO: Add drag to reorder
 	return (
 		<nav className="flex gap-2 flex-wrap w-full border-b px-1">
-			{tabList.map((tab) => (
-				<Link
-					key={tab.data.id}
-					to={tab.path}
-					params={tab.params}
-					variant={"ghost"}
-					size={"sm"}
-					className="mr-0 pr-0"
-					activeProps={{
-						variant: "outline",
-					}}
-				>
-					{tab.data.name}
-					<Button
+			{tabList.map((tab) => {
+				// Construct the path dynamically to prevent staleness
+				const path = `/games/${tab.gameId}/${tab.entityType}/${tab.data.id}/`;
+				const params = { gameId: tab.gameId, id: tab.data.id };
+
+				return (
+					<Link
+						key={tab.data.id}
+						to={path}
+						params={params}
 						variant={"ghost"}
-						size={"icon"}
-						className="ml-auto mr-0"
-						onClick={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							removeTab(tab.data.id);
+						size={"sm"}
+						className="mr-0 pr-0"
+						activeProps={{
+							variant: "outline",
 						}}
 					>
-						&times;
-					</Button>
-				</Link>
-			))}
+						{tab.data.name}
+						<Button
+							variant={"ghost"}
+							size={"icon"}
+							className="ml-auto mr-0"
+							onClick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								removeTab(tab.data.id);
+							}}
+						>
+							&times;
+						</Button>
+					</Link>
+				);
+			})}
 		</nav>
 	);
 }

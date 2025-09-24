@@ -35,8 +35,8 @@ function RouteComponent() {
 
 	useAddTab({
 		data: character,
-		path: Route.fullPath,
-		params,
+		entityType: "characters",
+		gameId,
 	});
 
 	if (!character) {

@@ -31,8 +31,8 @@ function RouteComponent() {
 
 	useAddTab({
 		data: faction,
-		path: Route.fullPath,
-		params,
+		entityType: "factions",
+		gameId,
 	});
 
 	if (!faction) {

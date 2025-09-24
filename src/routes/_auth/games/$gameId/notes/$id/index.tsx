@@ -25,8 +25,8 @@ function RouteComponent() {
 
 	useAddTab({
 		data: note,
-		path: Route.fullPath,
-		params,
+		entityType: "notes",
+		gameId,
 	});
 
 	if (!note) {

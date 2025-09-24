@@ -25,8 +25,8 @@ function RouteComponent() {
 
 	useAddTab({
 		data: location,
-		path: Route.fullPath,
-		params,
+		entityType: "locations",
+		gameId,
 	});
 
 	if (!location) {
