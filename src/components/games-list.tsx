@@ -1,41 +1,38 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { listGamesOptions } from "~/api/@tanstack/react-query.gen";
-import type { Game } from "~/api/types.gen";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "~/components/ui/table";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 export function GamesList() {
-	const { data } = useQuery({ ...listGamesOptions() });
+	const { data: games, error } = useSuspenseQuery(listGamesOptions());
+
+	const navigate = useNavigate();
 
 	return (
-		<Table>
-			<TableHeader>
-				<TableRow>
-					<TableHead>Game</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{data?.data?.map((game: Game) => (
-					<TableRow key={game.id}>
-						<TableCell>
-							<Link
-								to="/games/$gameId"
-								params={{ gameId: game.id.toString() }}
-								className="text-blue-600 hover:underline"
-							>
-								{game.name || `Game ${game.id}`}
-							</Link>
-						</TableCell>
-					</TableRow>
+		<>
+			{error && <div>Error: {error.message}</div>}
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 m-10">
+				{games.data?.map((game) => (
+					<Card
+						key={game.id}
+						className="group cursor-pointer hover:bg-primary transition-colors ease-in-out duration-200 "
+						onClick={() =>
+							navigate({
+								to: "/games/$gameId",
+								from: "/games",
+								params: { gameId: game.id },
+							})
+						}
+					>
+						<CardHeader>
+							<CardTitle>{game.name}</CardTitle>
+							<CardDescription className="group-hover:text-primary-foreground transition-colors ease-in-out duration-200">
+								{game.content}
+							</CardDescription>
+						</CardHeader>
+					</Card>
 				))}
-			</TableBody>
-		</Table>
+			</div>
+		</>
 	);
 }

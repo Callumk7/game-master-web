@@ -25,14 +25,15 @@ interface EntityViewProps {
 
 export function EntityView({ name, badges, onEdit, onDelete, tabs }: EntityViewProps) {
 	return (
-		<div className="space-y-10 mt-10">
-			<EntityViewHeader
-				name={name}
-				badges={badges}
-				onEdit={onEdit}
-				onDelete={onDelete}
-			/>
-			<EntityTabs tabs={tabs} />
+		<div className="space-y-10 mt-2">
+			<EntityTabs tabs={tabs}>
+				<EntityViewHeader
+					name={name}
+					badges={badges}
+					onEdit={onEdit}
+					onDelete={onDelete}
+				/>
+			</EntityTabs>
 		</div>
 	);
 }
@@ -44,7 +45,7 @@ export function EntityViewHeader({
 	onDelete,
 }: Omit<EntityViewProps, "tabs">) {
 	return (
-		<div className="space-y-2">
+		<div className="space-y-2 mb-4">
 			<div className="flex items-center gap-3">
 				<h1 className="text-3xl font-bold">{name}</h1>
 				<EntityControls onEdit={onEdit} onDelete={onDelete} />
@@ -83,22 +84,24 @@ export function EntityControls({ onEdit, onDelete }: EntityControlsProps) {
 
 interface EntityTabsProps {
 	tabs: EntityTab[];
+	children: React.ReactNode;
 }
 
-export function EntityTabs({ tabs }: EntityTabsProps) {
+export function EntityTabs({ tabs, children }: EntityTabsProps) {
 	if (!tabs.length) {
 		return null;
 	}
 
 	return (
 		<Tabs defaultValue={tabs[0].id}>
-			<TabsList>
+			<TabsList className="mb-6">
 				{tabs.map((tab) => (
 					<TabsTrigger key={tab.id} value={tab.id}>
 						{tab.label}
 					</TabsTrigger>
 				))}
 			</TabsList>
+			{children}
 			{tabs.map((tab) => (
 				<TabsContent key={tab.id} value={tab.id}>
 					{tab.content}

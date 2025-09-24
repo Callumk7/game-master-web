@@ -1,19 +1,16 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import type { Note } from "~/api";
 import { useGetNoteLinksQuery } from "~/api/@tanstack/react-query.gen";
-import { CreateNoteLink } from "~/components/notes/create-note-link";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { CreateNoteLink } from "~/components/notes/create-note-link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
 import { useEditorContentActions } from "~/components/ui/shadcn-io/minimal-tiptap/hooks";
 import { parseContentForEditor } from "~/components/ui/shadcn-io/minimal-tiptap/utils";
-import {
-	useNoteSuspenseQuery,
-	useUpdateNoteMutation,
-} from "~/queries/notes";
+import { useNoteSuspenseQuery, useUpdateNoteMutation } from "~/queries/notes";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/")({

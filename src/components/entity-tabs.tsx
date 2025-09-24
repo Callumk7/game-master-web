@@ -72,7 +72,7 @@ export function EntityTabs() {
 	// TODO: Add pin button
 	// TODO: Add drag to reorder
 	return (
-		<nav className="flex gap-2 flex-wrap">
+		<nav className="flex gap-2 flex-wrap w-full border-b px-1">
 			{tabList.map((tab) => (
 				<Link
 					key={tab.data.id}

@@ -56,11 +56,11 @@ export function GameSidebar({
 
 	// TODO: This needs to be cleaned up, and probably extracted to a hook / function
 	const { data: links } = useGetGameLinksSuspenseQuery({ id: gameId });
-	const characters = links?.data?.entities?.characters;
-	const factions = links?.data?.entities?.factions;
-	const locations = links?.data?.entities?.locations;
-	const notes = links?.data?.entities?.notes;
-	const quests = links?.data?.entities?.quests;
+	const characters = resolveEntityArray(links?.data?.entities?.characters);
+	const factions = resolveEntityArray(links?.data?.entities?.factions);
+	const locations = resolveEntityArray(links?.data?.entities?.locations);
+	const notes = resolveEntityArray(links?.data?.entities?.notes);
+	const quests = resolveEntityArray(links?.data?.entities?.quests);
 
 	const { data: locationTree } = useGetLocationTreeSuspenseQuery(gameId);
 	const { data: questTree } = useGetQuestTreeSuspenseQuery(gameId);
@@ -122,8 +122,7 @@ export function GameSidebar({
 								to="/games/$gameId/characters"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<Users className="w-4 h-4" />
@@ -134,13 +133,32 @@ export function GameSidebar({
 							</SidebarMenuLink>
 						</SidebarMenuItem>
 
+						<div className="pl-2 border-l">
+							{characters.map((char) => (
+								<SidebarMenuItem key={char.id}>
+									<SidebarMenuLink
+										to="/games/$gameId/characters/$id"
+										params={{ gameId, id: char.id }}
+										className="text-xs"
+										activeProps={{
+											className:
+												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+										}}
+									>
+										{char.name}
+									</SidebarMenuLink>
+								</SidebarMenuItem>
+							))}
+						</div>
+					</SidebarMenu>
+
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/factions"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<div className="w-4 h-4 flex items-center justify-center text-sm">
@@ -152,14 +170,32 @@ export function GameSidebar({
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
+						<div className="pl-2 border-l">
+							{factions.map((faction) => (
+								<SidebarMenuItem key={faction.id}>
+									<SidebarMenuLink
+										to="/games/$gameId/factions/$id"
+										params={{ gameId, id: faction.id }}
+										className="text-xs"
+										activeProps={{
+											className:
+												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+										}}
+									>
+										{faction.name}
+									</SidebarMenuLink>
+								</SidebarMenuItem>
+							))}
+						</div>
+					</SidebarMenu>
 
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/locations"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<MapPin className="w-4 h-4" />
@@ -169,14 +205,32 @@ export function GameSidebar({
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
+						<div className="pl-2 border-l">
+							{locations.map((location) => (
+								<SidebarMenuItem key={location.id}>
+									<SidebarMenuLink
+										to="/games/$gameId/locations/$id"
+										params={{ gameId, id: location.id }}
+										className="text-xs"
+										activeProps={{
+											className:
+												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+										}}
+									>
+										{location.name}
+									</SidebarMenuLink>
+								</SidebarMenuItem>
+							))}
+						</div>
+					</SidebarMenu>
 
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/quests"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<Gem className="w-4 h-4" />
@@ -186,14 +240,32 @@ export function GameSidebar({
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
+						<div className="pl-2 border-l">
+							{quests.map((quest) => (
+								<SidebarMenuItem key={quest.id}>
+									<SidebarMenuLink
+										to="/games/$gameId/quests/$id"
+										params={{ gameId, id: quest.id }}
+										className="text-xs"
+										activeProps={{
+											className:
+												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+										}}
+									>
+										{quest.name}
+									</SidebarMenuLink>
+								</SidebarMenuItem>
+							))}
+						</div>
+					</SidebarMenu>
 
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/notes"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<Scroll className="w-4 h-4" />
@@ -203,6 +275,23 @@ export function GameSidebar({
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
+						<div className="pl-2 border-l">
+							{notes.map((note) => (
+								<SidebarMenuItem key={note.id}>
+									<SidebarMenuLink
+										to="/games/$gameId/notes/$id"
+										params={{ gameId, id: note.id }}
+										className="text-xs"
+										activeProps={{
+											className:
+												"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+										}}
+									>
+										{note.name}
+									</SidebarMenuLink>
+								</SidebarMenuItem>
+							))}
+						</div>
 					</SidebarMenu>
 
 					<SidebarGroup>
@@ -297,4 +386,12 @@ export function GameSidebar({
 			</SidebarContent>
 		</Sidebar>
 	);
+}
+
+function resolveEntityArray<T>(entityArray: T[] | undefined): T[] {
+	if (!entityArray) {
+		return [];
+	}
+
+	return entityArray;
 }
