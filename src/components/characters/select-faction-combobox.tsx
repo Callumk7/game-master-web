@@ -16,6 +16,8 @@ import {
 	ComboboxTrigger,
 } from "../ui/combobox";
 import { FormField } from "../ui/composite/form-field";
+import { useMutation } from "@tanstack/react-query";
+import { setCharacterPrimaryFactionMutation } from "~/api/@tanstack/react-query.gen";
 
 interface SelectFactionComboboxProps {
 	gameId: string;
@@ -31,18 +33,18 @@ export function SelectFactionCombobox({
 	const [selectedFaction, setSelectedFaction] = React.useState<Faction | null>(null);
 	const [role, setRole] = React.useState<string>("");
 
-	const updateCharacter = useUpdateCharacterMutation(gameId, characterId);
+	const selectFaction = useMutation(setCharacterPrimaryFactionMutation());
 
 	const handleSave = () => {
-		updateCharacter.mutateAsync({
-			body: {
-				character: {
-					member_of_faction_id: selectedFaction?.id,
-					faction_role: role,
+		if (selectedFaction) {
+			selectFaction.mutateAsync({
+				body: {
+					faction_id: selectedFaction?.id,
+					role,
 				},
-			},
-			path: { game_id: gameId, id: characterId },
-		});
+				path: { game_id: gameId, character_id: characterId },
+			});
+		}
 	};
 
 	return (
