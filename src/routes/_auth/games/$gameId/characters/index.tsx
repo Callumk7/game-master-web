@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
-import { CharacterTable } from "~/components/characters/CharacterTable";
+import {
+	listCharactersOptions,
+	useListCharactersQuery,
+} from "~/api/@tanstack/react-query.gen";
+import { CharacterTable } from "~/components/characters/character-table";
 import { createColumns } from "~/components/characters/columns";
-import { useListCharactersQuery } from "~/queries/characters";
+import { PageHeader } from "~/components/page-header";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 	component: RouteComponent,
@@ -16,7 +19,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListCharactersQuery(gameId);
+	const { data, isLoading } = useListCharactersQuery({ path: { game_id: gameId } });
 	const characters = data?.data || [];
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
@@ -26,7 +29,11 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="container mx-auto py-8">
+			<PageHeader
+				title="All Characters"
+				description="Browse all characters in your game."
+			/>
 			<CharacterTable
 				columns={createColumns(gameId)}
 				data={characters}

@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
 import { createColumns } from "~/components/notes/columns";
-import { NotesTable } from "~/components/notes/NotesTable";
-import { useListNotesQuery } from "~/queries/notes";
+import { NotesTable } from "~/components/notes/notes-table";
+import { PageHeader } from "~/components/page-header";
+import { useListNotesSuspenseQuery } from "~/queries/notes";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/")({
 	component: RouteComponent,
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListNotesQuery(gameId);
+	const { data, isLoading } = useListNotesSuspenseQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
 
@@ -28,7 +29,8 @@ function RouteComponent() {
 	const columns = createColumns(gameId);
 
 	return (
-		<div className="space-y-4">
+		<div className="container mx-auto py-8">
+			<PageHeader title="All Notes" description="Browse all notes in your game." />
 			<NotesTable
 				columns={columns}
 				data={notes}

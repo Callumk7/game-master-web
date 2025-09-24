@@ -1,4 +1,4 @@
-import { ErrorDetails } from "~/api/types.gen";
+import type { ErrorDetails } from "~/api/types.gen";
 
 interface ParsedError {
 	message: string;
@@ -10,7 +10,12 @@ interface ParsedError {
 
 // TODO: Fix the parsing of errors, I think we mostly use the details field, which has nested errors for each field
 
-export function parseApiError(errorDetails: ErrorDetails): ParsedError {
+export function parseApiError(errorDetails: ErrorDetails | undefined): ParsedError {
+	if (!errorDetails) {
+		return {
+			message: "An unknown error occurred",
+		};
+	}
 	// Common field names to check for error information
 	const messageFields = ["message", "error", "description", "detail", "msg"];
 	const codeFields = ["code", "errorCode", "error_code", "type"];

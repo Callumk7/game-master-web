@@ -1,13 +1,7 @@
-import {
-	useMutation,
-	useQuery,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteQuestMutation,
-	getQuestLinksOptions,
 	getQuestOptions,
 	getQuestQueryKey,
 	getQuestTreeOptions,
@@ -20,26 +14,16 @@ import {
 //                                QUERIES
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useListQuestsQuery = (gameId: string) => {
-	return useQuery({ ...listQuestsOptions({ path: { game_id: gameId } }) });
+export const useListQuestsSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(listQuestsOptions({ path: { game_id: gameId } }));
 };
 
-export const useQuestQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getQuestOptions({ path: { game_id: gameId, id } }),
-	});
+export const useGetQuestSuspenseQuery = (gameId: string, id: string) => {
+	return useSuspenseQuery(getQuestOptions({ path: { game_id: gameId, id } }));
 };
 
-export const useGetQuestLinks = (gameId: string, questId: string) => {
-	return useQuery(
-		getQuestLinksOptions({
-			path: { game_id: gameId, quest_id: questId },
-		}),
-	);
-};
-
-export const useGetQuestTree = (gameId: string) => {
-	return useQuery(getQuestTreeOptions({ path: { game_id: gameId } }));
+export const useGetQuestTreeSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(getQuestTreeOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,4 +59,3 @@ export const useUpdateQuestMutation = (gameId: string, questId: string) => {
 		},
 	});
 };
-

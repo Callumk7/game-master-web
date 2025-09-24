@@ -96,17 +96,17 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 				try {
 					// Convert editor objects to strings before validation
 					const processedValue = processFormValuesForSubmission(value, fields);
-					
+
 					// Auto-extend schema to include _plain_text fields for editor fields
 					const extendedSchema = fields.reduce((acc, field) => {
 						if (field.type === "editor") {
 							return acc.extend({
-								[`${field.name}_plain_text`]: z.string().optional()
+								[`${field.name}_plain_text`]: z.string().optional(),
 							});
 						}
 						return acc;
 					}, schema);
-					
+
 					const validatedData = extendedSchema.parse(processedValue);
 					const fullData = {
 						body: { [entityName]: validatedData },
@@ -315,17 +315,17 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 			try {
 				// Convert editor objects to strings before validation
 				const processedValue = processFormValuesForSubmission(value, fields);
-				
+
 				// Auto-extend schema to include _plain_text fields for editor fields
 				const extendedSchema = fields.reduce((acc, field) => {
 					if (field.type === "editor") {
 						return acc.extend({
-							[`${field.name}_plain_text`]: z.string().optional()
+							[`${field.name}_plain_text`]: z.string().optional(),
 						});
 					}
 					return acc;
 				}, schema);
-				
+
 				const validatedData = extendedSchema.parse(processedValue);
 				const fullData = {
 					body: { [entityName]: validatedData },
@@ -380,7 +380,8 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 
 			// Apply smart field type detection
 			const zodField = (schema.shape as any)[fieldName];
-			const actualType = zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
+			const actualType =
+				zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
 
 			if (actualType instanceof z.ZodString) {
 				// Check for rich text editor fields (complex content)
@@ -395,11 +396,10 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 				}
 			} else if (actualType instanceof z.ZodEnum) {
 				fieldConfig.type = "select";
-				const def = actualType._def;
-				const enumValues = def?.values || Object.keys(def?.entries || {});
-				fieldConfig.options = enumValues.map((value: string) => ({
-					value,
-					label: value.charAt(0).toUpperCase() + value.slice(1),
+				const enumValues = actualType.options || [];
+				fieldConfig.options = enumValues.map((value) => ({
+					value: String(value),
+					label: String(value).charAt(0).toUpperCase() + String(value).slice(1),
 				}));
 			} else if (actualType instanceof z.ZodArray) {
 				// Check if it's an array of strings, likely for tags

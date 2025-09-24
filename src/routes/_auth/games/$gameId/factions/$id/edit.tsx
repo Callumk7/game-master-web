@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getFactionOptions } from "~/api/@tanstack/react-query.gen";
-import { EditFactionForm } from "~/components/factions/EditFactionForm";
+import { EditFactionForm } from "~/components/factions/edit-faction-form";
 import { useFactionQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/edit")({

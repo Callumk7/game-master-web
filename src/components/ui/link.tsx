@@ -13,8 +13,8 @@ const BasicLinkComponent = React.forwardRef<HTMLAnchorElement, BasicLinkProps>(
 		return (
 			<a
 				ref={ref}
+				className={cn(buttonVariants({ variant, size }), className)}
 				{...props}
-				className={cn(buttonVariants({ variant, size, className }))}
 			/>
 		);
 	},

@@ -1,13 +1,7 @@
-import {
-	useMutation,
-	useQuery,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteNoteMutation,
-	getNoteLinksOptions,
 	getNoteOptions,
 	getNoteQueryKey,
 	listNotesOptions,
@@ -19,22 +13,12 @@ import {
 //                                QUERIES
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useListNotesQuery = (gameId: string) => {
-	return useQuery({ ...listNotesOptions({ path: { game_id: gameId } }) });
+export const useListNotesSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(listNotesOptions({ path: { game_id: gameId } }));
 };
 
-export const useNoteQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getNoteOptions({ path: { game_id: gameId, id } }),
-	});
-};
-
-export const useGetNoteLinks = (gameId: string, noteId: string) => {
-	return useQuery(
-		getNoteLinksOptions({
-			path: { game_id: gameId, note_id: noteId },
-		}),
-	);
+export const useNoteSuspenseQuery = (gameId: string, id: string) => {
+	return useSuspenseQuery(getNoteOptions({ path: { game_id: gameId, id } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,4 +54,3 @@ export const useUpdateNoteMutation = (gameId: string, noteId: string) => {
 		},
 	});
 };
-

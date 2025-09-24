@@ -1,13 +1,7 @@
-import {
-	useMutation,
-	useQuery,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteLocationMutation,
-	getLocationLinksOptions,
 	getLocationOptions,
 	getLocationQueryKey,
 	getLocationTreeOptions,
@@ -20,26 +14,16 @@ import {
 //                                QUERIES
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useListLocationsQuery = (gameId: string) => {
-	return useQuery({ ...listLocationsOptions({ path: { game_id: gameId } }) });
+export const useListLocationsSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(listLocationsOptions({ path: { game_id: gameId } }));
 };
 
-export const useLocationQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getLocationOptions({ path: { game_id: gameId, id } }),
-	});
+export const useLocationSuspenseQuery = (gameId: string, id: string) => {
+	return useSuspenseQuery(getLocationOptions({ path: { game_id: gameId, id } }));
 };
 
-export const useGetLocationLinks = (gameId: string, locationId: string) => {
-	return useQuery(
-		getLocationLinksOptions({
-			path: { game_id: gameId, location_id: locationId },
-		}),
-	);
-};
-
-export const useGetLocationTree = (gameId: string) => {
-	return useQuery(getLocationTreeOptions({ path: { game_id: gameId } }));
+export const useGetLocationTreeSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(getLocationTreeOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,4 +59,3 @@ export const useUpdateLocationMutation = (gameId: string, locationId: string) =>
 		},
 	});
 };
-

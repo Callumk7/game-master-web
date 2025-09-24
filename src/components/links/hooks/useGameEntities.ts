@@ -1,13 +1,14 @@
 import { useMemo } from "react";
-import { useGetGameLinksQuery } from "~/queries/games";
-import type { EntityOption, EntityType } from "../types";
+import { useGetGameLinksSuspenseQuery } from "~/queries/games";
+import type { EntityType } from "~/types";
+import type { EntityOption } from "../types";
 
 export function useGameEntities(
 	gameId: string,
 	excludeTypes?: EntityType[],
 	excludeIds?: string[],
 ) {
-	const { data, isLoading, error } = useGetGameLinksQuery({ id: gameId });
+	const { data, isLoading, error } = useGetGameLinksSuspenseQuery({ id: gameId });
 
 	const entities = useMemo(() => {
 		if (!data?.data?.entities) {

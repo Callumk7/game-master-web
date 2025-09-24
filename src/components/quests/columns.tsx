@@ -63,7 +63,10 @@ export const createColumns = (gameId: string): ColumnDef<Quest>[] => [
 		filterFn: (row, columnId, value) => {
 			if (!value) return true;
 			const tags = row.getValue(columnId) as string[];
-			return tags?.some(tag => tag.toLowerCase().includes(value.toLowerCase())) ?? false;
+			return (
+				tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ??
+				false
+			);
 		},
 		cell: ({ row }) => {
 			const tags = row.getValue("tags") as string[];
@@ -130,7 +133,9 @@ export const createColumns = (gameId: string): ColumnDef<Quest>[] => [
 							<DropdownMenuContent>
 								<DropdownMenuItem
 									onClick={() => {
-										navigator.clipboard.writeText(quest.id.toString());
+										navigator.clipboard.writeText(
+											quest.id.toString(),
+										);
 										toast("Quest ID copied to clipboard!");
 									}}
 								>

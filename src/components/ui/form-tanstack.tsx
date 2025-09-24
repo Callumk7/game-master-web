@@ -100,9 +100,7 @@ function FieldMessage({ className, ...props }: React.ComponentProps<"p">) {
 
 	if (props.children) return props.children;
 
-	const body = isValid
-		? props.children
-		: String(errors.join(", ") ?? "");
+	const body = isValid ? props.children : String(errors.join(", ") ?? "");
 
 	if (!body) return null;
 

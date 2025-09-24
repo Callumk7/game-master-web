@@ -22,3 +22,11 @@ export interface CreateLinkParams extends LinkRequest {
 	sourceType: EntityType;
 	sourceId: string;
 }
+
+export interface DeleteLinkParams {
+	gameId: string;
+	sourceType: EntityType;
+	sourceId: string;
+	targetType: EntityType;
+	targetId: string;
+}

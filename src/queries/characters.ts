@@ -1,49 +1,21 @@
-import {
-	useMutation,
-	useQuery,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
-	getCharacterLinksOptions,
-	getCharacterNotesTreeOptions,
+	getCharacterLinksQueryKey,
 	getCharacterOptions,
 	getCharacterQueryKey,
-	listCharactersOptions,
 	listCharactersQueryKey,
+	setCharacterPrimaryFactionMutation,
 	updateCharacterMutation,
 } from "~/api/@tanstack/react-query.gen";
 
 ////////////////////////////////////////////////////////////////////////////////
-//                                QUERIES
+//                                SUSPENSE
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useListCharactersQuery = (gameId: string) => {
-	return useQuery({ ...listCharactersOptions({ path: { game_id: gameId } }) });
-};
-
-export const useCharacterQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getCharacterOptions({ path: { game_id: gameId, id } }),
-	});
-};
-
-export const useGetCharacterLinks = (gameId: string, characterId: string) => {
-	return useQuery(
-		getCharacterLinksOptions({
-			path: { game_id: gameId, character_id: characterId },
-		}),
-	);
-};
-
-export const useGetCharacterNoteTree = (gameId: string, characterId: string) => {
-	return useQuery(
-		getCharacterNotesTreeOptions({
-			path: { game_id: gameId, id: characterId },
-		}),
-	);
+export const useGetCharacterSuspenseQuery = (gameId: string, id: string) => {
+	return useSuspenseQuery(getCharacterOptions({ path: { game_id: gameId, id } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +43,28 @@ export const useUpdateCharacterMutation = (gameId: string, characterId: string) 
 	return useMutation({
 		...updateCharacterMutation(),
 		onSuccess: () => {
+			client.invalidateQueries({
+				queryKey: getCharacterQueryKey({
+					path: { game_id: gameId, id: characterId },
+				}),
+			});
+		},
+	});
+};
+
+export const useSetCharacterPrimaryFactionMutation = (
+	gameId: string,
+	characterId: string,
+) => {
+	const client = useQueryClient();
+	return useMutation({
+		...setCharacterPrimaryFactionMutation(),
+		onSuccess: () => {
+			client.invalidateQueries({
+				queryKey: getCharacterLinksQueryKey({
+					path: { game_id: gameId, character_id: characterId },
+				}),
+			});
 			client.invalidateQueries({
 				queryKey: getCharacterQueryKey({
 					path: { game_id: gameId, id: characterId },

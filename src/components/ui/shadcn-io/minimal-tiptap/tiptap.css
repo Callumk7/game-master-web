@@ -10,7 +10,7 @@
 	--editor-bg-subtle: var(--color-muted);
 	--editor-bg-muted: var(--color-accent);
 
-	--editor-highlight-default: var(--color-muted);
+	--editor-highlight-default: var(--color-primary);
 	--editor-highlight-gray: var(--color-accent);
 
 	--editor-border-default: var(--color-border);
@@ -39,7 +39,6 @@
 	/* background-color: var(--editor-bg-default); */
 	color: var(--editor-text-default);
 	transition: all var(--editor-transition-normal);
-	min-height: auto;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -52,7 +51,7 @@
 
 .ProseMirror .selection,
 .ProseMirror *::selection {
-	background-color: var(--editor-highlight-blue);
+	background-color: var(--editor-highlight-default);
 	/* color: var(--editor-text-default); */
 }
 

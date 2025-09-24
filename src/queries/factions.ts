@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteFactionMutation,
@@ -14,24 +14,28 @@ import {
 //                                QUERIES
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useListFactionsQuery = (gameId: string) => {
-	return useQuery({ ...listFactionsOptions({ path: { game_id: gameId } }) });
+export const useListFactionsSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(
+		listFactionsOptions({
+			path: { game_id: gameId },
+		}),
+	);
 };
 
-export const useFactionQuery = (gameId: string, id: string) => {
-	return useSuspenseQuery({
-		...getFactionOptions({
+export const useFactionSuspenseQuery = (gameId: string, id: string) => {
+	return useSuspenseQuery(
+		getFactionOptions({
 			path: { game_id: gameId, id },
 		}),
-	});
+	);
 };
 
-export const useGetFactionLinks = (gameId: string, factionId: string) => {
-	return useSuspenseQuery({
-		...getFactionLinksOptions({
+export const useGetFactionLinksSuspenseQuery = (gameId: string, factionId: string) => {
+	return useSuspenseQuery(
+		getFactionLinksOptions({
 			path: { game_id: gameId, faction_id: factionId },
 		}),
-	});
+	);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

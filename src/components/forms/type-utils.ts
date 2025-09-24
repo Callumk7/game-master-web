@@ -31,6 +31,9 @@ export function extractDefaultValues<T extends z.ZodRawShape>(
 				defaults[key] = false;
 			} else if (zodType instanceof z.ZodArray) {
 				defaults[key] = [];
+			} else if (zodType instanceof z.ZodEnum) {
+				// For enum fields (selects), default to empty string to maintain controlled state
+				defaults[key] = "";
 			}
 		}
 	}
@@ -122,11 +125,10 @@ export function generateFieldsFromSchema<T extends z.ZodRawShape>(
 			field.type = "checkbox";
 		} else if (actualType instanceof z.ZodEnum) {
 			field.type = "select";
-			const def = (actualType as any)._def;
-			const enumValues = def?.values || Object.keys(def?.entries || {});
-			field.options = enumValues.map((value: string) => ({
-				value,
-				label: titleCase(value),
+			const enumValues = actualType.options || [];
+			field.options = enumValues.map((value) => ({
+				value: String(value),
+				label: titleCase(String(value)),
 			}));
 		} else if (actualType instanceof z.ZodDate) {
 			field.type = "date";

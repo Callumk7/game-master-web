@@ -1,8 +1,8 @@
 import { useParams } from "@tanstack/react-router";
 import {
 	BookOpen,
-	ChevronRight,
 	Gem,
+	Globe,
 	Home,
 	MapPin,
 	Moon,
@@ -14,10 +14,8 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
-import type { LocationTreeNode, QuestTreeNode } from "~/api";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Link } from "~/components/ui/link";
 import {
 	Sidebar,
 	SidebarContent,
@@ -29,15 +27,28 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuLink,
-	SidebarMenuSub,
 } from "~/components/ui/sidebar";
-import { useGetGameLinksQuery } from "~/queries/games";
-import { useGetLocationTree } from "~/queries/locations";
-import { useGetQuestTree } from "~/queries/quests";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { useGetGameLinksSuspenseQuery } from "~/queries/games";
+import { useGetLocationTreeSuspenseQuery } from "~/queries/locations";
+import { useGetQuestTreeSuspenseQuery } from "~/queries/quests";
+import { SidebarTree } from "./tree";
 import { NavUser } from "./user-sidebar";
 
-export function GameSidebar() {
+interface GameSidebarProps {
+	setNewCharSheetOpen: (isOpen: boolean) => void;
+	setNewFactionSheetOpen: (isOpen: boolean) => void;
+	setNewLocationSheetOpen: (isOpen: boolean) => void;
+	setNewNoteSheetOpen: (isOpen: boolean) => void;
+	setNewQuestSheetOpen: (isOpen: boolean) => void;
+}
+
+export function GameSidebar({
+	setNewCharSheetOpen,
+	setNewFactionSheetOpen,
+	setNewLocationSheetOpen,
+	setNewNoteSheetOpen,
+	setNewQuestSheetOpen,
+}: GameSidebarProps) {
 	const { theme, setTheme } = useTheme();
 	const [mounted, setMounted] = React.useState(false);
 
@@ -45,20 +56,21 @@ export function GameSidebar() {
 	const gameId = params.gameId;
 
 	// TODO: This needs to be cleaned up, and probably extracted to a hook / function
-	const { data: links, isLoading: linksLoading } = useGetGameLinksQuery({ id: gameId });
-	const characters = links?.data?.entities?.characters;
-	const factions = links?.data?.entities?.factions;
-	const locations = links?.data?.entities?.locations;
-	const notes = links?.data?.entities?.notes;
-	const quests = links?.data?.entities?.quests;
+	const { data: links } = useGetGameLinksSuspenseQuery({ id: gameId });
+	const characters = resolveEntityArray(links?.data?.entities?.characters);
+	const factions = resolveEntityArray(links?.data?.entities?.factions);
+	const locations = resolveEntityArray(links?.data?.entities?.locations);
+	const notes = resolveEntityArray(links?.data?.entities?.notes);
+	const quests = resolveEntityArray(links?.data?.entities?.quests);
 
-	const { data: locationTree, isLoading: locationTreeLoading } =
-		useGetLocationTree(gameId);
-	const { data: questTree, isLoading: questTreeLoading } = useGetQuestTree(gameId);
+	const { data: locationTree } = useGetLocationTreeSuspenseQuery(gameId);
+	const { data: questTree } = useGetQuestTreeSuspenseQuery(gameId);
 
 	React.useEffect(() => {
 		setMounted(true);
 	}, []);
+
+	const totalEntityCount = (characters?.length || 0) + (factions?.length || 0) + (locations?.length || 0) + (notes?.length || 0) + (quests?.length || 0);
 
 	return (
 		<Sidebar>
@@ -109,20 +121,32 @@ export function GameSidebar() {
 
 					<SidebarMenu>
 						<SidebarMenuItem>
+							<SidebarMenuLink 
+								to={"/games/$gameId/all"} 
+								params={params}
+								activeProps={{
+									className: "bg-secondary text-secondary-foreground",
+								}}
+							>
+								<Globe className="w-4 h-4" />
+								All
+								<Badge variant="secondary" className="ml-auto">
+									{totalEntityCount.toString()}
+								</Badge>
+							</SidebarMenuLink>
+						</SidebarMenuItem>
+						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/characters"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<Users className="w-4 h-4" />
 								Characters
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: characters?.length.toString() || "0"}
+									{characters?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -132,8 +156,7 @@ export function GameSidebar() {
 								to="/games/$gameId/factions"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<div className="w-4 h-4 flex items-center justify-center text-sm">
@@ -141,47 +164,36 @@ export function GameSidebar() {
 								</div>
 								Factions
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: factions?.length.toString() || "0"}
+									{factions?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
 
-						<SidebarMenuItem>
-							<SidebarMenuLink
-								to="/games/$gameId/locations"
-								params={params}
-								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-								}}
-							>
-								<MapPin className="w-4 h-4" />
-								Locations
-								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: locations?.length.toString() || "0"}
-								</Badge>
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-
+						<SidebarMenuLink
+							to="/games/$gameId/locations"
+							params={params}
+							activeProps={{
+								className: "bg-secondary text-secondary-foreground",
+							}}
+						>
+							<MapPin className="w-4 h-4" />
+							Locations
+							<Badge variant="secondary" className="ml-auto">
+								{locations?.length.toString() || "0"}
+							</Badge>
+						</SidebarMenuLink>
 						<SidebarMenuItem>
 							<SidebarMenuLink
 								to="/games/$gameId/quests"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<Gem className="w-4 h-4" />
 								Quests
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: quests?.length.toString() || "0"}
+									{quests?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -191,16 +203,13 @@ export function GameSidebar() {
 								to="/games/$gameId/notes"
 								params={params}
 								activeProps={{
-									className:
-										"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+									className: "bg-secondary text-secondary-foreground",
 								}}
 							>
 								<Scroll className="w-4 h-4" />
 								Notes
 								<Badge variant="secondary" className="ml-auto">
-									{linksLoading
-										? "..."
-										: notes?.length.toString() || "0"}
+									{notes?.length.toString() || "0"}
 								</Badge>
 							</SidebarMenuLink>
 						</SidebarMenuItem>
@@ -210,19 +219,13 @@ export function GameSidebar() {
 						<SidebarGroupLabel>Locations</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								{locationTreeLoading ? (
-									<div className="text-muted-foreground text-sm p-2">
-										Loading locations...
-									</div>
-								) : (
-									locationTree?.data?.map((item) => (
-										<LocationTree
-											gameId={gameId}
-											key={item.id}
-											item={item}
-										/>
-									))
-								)}
+								{locationTree?.data?.map((item) => (
+									<SidebarTree
+										gameId={gameId}
+										key={item.id}
+										parentNode={item}
+									/>
+								))}
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
@@ -230,94 +233,63 @@ export function GameSidebar() {
 						<SidebarGroupLabel>Quests</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								{questTreeLoading ? (
-									<div className="text-muted-foreground text-sm p-2">
-										Loading quests...
-									</div>
-								) : (
-									questTree?.data?.map((item) => (
-										<QuestTree
-											gameId={gameId}
-											key={item.id}
-											item={item}
-										/>
-									))
-								)}
+								{questTree?.data?.map((item) => (
+									<SidebarTree
+										gameId={gameId}
+										key={item.id}
+										parentNode={item}
+									/>
+								))}
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
 
 					<div className="mt-4 space-y-2">
-						<Link
-							to="/games/$gameId/notes/new"
-							params={params}
+						<Button
+							onClick={() => setNewNoteSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Note
-						</Link>
-						<Link
-							to="/games/$gameId/characters/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewCharSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Character
-						</Link>
-						<Link
-							to="/games/$gameId/factions/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewFactionSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Faction
-						</Link>
-						<Link
-							to="/games/$gameId/locations/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewLocationSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Location
-						</Link>
-						<Link
-							to="/games/$gameId/quests/new"
-							params={params}
+						</Button>
+						<Button
+							onClick={() => setNewQuestSheetOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
-							activeProps={{
-								className:
-									"w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-							}}
 						>
 							<Plus className="w-4 h-4 mr-2" />
 							New Quest
-						</Link>
+						</Button>
 					</div>
 				</div>
 				<div className="flex-1" />
@@ -327,7 +299,7 @@ export function GameSidebar() {
 							user={{
 								name: "Callum",
 								email: "callum@example.com",
-								avatar: "https://avatars.dicebear.com/api/initials/callum@example.com.svg",
+								avatar: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages-wixmp-ed30a86b8c4ca887773594c2.wixmp.com%2Ff%2Fc3f6f733-7289-4186-bc20-1a811747f37f%2Fdj8mxhn-ad79f500-0b82-4a44-9545-b7b3c345971f.jpg%2Fv1%2Ffill%2Fw_894%2Ch_894%2Cq_70%2Cstrp%2Fbilbo_baggins_in_the_civil_war_by_houndhobbit_dj8mxhn-pre.jpg%3Ftoken%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcL2MzZjZmNzMzLTcyODktNDE4Ni1iYzIwLTFhODExNzQ3ZjM3ZlwvZGo4bXhobi1hZDc5ZjUwMC0wYjgyLTRhNDQtOTU0NS1iN2IzYzM0NTk3MWYuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.daP_x5eECE26Uo4ui9uvt-de5gOkOQbwAj0W3oxvj7c&f=1&nofb=1&ipt=e47750affbcaf6d843dee0e65f5a2f9499b02d76adc2352d92c0c6c02c21b495",
 							}}
 						/>
 					</SidebarMenuItem>
@@ -337,148 +309,10 @@ export function GameSidebar() {
 	);
 }
 
-function LocationTree({ item, gameId }: { item: LocationTreeNode; gameId: string }) {
-	const [isOpen, setIsOpen] = React.useState(true);
-
-	if (!item.children?.length) {
-		return (
-			<SidebarMenuItem>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/locations/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center">
-						<div className="h-1 w-1 rounded-full bg-muted-foreground/40" />
-					</div>
-				</div>
-			</SidebarMenuItem>
-		);
+function resolveEntityArray<T>(entityArray: T[] | undefined): T[] {
+	if (!entityArray) {
+		return [];
 	}
 
-	return (
-		<SidebarMenuItem>
-			<Collapsible
-				open={isOpen}
-				onOpenChange={setIsOpen}
-				className="group/collapsible"
-			>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/locations/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<CollapsibleTrigger
-						render={
-							<Button
-								variant="ghost"
-								size="icon"
-								className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-sidebar-accent z-10"
-							>
-								<ChevronRight
-									className={`h-3 w-3 transition-transform ${isOpen ? "rotate-90" : ""}`}
-								/>
-							</Button>
-						}
-					/>
-				</div>
-				<CollapsibleContent>
-					<SidebarMenuSub className="mx-0 px-0 ml-2">
-						{item.children?.map((subItem) => (
-							<LocationTree
-								gameId={gameId}
-								key={subItem.id}
-								item={subItem}
-							/>
-						))}
-					</SidebarMenuSub>
-				</CollapsibleContent>
-			</Collapsible>
-		</SidebarMenuItem>
-	);
-}
-
-function QuestTree({ item, gameId }: { item: QuestTreeNode; gameId: string }) {
-	const [isOpen, setIsOpen] = React.useState(true);
-
-	if (!item.children?.length) {
-		return (
-			<SidebarMenuItem>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/quests/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center">
-						<div className="h-1 w-1 rounded-full bg-muted-foreground/40" />
-					</div>
-				</div>
-			</SidebarMenuItem>
-		);
-	}
-
-	return (
-		<SidebarMenuItem>
-			<Collapsible
-				open={isOpen}
-				onOpenChange={setIsOpen}
-				className="group/collapsible"
-			>
-				<div className="relative">
-					<SidebarMenuLink
-						to="/games/$gameId/quests/$id"
-						params={{ gameId, id: item.id }}
-						className="w-full pl-6 min-w-0"
-						activeProps={{
-							className:
-								"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-						}}
-					>
-						<span className="truncate">{item.name}</span>
-					</SidebarMenuLink>
-					<CollapsibleTrigger
-						render={
-							<Button
-								variant="ghost"
-								size="icon"
-								className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-sidebar-accent z-10"
-							>
-								<ChevronRight
-									className={`h-3 w-3 transition-transform ${isOpen ? "rotate-90" : ""}`}
-								/>
-							</Button>
-						}
-					/>
-				</div>
-				<CollapsibleContent>
-					<SidebarMenuSub className="mx-0 px-0 pl-2">
-						{item.children?.map((subItem) => (
-							<QuestTree gameId={gameId} key={subItem.id} item={subItem} />
-						))}
-					</SidebarMenuSub>
-				</CollapsibleContent>
-			</Collapsible>
-		</SidebarMenuItem>
-	);
+	return entityArray;
 }

@@ -11,6 +11,10 @@ function SelectGroup({ ...props }: React.ComponentProps<typeof SelectPrimitive.G
 	return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
+function SelectPortal({ ...props }: React.ComponentProps<typeof SelectPrimitive.Portal>) {
+	return <SelectPrimitive.Portal data-slot="select-portal" {...props} />;
+}
+
 function SelectValue({
 	placeholder,
 	...props
@@ -66,18 +70,16 @@ function SelectTrigger({
 	);
 }
 
-function SelectPositioner(
-	props: React.ComponentProps<typeof SelectPrimitive.Positioner>,
-) {
+function SelectPositioner({
+	...props
+}: React.ComponentProps<typeof SelectPrimitive.Positioner>) {
 	return (
-		<SelectPrimitive.Portal>
-			<SelectPrimitive.Positioner
-				data-slot="select-positioner"
-				alignItemWithTrigger={false}
-				sideOffset={5}
-				{...props}
-			/>
-		</SelectPrimitive.Portal>
+		<SelectPrimitive.Positioner
+			data-slot="select-positioner"
+			alignItemWithTrigger={false}
+			sideOffset={5}
+			{...props}
+		/>
 	);
 }
 
@@ -195,6 +197,7 @@ export {
 	Select,
 	SelectContent,
 	SelectGroup,
+	SelectPortal,
 	SelectItem,
 	SelectLabel,
 	SelectSeparator,

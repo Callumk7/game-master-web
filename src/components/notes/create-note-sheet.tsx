@@ -1,5 +1,5 @@
 import { Sheet, SheetContent } from "../ui/sheet";
-import { CreateNoteForm } from "./CreateNoteForm";
+import { CreateNoteForm } from "./create-note-form";
 
 interface CreateNoteSheetProps {
 	isOpen: boolean;

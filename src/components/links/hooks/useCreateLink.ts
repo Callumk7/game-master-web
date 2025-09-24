@@ -25,8 +25,6 @@ export function useCreateLink(onSuccess?: () => void, onError?: (error: Error) =
 			relationship_type,
 			strength,
 		}: CreateLinkParams) => {
-			// For UUIDs, no validation needed - they're already strings
-
 			// Create the path parameter based on source entity type
 			const pathParam = {
 				game_id: gameId,

@@ -11,11 +11,11 @@ interface TagInputProps {
 	disabled?: boolean;
 }
 
-export function TagInput({ 
-	value = [], 
-	onChange, 
-	placeholder = "Add a tag", 
-	disabled = false 
+export function TagInput({
+	value = [],
+	onChange,
+	placeholder = "Add a tag",
+	disabled = false,
 }: TagInputProps) {
 	const [newTag, setNewTag] = useState("");
 

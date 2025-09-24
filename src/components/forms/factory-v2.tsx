@@ -128,7 +128,9 @@ export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> =
 			return (
 				<Select
 					value={fieldApi.state?.value ?? ""}
-					onValueChange={fieldApi.handleChange}
+					onValueChange={(value) => {
+						fieldApi.handleChange(value);
+					}}
 					disabled={field.disabled}
 					required={field.required}
 				>

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
-import { EditQuestForm } from "~/components/quests/EditQuestForm";
+import { EditQuestForm } from "~/components/quests/edit-quest-form";
 import { useQuestQuery } from ".";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/edit")({

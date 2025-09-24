@@ -5,11 +5,12 @@ import type {
 	LinkedNote,
 	LinkedQuest,
 } from "~/api/types.gen";
+import type { EntityType } from "~/types";
 
 export interface EntityLink {
 	id: string;
 	name: string;
-	type: string;
+	type: EntityType;
 	description?: string;
 	content?: string;
 	content_plain_text?: string;
@@ -44,9 +45,8 @@ export function flattenLinksForTable(linksResponse: GenericLinksResponse): Entit
 			flattenedLinks.push({
 				id: entity.id,
 				name: entity.name,
-				type: type.slice(0, -1), // Remove 's' from plural (factions -> faction)
+				type: type.slice(0, -1) as EntityType, // Remove 's' from plural (factions -> faction)
 				relationship_type: entity.relationship_type,
-				description: "description" in entity ? entity.description : undefined,
 				content:
 					"content" in entity && typeof entity.content === "string"
 						? entity.content
