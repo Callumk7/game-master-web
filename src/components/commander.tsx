@@ -55,12 +55,13 @@ export function Commander({ gameId }: { gameId: string }) {
 					<>
 						<CommandGroup heading="Characters">
 							<CommandItem
-								onSelect={() =>
+								onSelect={() => {
+									setOpen(false);
 									navigate({
 										to: "/games/$gameId/characters/new",
 										params: { gameId },
-									})
-								}
+									});
+								}}
 							>
 								<User />
 								<span>New Character</span>
@@ -69,12 +70,13 @@ export function Commander({ gameId }: { gameId: string }) {
 							{characters?.map((character) => (
 								<CommandItem
 									key={character.id}
-									onSelect={() =>
+									onSelect={() => {
+										setOpen(false);
 										navigate({
 											to: "/games/$gameId/characters/$id",
 											params: { gameId, id: character.id },
-										})
-									}
+										});
+									}}
 								>
 									<User />
 									<span>{character.name}</span>
@@ -84,7 +86,16 @@ export function Commander({ gameId }: { gameId: string }) {
 						<CommandSeparator />
 						<CommandGroup heading="Factions">
 							{factions?.map((faction) => (
-								<CommandItem key={faction.id}>
+								<CommandItem
+									key={faction.id}
+									onSelect={() => {
+										setOpen(false);
+										navigate({
+											to: "/games/$gameId/factions/$id",
+											params: { gameId, id: faction.id },
+										});
+									}}
+								>
 									<User />
 									<span>{faction.name}</span>
 								</CommandItem>
@@ -95,12 +106,13 @@ export function Commander({ gameId }: { gameId: string }) {
 							{locations?.map((location) => (
 								<CommandItem
 									key={location.id}
-									onSelect={() =>
+									onSelect={() => {
+										setOpen(false);
 										navigate({
 											to: "/games/$gameId/locations/$id",
 											params: { gameId, id: location.id },
-										})
-									}
+										});
+									}}
 								>
 									<User />
 									<span>{location.name}</span>
@@ -112,12 +124,13 @@ export function Commander({ gameId }: { gameId: string }) {
 							{notes?.map((note) => (
 								<CommandItem
 									key={note.id}
-									onSelect={() =>
+									onSelect={() => {
+										setOpen(false);
 										navigate({
 											to: "/games/$gameId/notes/$id",
 											params: { gameId, id: note.id },
-										})
-									}
+										});
+									}}
 								>
 									<User />
 									<span>{note.name}</span>
@@ -129,12 +142,13 @@ export function Commander({ gameId }: { gameId: string }) {
 							{quests?.map((quest) => (
 								<CommandItem
 									key={quest.id}
-									onSelect={() =>
+									onSelect={() => {
+										setOpen(false);
 										navigate({
 											to: "/games/$gameId/quests/$id",
 											params: { gameId, id: quest.id },
-										})
-									}
+										});
+									}}
 								>
 									<User />
 									<span>{quest.name}</span>
