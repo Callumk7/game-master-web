@@ -86,6 +86,19 @@ export function CreateLinkForm({
 
 	const hasEntities = Object.values(entities).some((group) => group.length > 0);
 
+	// Find the label for the selected value
+	const selectedLabel = React.useMemo(() => {
+		if (!selectedValue) return "";
+		
+		for (const items of Object.values(entities)) {
+			const selectedItem = items.find(item => item.value === selectedValue);
+			if (selectedItem) {
+				return selectedItem.label;
+			}
+		}
+		return selectedValue; // Fallback to value if label not found
+	}, [selectedValue, entities]);
+
 	return (
 		<form onSubmit={handleSubmit}>
 			<div className="flex flex-col gap-4">
@@ -105,7 +118,9 @@ export function CreateLinkForm({
 											? "No entities available"
 											: "Select an entity to link"
 								}
-							/>
+							>
+								{selectedLabel}
+							</SelectValue>
 						</SelectTrigger>
 						<SelectPortal>
 							<SelectPositioner>
