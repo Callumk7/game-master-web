@@ -110,6 +110,8 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
+					sourceType="character"
+					sourceId={character.id}
 				/>
 			)}
 		</div>

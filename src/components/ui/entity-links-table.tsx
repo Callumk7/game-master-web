@@ -32,15 +32,24 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import type { EntityType } from "~/types";
 import type { EntityLink } from "~/utils/linkHelpers";
+import { DeleteLink } from "../links/delete-link";
 import { Link } from "./link";
 
 interface EntityLinksTableProps {
 	links: EntityLink[];
 	gameId: string;
+	sourceId: string;
+	sourceType: EntityType;
 }
 
-export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
+export function EntityLinksTable({
+	links,
+	gameId,
+	sourceId,
+	sourceType,
+}: EntityLinksTableProps) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -103,6 +112,21 @@ export function EntityLinksTable({ links, gameId }: EntityLinksTableProps) {
 			enableHiding: false,
 			cell: ({ row }) => {
 				return <EntityLinkButton entity={row.original} />;
+			},
+		},
+		{
+			id: "delete",
+			enableHiding: false,
+			cell: ({ row }) => {
+				return (
+					<DeleteLink
+						gameId={gameId}
+						sourceId={sourceId}
+						sourceType={sourceType}
+						targetId={row.original.id}
+						targetType={row.getValue("type")}
+					/>
+				);
 			},
 		},
 	];

@@ -13,7 +13,6 @@ import {
 } from "~/components/ui/select";
 import type { EntityType } from "~/types";
 import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
 import { FormField } from "../ui/composite/form-field";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
@@ -32,9 +31,7 @@ export function CreateLinkForm({
 }: CreateLinkFormProps) {
 	const [selectedValue, setSelectedValue] = React.useState("");
 	const [relationshipValue, setRelationshipValue] = React.useState("");
-	const [active, setActive] = React.useState(false);
 	const [description, setDescription] = React.useState("");
-	const [strength, setStrength] = React.useState(1);
 
 	// Exclude self-referencing
 	const finalExcludeIds = [...excludeIds, `${sourceEntityType}:${sourceEntityId}`];
@@ -70,11 +67,24 @@ export function CreateLinkForm({
 			entity_type: targetType as EntityType,
 			entity_id: targetId,
 			relationship_type: relationshipValue,
-			is_active: active,
 			description,
-			strength,
 		});
 	};
+
+	const hasEntities = Object.values(entities).some((group) => group.length > 0);
+
+	// Find the label for the selected value
+	const selectedLabel = React.useMemo(() => {
+		if (!selectedValue) return "";
+
+		for (const items of Object.values(entities)) {
+			const selectedItem = items.find((item) => item.value === selectedValue);
+			if (selectedItem) {
+				return selectedItem.label;
+			}
+		}
+		return selectedValue; // Fallback to value if label not found
+	}, [selectedValue, entities]);
 
 	if (fetchError) {
 		return (
@@ -83,21 +93,6 @@ export function CreateLinkForm({
 			</div>
 		);
 	}
-
-	const hasEntities = Object.values(entities).some((group) => group.length > 0);
-
-	// Find the label for the selected value
-	const selectedLabel = React.useMemo(() => {
-		if (!selectedValue) return "";
-		
-		for (const items of Object.values(entities)) {
-			const selectedItem = items.find(item => item.value === selectedValue);
-			if (selectedItem) {
-				return selectedItem.label;
-			}
-		}
-		return selectedValue; // Fallback to value if label not found
-	}, [selectedValue, entities]);
 
 	return (
 		<form onSubmit={handleSubmit}>
@@ -149,24 +144,11 @@ export function CreateLinkForm({
 					</Select>
 				</div>
 
-				<div className="flex items-center gap-3">
-					<Checkbox id="active" checked={active} onCheckedChange={setActive} />
-					<Label htmlFor="active">Link Active?</Label>
-				</div>
-
 				<FormField
 					label="Relationship"
 					id="relationship"
 					value={relationshipValue}
 					onInput={(e) => setRelationshipValue(e.currentTarget.value)}
-				/>
-
-				<FormField
-					type="number"
-					label="Strength"
-					id="strength"
-					value={strength}
-					onInput={(e) => setStrength(Number(e.currentTarget.value))}
 				/>
 
 				<div className="space-y-1">
