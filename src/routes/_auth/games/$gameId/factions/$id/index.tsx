@@ -1,6 +1,12 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import * as React from "react";
 import type { Faction } from "~/api";
-import { useGetFactionLinksQuery } from "~/api/@tanstack/react-query.gen";
+import {
+	useGetFactionLinksQuery,
+	useGetFactionMembersQuery,
+} from "~/api/@tanstack/react-query.gen";
+import { CharacterTable } from "~/components/characters/character-table";
+import { createColumns } from "~/components/characters/columns";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateFactionLink } from "~/components/factions/create-faction-link";
@@ -99,6 +105,8 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
+					sourceId={faction.id}
+					sourceType={"faction"}
 				/>
 			)}
 		</div>
@@ -123,9 +131,35 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		{
 			id: "members",
 			label: "Members",
-			content: <div>Members tabs tbc</div>,
+			content: <MembersView factionId={faction.id} gameId={gameId} />,
 		},
 	];
 
 	return <EntityView name={faction.name} badges={badges} tabs={tabs} />;
+}
+
+interface FactionMembersViewProps {
+	factionId: string;
+	gameId: string;
+}
+function MembersView({ factionId, gameId }: FactionMembersViewProps) {
+	const { data: memberData } = useGetFactionMembersQuery({
+		path: { game_id: gameId, faction_id: factionId },
+	});
+	const members = memberData?.data?.members || [];
+	const [searchQuery, setSearchQuery] = React.useState("");
+	const [tagFilter, setTagFilter] = React.useState("");
+
+	const columns = createColumns(gameId);
+
+	return (
+		<CharacterTable
+			columns={columns}
+			data={members}
+			searchQuery={searchQuery}
+			onSearchChange={setSearchQuery}
+			tagFilter={tagFilter}
+			onTagFilterChange={setTagFilter}
+		/>
+	);
 }

@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
 import type { Faction } from "~/api";
-import { useUpdateCharacterMutation } from "~/queries/characters";
+import { useSetCharacterPrimaryFactionMutation } from "~/queries/characters";
 import { Button } from "../ui/button";
 import {
 	Combobox,
@@ -16,8 +16,6 @@ import {
 	ComboboxTrigger,
 } from "../ui/combobox";
 import { FormField } from "../ui/composite/form-field";
-import { useMutation } from "@tanstack/react-query";
-import { setCharacterPrimaryFactionMutation } from "~/api/@tanstack/react-query.gen";
 
 interface SelectFactionComboboxProps {
 	gameId: string;
@@ -33,7 +31,7 @@ export function SelectFactionCombobox({
 	const [selectedFaction, setSelectedFaction] = React.useState<Faction | null>(null);
 	const [role, setRole] = React.useState<string>("");
 
-	const selectFaction = useMutation(setCharacterPrimaryFactionMutation());
+	const selectFaction = useSetCharacterPrimaryFactionMutation(gameId, characterId);
 
 	const handleSave = () => {
 		if (selectedFaction) {
@@ -56,7 +54,7 @@ export function SelectFactionCombobox({
 				onValueChange={(faction) => setSelectedFaction(faction)}
 			>
 				<div className="relative flex flex-col gap-2">
-					<ComboboxInput placeholder="e.g. Empire" id={id} />
+					<ComboboxInput placeholder="Select a primary faction" id={id} />
 					<div className="absolute right-2 bottom-0 flex h-9 items-center justify-center text-muted-foreground">
 						<ComboboxClear />
 						<ComboboxTrigger
