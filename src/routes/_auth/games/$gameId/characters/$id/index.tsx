@@ -1,7 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { useMemo } from "react";
 import type { Character } from "~/api";
-import { useGetCharacterLinksQuery } from "~/api/@tanstack/react-query.gen";
+import {
+	getFactionOptions,
+	useGetCharacterLinksQuery,
+	useListFactionsQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
+import { SelectFactionCombobox } from "~/components/characters/select-faction-combobox";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
@@ -136,9 +143,61 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		{
 			id: "faction",
 			label: "Faction",
-			content: <div>Factions tabs tbc</div>,
+			content: <CharacterFactionView gameId={gameId} />,
 		},
 	];
 
 	return <EntityView name={character.name} badges={badges} tabs={tabs} />;
+}
+
+interface CharacterFactionViewProps {
+	gameId: string;
+	primaryFactionId?: string;
+}
+function CharacterFactionView({ gameId, primaryFactionId }: CharacterFactionViewProps) {
+	// Fetch the primary faction if it exists
+	const { data: factionData, isEnabled } = useQuery({
+		...getFactionOptions({ path: { game_id: gameId, id: primaryFactionId! } }),
+		enabled: !!primaryFactionId,
+	});
+
+	const faction = factionData?.data;
+
+	// Fetch faction list for switcher
+	const { data: factionList, isLoading: isFactionListLoading } = useListFactionsQuery({
+		path: { game_id: gameId },
+	});
+
+	const factions = useMemo(() => factionList?.data ?? [], [factionList?.data]);
+
+	if (!isEnabled) {
+		return (
+			<div>
+				<h2>Faction View</h2>
+				{isFactionListLoading ? (
+					<div>Loading factions...</div>
+				) : (
+					<SelectFactionCombobox factions={factions} />
+				)}
+			</div>
+		);
+	}
+
+	return (
+		<div>
+			<h2>Faction View</h2>
+			{faction && (
+				<div className="flex flex-col gap-2">
+					<div className="flex items-center gap-2">
+						<div className="text-muted-foreground">Primary Faction</div>
+						<div className="text-muted-foreground">{faction.name}</div>
+					</div>
+					<div className="flex items-center gap-2">
+						<div className="text-muted-foreground">Secondary Faction</div>
+						<div className="text-muted-foreground">{faction.name}</div>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 }

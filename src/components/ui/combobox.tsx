@@ -6,7 +6,11 @@ import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/utils/cn";
 
-function Combobox(props: React.ComponentProps<typeof ComboboxPrimitive.Root>) {
+function Combobox<
+	ItemValue,
+	SelectedValue = ItemValue,
+	Multiple extends boolean | undefined = false,
+>(props: ComboboxPrimitive.Root.Props<ItemValue, SelectedValue, Multiple>) {
 	return <ComboboxPrimitive.Root data-slot="combobox" {...props} />;
 }
 
