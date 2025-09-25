@@ -5,7 +5,6 @@ import {
 	useListCharactersQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
-import { createColumns } from "~/components/characters/columns";
 import { PageHeader } from "~/components/page-header";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
@@ -41,7 +40,7 @@ function RouteComponent() {
 				handleCreate={handleCreate}
 			/>
 			<CharacterTable
-				columns={createColumns(gameId)}
+				gameId={gameId}
 				data={characters}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

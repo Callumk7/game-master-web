@@ -6,7 +6,6 @@ import {
 	useGetFactionMembersQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
-import { createColumns } from "~/components/characters/columns";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateFactionLink } from "~/components/factions/create-faction-link";
@@ -56,7 +55,10 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 
 	const updateFaction = useUpdateFactionMutation(gameId, faction.id);
 
-	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
+	const handleSave = async (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => {
 		updateFaction.mutate({
 			body: { faction: payload },
 			path: { game_id: gameId, id: faction.id },
@@ -144,11 +146,9 @@ function MembersView({ factionId, gameId }: FactionMembersViewProps) {
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [tagFilter, setTagFilter] = React.useState("");
 
-	const columns = createColumns(gameId);
-
 	return (
 		<CharacterTable
-			columns={columns}
+			gameId={gameId}
 			data={members}
 			searchQuery={searchQuery}
 			onSearchChange={setSearchQuery}

@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listQuestsOptions } from "~/api/@tanstack/react-query.gen";
 import { PageHeader } from "~/components/page-header";
-import { createColumns } from "~/components/quests/columns";
 import { QuestsTable } from "~/components/quests/quests-table";
 import { useListQuestsSuspenseQuery } from "~/queries/quests";
 
@@ -40,7 +39,7 @@ function RouteComponent() {
 				handleCreate={handleCreate}
 			/>
 			<QuestsTable
-				columns={createColumns(gameId)}
+				gameId={gameId}
 				data={quests}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

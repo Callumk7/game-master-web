@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
-import { createColumns } from "~/components/notes/columns";
 import { NotesTable } from "~/components/notes/notes-table";
 import { PageHeader } from "~/components/page-header";
 import { useListNotesSuspenseQuery } from "~/queries/notes";
@@ -40,7 +39,7 @@ function RouteComponent() {
 				handleCreate={handleCreate}
 			/>
 			<NotesTable
-				columns={createColumns(gameId)}
+				gameId={gameId}
 				data={notes}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

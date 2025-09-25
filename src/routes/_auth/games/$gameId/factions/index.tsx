@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
-import { createColumns } from "~/components/factions/columns";
 import { FactionsTable } from "~/components/factions/factions-table";
 import { PageHeader } from "~/components/page-header";
 import { useListFactionsSuspenseQuery } from "~/queries/factions";
@@ -40,7 +39,7 @@ function RouteComponent() {
 				handleCreate={handleCreate}
 			/>
 			<FactionsTable
-				columns={createColumns(gameId)}
+				gameId={gameId}
 				data={factions}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

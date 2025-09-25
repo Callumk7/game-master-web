@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
-import { createColumns } from "~/components/locations/columns";
 import { LocationsTable } from "~/components/locations/locations-table";
 import { PageHeader } from "~/components/page-header";
 import { useListLocationsSuspenseQuery } from "~/queries/locations";
@@ -36,7 +35,7 @@ function RouteComponent() {
 				handleCreate={handleCreate}
 			/>
 			<LocationsTable
-				columns={createColumns(gameId)}
+				gameId={gameId}
 				data={locations}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

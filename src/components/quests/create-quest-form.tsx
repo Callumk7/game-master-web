@@ -11,7 +11,11 @@ import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 import { ParentQuestSelect } from "./parent-quest-select";
 
-export function CreateQuestForm() {
+interface CreateQuestFormProps {
+	container?: React.RefObject<HTMLElement | null>;
+}
+
+export function CreateQuestForm({ container }: CreateQuestFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
 
@@ -63,6 +67,7 @@ export function CreateQuestForm() {
 												value={field.state.value}
 												onChange={field.handleChange}
 												placeholder="Select parent quest (optional)"
+												container={container}
 											/>
 										)}
 									</field.Control>
