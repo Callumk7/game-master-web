@@ -88,7 +88,7 @@ export function NotesTable<TData, TValue>({
 	}, [tagFilter, table]);
 
 	return (
-		<div className="w-full">
+		<div className="w-full max-w-full">
 			<div className="flex items-center gap-4 py-4">
 				<Input
 					placeholder="Filter names..."
@@ -136,7 +136,8 @@ export function NotesTable<TData, TValue>({
 				</DropdownMenu>
 			</div>
 			<div className="overflow-hidden rounded-md border">
-				<Table>
+				<div className="overflow-x-auto">
+					<Table className="table-fixed w-full">
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
@@ -183,7 +184,8 @@ export function NotesTable<TData, TValue>({
 							</TableRow>
 						)}
 					</TableBody>
-				</Table>
+					</Table>
+				</div>
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
 				<div className="flex-1 text-sm text-muted-foreground">

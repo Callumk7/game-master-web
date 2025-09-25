@@ -98,10 +98,12 @@ export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 				<span className="text-muted-foreground">-</span>
 			);
 		},
+		maxSize: 60,
 	},
 	{
 		id: "actions",
 		enableHiding: false,
+		maxSize: 40,
 		cell: ({ row }) => {
 			const faction = row.original;
 			const deleteFaction = useDeleteFactionMutation(gameId);

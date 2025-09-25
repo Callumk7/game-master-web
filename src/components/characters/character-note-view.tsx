@@ -58,9 +58,9 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 			<div className="space-y-4">
 				<Button onClick={() => setIsOpen(true)}>Create Note</Button>
 				<SelectNoteCombobox gameId={gameId} characterId={characterId} />
-				<div className="grid grid-cols-3 gap-2">
+				<div className="flex flex-wrap gap-4">
 					{noteTree?.data?.notes_tree?.map((note) => (
-						<Card key={note.id}>
+						<Card key={note.id} className={`max-w-xl`}>
 							<CardHeader className="relative">
 								<CardTitle>{note.name}</CardTitle>
 								<CardDescription>
@@ -81,7 +81,9 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 								</Button>
 							</CardHeader>
 							<CardContent>
-								<TiptapViewer content={note.content} />
+								<div className="max-h-[500px] overflow-y-auto">
+									<TiptapViewer content={note.content} />
+								</div>
 							</CardContent>
 						</Card>
 					))}

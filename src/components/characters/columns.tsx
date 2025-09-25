@@ -13,6 +13,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useDeleteCharacterMutation } from "~/queries/characters";
+import { Badge } from "../ui/badge";
 import { Link } from "../ui/link";
 
 export const createColumns = (gameId: string): ColumnDef<Character>[] => [
@@ -38,6 +39,7 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 						gameId: gameId,
 						id: character.id.toString(),
 					}}
+					className="font-medium hover:underline truncate block"
 				>
 					{row.getValue("name")}
 				</Link>
@@ -47,7 +49,7 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 	{
 		accessorKey: "class",
 		header: "Class",
-		cell: ({ row }) => <div>{row.getValue("class")}</div>,
+		cell: ({ row }) => <div className="truncate">{row.getValue("class") || "-"}</div>,
 	},
 	{
 		accessorKey: "level",
@@ -63,6 +65,7 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 			);
 		},
 		cell: ({ row }) => <div className="text-center">{row.getValue("level")}</div>,
+		maxSize: 50,
 	},
 	{
 		accessorKey: "content_plain_text",
@@ -88,22 +91,21 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 			);
 		},
 		cell: ({ row }) => {
-			const tags = row.getValue("tags") as string[];
+			const tags = row.getValue("tags") as string[] | undefined;
+			if (!tags || tags.length === 0) {
+				return <div className="text-sm text-muted-foreground">-</div>;
+			}
 			return (
 				<div className="flex flex-wrap gap-1">
-					{tags && tags.length > 0 ? (
-						tags.map((tag) => (
-							<span
-								key={tag}
-								className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-							>
-								{tag}
-							</span>
-						))
-					) : (
-						<span className="text-muted-foreground italic text-xs">
-							No tags
-						</span>
+					{tags.slice(0, 3).map((tag) => (
+						<Badge key={tag} variant="outline" className="text-xs">
+							{tag}
+						</Badge>
+					))}
+					{tags.length > 3 && (
+						<Badge variant="outline" className="text-xs">
+							+{tags.length - 3}
+						</Badge>
 					)}
 				</div>
 			);
@@ -200,5 +202,6 @@ export const createColumns = (gameId: string): ColumnDef<Character>[] => [
 				</DropdownMenu>
 			);
 		},
+		maxSize: 60,
 	},
 ];
