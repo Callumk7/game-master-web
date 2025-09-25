@@ -2,7 +2,9 @@ import { SquareArrowDownRight } from "lucide-react";
 import * as React from "react";
 import DraggableWindow from "~/components/draggable";
 import { Button } from "~/components/ui/button";
-import type { EntityLink } from "./entity-links-table";
+import type { EntityLink } from "~/utils/linkHelpers";
+import { Badge } from "./badge";
+import { TiptapViewer } from "./editor/viewer";
 
 interface EntityLinkButtonProps {
 	entity: EntityLink;
@@ -18,8 +20,6 @@ export function EntityLinkButton({ entity }: EntityLinkButtonProps) {
 		windowCounter = (windowCounter + 1) % 10; // Reset after 10 windows
 		return { x: offset, y: offset };
 	});
-
-	const displayContent = entity.content_plain_text || "No content available";
 
 	return (
 		<>
@@ -38,13 +38,9 @@ export function EntityLinkButton({ entity }: EntityLinkButtonProps) {
 			>
 				<div className="prose prose-sm max-w-none">
 					<div className="mb-4">
-						<span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 capitalize">
-							{entity.type}
-						</span>
+						<Badge>{entity.type}</Badge>
 					</div>
-					<div className="whitespace-pre-wrap text-sm leading-relaxed">
-						{displayContent}
-					</div>
+					<TiptapViewer content={entity.content} />
 				</div>
 			</DraggableWindow>
 		</>

@@ -11,7 +11,6 @@ export interface EntityLink {
 	id: string;
 	name: string;
 	type: EntityType;
-	description?: string;
 	content?: string;
 	content_plain_text?: string;
 	relationship_type?: string;
