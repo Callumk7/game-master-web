@@ -13,10 +13,7 @@ import { SelectFactionCombobox } from "~/components/characters/select-faction-co
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Tiptap } from "~/components/ui/editor";
-import { useEditorContentActions } from "~/components/ui/editor/hooks";
-import { parseContentForEditor } from "~/components/ui/editor/utils";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import {
 	useGetCharacterSuspenseQuery,
@@ -63,16 +60,13 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		path: { game_id: gameId, character_id: character.id },
 	});
 
-	const { isUpdated, setIsUpdated, onChange, getPayload } = useEditorContentActions();
-
 	const updateCharacter = useUpdateCharacterMutation(gameId, character.id);
 
-	const handleSave = () => {
+	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
 		updateCharacter.mutate({
-			body: getPayload("character"),
+			body: { character: payload },
 			path: { game_id: gameId, id: character.id },
 		});
-		setIsUpdated(false);
 	};
 
 	const badges = (
@@ -92,15 +86,14 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 	);
 
 	const contentTab = (
-		<div className="space-y-4">
-			<Tiptap
-				content={parseContentForEditor(character.content)}
-				onChange={onChange}
-			/>
-			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
-				Save
-			</Button>
-		</div>
+		<EntityEditor
+			content={character.content}
+			gameId={gameId}
+			entityType="character"
+			entityId={character.id}
+			onSave={handleSave}
+			isSaving={updateCharacter.isPending}
+		/>
 	);
 
 	const linksTab = (

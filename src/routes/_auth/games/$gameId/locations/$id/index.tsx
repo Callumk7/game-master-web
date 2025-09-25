@@ -5,10 +5,7 @@ import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateLocationLink } from "~/components/locations/create-location-link";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Tiptap } from "~/components/ui/editor";
-import { useEditorContentActions } from "~/components/ui/editor/hooks";
-import { parseContentForEditor } from "~/components/ui/editor/utils";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { useLocationSuspenseQuery, useUpdateLocationMutation } from "~/queries/locations";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
@@ -53,16 +50,13 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		path: { game_id: gameId, location_id: location.id },
 	});
 
-	const { isUpdated, setIsUpdated, onChange, getPayload } = useEditorContentActions();
-
 	const updateLocation = useUpdateLocationMutation(gameId, location.id);
 
-	const handleSave = () => {
+	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
 		updateLocation.mutate({
-			body: getPayload("location"),
+			body: { location: payload },
 			path: { game_id: gameId, id: location.id },
 		});
-		setIsUpdated(false);
 	};
 
 	const badges = (
@@ -81,17 +75,14 @@ function LocationView({ location, gameId }: LocationViewProps) {
 	);
 
 	const contentTab = (
-		<div className="space-y-4">
-			<Tiptap
-				content={parseContentForEditor(location.content)}
-				onChange={onChange}
-			/>
-			<ClientOnly>
-				<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
-					Save
-				</Button>
-			</ClientOnly>
-		</div>
+		<EntityEditor
+			content={location.content}
+			gameId={gameId}
+			entityType="location"
+			entityId={location.id}
+			onSave={handleSave}
+			isSaving={updateLocation.isPending}
+		/>
 	);
 
 	const linksTab = (

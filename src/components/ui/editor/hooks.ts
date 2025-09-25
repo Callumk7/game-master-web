@@ -34,5 +34,6 @@ export const useEditorContentActions = () => {
 		setIsUpdated,
 		onChange,
 		getPayload,
+		updatedContent, // Export the content so we can access the JSON
 	};
 };

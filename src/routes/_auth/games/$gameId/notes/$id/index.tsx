@@ -5,10 +5,7 @@ import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateNoteLink } from "~/components/notes/create-note-link";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Tiptap } from "~/components/ui/editor";
-import { useEditorContentActions } from "~/components/ui/editor/hooks";
-import { parseContentForEditor } from "~/components/ui/editor/utils";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { useNoteSuspenseQuery, useUpdateNoteMutation } from "~/queries/notes";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
@@ -53,16 +50,13 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		path: { game_id: gameId, note_id: note.id },
 	});
 
-	const { isUpdated, setIsUpdated, onChange, getPayload } = useEditorContentActions();
-
 	const updateNote = useUpdateNoteMutation(gameId, note.id);
 
-	const handleSave = () => {
+	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
 		updateNote.mutate({
-			body: getPayload("note"),
+			body: { note: payload },
 			path: { game_id: gameId, id: note.id },
 		});
-		setIsUpdated(false);
 	};
 
 	const badges = note.tags && note.tags.length > 0 && (
@@ -76,12 +70,14 @@ function NoteView({ note, gameId }: NoteViewProps) {
 	);
 
 	const contentTab = (
-		<div className="space-y-4">
-			<Tiptap content={parseContentForEditor(note.content)} onChange={onChange} />
-			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
-				Save
-			</Button>
-		</div>
+		<EntityEditor
+			content={note.content}
+			gameId={gameId}
+			entityType="note"
+			entityId={note.id}
+			onSave={handleSave}
+			isSaving={updateNote.isPending}
+		/>
 	);
 
 	const linksTab = (

@@ -11,10 +11,7 @@ import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateFactionLink } from "~/components/factions/create-faction-link";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Tiptap } from "~/components/ui/editor";
-import { useEditorContentActions } from "~/components/ui/editor/hooks";
-import { parseContentForEditor } from "~/components/ui/editor/utils";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { useFactionSuspenseQuery, useUpdateFactionMutation } from "~/queries/factions";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
@@ -57,15 +54,13 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		error: linksQueryError,
 	} = useGetFactionLinksQuery({ path: { game_id: gameId, faction_id: faction.id } });
 
-	const { isUpdated, setIsUpdated, onChange, getPayload } = useEditorContentActions();
 	const updateFaction = useUpdateFactionMutation(gameId, faction.id);
 
-	const handleSave = () => {
+	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
 		updateFaction.mutate({
-			body: getPayload("faction"),
+			body: { faction: payload },
 			path: { game_id: gameId, id: faction.id },
 		});
-		setIsUpdated(false);
 	};
 
 	const badges = faction.tags && faction.tags.length > 0 && (
@@ -79,15 +74,14 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 	);
 
 	const contentTab = (
-		<div className="space-y-4">
-			<Tiptap
-				content={parseContentForEditor(faction.content)}
-				onChange={onChange}
-			/>
-			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
-				Save
-			</Button>
-		</div>
+		<EntityEditor
+			content={faction.content}
+			gameId={gameId}
+			entityType="faction"
+			entityId={faction.id}
+			onSave={handleSave}
+			isSaving={updateFaction.isPending}
+		/>
 	);
 
 	const linksTab = (

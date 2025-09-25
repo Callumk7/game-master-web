@@ -5,10 +5,7 @@ import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateQuestLink } from "~/components/quests/create-quest-link";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Tiptap } from "~/components/ui/editor";
-import { useEditorContentActions } from "~/components/ui/editor/hooks";
-import { parseContentForEditor } from "~/components/ui/editor/utils";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { useGetQuestSuspenseQuery, useUpdateQuestMutation } from "~/queries/quests";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
@@ -53,16 +50,13 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		path: { game_id: gameId, quest_id: quest.id },
 	});
 
-	const { isUpdated, setIsUpdated, onChange, getPayload } = useEditorContentActions();
-
 	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
 
-	const handleSave = () => {
+	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
 		updateQuest.mutate({
-			body: getPayload("quest"),
+			body: { quest: payload },
 			path: { game_id: gameId, id: quest.id },
 		});
-		setIsUpdated(false);
 	};
 
 	const badges = quest.tags && quest.tags.length > 0 && (
@@ -76,14 +70,14 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 	);
 
 	const contentTab = (
-		<div className="space-y-4">
-			<Tiptap content={parseContentForEditor(quest.content)} onChange={onChange} />
-			<ClientOnly>
-				<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
-					Save
-				</Button>
-			</ClientOnly>
-		</div>
+		<EntityEditor
+			content={quest.content}
+			gameId={gameId}
+			entityType="quest"
+			entityId={quest.id}
+			onSave={handleSave}
+			isSaving={updateQuest.isPending}
+		/>
 	);
 
 	const linksTab = (
