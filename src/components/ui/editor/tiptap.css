@@ -42,6 +42,7 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	white-space: pre-wrap;
 }
 
 .ProseMirror:focus {
@@ -368,5 +369,39 @@
 	content: attr(data-placeholder);
 	float: left;
 	height: 0;
+	pointer-events: none;
+}
+
+/* Mention styles */
+.ProseMirror .mention-wrapper {
+	display: inline;
+	vertical-align: baseline;
+}
+
+.ProseMirror .mention {
+	display: inline;
+	vertical-align: baseline;
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+	text-decoration: none;
+	pointer-events: auto;
+}
+
+.ProseMirror .mention button {
+	display: inline-flex;
+	align-items: center;
+	vertical-align: baseline;
+	pointer-events: auto;
+	cursor: pointer;
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+}
+
+.ProseMirror .mention button * {
 	pointer-events: none;
 }
