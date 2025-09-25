@@ -6,10 +6,10 @@ import { EntityView } from "~/components/entity-view";
 import { CreateLocationLink } from "~/components/locations/create-location-link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Tiptap } from "~/components/ui/editor";
+import { useEditorContentActions } from "~/components/ui/editor/hooks";
+import { parseContentForEditor } from "~/components/ui/editor/utils";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import { useEditorContentActions } from "~/components/ui/shadcn-io/minimal-tiptap/hooks";
-import { parseContentForEditor } from "~/components/ui/shadcn-io/minimal-tiptap/utils";
 import { useLocationSuspenseQuery, useUpdateLocationMutation } from "~/queries/locations";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
@@ -82,7 +82,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 
 	const contentTab = (
 		<div className="space-y-4">
-			<MinimalTiptap
+			<Tiptap
 				content={parseContentForEditor(location.content)}
 				onChange={onChange}
 			/>
@@ -109,6 +109,8 @@ function LocationView({ location, gameId }: LocationViewProps) {
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
+					sourceId={location.id}
+					sourceType="location"
 				/>
 			)}
 		</div>

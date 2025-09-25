@@ -17,12 +17,12 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { cn } from "~/utils/cn";
-import { Button } from "../../button";
-import { Separator } from "../../separator";
-import { Toggle } from "../../toggle";
-import "src/components/ui/shadcn-io/minimal-tiptap/tiptap.css";
+import "src/components/ui/editor/tiptap.css";
+import { Button } from "../button";
+import { Separator } from "../separator";
+import { Toggle } from "../toggle";
 
-interface MinimalTiptapProps {
+export interface TiptapProps {
 	content?: object | null;
 	onChange?: (content: { json: object; text: string }) => void;
 	placeholder?: string;
@@ -30,13 +30,13 @@ interface MinimalTiptapProps {
 	className?: string;
 }
 
-function MinimalTiptap({
+export function Tiptap({
 	content = null,
 	onChange,
 	placeholder = "Start typing...",
 	editable = true,
 	className,
-}: MinimalTiptapProps) {
+}: TiptapProps) {
 	const initialContentRef = React.useRef(content);
 	const isInternalUpdate = React.useRef(false);
 
@@ -230,6 +230,3 @@ function MinimalTiptap({
 		</div>
 	);
 }
-
-export { MinimalTiptap, type MinimalTiptapProps };
-export { MinimalTiptapViewer, type MinimalTiptapViewerProps } from "./viewer";

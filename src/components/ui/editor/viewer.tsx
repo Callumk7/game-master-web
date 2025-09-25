@@ -3,12 +3,12 @@ import StarterKit from "@tiptap/starter-kit";
 import { cn } from "~/utils/cn";
 import { parseContentForEditor } from "./utils";
 
-interface MinimalTiptapViewerProps {
+export interface TiptapViewerProps {
 	content?: string;
 	className?: string;
 }
 
-function MinimalTiptapViewer({ content, className }: MinimalTiptapViewerProps) {
+export function TiptapViewer({ content, className }: TiptapViewerProps) {
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -41,5 +41,3 @@ function MinimalTiptapViewer({ content, className }: MinimalTiptapViewerProps) {
 
 	return <EditorContent editor={editor} />;
 }
-
-export { MinimalTiptapViewer, type MinimalTiptapViewerProps };

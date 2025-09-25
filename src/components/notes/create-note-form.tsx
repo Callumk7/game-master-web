@@ -3,6 +3,7 @@ import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { createNoteMutation, listNotesQueryKey } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
+import type { EntityType } from "~/types";
 import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
@@ -10,7 +11,7 @@ interface CreateNoteFormProps {
 	/** Optional parent entity ID */
 	parentId?: string;
 	/** Optional parent entity type */
-	parentType?: "character" | "quest" | "location" | "faction";
+	parentType?: EntityType;
 	/** Custom CSS class for form container */
 	className?: string;
 	/** Custom submit button text */

@@ -66,6 +66,8 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 	const [typeFilter, setTypeFilter] = React.useState<string>("all");
 	const [tagFilter, setTagFilter] = React.useState("");
 
+	const PAGINATION_SIZE = 15;
+
 	const columns: ColumnDef<AllEntity>[] = [
 		{
 			accessorKey: "name",
@@ -94,6 +96,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 					</Link>
 				);
 			},
+			size: 200,
 		},
 		{
 			accessorKey: "type",
@@ -103,6 +106,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 					{row.getValue("type")}
 				</Badge>
 			),
+			size: 100,
 		},
 		{
 			accessorKey: "content_plain_text",
@@ -115,11 +119,20 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 					</div>
 				);
 			},
+			size: 300,
 		},
 		{
 			accessorKey: "tags",
 			header: "Tags",
-			filterFn: "fuzzy",
+			filterFn: (row, columnId, value) => {
+				const itemValue = row.getValue(columnId) as string | string[];
+				if (Array.isArray(itemValue)) {
+					return itemValue.some((tag) =>
+						tag.toLowerCase().includes(value.toLowerCase()),
+					);
+				}
+				return itemValue?.toLowerCase().includes(value.toLowerCase()) ?? false;
+			},
 			cell: ({ row }) => {
 				const tags = row.getValue("tags") as string[] | undefined;
 				if (!tags || tags.length === 0) {
@@ -140,6 +153,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 					</div>
 				);
 			},
+			size: 150,
 		},
 		{
 			accessorKey: "updated_at",
@@ -163,6 +177,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 					<div className="text-sm">{new Date(date).toLocaleDateString()}</div>
 				);
 			},
+			size: 120,
 		},
 	];
 
@@ -194,7 +209,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 		},
 		initialState: {
 			pagination: {
-				pageSize: 10,
+				pageSize: PAGINATION_SIZE,
 			},
 		},
 	});
@@ -299,52 +314,53 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 			<div className="overflow-hidden rounded-md border">
 				<div className="overflow-x-auto">
 					<Table className="table-fixed w-full">
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
-								>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext(),
-											)}
-										</TableCell>
-									))}
+						<TableHeader>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
+										return (
+											<TableHead key={header.id}>
+												{header.isPlaceholder
+													? null
+													: flexRender(
+															header.column.columnDef
+																.header,
+															header.getContext(),
+														)}
+											</TableHead>
+										);
+									})}
 								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={columns.length}
-									className="h-24 text-center"
-								>
-									No entities found.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
+							))}
+						</TableHeader>
+						<TableBody>
+							{table.getRowModel().rows?.length ? (
+								table.getRowModel().rows.map((row) => (
+									<TableRow
+										key={row.id}
+										data-state={row.getIsSelected() && "selected"}
+									>
+										{row.getVisibleCells().map((cell) => (
+											<TableCell key={cell.id}>
+												{flexRender(
+													cell.column.columnDef.cell,
+													cell.getContext(),
+												)}
+											</TableCell>
+										))}
+									</TableRow>
+								))
+							) : (
+								<TableRow>
+									<TableCell
+										colSpan={columns.length}
+										className="h-24 text-center"
+									>
+										No entities found.
+									</TableCell>
+								</TableRow>
+							)}
+						</TableBody>
 					</Table>
 				</div>
 			</div>

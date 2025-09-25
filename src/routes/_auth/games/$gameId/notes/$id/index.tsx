@@ -6,10 +6,10 @@ import { EntityView } from "~/components/entity-view";
 import { CreateNoteLink } from "~/components/notes/create-note-link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Tiptap } from "~/components/ui/editor";
+import { useEditorContentActions } from "~/components/ui/editor/hooks";
+import { parseContentForEditor } from "~/components/ui/editor/utils";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import { useEditorContentActions } from "~/components/ui/shadcn-io/minimal-tiptap/hooks";
-import { parseContentForEditor } from "~/components/ui/shadcn-io/minimal-tiptap/utils";
 import { useNoteSuspenseQuery, useUpdateNoteMutation } from "~/queries/notes";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
@@ -77,10 +77,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 
 	const contentTab = (
 		<div className="space-y-4">
-			<MinimalTiptap
-				content={parseContentForEditor(note.content)}
-				onChange={onChange}
-			/>
+			<Tiptap content={parseContentForEditor(note.content)} onChange={onChange} />
 			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
 				Save
 			</Button>
@@ -102,6 +99,8 @@ function NoteView({ note, gameId }: NoteViewProps) {
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
 					gameId={gameId}
+					sourceId={note.id}
+					sourceType="note"
 				/>
 			)}
 		</div>
