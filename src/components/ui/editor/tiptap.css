@@ -389,19 +389,20 @@
 	pointer-events: auto;
 }
 
-.ProseMirror .mention button {
-	display: inline-flex;
-	align-items: center;
+.ProseMirror .mention .mention-link {
+	text-decoration: none !important;
+	text-decoration-thickness: 0 !important;
+	text-underline-offset: 0 !important;
 	vertical-align: baseline;
 	pointer-events: auto;
 	cursor: pointer;
-	background: none;
-	border: none;
-	padding: 0;
-	margin: 0;
-	font: inherit;
 }
 
-.ProseMirror .mention button * {
+.ProseMirror .mention .mention-link:hover {
+	text-decoration: none !important;
+	text-decoration-thickness: 0 !important;
+}
+
+.ProseMirror .mention .mention-link * {
 	pointer-events: none;
 }

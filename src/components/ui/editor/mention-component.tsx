@@ -1,6 +1,6 @@
 import { NodeViewWrapper } from "@tiptap/react";
 import * as React from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { cn } from "~/utils/cn";
 
 interface MentionComponentProps {
@@ -16,10 +16,11 @@ interface MentionComponentProps {
 
 export const MentionComponent: React.FC<MentionComponentProps> = ({ node }) => {
 	const { id, label, type, gameId } = node.attrs;
-	const router = useRouter();
 
 	if (!id || !label || !type || !gameId) {
-		return <NodeViewWrapper className="inline">@{label || "unknown"}</NodeViewWrapper>;
+		return (
+			<NodeViewWrapper className="inline">@{label || "unknown"}</NodeViewWrapper>
+		);
 	}
 
 	const getRouteParams = () => {
@@ -62,9 +63,9 @@ export const MentionComponent: React.FC<MentionComponentProps> = ({ node }) => {
 			case "character":
 				return "👤";
 			case "faction":
-				return "⚔️";
+				return "⚔";
 			case "location":
-				return "🗺️";
+				return "🗺";
 			case "note":
 				return "📝";
 			case "quest":
@@ -76,51 +77,23 @@ export const MentionComponent: React.FC<MentionComponentProps> = ({ node }) => {
 
 	const routeParams = getRouteParams();
 
-	const handleClick = (e: React.MouseEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		
-		// Defer navigation to avoid flushSync conflicts with React rendering
-		React.startTransition(() => {
-			// Use setTimeout to ensure navigation happens after current render cycle
-			setTimeout(() => {
-				router.navigate({
-					...routeParams,
-				});
-			}, 0);
-		});
-	};
-
 	return (
-		<NodeViewWrapper 
-			className="inline mention" 
-			as="span"
-			draggable={false}
-		>
-			<button
-				type="button"
-				onClick={handleClick}
-				onMouseDown={(e) => e.stopPropagation()}
+		<NodeViewWrapper className="inline mention" as="span" draggable={false}>
+			<Link
+				{...routeParams}
 				className={cn(
 					"inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-sm",
 					"bg-primary/10 text-primary border border-primary/20",
-					"hover:bg-primary/20 hover:border-primary/30",
+					"hover:bg-primary/20 hover:border-primary/30 hover:text-primary",
 					"no-underline font-medium transition-colors cursor-pointer",
-					"border-none bg-transparent p-0 m-0",
+					"mention-link", // Add specific class for CSS targeting
 				)}
+				onMouseDown={(e) => e.stopPropagation()}
+				onClick={(e) => e.stopPropagation()}
 			>
-				<span 
-					className={cn(
-						"inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-sm",
-						"bg-primary/10 text-primary border border-primary/20",
-						"hover:bg-primary/20 hover:border-primary/30",
-						"font-medium transition-colors",
-					)}
-				>
-					<span className="text-xs">{getEntityIcon()}</span>
-					<span>{label}</span>
-				</span>
-			</button>
+				<span className="text-xs">{getEntityIcon()}</span>
+				<span>{label}</span>
+			</Link>
 		</NodeViewWrapper>
 	);
 };
