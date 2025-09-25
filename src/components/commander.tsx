@@ -85,6 +85,19 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Factions">
+							<CommandItem
+								onSelect={() => {
+									setOpen(false);
+									navigate({
+										to: "/games/$gameId/factions/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Faction</span>
+								<CommandShortcut>⌘F</CommandShortcut>
+							</CommandItem>
 							{factions?.map((faction) => (
 								<CommandItem
 									key={faction.id}
@@ -103,6 +116,19 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Locations">
+							<CommandItem
+								onSelect={() => {
+									setOpen(false);
+									navigate({
+										to: "/games/$gameId/locations/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Location</span>
+								<CommandShortcut>⌘L</CommandShortcut>
+							</CommandItem>
 							{locations?.map((location) => (
 								<CommandItem
 									key={location.id}
@@ -121,6 +147,19 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Notes">
+							<CommandItem
+								onSelect={() => {
+									setOpen(false);
+									navigate({
+										to: "/games/$gameId/notes/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Note</span>
+								<CommandShortcut>⌘N</CommandShortcut>
+							</CommandItem>
 							{notes?.map((note) => (
 								<CommandItem
 									key={note.id}
@@ -139,6 +178,19 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Quests">
+							<CommandItem
+								onSelect={() => {
+									setOpen(false);
+									navigate({
+										to: "/games/$gameId/quests/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Quest</span>
+								<CommandShortcut>⌘Q</CommandShortcut>
+							</CommandItem>
 							{quests?.map((quest) => (
 								<CommandItem
 									key={quest.id}
