@@ -12,8 +12,8 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Link } from "../ui/link";
 import { useDeleteFactionMutation } from "~/queries/factions";
+import { Link } from "../ui/link";
 
 export const createColumns = (gameId: string): ColumnDef<Faction>[] => [
 	{

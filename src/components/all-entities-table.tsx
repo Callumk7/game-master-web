@@ -10,7 +10,7 @@ import {
 	useReactTable,
 	type VisibilityState,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import { ArrowUpDown, ChevronDown } from "lucide-react";
 import * as React from "react";
 
 import { Badge } from "~/components/ui/badge";
@@ -64,18 +64,31 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [typeFilter, setTypeFilter] = React.useState<string>("all");
+	const [tagFilter, setTagFilter] = React.useState("");
 
 	const columns: ColumnDef<AllEntity>[] = [
 		{
 			accessorKey: "name",
-			header: "Name",
+			header: ({ column }) => {
+				return (
+					<Button
+						variant="ghost"
+						onClick={() =>
+							column.toggleSorting(column.getIsSorted() === "asc")
+						}
+					>
+						Name
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				const type = row.original.type;
 				const id = row.original.id;
 				return (
 					<Link
 						to={`/games/${gameId}/${type}s/${id}` as string}
-						className="font-medium hover:underline"
+						className="font-medium hover:underline truncate block"
 					>
 						{row.getValue("name")}
 					</Link>
@@ -106,6 +119,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 		{
 			accessorKey: "tags",
 			header: "Tags",
+			filterFn: "fuzzy",
 			cell: ({ row }) => {
 				const tags = row.getValue("tags") as string[] | undefined;
 				if (!tags || tags.length === 0) {
@@ -129,14 +143,24 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 		},
 		{
 			accessorKey: "updated_at",
-			header: "Last Updated",
+			header: ({ column }) => {
+				return (
+					<Button
+						variant="ghost"
+						onClick={() =>
+							column.toggleSorting(column.getIsSorted() === "asc")
+						}
+					>
+						Last Updated
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				const date = row.getValue("updated_at") as string | undefined;
 				if (!date) return <div className="text-sm text-muted-foreground">-</div>;
 				return (
-					<div className="text-sm">
-						{new Date(date).toLocaleDateString()}
-					</div>
+					<div className="text-sm">{new Date(date).toLocaleDateString()}</div>
 				);
 			},
 		},
@@ -156,6 +180,17 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 			sorting,
 			columnFilters,
 			columnVisibility,
+		},
+		filterFns: {
+			fuzzy: (row, columnId, value) => {
+				const itemValue = row.getValue(columnId) as string | string[];
+				if (Array.isArray(itemValue)) {
+					return itemValue.some((tag) =>
+						tag.toLowerCase().includes(value.toLowerCase()),
+					);
+				}
+				return itemValue?.toLowerCase().includes(value.toLowerCase()) ?? false;
+			},
 		},
 		initialState: {
 			pagination: {
@@ -177,13 +212,23 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 		table.getColumn("type")?.setFilterValue(typeFilter === "all" ? "" : typeFilter);
 	}, [typeFilter, table]);
 
+	React.useEffect(() => {
+		table.getColumn("tags")?.setFilterValue(tagFilter);
+	}, [tagFilter, table]);
+
 	return (
-		<div className="w-full">
+		<div className="w-full max-w-full">
 			<div className="flex items-center gap-4 py-4">
 				<Input
 					placeholder="Search entities..."
 					value={searchQuery}
 					onChange={(event) => setSearchQuery(event.target.value)}
+					className="max-w-sm"
+				/>
+				<Input
+					placeholder="Filter tags..."
+					value={tagFilter}
+					onChange={(event) => setTagFilter(event.target.value)}
 					className="max-w-sm"
 				/>
 				<DropdownMenu>
@@ -252,7 +297,8 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 				</DropdownMenu>
 			</div>
 			<div className="overflow-hidden rounded-md border">
-				<Table>
+				<div className="overflow-x-auto">
+					<Table className="table-fixed w-full">
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
@@ -299,12 +345,13 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 							</TableRow>
 						)}
 					</TableBody>
-				</Table>
+					</Table>
+				</div>
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
 				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} of{" "}
-					{entities.length} entity(s) total.
+					{table.getFilteredRowModel().rows.length} of {entities.length}{" "}
+					entity(s) total.
 				</div>
 				<div className="space-x-2">
 					<Button

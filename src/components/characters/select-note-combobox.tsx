@@ -16,6 +16,13 @@ import {
 	ComboboxPositioner,
 	ComboboxTrigger,
 } from "../ui/combobox";
+import {
+	Popover,
+	PopoverContent,
+	PopoverPositioner,
+	PopoverTrigger,
+} from "../ui/popover";
+import { Label } from "../ui/label";
 
 interface SelectNoteComboboxProps {
 	gameId: string;
@@ -46,42 +53,54 @@ export function SelectNoteCombobox({ gameId, characterId }: SelectNoteComboboxPr
 	};
 
 	return (
-		<div className="max-w-3xs w-full">
-			<Combobox
-				items={notes}
-				value={selectedNote}
-				onValueChange={(note) => setSelectedNote(note)}
-				itemToStringLabel={(note) => note.name}
-			>
-				<div className="relative flex flex-col gap-2">
-					<ComboboxInput placeholder="Select a note" id={id} />
-					<div className="absolute right-2 bottom-0 flex h-9 items-center justify-center text-muted-foreground">
-						<ComboboxClear />
-						<ComboboxTrigger
-							className="h-9 w-6 text-muted-foreground shadow-none bg-transparent hover:bg-transparent border-none"
-							aria-label="Open popup"
-						>
-							<ChevronDown className="size-4" />
-						</ComboboxTrigger>
+		<Popover>
+			<PopoverTrigger render={<Button />}>Link existing note</PopoverTrigger>
+			<PopoverPositioner align="start" side="bottom">
+				<PopoverContent>
+					<div className="space-y-2">
+						<div className="space-y-1">
+							<Label>Select a note</Label>
+							<Combobox
+								items={notes}
+								value={selectedNote}
+								onValueChange={(note) => setSelectedNote(note)}
+								itemToStringLabel={(note) => note.name}
+							>
+								<div className="relative flex flex-col gap-2">
+									<ComboboxInput placeholder="Select a note" id={id} />
+									<div className="absolute right-2 bottom-0 flex h-9 items-center justify-center text-muted-foreground">
+										<ComboboxClear />
+										<ComboboxTrigger
+											className="h-9 w-6 text-muted-foreground shadow-none bg-transparent hover:bg-transparent border-none"
+											aria-label="Open popup"
+										>
+											<ChevronDown className="size-4" />
+										</ComboboxTrigger>
+									</div>
+								</div>
+
+								<ComboboxPositioner>
+									<ComboboxPopup>
+										<ComboboxEmpty>No notes found.</ComboboxEmpty>
+										<ComboboxList>
+											{(note) => (
+												<ComboboxItem key={note.id} value={note}>
+													<ComboboxItemIndicator />
+													<div className="col-start-2">
+														{note.name}
+													</div>
+												</ComboboxItem>
+											)}
+										</ComboboxList>
+									</ComboboxPopup>
+								</ComboboxPositioner>
+							</Combobox>
+						</div>
+
+						<Button onClick={handleLink}>Link</Button>
 					</div>
-				</div>
-
-				<ComboboxPositioner>
-					<ComboboxPopup>
-						<ComboboxEmpty>No notes found.</ComboboxEmpty>
-						<ComboboxList>
-							{(note) => (
-								<ComboboxItem key={note.id} value={note}>
-									<ComboboxItemIndicator />
-									<div className="col-start-2">{note.name}</div>
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-					</ComboboxPopup>
-				</ComboboxPositioner>
-			</Combobox>
-
-			<Button onClick={handleLink}>Link</Button>
-		</div>
+				</PopoverContent>
+			</PopoverPositioner>
+		</Popover>
 	);
 }

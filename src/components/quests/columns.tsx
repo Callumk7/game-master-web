@@ -44,10 +44,10 @@ export const createColumns = (gameId: string): ColumnDef<Quest>[] => [
 		},
 	},
 	{
-		accessorKey: "content",
+		accessorKey: "content_plain_text",
 		header: "Content",
 		cell: ({ row }) => {
-			const content = row.getValue("content") as string;
+			const content = row.getValue("content_plain_text") as string;
 			return (
 				<div className="max-w-[300px] truncate">
 					{content || (
