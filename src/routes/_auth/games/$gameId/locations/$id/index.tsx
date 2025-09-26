@@ -52,7 +52,10 @@ function LocationView({ location, gameId }: LocationViewProps) {
 
 	const updateLocation = useUpdateLocationMutation(gameId, location.id);
 
-	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
+	const handleSave = async (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => {
 		updateLocation.mutate({
 			body: { location: payload },
 			path: { game_id: gameId, id: location.id },
@@ -130,7 +133,16 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		},
 	];
 
-	return <EntityView name={location.name} badges={badges} tabs={tabs} />;
+	const navigate = Route.useNavigate();
+
+	return (
+		<EntityView
+			name={location.name}
+			badges={badges}
+			tabs={tabs}
+			onEdit={() => navigate({ to: "edit" })}
+		/>
+	);
 }
 
 const formatType = (type: string) => {

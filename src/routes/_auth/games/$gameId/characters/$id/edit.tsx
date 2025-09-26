@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getCharacterOptions } from "~/api/@tanstack/react-query.gen";
+import {
+	getCharacterOptions,
+	useGetCharacterQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { EditCharacterForm } from "~/components/characters/edit-character-form";
-import { useCharacterQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/edit")({
 	component: RouteComponent,
@@ -16,10 +18,13 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/edit")
 
 function RouteComponent() {
 	const { gameId, id } = Route.useParams();
-	const { data } = useCharacterQuery(gameId, id);
-	return (
-		<div>
-			<EditCharacterForm initialData={data.data} />
-		</div>
-	);
+	const { data, isLoading, isSuccess } = useGetCharacterQuery({
+		path: { game_id: gameId, id: id },
+	});
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	return <div>{isSuccess && <EditCharacterForm initialData={data.data} />}</div>;
 }

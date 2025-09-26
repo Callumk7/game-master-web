@@ -1,4 +1,4 @@
-import { ClientOnly, createFileRoute, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import type { Quest } from "~/api";
 import { useGetQuestLinksQuery } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
@@ -52,7 +52,10 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 
 	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
 
-	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
+	const handleSave = async (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => {
 		updateQuest.mutate({
 			body: { quest: payload },
 			path: { game_id: gameId, id: quest.id },
@@ -125,5 +128,14 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		},
 	];
 
-	return <EntityView name={quest.name} badges={badges} tabs={tabs} />;
+	const navigate = Route.useNavigate();
+
+	return (
+		<EntityView
+			name={quest.name}
+			badges={badges}
+			tabs={tabs}
+			onEdit={() => navigate({ to: "edit" })}
+		/>
+	);
 }

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getLocationOptions } from "~/api/@tanstack/react-query.gen";
+import { getLocationOptions, useGetLocationQuery } from "~/api/@tanstack/react-query.gen";
 import { EditLocationForm } from "~/components/locations/edit-location-form";
-import { useLocationQuery } from ".";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/edit")({
 	component: RouteComponent,
@@ -16,10 +15,13 @@ export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/edit")(
 
 function RouteComponent() {
 	const { gameId, id } = Route.useParams();
-	const { data } = useLocationQuery(gameId, id);
-	return (
-		<div>
-			<EditLocationForm initialData={data.data} />
-		</div>
-	);
+	const { data, isLoading, isSuccess } = useGetLocationQuery({
+		path: { game_id: gameId, id: id },
+	});
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	return <div>{isSuccess && <EditLocationForm initialData={data.data} />}</div>;
 }

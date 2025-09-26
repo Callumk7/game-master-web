@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getNoteOptions } from "~/api/@tanstack/react-query.gen";
+import { getNoteOptions, useGetNoteQuery } from "~/api/@tanstack/react-query.gen";
 import { EditNoteForm } from "~/components/notes/edit-note-form";
-import { useNoteQuery } from ".";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/edit")({
 	component: RouteComponent,
@@ -16,10 +15,13 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/edit")({
 
 function RouteComponent() {
 	const { gameId, id } = Route.useParams();
-	const { data } = useNoteQuery(gameId, id);
-	return (
-		<div>
-			<EditNoteForm initialData={data.data} />
-		</div>
-	);
+	const { data, isLoading, isSuccess } = useGetNoteQuery({
+		path: { game_id: gameId, id: id },
+	});
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	return <div>{isSuccess && <EditNoteForm initialData={data.data} />}</div>;
 }

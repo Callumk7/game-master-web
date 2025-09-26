@@ -131,7 +131,16 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		},
 	];
 
-	return <EntityView name={faction.name} badges={badges} tabs={tabs} />;
+	const navigate = Route.useNavigate();
+
+	return (
+		<EntityView
+			name={faction.name}
+			badges={badges}
+			tabs={tabs}
+			onEdit={() => navigate({ to: "edit" })}
+		/>
+	);
 }
 
 interface FactionMembersViewProps {

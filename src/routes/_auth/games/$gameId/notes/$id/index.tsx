@@ -52,7 +52,10 @@ function NoteView({ note, gameId }: NoteViewProps) {
 
 	const updateNote = useUpdateNoteMutation(gameId, note.id);
 
-	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
+	const handleSave = async (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => {
 		updateNote.mutate({
 			body: { note: payload },
 			path: { game_id: gameId, id: note.id },
@@ -120,5 +123,14 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		},
 	];
 
-	return <EntityView name={note.name} badges={badges} tabs={tabs} />;
+	const navigate = Route.useNavigate();
+
+	return (
+		<EntityView
+			name={note.name}
+			badges={badges}
+			tabs={tabs}
+			onEdit={() => navigate({ to: "edit" })}
+		/>
+	);
 }

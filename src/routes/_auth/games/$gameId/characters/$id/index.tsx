@@ -166,6 +166,8 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		},
 	];
 
+	const navigate = Route.useNavigate();
+
 	return (
 		<>
 			<div>{character.member_of_faction_id || "no faction"}</div>
@@ -174,6 +176,7 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 				badges={badges}
 				tabs={tabs}
 				pinned={character.pinned}
+				onEdit={() => navigate({ to: "edit" })}
 				onTogglePin={handleTogglePin}
 			/>
 		</>
