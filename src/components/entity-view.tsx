@@ -1,4 +1,4 @@
-import { Menu, Pencil, Trash2 } from "lucide-react";
+import { Menu, Pencil, Pin, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
@@ -20,10 +20,20 @@ interface EntityViewProps {
 	badges?: React.ReactNode;
 	onEdit?: () => void;
 	onDelete?: () => void;
+	pinned?: boolean;
+	onTogglePin?: () => void;
 	tabs: EntityTab[];
 }
 
-export function EntityView({ name, badges, onEdit, onDelete, tabs }: EntityViewProps) {
+export function EntityView({
+	name,
+	badges,
+	onEdit,
+	onDelete,
+	pinned,
+	onTogglePin,
+	tabs,
+}: EntityViewProps) {
 	return (
 		<div className="space-y-10 mt-2">
 			<EntityTabs tabs={tabs}>
@@ -32,6 +42,8 @@ export function EntityView({ name, badges, onEdit, onDelete, tabs }: EntityViewP
 					badges={badges}
 					onEdit={onEdit}
 					onDelete={onDelete}
+					pinned={pinned}
+					onTogglePin={onTogglePin}
 				/>
 			</EntityTabs>
 		</div>
@@ -43,12 +55,19 @@ export function EntityViewHeader({
 	badges,
 	onEdit,
 	onDelete,
+	pinned,
+	onTogglePin,
 }: Omit<EntityViewProps, "tabs">) {
 	return (
 		<div className="space-y-2 mb-4">
 			<div className="flex items-center gap-3">
 				<h1 className="text-3xl font-bold">{name}</h1>
-				<EntityControls onEdit={onEdit} onDelete={onDelete} />
+				<EntityControls
+					onEdit={onEdit}
+					onDelete={onDelete}
+					pinned={pinned}
+					onTogglePin={onTogglePin}
+				/>
 			</div>
 			{badges && <div className="mt-1">{badges}</div>}
 		</div>
@@ -58,9 +77,16 @@ export function EntityViewHeader({
 interface EntityControlsProps {
 	onEdit?: () => void;
 	onDelete?: () => void;
+	pinned?: boolean;
+	onTogglePin?: () => void;
 }
 
-export function EntityControls({ onEdit, onDelete }: EntityControlsProps) {
+export function EntityControls({
+	onEdit,
+	onDelete,
+	pinned,
+	onTogglePin,
+}: EntityControlsProps) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger render={<Button size={"icon"} variant={"ghost"} />}>
@@ -71,6 +97,10 @@ export function EntityControls({ onEdit, onDelete }: EntityControlsProps) {
 					<DropdownMenuItem onClick={onEdit}>
 						<Pencil />
 						Edit
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={onTogglePin}>
+						<Pin />
+						{pinned ? "Unpin" : "Pin"}
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={onDelete}>
 						<Trash2 />

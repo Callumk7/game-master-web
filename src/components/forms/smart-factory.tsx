@@ -87,6 +87,7 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 			onSuccess: (data) => {
 				queryClient.invalidateQueries();
 				onSuccess?.(data);
+				form.reset();
 			},
 		});
 
@@ -306,6 +307,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		onSuccess: (data) => {
 			queryClient.invalidateQueries();
 			onSuccess?.(data);
+			form.reset();
 		},
 	});
 

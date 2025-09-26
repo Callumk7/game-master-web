@@ -6,16 +6,12 @@ import {
 	useGetFactionMembersQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
-import { createColumns } from "~/components/characters/columns";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateFactionLink } from "~/components/factions/create-faction-link";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import { useEditorContentActions } from "~/components/ui/shadcn-io/minimal-tiptap/hooks";
-import { parseContentForEditor } from "~/components/ui/shadcn-io/minimal-tiptap/utils";
 import { useFactionSuspenseQuery, useUpdateFactionMutation } from "~/queries/factions";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
@@ -57,15 +53,16 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		error: linksQueryError,
 	} = useGetFactionLinksQuery({ path: { game_id: gameId, faction_id: faction.id } });
 
-	const { isUpdated, setIsUpdated, onChange, getPayload } = useEditorContentActions();
 	const updateFaction = useUpdateFactionMutation(gameId, faction.id);
 
-	const handleSave = () => {
+	const handleSave = async (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => {
 		updateFaction.mutate({
-			body: getPayload("faction"),
+			body: { faction: payload },
 			path: { game_id: gameId, id: faction.id },
 		});
-		setIsUpdated(false);
 	};
 
 	const badges = faction.tags && faction.tags.length > 0 && (
@@ -79,15 +76,14 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 	);
 
 	const contentTab = (
-		<div className="space-y-4">
-			<MinimalTiptap
-				content={parseContentForEditor(faction.content)}
-				onChange={onChange}
-			/>
-			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
-				Save
-			</Button>
-		</div>
+		<EntityEditor
+			content={faction.content}
+			gameId={gameId}
+			entityType="faction"
+			entityId={faction.id}
+			onSave={handleSave}
+			isSaving={updateFaction.isPending}
+		/>
 	);
 
 	const linksTab = (
@@ -135,7 +131,16 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		},
 	];
 
-	return <EntityView name={faction.name} badges={badges} tabs={tabs} />;
+	const navigate = Route.useNavigate();
+
+	return (
+		<EntityView
+			name={faction.name}
+			badges={badges}
+			tabs={tabs}
+			onEdit={() => navigate({ to: "edit" })}
+		/>
+	);
 }
 
 interface FactionMembersViewProps {
@@ -150,11 +155,9 @@ function MembersView({ factionId, gameId }: FactionMembersViewProps) {
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [tagFilter, setTagFilter] = React.useState("");
 
-	const columns = createColumns(gameId);
-
 	return (
 		<CharacterTable
-			columns={columns}
+			gameId={gameId}
 			data={members}
 			searchQuery={searchQuery}
 			onSearchChange={setSearchQuery}

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
+import { getQuestOptions, useGetQuestQuery } from "~/api/@tanstack/react-query.gen";
 import { EditQuestForm } from "~/components/quests/edit-quest-form";
-import { useQuestQuery } from ".";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/edit")({
 	component: RouteComponent,
@@ -16,10 +15,13 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/edit")({
 
 function RouteComponent() {
 	const { gameId, id } = Route.useParams();
-	const { data } = useQuestQuery(gameId, id);
-	return (
-		<div>
-			<EditQuestForm initialData={data.data} />
-		</div>
-	);
+	const { data, isLoading, isSuccess } = useGetQuestQuery({
+		path: { game_id: gameId, id: id },
+	});
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	return <div>{isSuccess && <EditQuestForm initialData={data.data} />}</div>;
 }

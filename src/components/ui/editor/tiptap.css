@@ -42,6 +42,7 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	white-space: pre-wrap;
 }
 
 .ProseMirror:focus {
@@ -368,5 +369,40 @@
 	content: attr(data-placeholder);
 	float: left;
 	height: 0;
+	pointer-events: none;
+}
+
+/* Mention styles */
+.ProseMirror .mention-wrapper {
+	display: inline;
+	vertical-align: baseline;
+}
+
+.ProseMirror .mention {
+	display: inline;
+	vertical-align: baseline;
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+	text-decoration: none;
+	pointer-events: auto;
+}
+
+.ProseMirror .mention .mention-link {
+	text-decoration: none !important;
+	text-decoration-thickness: 0 !important;
+	text-underline-offset: 0 !important;
+	vertical-align: baseline;
+	pointer-events: auto;
+	cursor: pointer;
+}
+
+.ProseMirror .mention .mention-link:hover {
+	text-decoration: none !important;
+	text-decoration-thickness: 0 !important;
+}
+
+.ProseMirror .mention .mention-link * {
 	pointer-events: none;
 }

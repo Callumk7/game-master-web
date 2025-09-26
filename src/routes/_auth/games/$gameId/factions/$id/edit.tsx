@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getFactionOptions } from "~/api/@tanstack/react-query.gen";
+import { getFactionOptions, useGetFactionQuery } from "~/api/@tanstack/react-query.gen";
 import { EditFactionForm } from "~/components/factions/edit-faction-form";
-import { useFactionQuery } from "~/queries/factions";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/edit")({
 	component: RouteComponent,
@@ -16,10 +15,13 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/edit")({
 
 function RouteComponent() {
 	const { gameId, id } = Route.useParams();
-	const { data } = useFactionQuery(gameId, id);
-	return (
-		<div>
-			<EditFactionForm initialData={data.data} />
-		</div>
-	);
+	const { data, isLoading, isSuccess } = useGetFactionQuery({
+		path: { game_id: gameId, id: id },
+	});
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	return <div>{isSuccess && <EditFactionForm initialData={data.data} />}</div>;
 }

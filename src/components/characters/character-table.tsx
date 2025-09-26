@@ -1,214 +1,137 @@
-import {
-	type ColumnDef,
-	type ColumnFiltersState,
-	flexRender,
-	getCoreRowModel,
-	getFilteredRowModel,
-	getPaginationRowModel,
-	getSortedRowModel,
-	type SortingState,
-	useReactTable,
-	type VisibilityState,
-} from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
-import * as React from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 
-import { Button } from "~/components/ui/button";
-
+import type { Character } from "~/api/types.gen";
 import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuPortal,
-	DropdownMenuPositioner,
-	DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { Input } from "~/components/ui/input";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "~/components/ui/table";
+	ActionsDropdown,
+	ContentDisplay,
+	DateDisplay,
+	EntityLink,
+	EntityTable,
+	SortableHeader,
+	TagsDisplay,
+} from "~/components/ui/entity-table";
+import { useDeleteCharacterMutation } from "~/queries/characters";
+import { Badge } from "../ui/badge";
 
-interface CharacterTableProps<TData, TValue> {
-	columns: ColumnDef<TData, TValue>[];
-	data: TData[];
+interface CharacterTableProps {
+	data: Character[];
 	searchQuery: string;
 	onSearchChange: (query: string) => void;
 	tagFilter: string;
 	onTagFilterChange: (tag: string) => void;
+	gameId: string;
 }
 
-export function CharacterTable<TData, TValue>({
-	columns,
+function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
+	return [
+		{
+			accessorKey: "name",
+			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
+			cell: ({ row }) => (
+				<EntityLink
+					entityType="character"
+					gameId={gameId}
+					entityId={row.original.id}
+					name={row.getValue("name")}
+				/>
+			),
+		},
+		{
+			accessorKey: "class",
+			header: "Class",
+			cell: ({ row }) => (
+				<Badge variant="secondary" className="capitalize">
+					{row.getValue("class")}
+				</Badge>
+			),
+		},
+		{
+			accessorKey: "level",
+			header: ({ column }) => (
+				<SortableHeader column={column}>Level</SortableHeader>
+			),
+			cell: ({ row }) => <div className="text-center">{row.getValue("level")}</div>,
+			maxSize: 50,
+		},
+		{
+			accessorKey: "content_plain_text",
+			header: "Content",
+			cell: ({ row }) => (
+				<ContentDisplay
+					content={row.getValue("content_plain_text")}
+					maxWidth="max-w-xs"
+					placeholder="No content"
+				/>
+			),
+		},
+		{
+			accessorKey: "tags",
+			header: "Tags",
+			filterFn: (row, columnId, value) => {
+				if (!value) return true;
+				const tags = row.getValue(columnId) as string[];
+				return (
+					tags?.some((tag) =>
+						tag.toLowerCase().includes(value.toLowerCase()),
+					) ?? false
+				);
+			},
+			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
+		},
+		{
+			accessorKey: "created_at",
+			header: ({ column }) => (
+				<SortableHeader column={column}>Created</SortableHeader>
+			),
+			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+		},
+		{
+			id: "actions",
+			enableHiding: false,
+			cell: ({ row }) => {
+				const character = row.original;
+				const deleteCharacter = useDeleteCharacterMutation(gameId);
+
+				return (
+					<ActionsDropdown
+						entityType="character"
+						entityName="character"
+						entity={character}
+						gameId={gameId}
+						onDelete={() => {
+							deleteCharacter.mutate({
+								path: { id: character.id, game_id: gameId },
+							});
+						}}
+					/>
+				);
+			},
+			maxSize: 60,
+		},
+	];
+}
+
+export function CharacterTable({
 	data,
 	searchQuery,
 	onSearchChange,
 	tagFilter,
 	onTagFilterChange,
-}: CharacterTableProps<TData, TValue>) {
-	const [sorting, setSorting] = React.useState<SortingState>([]);
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-
-	const table = useReactTable({
-		data,
-		columns,
-		onSortingChange: setSorting,
-		onColumnFiltersChange: setColumnFilters,
-		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		onColumnVisibilityChange: setColumnVisibility,
-		state: {
-			sorting,
-			columnFilters,
-			columnVisibility,
-		},
-		filterFns: {
-			fuzzy: (row, columnId, value) => {
-				const itemValue = row.getValue(columnId) as string;
-				return itemValue?.toLowerCase().includes(value.toLowerCase()) ?? false;
-			},
-		},
-	});
-
-	React.useEffect(() => {
-		table.getColumn("name")?.setFilterValue(searchQuery);
-	}, [searchQuery, table]);
-
-	React.useEffect(() => {
-		const column = table.getColumn("tags");
-		if (column) {
-			column.setFilterValue(tagFilter);
-		}
-	}, [tagFilter, table]);
+	gameId,
+}: CharacterTableProps) {
+	const columns = createCharacterColumns(gameId);
 
 	return (
-		<div className="w-full">
-			<div className="flex items-center gap-4 py-4">
-				<Input
-					placeholder="Filter names..."
-					value={searchQuery}
-					onChange={(event) => onSearchChange(event.target.value)}
-					className="max-w-sm"
-				/>
-				<Input
-					placeholder="Filter tags..."
-					value={tagFilter}
-					onChange={(event) => onTagFilterChange(event.target.value)}
-					className="max-w-sm"
-				/>
-				<DropdownMenu>
-					<DropdownMenuTrigger
-						render={
-							<Button variant="outline" className="ml-auto">
-								Columns <ChevronDown className="ml-2 h-4 w-4" />
-							</Button>
-						}
-					></DropdownMenuTrigger>
-					<DropdownMenuPortal>
-						<DropdownMenuPositioner>
-							<DropdownMenuContent>
-								{table
-									.getAllColumns()
-									.filter((column) => column.getCanHide())
-									.map((column) => {
-										return (
-											<DropdownMenuCheckboxItem
-												key={column.id}
-												className="capitalize"
-												checked={column.getIsVisible()}
-												onCheckedChange={(value) =>
-													column.toggleVisibility(!!value)
-												}
-											>
-												{column.id}
-											</DropdownMenuCheckboxItem>
-										);
-									})}
-							</DropdownMenuContent>
-						</DropdownMenuPositioner>
-					</DropdownMenuPortal>
-				</DropdownMenu>
-			</div>
-			<div className="overflow-hidden rounded-md border">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead key={header.id}>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
-								>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext(),
-											)}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={columns.length}
-									className="h-24 text-center"
-								>
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
-			<div className="flex items-center justify-end space-x-2 py-4">
-				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} character(s) total.
-				</div>
-				<div className="space-x-2">
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
-					>
-						Previous
-					</Button>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-					>
-						Next
-					</Button>
-				</div>
-			</div>
-		</div>
+		<EntityTable
+			columns={columns}
+			data={data}
+			searchQuery={searchQuery}
+			onSearchChange={onSearchChange}
+			tagFilter={tagFilter}
+			onTagFilterChange={onTagFilterChange}
+			entityName="character"
+			searchPlaceholder="Filter names..."
+			tagPlaceholder="Filter tags..."
+		/>
 	);
 }

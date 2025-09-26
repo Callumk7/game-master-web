@@ -6,6 +6,7 @@ import {
 	getLocationTreeOptions,
 	getQuestTreeOptions,
 	listGameEntitiesOptions,
+	listPinnedEntitiesOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { Commander } from "~/components/commander";
@@ -16,7 +17,7 @@ import { GameSidebar } from "~/components/layout/game-sidebar";
 import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
-import { Input } from "~/components/ui/input";
+import { Badge } from "~/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
@@ -35,6 +36,9 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 		context.queryClient.ensureQueryData(
 			getQuestTreeOptions({ path: { game_id: gameId } }),
 		);
+		context.queryClient.ensureQueryData(
+			listPinnedEntitiesOptions({ path: { game_id: gameId } }),
+		);
 	},
 	errorComponent: BasicErrorComponent,
 });
@@ -43,6 +47,7 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 
+	const [commanderOpen, setCommanderOpen] = React.useState(false);
 	const [newCharSheetOpen, setNewCharSheetOpen] = React.useState(false);
 	const [newFactionSheetOpen, setNewFactionSheetOpen] = React.useState(false);
 	const [newLocationSheetOpen, setNewLocationSheetOpen] = React.useState(false);
@@ -62,21 +67,27 @@ function RouteComponent() {
 					/>
 					{/* Main Content */}
 					<div className="flex-1 flex flex-col">
-						<header className="border-b p-4 flex items-center gap-4">
-							<SidebarTrigger />
-							<Commander gameId={gameId} />
-							<div className="flex-1 max-w-md">
-								<div className="relative">
-									<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-									<Input
-										placeholder="Search entities..."
-										className="pl-10"
-									/>
-								</div>
-							</div>
-						</header>
-
 						<main className="flex-1 overflow-auto">
+							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20">
+								<SidebarTrigger />
+								<Commander 
+									gameId={gameId} 
+									open={commanderOpen} 
+									setOpen={setCommanderOpen} 
+								/>
+								<div className="flex-1 max-w-md">
+									<button
+										onClick={() => setCommanderOpen(true)}
+										className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
+									>
+										<Search className="mr-3 w-4 h-4 text-muted-foreground" />
+										<span className="text-muted-foreground">Search entities...</span>
+										<Badge variant="secondary" className="ml-auto text-xs">
+											⌘J
+										</Badge>
+									</button>
+								</div>
+							</header>
 							<EntityTabs />
 							<div className="p-6">
 								<Outlet />

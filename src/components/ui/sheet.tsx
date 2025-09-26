@@ -1,6 +1,6 @@
 import { Dialog as SheetPrimitive } from "@base-ui-components/react/dialog";
 import { XIcon } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "~/utils/cn";
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
@@ -40,6 +40,7 @@ function SheetContent({
 	children,
 	side = "right",
 	width = "sm",
+	ref,
 	...props
 }: React.ComponentProps<typeof SheetPrimitive.Popup> & {
 	side?: "top" | "right" | "bottom" | "left";
@@ -49,6 +50,7 @@ function SheetContent({
 		<SheetPortal>
 			<SheetOverlay />
 			<SheetPrimitive.Popup
+				ref={ref}
 				data-slot="sheet-content"
 				className={cn(
 					"bg-background data-[open]:animate-in data-[closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[closed]:duration-300 data-[open]:duration-500",

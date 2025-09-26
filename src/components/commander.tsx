@@ -14,8 +14,18 @@ import {
 } from "~/components/ui/command";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
 
-export function Commander({ gameId }: { gameId: string }) {
-	const [open, setOpen] = React.useState(false);
+export function Commander({ 
+	gameId, 
+	open, 
+	setOpen 
+}: { 
+	gameId: string;
+	open?: boolean;
+	setOpen?: (open: boolean) => void;
+}) {
+	const [internalOpen, setInternalOpen] = React.useState(false);
+	const isOpen = open !== undefined ? open : internalOpen;
+	const setIsOpen = setOpen !== undefined ? setOpen : setInternalOpen;
 
 	const navigate = useNavigate();
 
@@ -32,7 +42,7 @@ export function Commander({ gameId }: { gameId: string }) {
 		const down = (e: KeyboardEvent) => {
 			if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
 				e.preventDefault();
-				setOpen((open) => !open);
+				setIsOpen((open) => !open);
 			}
 		};
 
@@ -41,7 +51,7 @@ export function Commander({ gameId }: { gameId: string }) {
 	}, []);
 
 	return (
-		<CommandDialog open={open} onOpenChange={setOpen}>
+		<CommandDialog open={isOpen} onOpenChange={setIsOpen}>
 			<CommandInput placeholder="Type a command or search..." />
 			<CommandList>
 				<CommandEmpty>No results found.</CommandEmpty>
@@ -56,7 +66,7 @@ export function Commander({ gameId }: { gameId: string }) {
 						<CommandGroup heading="Characters">
 							<CommandItem
 								onSelect={() => {
-									setOpen(false);
+									setIsOpen(false);
 									navigate({
 										to: "/games/$gameId/characters/new",
 										params: { gameId },
@@ -71,7 +81,7 @@ export function Commander({ gameId }: { gameId: string }) {
 								<CommandItem
 									key={character.id}
 									onSelect={() => {
-										setOpen(false);
+										setIsOpen(false);
 										navigate({
 											to: "/games/$gameId/characters/$id",
 											params: { gameId, id: character.id },
@@ -85,11 +95,24 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Factions">
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
+										to: "/games/$gameId/factions/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Faction</span>
+								<CommandShortcut>⌘F</CommandShortcut>
+							</CommandItem>
 							{factions?.map((faction) => (
 								<CommandItem
 									key={faction.id}
 									onSelect={() => {
-										setOpen(false);
+										setIsOpen(false);
 										navigate({
 											to: "/games/$gameId/factions/$id",
 											params: { gameId, id: faction.id },
@@ -103,11 +126,24 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Locations">
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
+										to: "/games/$gameId/locations/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Location</span>
+								<CommandShortcut>⌘L</CommandShortcut>
+							</CommandItem>
 							{locations?.map((location) => (
 								<CommandItem
 									key={location.id}
 									onSelect={() => {
-										setOpen(false);
+										setIsOpen(false);
 										navigate({
 											to: "/games/$gameId/locations/$id",
 											params: { gameId, id: location.id },
@@ -121,11 +157,24 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Notes">
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
+										to: "/games/$gameId/notes/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Note</span>
+								<CommandShortcut>⌘N</CommandShortcut>
+							</CommandItem>
 							{notes?.map((note) => (
 								<CommandItem
 									key={note.id}
 									onSelect={() => {
-										setOpen(false);
+										setIsOpen(false);
 										navigate({
 											to: "/games/$gameId/notes/$id",
 											params: { gameId, id: note.id },
@@ -139,11 +188,24 @@ export function Commander({ gameId }: { gameId: string }) {
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Quests">
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
+										to: "/games/$gameId/quests/new",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span>New Quest</span>
+								<CommandShortcut>⌘Q</CommandShortcut>
+							</CommandItem>
 							{quests?.map((quest) => (
 								<CommandItem
 									key={quest.id}
 									onSelect={() => {
-										setOpen(false);
+										setIsOpen(false);
 										navigate({
 											to: "/games/$gameId/quests/$id",
 											params: { gameId, id: quest.id },

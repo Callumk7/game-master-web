@@ -4,19 +4,18 @@ import { useMemo } from "react";
 import type { Character } from "~/api";
 import {
 	getFactionOptions,
+	listPinnedEntitiesQueryKey,
 	useGetCharacterLinksQuery,
 	useListFactionsQuery,
 } from "~/api/@tanstack/react-query.gen";
+import { CharacterNotesView } from "~/components/characters/character-note-view";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
 import { SelectFactionCombobox } from "~/components/characters/select-faction-combobox";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { MinimalTiptap } from "~/components/ui/shadcn-io/minimal-tiptap";
-import { useEditorContentActions } from "~/components/ui/shadcn-io/minimal-tiptap/hooks";
-import { parseContentForEditor } from "~/components/ui/shadcn-io/minimal-tiptap/utils";
 import {
 	useGetCharacterSuspenseQuery,
 	useUpdateCharacterMutation,
@@ -62,16 +61,37 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		path: { game_id: gameId, character_id: character.id },
 	});
 
-	const { isUpdated, setIsUpdated, onChange, getPayload } = useEditorContentActions();
-
+	const context = Route.useRouteContext();
 	const updateCharacter = useUpdateCharacterMutation(gameId, character.id);
 
-	const handleSave = () => {
-		updateCharacter.mutate({
-			body: getPayload("character"),
+	const handleSave = async (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => {
+		updateCharacter.mutateAsync({
+			body: { character: payload },
 			path: { game_id: gameId, id: character.id },
 		});
-		setIsUpdated(false);
+	};
+
+	// We also have pinCharacterMutation, but since the character mutation is already
+	// being used, we can just use it for both actions.
+	const handleTogglePin = async () => {
+		updateCharacter.mutateAsync(
+			{
+				body: { character: { pinned: !character.pinned } },
+				path: { game_id: gameId, id: character.id },
+			},
+			{
+				onSuccess: () => {
+					context.queryClient.invalidateQueries({
+						queryKey: listPinnedEntitiesQueryKey({
+							path: { game_id: gameId },
+						}),
+					});
+				},
+			},
+		);
 	};
 
 	const badges = (
@@ -91,15 +111,14 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 	);
 
 	const contentTab = (
-		<div className="space-y-4">
-			<MinimalTiptap
-				content={parseContentForEditor(character.content)}
-				onChange={onChange}
-			/>
-			<Button variant={"secondary"} onClick={handleSave} disabled={!isUpdated}>
-				Save
-			</Button>
-		</div>
+		<EntityEditor
+			content={character.content}
+			gameId={gameId}
+			entityType="character"
+			entityId={character.id}
+			onSave={handleSave}
+			isSaving={updateCharacter.isPending}
+		/>
 	);
 
 	const linksTab = (
@@ -138,7 +157,7 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		{
 			id: "notes",
 			label: "Notes",
-			content: <div>Notes tabs tbc</div>,
+			content: <CharacterNotesView gameId={gameId} characterId={character.id} />,
 		},
 		{
 			id: "faction",
@@ -147,10 +166,19 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		},
 	];
 
+	const navigate = Route.useNavigate();
+
 	return (
 		<>
 			<div>{character.member_of_faction_id || "no faction"}</div>
-			<EntityView name={character.name} badges={badges} tabs={tabs} />
+			<EntityView
+				name={character.name}
+				badges={badges}
+				tabs={tabs}
+				pinned={character.pinned}
+				onEdit={() => navigate({ to: "edit" })}
+				onTogglePin={handleTogglePin}
+			/>
 		</>
 	);
 }

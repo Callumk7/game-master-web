@@ -1,7 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
-import { createColumns } from "~/components/locations/columns";
 import { LocationsTable } from "~/components/locations/locations-table";
 import { PageHeader } from "~/components/page-header";
 import { useListLocationsSuspenseQuery } from "~/queries/locations";
@@ -20,19 +19,23 @@ function RouteComponent() {
 	const { data } = useListLocationsSuspenseQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
+	const navigate = useNavigate();
 
 	const locations = data?.data || [];
 
-	const columns = createColumns(gameId);
+	const handleCreate = () => {
+		navigate({ to: "/games/$gameId/locations/new", params: { gameId } });
+	};
 
 	return (
 		<div className="container mx-auto py-8">
 			<PageHeader
 				title="All Locations"
 				description="Browse all locations in your game."
+				handleCreate={handleCreate}
 			/>
 			<LocationsTable
-				columns={columns}
+				gameId={gameId}
 				data={locations}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

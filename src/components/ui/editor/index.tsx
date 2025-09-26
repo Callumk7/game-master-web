@@ -17,12 +17,16 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { cn } from "~/utils/cn";
-import { Button } from "../../button";
-import { Separator } from "../../separator";
-import { Toggle } from "../../toggle";
-import "src/components/ui/shadcn-io/minimal-tiptap/tiptap.css";
+import "src/components/ui/editor/tiptap.css";
+import { Button } from "../button";
+import { Separator } from "../separator";
+import { Toggle } from "../toggle";
+import { SimpleMention, type MentionItem } from "./mention-extension-simple";
+import { listGameEntitiesOptions } from "~/api/@tanstack/react-query.gen";
+import { useParams } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 
-interface MinimalTiptapProps {
+export interface TiptapProps {
 	content?: object | null;
 	onChange?: (content: { json: object; text: string }) => void;
 	placeholder?: string;
@@ -30,15 +34,83 @@ interface MinimalTiptapProps {
 	className?: string;
 }
 
-function MinimalTiptap({
+export function Tiptap({
 	content = null,
 	onChange,
 	placeholder = "Start typing...",
 	editable = true,
 	className,
-}: MinimalTiptapProps) {
+}: TiptapProps) {
 	const initialContentRef = React.useRef(content);
 	const isInternalUpdate = React.useRef(false);
+	const params = useParams({ from: "/_auth/games/$gameId" });
+	const gameId = params?.gameId;
+
+	const { data: entitiesData } = useQuery({
+		...listGameEntitiesOptions({ path: { game_id: gameId } }),
+		enabled: !!gameId,
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	});
+
+	// Transform entities into mention items
+	const mentionItems = React.useMemo((): MentionItem[] => {
+		if (!entitiesData?.data?.entities || !gameId) return [];
+
+		const items: MentionItem[] = [];
+		const entities = entitiesData.data.entities;
+
+		// Add characters
+		entities.characters?.forEach((character) => {
+			items.push({
+				id: character.id,
+				label: character.name,
+				type: "character",
+				gameId,
+			});
+		});
+
+		// Add factions
+		entities.factions?.forEach((faction) => {
+			items.push({
+				id: faction.id,
+				label: faction.name,
+				type: "faction",
+				gameId,
+			});
+		});
+
+		// Add locations
+		entities.locations?.forEach((location) => {
+			items.push({
+				id: location.id,
+				label: location.name,
+				type: "location",
+				gameId,
+			});
+		});
+
+		// Add notes
+		entities.notes?.forEach((note) => {
+			items.push({
+				id: note.id,
+				label: note.name,
+				type: "note",
+				gameId,
+			});
+		});
+
+		// Add quests
+		entities.quests?.forEach((quest) => {
+			items.push({
+				id: quest.id,
+				label: quest.name,
+				type: "quest",
+				gameId,
+			});
+		});
+
+		return items;
+	}, [entitiesData, gameId]);
 
 	const editor = useEditor({
 		extensions: [
@@ -52,14 +124,28 @@ function MinimalTiptap({
 					keepAttributes: false,
 				},
 			}),
+			SimpleMention.configure({
+				suggestion: {
+					items: ({ query }: { query: string }) => {
+						return mentionItems
+							.filter((item) =>
+								item.label.toLowerCase().includes(query.toLowerCase()),
+							)
+							.slice(0, 10);
+					},
+				},
+			}),
 		],
 		content,
 		editable,
 		onUpdate: ({ editor }) => {
 			isInternalUpdate.current = true;
-			onChange?.({
-				json: editor.getJSON(),
-				text: editor.getText(),
+			// Defer the onChange callback to avoid flushSync conflicts
+			React.startTransition(() => {
+				onChange?.({
+					json: editor.getJSON(),
+					text: editor.getText(),
+				});
 			});
 		},
 		editorProps: {
@@ -76,12 +162,24 @@ function MinimalTiptap({
 	React.useEffect(() => {
 		if (editor && content !== null && !isInternalUpdate.current) {
 			if (initialContentRef.current !== content) {
-				editor.commands.setContent(content);
-				initialContentRef.current = content;
+				// Use startTransition to defer content updates and avoid flushSync conflicts
+				React.startTransition(() => {
+					editor.commands.setContent(content);
+					initialContentRef.current = content;
+				});
 			}
 		}
 		isInternalUpdate.current = false;
 	}, [editor, content]);
+
+	// Cleanup effect to prevent memory leaks and flushSync issues on unmount
+	React.useEffect(() => {
+		return () => {
+			if (editor) {
+				editor.destroy();
+			}
+		};
+	}, [editor]);
 
 	if (!editor) {
 		return null;
@@ -230,6 +328,3 @@ function MinimalTiptap({
 		</div>
 	);
 }
-
-export { MinimalTiptap, type MinimalTiptapProps };
-export { MinimalTiptapViewer, type MinimalTiptapViewerProps } from "./viewer";

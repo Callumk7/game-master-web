@@ -17,6 +17,7 @@ interface EntityTabsContextType {
 	tabList: Tab[];
 	addTab: (tab: Tab) => void;
 	removeTab: (tabId: string) => void;
+	clearAllTabs: () => void;
 }
 
 const EntityTabsContext = React.createContext<EntityTabsContextType | undefined>(
@@ -40,7 +41,11 @@ export const EntityTabsProvider = ({ children }: { children: React.ReactNode }) 
 		setTabList((prevTabs) => prevTabs.filter((t) => t.data.id !== tabId));
 	}, []);
 
-	const value = { tabList, addTab, removeTab };
+	const clearAllTabs = React.useCallback(() => {
+		setTabList([]);
+	}, []);
+
+	const value = { tabList, addTab, removeTab, clearAllTabs };
 
 	return (
 		<EntityTabsContext.Provider value={value}>{children}</EntityTabsContext.Provider>
@@ -65,11 +70,11 @@ export const useAddTab = (tab: Optional<Tab, "data">) => {
 };
 
 export function EntityTabs() {
-	const { tabList, removeTab } = useEntityTabs();
+	const { tabList, removeTab, clearAllTabs } = useEntityTabs();
 	// TODO: Add pin button
 	// TODO: Add drag to reorder
 	return (
-		<nav className="flex gap-2 flex-wrap w-full border-b px-1">
+		<nav className="sticky top-[73px] flex gap-2 flex-wrap w-full border-b px-1 items-center backdrop-blur-md bg-background/80 z-10">
 			{tabList.map((tab) => {
 				// Construct the path dynamically to prevent staleness
 				const path = `/games/${tab.gameId}/${tab.entityType}/${tab.data.id}/`;
@@ -103,6 +108,17 @@ export function EntityTabs() {
 					</Link>
 				);
 			})}
+			{tabList.length > 0 && (
+				<Button
+					variant="ghost"
+					size="sm"
+					className="ml-auto text-muted-foreground hover:text-foreground"
+					onClick={clearAllTabs}
+					title="Clear all tabs"
+				>
+					Clear All
+				</Button>
+			)}
 		</nav>
 	);
 }
