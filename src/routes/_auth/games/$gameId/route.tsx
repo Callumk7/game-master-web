@@ -66,21 +66,20 @@ function RouteComponent() {
 					/>
 					{/* Main Content */}
 					<div className="flex-1 flex flex-col">
-						<header className="border-b p-4 flex items-center gap-4">
-							<SidebarTrigger />
-							<Commander gameId={gameId} />
-							<div className="flex-1 max-w-md">
-								<div className="relative">
-									<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-									<Input
-										placeholder="Search entities..."
-										className="pl-10"
-									/>
-								</div>
-							</div>
-						</header>
-
 						<main className="flex-1 overflow-auto">
+							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20">
+								<SidebarTrigger />
+								<Commander gameId={gameId} />
+								<div className="flex-1 max-w-md">
+									<div className="relative">
+										<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+										<Input
+											placeholder="Search entities..."
+											className="pl-10"
+										/>
+									</div>
+								</div>
+							</header>
 							<EntityTabs />
 							<div className="p-6">
 								<Outlet />

@@ -74,7 +74,7 @@ export function EntityTabs() {
 	// TODO: Add pin button
 	// TODO: Add drag to reorder
 	return (
-		<nav className="flex gap-2 flex-wrap w-full border-b px-1 items-center">
+		<nav className="sticky top-[73px] flex gap-2 flex-wrap w-full border-b px-1 items-center backdrop-blur-md bg-background/80 z-10">
 			{tabList.map((tab) => {
 				// Construct the path dynamically to prevent staleness
 				const path = `/games/${tab.gameId}/${tab.entityType}/${tab.data.id}/`;
