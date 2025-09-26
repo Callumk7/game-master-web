@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import type { Character } from "~/api";
 import {
 	getFactionOptions,
+	listPinnedEntitiesQueryKey,
 	useGetCharacterLinksQuery,
 	useListFactionsQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -60,13 +61,37 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		path: { game_id: gameId, character_id: character.id },
 	});
 
+	const context = Route.useRouteContext();
 	const updateCharacter = useUpdateCharacterMutation(gameId, character.id);
 
-	const handleSave = async (payload: { content: string; content_plain_text: string }) => {
-		updateCharacter.mutate({
+	const handleSave = async (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => {
+		updateCharacter.mutateAsync({
 			body: { character: payload },
 			path: { game_id: gameId, id: character.id },
 		});
+	};
+
+	// We also have pinCharacterMutation, but since the character mutation is already
+	// being used, we can just use it for both actions.
+	const handleTogglePin = async () => {
+		updateCharacter.mutateAsync(
+			{
+				body: { character: { pinned: !character.pinned } },
+				path: { game_id: gameId, id: character.id },
+			},
+			{
+				onSuccess: () => {
+					context.queryClient.invalidateQueries({
+						queryKey: listPinnedEntitiesQueryKey({
+							path: { game_id: gameId },
+						}),
+					});
+				},
+			},
+		);
 	};
 
 	const badges = (
@@ -144,7 +169,13 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 	return (
 		<>
 			<div>{character.member_of_faction_id || "no faction"}</div>
-			<EntityView name={character.name} badges={badges} tabs={tabs} />
+			<EntityView
+				name={character.name}
+				badges={badges}
+				tabs={tabs}
+				pinned={character.pinned}
+				onTogglePin={handleTogglePin}
+			/>
 		</>
 	);
 }

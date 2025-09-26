@@ -6,6 +6,7 @@ import {
 	getLocationTreeOptions,
 	getQuestTreeOptions,
 	listGameEntitiesOptions,
+	listPinnedEntitiesOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { Commander } from "~/components/commander";
@@ -34,6 +35,9 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 		);
 		context.queryClient.ensureQueryData(
 			getQuestTreeOptions({ path: { game_id: gameId } }),
+		);
+		context.queryClient.ensureQueryData(
+			listPinnedEntitiesOptions({ path: { game_id: gameId } }),
 		);
 	},
 	errorComponent: BasicErrorComponent,

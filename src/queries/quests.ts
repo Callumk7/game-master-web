@@ -5,6 +5,7 @@ import {
 	getQuestOptions,
 	getQuestQueryKey,
 	getQuestTreeOptions,
+	listPinnedEntitiesOptions,
 	listQuestsOptions,
 	listQuestsQueryKey,
 	updateQuestMutation,
@@ -24,6 +25,10 @@ export const useGetQuestSuspenseQuery = (gameId: string, id: string) => {
 
 export const useGetQuestTreeSuspenseQuery = (gameId: string) => {
 	return useSuspenseQuery(getQuestTreeOptions({ path: { game_id: gameId } }));
+};
+
+export const useListPinnedEntitiesSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(listPinnedEntitiesOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
