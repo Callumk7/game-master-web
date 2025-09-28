@@ -174,7 +174,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 				const date = row.getValue("updated_at") as string | undefined;
 				if (!date) return <div className="text-sm text-muted-foreground">-</div>;
 				return (
-					<div className="text-sm">{new Date(date).toLocaleDateString()}</div>
+					<div className="text-sm">{new Date(date).toLocaleDateString("en-US")}</div>
 				);
 			},
 			size: 120,

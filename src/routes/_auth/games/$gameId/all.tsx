@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { AllEntitiesTable, type AllEntity } from "~/components/all-entities-table";
 import { PageHeader } from "~/components/page-header";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
@@ -75,7 +75,9 @@ function RouteComponent() {
 				title="All Entities"
 				description="Browse all characters, factions, locations, notes, and quests in your game."
 			/>
-			<AllEntitiesTable entities={allEntities} gameId={gameId} />
+			<ClientOnly>
+				<AllEntitiesTable entities={allEntities} gameId={gameId} />
+			</ClientOnly>
 		</div>
 	);
 }

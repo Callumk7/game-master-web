@@ -1,5 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "~/components/theme-provider";
@@ -65,6 +67,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body>
 				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
 					{children}
+					<TanStackRouterDevtools position="bottom-right" />
+					<ReactQueryDevtools buttonPosition="bottom-left" />
 					<Scripts />
 					<Toaster position="top-center" theme={"dark"} />
 				</ThemeProvider>
