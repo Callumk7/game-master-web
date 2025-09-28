@@ -7,7 +7,7 @@ import { clearApiAuth, updateApiAuth } from "~/utils/api-client";
 import { getAppSession } from "~/utils/session";
 
 export const loginFn = createServerFn({ method: "POST" })
-	.validator((d: { email: string; password: string }) => d)
+	.inputValidator((d: { email: string; password: string }) => d)
 	.handler(async ({ data }) => {
 		const { data: loginData, error } = await loginUser({ body: data });
 
