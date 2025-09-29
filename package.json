@@ -1,6 +1,7 @@
 {
 	"name": "game-master-web",
 	"private": true,
+	"sideEffects": false,
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --port 3000",
