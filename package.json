@@ -72,6 +72,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.3",
+		"@cloudflare/vite-plugin": "^1.13.7",
 		"@hey-api/openapi-ts": "0.82.5",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/react": "^16.2.0",
@@ -84,6 +85,7 @@
 		"typescript": "^5.7.2",
 		"vite": "^7.1.7",
 		"vitest": "^3.0.5",
-		"web-vitals": "^4.2.4"
+		"web-vitals": "^4.2.4",
+		"wrangler": "^4.40.2"
 	}
 }
