@@ -14,19 +14,15 @@ import {
 } from "~/components/ui/command";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
 
-export function Commander({ 
-	gameId, 
-	open, 
-	setOpen 
-}: { 
+export function Commander({
+	gameId,
+	isOpen,
+	setIsOpen,
+}: {
 	gameId: string;
-	open?: boolean;
-	setOpen?: (open: boolean) => void;
+	isOpen: boolean;
+	setIsOpen: (open: boolean) => void;
 }) {
-	const [internalOpen, setInternalOpen] = React.useState(false);
-	const isOpen = open !== undefined ? open : internalOpen;
-	const setIsOpen = setOpen !== undefined ? setOpen : setInternalOpen;
-
 	const navigate = useNavigate();
 
 	const { data: links, isLoading: linksLoading } = useGetGameLinksSuspenseQuery({
@@ -42,7 +38,7 @@ export function Commander({
 		const down = (e: KeyboardEvent) => {
 			if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
 				e.preventDefault();
-				setIsOpen((open) => !open);
+				setIsOpen(!isOpen);
 			}
 		};
 

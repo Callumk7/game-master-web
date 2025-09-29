@@ -1,6 +1,6 @@
-import { Node, mergeAttributes } from "@tiptap/core";
-import { ReactNodeViewRenderer, ReactRenderer } from "@tiptap/react";
+import { mergeAttributes, Node } from "@tiptap/core";
 import { PluginKey } from "@tiptap/pm/state";
+import { ReactNodeViewRenderer, ReactRenderer } from "@tiptap/react";
 import { Suggestion } from "@tiptap/suggestion";
 import tippy, { type Instance } from "tippy.js";
 import { MentionComponent } from "./mention-component";
@@ -94,7 +94,7 @@ export const SimpleMention = Node.create({
 
 						onExit() {
 							if (popup?.length) {
-								popup.forEach(instance => {
+								popup.forEach((instance) => {
 									if (!instance.state.isDestroyed) {
 										instance.destroy();
 									}
@@ -172,11 +172,11 @@ export const SimpleMention = Node.create({
 		return ReactNodeViewRenderer(MentionComponent, {
 			stopEvent: (event) => {
 				// Allow click events on the mention component
-				return event.type === 'click' || event.type === 'mousedown';
+				return event.type === "click" || event.type === "mousedown";
 			},
 			// Use React 18 concurrent rendering to avoid flushSync conflicts
-			as: 'span',
-			className: 'mention-wrapper',
+			as: "span",
+			className: "mention-wrapper",
 		});
 	},
 

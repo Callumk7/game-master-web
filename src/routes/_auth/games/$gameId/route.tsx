@@ -70,19 +70,25 @@ function RouteComponent() {
 						<main className="flex-1 overflow-auto">
 							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20">
 								<SidebarTrigger />
-								<Commander 
-									gameId={gameId} 
-									open={commanderOpen} 
-									setOpen={setCommanderOpen} 
+								<Commander
+									gameId={gameId}
+									isOpen={commanderOpen}
+									setIsOpen={setCommanderOpen}
 								/>
 								<div className="flex-1 max-w-md">
 									<button
+										type="button"
 										onClick={() => setCommanderOpen(true)}
 										className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
 									>
 										<Search className="mr-3 w-4 h-4 text-muted-foreground" />
-										<span className="text-muted-foreground">Search entities...</span>
-										<Badge variant="secondary" className="ml-auto text-xs">
+										<span className="text-muted-foreground">
+											Search entities...
+										</span>
+										<Badge
+											variant="secondary"
+											className="ml-auto text-xs"
+										>
 											⌘J
 										</Badge>
 									</button>

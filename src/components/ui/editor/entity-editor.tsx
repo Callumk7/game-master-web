@@ -1,10 +1,9 @@
-import * as React from "react";
 import { Button } from "~/components/ui/button";
-import { Tiptap } from "./index";
+import type { EntityType } from "~/types";
 import { useEditorContentActions } from "./hooks";
 import { useCreateLinksFromMentions } from "./hooks/useCreateLinksFromMentions";
+import { Tiptap } from "./index";
 import { parseContentForEditor } from "./utils";
-import type { EntityType } from "~/types";
 
 interface EntityEditorProps {
 	/** The entity's current content (JSON string or object) */
@@ -16,13 +15,22 @@ interface EntityEditorProps {
 	/** The entity ID for creating mention links */
 	entityId: string;
 	/** Callback when save is clicked - receives the payload to send to the server */
-	onSave: (payload: { content: string; content_plain_text: string }) => void | Promise<void>;
+	onSave: (payload: {
+		content: string;
+		content_plain_text: string;
+	}) => void | Promise<void>;
 	/** Whether the save operation is currently pending */
 	isSaving?: boolean;
 	/** Custom save button text */
 	saveButtonText?: string;
 	/** Custom save button variant */
-	saveButtonVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+	saveButtonVariant?:
+		| "default"
+		| "destructive"
+		| "outline"
+		| "secondary"
+		| "ghost"
+		| "link";
 	/** Additional className for the container */
 	className?: string;
 }
@@ -38,16 +46,17 @@ export function EntityEditor({
 	saveButtonVariant = "secondary",
 	className,
 }: EntityEditorProps) {
-	const { isUpdated, setIsUpdated, onChange, getPayload, updatedContent } = useEditorContentActions();
+	const { isUpdated, setIsUpdated, onChange, getPayload, updatedContent } =
+		useEditorContentActions();
 	const { createLinksFromMentions, isCreatingLinks } = useCreateLinksFromMentions();
 
 	const handleSave = async () => {
 		// Get the payload for this entity type
 		const payload = getPayload(entityType)[entityType];
-		
+
 		// Call the provided save function
 		await onSave(payload);
-		
+
 		// Create links from mentions (runs in background)
 		if (updatedContent.json) {
 			try {
@@ -61,19 +70,21 @@ export function EntityEditor({
 				console.warn("Some mention links failed to create:", error);
 			}
 		}
-		
+
 		setIsUpdated(false);
 	};
 
 	return (
 		<div className={`space-y-4 ${className || ""}`}>
 			<Tiptap
-				content={parseContentForEditor(content)}
+				content={
+					typeof content === "object" ? content : parseContentForEditor(content)
+				}
 				onChange={onChange}
 			/>
-			<Button 
+			<Button
 				variant={saveButtonVariant}
-				onClick={handleSave} 
+				onClick={handleSave}
 				disabled={!isUpdated || isSaving || isCreatingLinks}
 			>
 				{isSaving || isCreatingLinks ? "Saving..." : saveButtonText}

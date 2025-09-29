@@ -30,11 +30,11 @@ const LOCATION_HIERARCHY = {
 
 type LocationType = keyof typeof LOCATION_HIERARCHY;
 
-function isValidParent(parentType: string, currentType?: string): boolean {
+function isValidParent(parentType: LocationType, currentType?: string): boolean {
 	if (!currentType) return true;
 
 	const validParentTypes = LOCATION_HIERARCHY[currentType as LocationType];
-	return validParentTypes?.includes(parentType as LocationType) ?? false;
+	return (validParentTypes as readonly LocationType[])?.includes(parentType) ?? false;
 }
 
 function buildLocationHierarchy(locations: Location[]): Map<string, Location[]> {
@@ -81,7 +81,7 @@ export function ParentLocationSelect({
 }: ParentLocationSelectProps) {
 	// Filter locations that can be valid parents
 	const validParentLocations = locations.filter((location) =>
-		isValidParent(location.type, currentType),
+		isValidParent(location.type as LocationType, currentType),
 	);
 
 	// Build hierarchy for display

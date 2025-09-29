@@ -1,15 +1,15 @@
 import { useParams, useRouteContext } from "@tanstack/react-router";
+import type { LocationUpdateParams } from "~/api";
 import {
 	getLocationQueryKey,
 	listLocationsQueryKey,
 	updateLocationMutation,
 } from "~/api/@tanstack/react-query.gen";
-import type { LocationParams } from "~/api/types.gen";
 import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditLocationFormProps {
-	initialData?: Partial<LocationParams>;
+	initialData?: Partial<LocationUpdateParams>;
 }
 
 export function EditLocationForm({ initialData }: EditLocationFormProps) {

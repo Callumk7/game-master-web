@@ -1,3 +1,4 @@
+import { Link, useParams } from "@tanstack/react-router";
 import { Pencil, Trash2 } from "lucide-react";
 import {
 	Menubar,
@@ -9,7 +10,6 @@ import {
 	MenubarSubTrigger,
 	MenubarTrigger,
 } from "../ui/menubar";
-import { Link, useParams } from "@tanstack/react-router";
 
 interface CharacterMenuProps {
 	onEditDetails: () => void;
@@ -57,28 +57,8 @@ export function CharacterMenu({ onEditDetails, onDelete }: CharacterMenuProps) {
 									<MenubarItem>Faction</MenubarItem>
 									<MenubarItem>Characters</MenubarItem>
 									<MenubarItem>Quests</MenubarItem>
-									<MenubarItem
-										render={
-											<Link
-												to="/games/$gameId/characters/$id/notes"
-												params={params}
-											/>
-										}
-									>
-										Notes
-									</MenubarItem>
 								</MenubarContent>
 							</MenubarPositioner>
-							<MenubarItem
-								render={
-									<Link
-										to="/games/$gameId/characters/$id/notes"
-										params={params}
-									/>
-								}
-							>
-								Notes
-							</MenubarItem>
 						</MenubarSub>
 						<MenubarItem>Create</MenubarItem>
 					</MenubarContent>

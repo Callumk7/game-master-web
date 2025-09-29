@@ -3,7 +3,10 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "~/utils/cn";
 
-function Select({ ...props }: React.ComponentProps<typeof SelectPrimitive.Root>) {
+function Select<
+	Value,
+	Multiple extends boolean | undefined = false,
+>({ ...props }: SelectPrimitive.Root.Props<Value, Multiple>) {
 	return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 

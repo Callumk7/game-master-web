@@ -1,15 +1,15 @@
 import { useParams, useRouteContext } from "@tanstack/react-router";
+import type { QuestUpdateParams } from "~/api";
 import {
 	getQuestQueryKey,
 	listQuestsQueryKey,
 	updateQuestMutation,
 } from "~/api/@tanstack/react-query.gen";
-import type { QuestParams } from "~/api/types.gen";
 import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditQuestFormProps {
-	initialData?: Partial<QuestParams>;
+	initialData?: Partial<QuestUpdateParams>;
 }
 
 export function EditQuestForm({ initialData }: EditQuestFormProps) {

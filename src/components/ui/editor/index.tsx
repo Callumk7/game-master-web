@@ -18,13 +18,13 @@ import {
 import * as React from "react";
 import { cn } from "~/utils/cn";
 import "src/components/ui/editor/tiptap.css";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { listGameEntitiesOptions } from "~/api/@tanstack/react-query.gen";
 import { Button } from "../button";
 import { Separator } from "../separator";
 import { Toggle } from "../toggle";
-import { SimpleMention, type MentionItem } from "./mention-extension-simple";
-import { listGameEntitiesOptions } from "~/api/@tanstack/react-query.gen";
-import { useParams } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { type MentionItem, SimpleMention } from "./mention-extension-simple";
 
 export interface TiptapProps {
 	content?: object | null;

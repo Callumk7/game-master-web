@@ -11,12 +11,7 @@ import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 import { Button } from "~/components/ui/button";
 import { Link } from "~/components/ui/link";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { Separator } from "~/components/ui/separator";
-import {
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-} from "~/components/ui/sidebar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "~/components/ui/sidebar";
 import { TiptapViewer } from "../ui/editor/viewer";
 
 interface CharacterNotesViewProps {
@@ -35,7 +30,7 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 	});
 
 	const notes = noteTree?.data?.notes_tree || [];
-	const selectedNote = notes.find(note => note.id === selectedNoteId);
+	const selectedNote = notes.find((note) => note.id === selectedNoteId);
 
 	// Auto-select first note if none selected
 	React.useEffect(() => {
@@ -57,11 +52,11 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 
 	const handleDeleteNote = (noteId: string) => {
 		if (selectedNoteId === noteId && notes.length > 1) {
-			const currentIndex = notes.findIndex(note => note.id === noteId);
+			const currentIndex = notes.findIndex((note) => note.id === noteId);
 			const nextNote = notes[currentIndex + 1] || notes[currentIndex - 1];
 			setSelectedNoteId(nextNote?.id || null);
 		}
-		
+
 		removeNote.mutateAsync({
 			path: { game_id: gameId, id: noteId },
 			body: {
@@ -77,7 +72,7 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 					<Button onClick={() => setIsOpen(true)}>Create Note</Button>
 					<SelectNoteCombobox gameId={gameId} characterId={characterId} />
 				</div>
-				
+
 				<div className="flex flex-col lg:flex-row gap-4 min-h-[calc(100vh-26rem)]">
 					{/* Notes List - Left Column */}
 					<div className="w-full lg:w-1/4 border rounded-lg bg-sidebar">
@@ -90,13 +85,20 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 								) : (
 									<SidebarMenu>
 										{notes.map((note) => (
-											<SidebarMenuItem key={note.id} className="group relative">
+											<SidebarMenuItem
+												key={note.id}
+												className="group relative"
+											>
 												<SidebarMenuButton
 													isActive={selectedNoteId === note.id}
-													onClick={() => setSelectedNoteId(note.id)}
+													onClick={() =>
+														setSelectedNoteId(note.id)
+													}
 													className="w-full pr-8"
 												>
-													<span className="truncate">{note.name}</span>
+													<span className="truncate">
+														{note.name}
+													</span>
 												</SidebarMenuButton>
 												<Button
 													variant="ghost"
@@ -123,7 +125,9 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 							<div className="flex flex-col">
 								<div className="p-4 border-b bg-muted/30">
 									<div className="flex justify-between items-center">
-										<h2 className="text-xl font-semibold">{selectedNote.name}</h2>
+										<h2 className="text-xl font-semibold">
+											{selectedNote.name}
+										</h2>
 										<Link
 											to="/games/$gameId/notes/$id"
 											params={{ gameId, id: selectedNote.id }}
@@ -135,7 +139,10 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 									</div>
 								</div>
 								<div className="p-4">
-									<TiptapViewer key={selectedNote.id} content={selectedNote.content} />
+									<TiptapViewer
+										key={selectedNote.id}
+										content={selectedNote.content}
+									/>
 								</div>
 							</div>
 						) : (
