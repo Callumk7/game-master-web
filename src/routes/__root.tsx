@@ -1,12 +1,11 @@
-import { TanstackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
+import { TanStackRouterDevtools } from "node_modules/@tanstack/react-router-devtools/dist/esm/TanStackRouterDevtools";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "~/components/theme-provider";
 import { getAppSession } from "~/utils/session";
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -68,18 +67,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body>
 				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
 					{children}
-					<TanstackDevtools
-						config={{
-							position: "bottom-left",
-						}}
-						plugins={[
-							{
-								name: "Tanstack Router",
-								render: <TanStackRouterDevtoolsPanel />,
-							},
-							TanStackQueryDevtools,
-						]}
-					/>
+					<TanStackRouterDevtools />
+					<ReactQueryDevtools />
 					<Scripts />
 					<Toaster position="top-center" theme={"dark"} />
 				</ThemeProvider>
