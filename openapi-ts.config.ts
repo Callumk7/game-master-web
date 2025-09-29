@@ -10,5 +10,6 @@ export default defineConfig({
 			queryOptions: true,
 			useQuery: true,
 		},
+		"zod"
 	],
 });
