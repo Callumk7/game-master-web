@@ -1,21 +1,17 @@
-import { NodeViewWrapper } from "@tiptap/react";
-import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import { NodeViewWrapper, type ReactNodeViewProps } from "@tiptap/react";
+import type * as React from "react";
 import { cn } from "~/utils/cn";
 
-interface MentionComponentProps {
-	node: {
-		attrs: {
-			id: string;
-			label: string;
-			type: "character" | "faction" | "location" | "note" | "quest";
-			gameId: string;
-		};
-	};
+interface MentionAttributes {
+	id: string;
+	label: string;
+	type: "character" | "faction" | "location" | "note" | "quest";
+	gameId: string;
 }
 
-export const MentionComponent: React.FC<MentionComponentProps> = ({ node }) => {
-	const { id, label, type, gameId } = node.attrs;
+export const MentionComponent: React.FC<ReactNodeViewProps> = ({ node }) => {
+	const { id, label, type, gameId } = node.attrs as MentionAttributes;
 
 	if (!id || !label || !type || !gameId) {
 		return (

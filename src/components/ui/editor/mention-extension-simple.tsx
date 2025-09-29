@@ -170,9 +170,9 @@ export const SimpleMention = Node.create({
 
 	addNodeView() {
 		return ReactNodeViewRenderer(MentionComponent, {
-			stopEvent: (event) => {
+			stopEvent: (props: { event: Event }) => {
 				// Allow click events on the mention component
-				return event.type === "click" || event.type === "mousedown";
+				return props.event.type === "click" || props.event.type === "mousedown";
 			},
 			// Use React 18 concurrent rendering to avoid flushSync conflicts
 			as: "span",
