@@ -7,7 +7,7 @@ import { parseApiError } from "~/utils/error-parser";
 import { getAppSession } from "~/utils/session";
 
 export const signupFn = createServerFn({ method: "POST" })
-	.validator((d: { email: string; password: string; redirectUrl?: string }) => d)
+	.inputValidator((d: { email: string; password: string; redirectUrl?: string }) => d)
 	.handler(async ({ data }) => {
 		const { data: signupData, error } = await signupUser({ body: data });
 
