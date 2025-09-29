@@ -1,4 +1,4 @@
-import { ClientOnly, createFileRoute, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import type { Location } from "~/api";
 import { useGetLocationLinksQuery } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";

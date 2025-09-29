@@ -13,7 +13,7 @@ function RouteComponent() {
 	const { data: gameData } = useGetGameSuspenseQuery({ id: gameId });
 	const game = gameData.data;
 
-	const { data: links, isLoading: linksLoading } = useGetGameLinksSuspenseQuery({
+	const { data: links } = useGetGameLinksSuspenseQuery({
 		id: gameId,
 	});
 	const characters = links?.data?.entities?.characters;

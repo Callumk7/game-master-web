@@ -1,15 +1,20 @@
 import * as React from "react";
 import { cn } from "~/utils/cn";
-import type { MentionItem } from "./mention-extension";
+import type { MentionItem } from "./mention-extension-simple";
 
 interface MentionListProps {
 	items: MentionItem[];
 	command: (item: MentionItem) => void;
 }
 
-export const MentionList = React.forwardRef<HTMLDivElement, MentionListProps>(
+interface MentionListRef {
+	onKeyDown: ({ event }: { event: KeyboardEvent }) => boolean;
+}
+
+export const MentionList = React.forwardRef<MentionListRef, MentionListProps>(
 	(props, ref) => {
 		const [selectedIndex, setSelectedIndex] = React.useState(0);
+		const divRef = React.useRef<HTMLDivElement>(null);
 
 		const selectItem = (index: number) => {
 			const item = props.items[index];
@@ -32,6 +37,7 @@ export const MentionList = React.forwardRef<HTMLDivElement, MentionListProps>(
 			selectItem(selectedIndex);
 		};
 
+		// biome-ignore lint/correctness/useExhaustiveDependencies: resets whenever items array changes in any way -> safest option
 		React.useEffect(() => {
 			setSelectedIndex(0);
 		}, [props.items]);
@@ -93,7 +99,7 @@ export const MentionList = React.forwardRef<HTMLDivElement, MentionListProps>(
 
 		return (
 			<div
-				ref={ref}
+				ref={divRef}
 				className="bg-popover border border-border rounded-lg shadow-md max-h-60 overflow-auto p-1"
 			>
 				{props.items.length ? (
