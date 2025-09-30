@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { StatCard } from "~/components/stat-card";
-import { Button } from "~/components/ui/button";
+import { Link } from "~/components/ui/link";
 import { useGetGameLinksSuspenseQuery, useGetGameSuspenseQuery } from "~/queries/games";
 
 export const Route = createFileRoute("/_auth/games/$gameId/")({
@@ -31,7 +31,9 @@ function RouteComponent() {
 						{game?.name} - {game?.content || "A TTRPG campaign"}
 					</p>
 				</div>
-				<Button>View Graph</Button>
+				<Link to="/games/$gameId/tree" params={{ gameId }} variant={"default"}>
+					View Graph
+				</Link>
 			</div>
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 				<StatCard
