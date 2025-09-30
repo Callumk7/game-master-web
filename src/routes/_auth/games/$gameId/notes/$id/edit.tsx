@@ -14,7 +14,8 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/edit")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data, isLoading, isSuccess } = useGetNoteQuery({
 		path: { game_id: gameId, id: id },
 	});
@@ -23,5 +24,9 @@ function RouteComponent() {
 		return <div>Loading...</div>;
 	}
 
-	return <div>{isSuccess && <EditNoteForm initialData={data.data} />}</div>;
+	return (
+		<div>
+			{isSuccess && <EditNoteForm initialData={data.data} params={params} />}
+		</div>
+	);
 }

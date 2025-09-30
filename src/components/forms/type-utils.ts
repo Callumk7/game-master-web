@@ -46,12 +46,18 @@ export function extractDefaultValues<T extends z.ZodRawShape>(
  */
 export function generateFieldsFromSchema<T extends z.ZodRawShape>(
 	schema: z.ZodObject<T>,
-	overrides: Partial<Record<keyof T, Partial<FieldConfig>>> = {},
+	overrides: Partial<Record<keyof T, Partial<FieldConfig> | null>> = {},
 ): FieldConfig[] {
 	const fields: FieldConfig[] = [];
 
 	for (const [key, zodType] of Object.entries(schema.shape)) {
 		const fieldName = key as keyof T;
+		
+		// Skip field if override is null (excludes the field)
+		if (overrides[fieldName] === null) {
+			continue;
+		}
+
 		const field: FieldConfig = {
 			name: key,
 			label: titleCase(key),

@@ -1,4 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 
 import type { Character } from "~/api/types.gen";
 import {
@@ -12,6 +13,7 @@ import {
 } from "~/components/ui/entity-table";
 import { useDeleteCharacterMutation } from "~/queries/characters";
 import { Badge } from "../ui/badge";
+import { EditCharacterDialog } from "./edit-character-dialog";
 
 interface CharacterTableProps {
 	data: Character[];
@@ -92,19 +94,28 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			cell: ({ row }) => {
 				const character = row.original;
 				const deleteCharacter = useDeleteCharacterMutation(gameId);
+				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<ActionsDropdown
-						entityType="character"
-						entityName="character"
-						entity={character}
-						gameId={gameId}
-						onDelete={() => {
-							deleteCharacter.mutate({
-								path: { id: character.id, game_id: gameId },
-							});
-						}}
-					/>
+					<>
+						<ActionsDropdown
+							entityType="character"
+							entityName="character"
+							entity={character}
+							gameId={gameId}
+							onDelete={() => {
+								deleteCharacter.mutate({
+									path: { id: character.id, game_id: gameId },
+								});
+							}}
+							onEdit={() => setEditModalOpen(true)}
+						/>
+						<EditCharacterDialog
+							isOpen={editModalOpen}
+							setIsOpen={setEditModalOpen}
+							character={character}
+						/>
+					</>
 				);
 			},
 		},

@@ -1,4 +1,6 @@
-import { useParams, useRouteContext } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { QuestUpdateParams } from "~/api";
 import {
 	getQuestQueryKey,
@@ -9,14 +11,19 @@ import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditQuestFormProps {
+	params: {
+		gameId: string;
+		id: string;
+	};
 	initialData?: Partial<QuestUpdateParams>;
 }
 
-export function EditQuestForm({ initialData }: EditQuestFormProps) {
-	const { gameId, id } = useParams({ from: "/_auth/games/$gameId/quests/$id/edit" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/quests/$id/edit" });
+export function EditQuestForm({ initialData, params }: EditQuestFormProps) {
+	const { gameId, id } = params;
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
-	const FormWithContext = createSmartForm({
+	const FormComponent = createSmartForm({
 		mutation: () =>
 			updateQuestMutation({
 				path: {
@@ -25,24 +32,32 @@ export function EditQuestForm({ initialData }: EditQuestFormProps) {
 				},
 			}),
 		onSuccess: async () => {
-			context.queryClient.invalidateQueries({
+			toast("Quest updated successfully!");
+			queryClient.invalidateQueries({
 				queryKey: listQuestsQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
-			context.queryClient.invalidateQueries({
+			queryClient.invalidateQueries({
 				queryKey: getQuestQueryKey({
 					path: {
 						game_id: gameId,
-						id,
+						id: id,
 					},
 				}),
 			});
+			navigate({ to: ".." });
 		},
 		schema: schemas.quest,
-		initialValues: initialData,
 		entityName: "quest",
+		initialValues: {
+			...initialData,
+			image_url: initialData?.image_url || undefined,
+		},
+		fieldOverrides: {
+			content: null,
+		},
 	});
 
-	return <FormWithContext />;
+	return <FormComponent />;
 }

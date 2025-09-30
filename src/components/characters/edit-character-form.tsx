@@ -1,4 +1,5 @@
-import { useNavigate, useParams, useRouteContext } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { CharacterUpdateParams } from "~/api";
 import {
@@ -10,14 +11,16 @@ import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditCharacterFormProps {
+	params: {
+		gameId: string;
+		id: string;
+	};
 	initialData?: Partial<CharacterUpdateParams>;
 }
 
-export function EditCharacterForm({ initialData }: EditCharacterFormProps) {
-	const { gameId, id } = useParams({
-		from: "/_auth/games/$gameId/characters/$id/edit",
-	});
-	const context = useRouteContext({ from: "/_auth/games/$gameId/characters/$id/edit" });
+export function EditCharacterForm({ initialData, params }: EditCharacterFormProps) {
+	const { gameId, id } = params;
+	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
 	// Create form component with proper context handling
@@ -26,17 +29,17 @@ export function EditCharacterForm({ initialData }: EditCharacterFormProps) {
 			updateCharacterMutation({
 				path: {
 					game_id: gameId,
-					id: id,
+					id,
 				},
 			}),
 		onSuccess: async () => {
 			toast("Character updated successfully!");
-			context.queryClient.invalidateQueries({
+			queryClient.invalidateQueries({
 				queryKey: listCharactersQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
-			context.queryClient.invalidateQueries({
+			queryClient.invalidateQueries({
 				queryKey: getCharacterQueryKey({
 					path: {
 						game_id: gameId,
@@ -51,6 +54,9 @@ export function EditCharacterForm({ initialData }: EditCharacterFormProps) {
 		initialValues: {
 			...initialData,
 			image_url: initialData?.image_url || undefined,
+		},
+		fieldOverrides: {
+			content: null,
 		},
 	});
 

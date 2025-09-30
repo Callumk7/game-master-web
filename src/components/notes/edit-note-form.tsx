@@ -1,4 +1,6 @@
-import { useParams, useRouteContext } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { NoteUpdateParams } from "~/api";
 import {
 	getNoteQueryKey,
@@ -9,14 +11,19 @@ import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditNoteFormProps {
+	params: {
+		gameId: string;
+		id: string;
+	};
 	initialData?: Partial<NoteUpdateParams>;
 }
 
-export function EditNoteForm({ initialData }: EditNoteFormProps) {
-	const { gameId, id } = useParams({ from: "/_auth/games/$gameId/notes/$id/edit" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/notes/$id/edit" });
+export function EditNoteForm({ initialData, params }: EditNoteFormProps) {
+	const { gameId, id } = params;
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
-	const FormWithContext = createSmartForm({
+	const FormComponent = createSmartForm({
 		mutation: () =>
 			updateNoteMutation({
 				path: {
@@ -25,24 +32,32 @@ export function EditNoteForm({ initialData }: EditNoteFormProps) {
 				},
 			}),
 		onSuccess: async () => {
-			context.queryClient.invalidateQueries({
+			toast("Note updated successfully!");
+			queryClient.invalidateQueries({
 				queryKey: listNotesQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
-			context.queryClient.invalidateQueries({
+			queryClient.invalidateQueries({
 				queryKey: getNoteQueryKey({
 					path: {
 						game_id: gameId,
-						id,
+						id: id,
 					},
 				}),
 			});
+			navigate({ to: ".." });
 		},
 		schema: schemas.note,
-		initialValues: initialData,
 		entityName: "note",
+		initialValues: {
+			...initialData,
+			image_url: initialData?.image_url || undefined,
+		},
+		fieldOverrides: {
+			content: null,
+		},
 	});
 
-	return <FormWithContext />;
+	return <FormComponent />;
 }

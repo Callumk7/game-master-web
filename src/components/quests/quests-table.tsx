@@ -1,4 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 
 import type { Quest } from "~/api/types.gen";
 import {
@@ -10,6 +11,7 @@ import {
 	ContentDisplay,
 	ActionsDropdown,
 } from "~/components/ui/entity-table";
+import { EditQuestDialog } from "./edit-quest-dialog";
 
 interface QuestsTableProps {
 	data: Quest[];
@@ -72,15 +74,24 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			enableHiding: false,
 			cell: ({ row }) => {
 				const quest = row.original;
+				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<ActionsDropdown
-						entityType="quest"
-						entityName="quest"
-						entity={quest}
-						gameId={gameId}
-						showDelete={false} // No delete mutation available in original
-					/>
+					<>
+						<ActionsDropdown
+							entityType="quest"
+							entityName="quest"
+							entity={quest}
+							gameId={gameId}
+							onEdit={() => setEditModalOpen(true)}
+							showDelete={false}
+						/>
+						<EditQuestDialog
+							isOpen={editModalOpen}
+							setIsOpen={setEditModalOpen}
+							quest={quest}
+						/>
+					</>
 				);
 			},
 		},

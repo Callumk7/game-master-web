@@ -1,4 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 
 import type { Faction } from "~/api/types.gen";
 import {
@@ -10,6 +11,7 @@ import {
 	TagsDisplay,
 } from "~/components/ui/entity-table";
 import { useDeleteFactionMutation } from "~/queries/factions";
+import { EditFactionDialog } from "./edit-faction-dialog";
 
 interface FactionsTableProps {
 	data: Faction[];
@@ -62,19 +64,28 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			cell: ({ row }) => {
 				const faction = row.original;
 				const deleteFaction = useDeleteFactionMutation(gameId);
+				const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
 				return (
-					<ActionsDropdown
-						entityType="faction"
-						entityName="faction"
-						entity={faction}
-						gameId={gameId}
-						onDelete={() => {
-							deleteFaction.mutate({
-								path: { game_id: gameId, id: faction.id },
-							});
-						}}
-					/>
+					<>
+						<ActionsDropdown
+							entityType="faction"
+							entityName="faction"
+							entity={faction}
+							gameId={gameId}
+							onEdit={() => setEditDialogOpen(true)}
+							onDelete={() => {
+								deleteFaction.mutate({
+									path: { game_id: gameId, id: faction.id },
+								});
+							}}
+						/>
+						<EditFactionDialog
+							isOpen={editDialogOpen}
+							setIsOpen={setEditDialogOpen}
+							faction={faction}
+						/>
+					</>
 				);
 			},
 		},

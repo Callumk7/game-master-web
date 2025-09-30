@@ -29,8 +29,8 @@ export interface SmartFormOptions<TData, TError, TMutationData extends TDataShap
 	entityName: string;
 	/** Success callback */
 	onSuccess?: (data: TData) => void;
-	/** Field configuration overrides */
-	fieldOverrides?: Partial<Record<string, Partial<FieldConfig>>>;
+	/** Field configuration overrides (use null to exclude a field) */
+	fieldOverrides?: Partial<Record<string, Partial<FieldConfig> | null>>;
 	/** CSS class for form container */
 	className?: string;
 	/** Custom submit button text */

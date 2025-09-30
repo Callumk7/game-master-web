@@ -1,0 +1,24 @@
+import type { Character } from "~/api/types.gen";
+import { EditEntityDialog } from "../edit-entity-dialog";
+import { EditCharacterForm } from "./edit-character-form";
+
+interface EditCharacterDialogProps {
+	isOpen: boolean;
+	setIsOpen: (isOpen: boolean) => void;
+	character: Character;
+}
+
+export function EditCharacterDialog({
+	isOpen,
+	setIsOpen,
+	character,
+}: EditCharacterDialogProps) {
+	return (
+		<EditEntityDialog entity={character} isOpen={isOpen} setIsOpen={setIsOpen}>
+			<EditCharacterForm
+				initialData={character}
+				params={{ gameId: character.game_id, id: character.id }}
+			/>
+		</EditEntityDialog>
+	);
+}

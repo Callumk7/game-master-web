@@ -34,6 +34,7 @@ export function Commander({
 	const notes = links?.data?.entities?.notes;
 	const quests = links?.data?.entities?.quests;
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Intent is to set up a global keyboard shortcut
 	React.useEffect(() => {
 		const down = (e: KeyboardEvent) => {
 			if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
@@ -60,6 +61,18 @@ export function Commander({
 				) : (
 					<>
 						<CommandGroup heading="Characters">
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
+										to: "/games/$gameId/characters",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span className="font-semibold">All Characters</span>
+							</CommandItem>
 							<CommandItem
 								onSelect={() => {
 									setIsOpen(false);
@@ -95,6 +108,18 @@ export function Commander({
 								onSelect={() => {
 									setIsOpen(false);
 									navigate({
+										to: "/games/$gameId/factions",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span className="font-semibold">All Factions</span>
+							</CommandItem>
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
 										to: "/games/$gameId/factions/new",
 										params: { gameId },
 									});
@@ -122,6 +147,18 @@ export function Commander({
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Locations">
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
+										to: "/games/$gameId/locations",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span className="font-semibold">All Locations</span>
+							</CommandItem>
 							<CommandItem
 								onSelect={() => {
 									setIsOpen(false);
@@ -157,6 +194,18 @@ export function Commander({
 								onSelect={() => {
 									setIsOpen(false);
 									navigate({
+										to: "/games/$gameId/notes",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span className="font-semibold">All Notes</span>
+							</CommandItem>
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
 										to: "/games/$gameId/notes/new",
 										params: { gameId },
 									});
@@ -184,6 +233,18 @@ export function Commander({
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Quests">
+							<CommandItem
+								onSelect={() => {
+									setIsOpen(false);
+									navigate({
+										to: "/games/$gameId/quests",
+										params: { gameId },
+									});
+								}}
+							>
+								<User />
+								<span className="font-semibold">All Quests</span>
+							</CommandItem>
 							<CommandItem
 								onSelect={() => {
 									setIsOpen(false);

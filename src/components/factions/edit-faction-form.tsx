@@ -1,4 +1,4 @@
-import { useParams, useRouteContext } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Faction } from "~/api";
 import {
 	getFactionQueryKey,
@@ -9,12 +9,16 @@ import { createSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 
 interface EditFactionFormProps {
+	params: {
+		gameId: string;
+		id: string;
+	};
 	initialData?: Partial<Faction>;
 }
 
-export function EditFactionForm({ initialData }: EditFactionFormProps) {
-	const { gameId, id } = useParams({ from: "/_auth/games/$gameId/factions/$id/edit" });
-	const context = useRouteContext({ from: "/_auth/games/$gameId/factions/$id/edit" });
+export function EditFactionForm({ initialData, params }: EditFactionFormProps) {
+	const { gameId, id } = params;
+	const queryClient = useQueryClient();
 
 	const FormWithContext = createSmartForm({
 		mutation: () =>
@@ -26,12 +30,12 @@ export function EditFactionForm({ initialData }: EditFactionFormProps) {
 			}),
 
 		onSuccess: async () => {
-			context.queryClient.invalidateQueries({
+			queryClient.invalidateQueries({
 				queryKey: listFactionsQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
-			context.queryClient.invalidateQueries({
+			queryClient.invalidateQueries({
 				queryKey: getFactionQueryKey({
 					path: {
 						game_id: gameId,
@@ -43,6 +47,9 @@ export function EditFactionForm({ initialData }: EditFactionFormProps) {
 		schema: schemas.faction,
 		initialValues: initialData,
 		entityName: "faction",
+		fieldOverrides: {
+			content: null,
+		},
 	});
 
 	return <FormWithContext />;

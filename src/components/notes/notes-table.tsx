@@ -1,4 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 
 import type { Note } from "~/api/types.gen";
 import {
@@ -9,6 +10,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
+import { EditNoteDialog } from "./edit-note-dialog";
 
 interface NotesTableProps {
 	data: Note[];
@@ -60,15 +62,24 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			enableHiding: false,
 			cell: ({ row }) => {
 				const note = row.original;
+				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<ActionsDropdown
-						entityType="note"
-						entityName="note"
-						entity={note}
-						gameId={gameId}
-						showDelete={false} // No delete mutation available in original
-					/>
+					<>
+						<ActionsDropdown
+							entityType="note"
+							entityName="note"
+							entity={note}
+							gameId={gameId}
+							onEdit={() => setEditModalOpen(true)}
+							showDelete={false}
+						/>
+						<EditNoteDialog
+							isOpen={editModalOpen}
+							setIsOpen={setEditModalOpen}
+							note={note}
+						/>
+					</>
 				);
 			},
 		},

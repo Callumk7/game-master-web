@@ -1,4 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 
 import type { Location } from "~/api/types.gen";
 import {
@@ -10,6 +11,7 @@ import {
 	TagsDisplay,
 } from "~/components/ui/entity-table";
 import { Badge } from "../ui/badge";
+import { EditLocationDialog } from "./edit-location-dialog";
 
 interface LocationsTableProps {
 	data: Location[];
@@ -70,15 +72,24 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			enableHiding: false,
 			cell: ({ row }) => {
 				const location = row.original;
+				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<ActionsDropdown
-						entityType="location"
-						entityName="location"
-						entity={location}
-						gameId={gameId}
-						showDelete={false} // No delete mutation available in original
-					/>
+					<>
+						<ActionsDropdown
+							entityType="location"
+							entityName="location"
+							entity={location}
+							gameId={gameId}
+							onEdit={() => setEditModalOpen(true)}
+							showDelete={false}
+						/>
+						<EditLocationDialog
+							isOpen={editModalOpen}
+							setIsOpen={setEditModalOpen}
+							location={location}
+						/>
+					</>
 				);
 			},
 		},

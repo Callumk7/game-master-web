@@ -151,6 +151,7 @@ interface ActionsDropdownProps {
 	entity: { id: string | number };
 	gameId: string;
 	onDelete?: () => void;
+	onEdit?: () => void;
 	showDelete?: boolean;
 }
 
@@ -160,6 +161,7 @@ export function ActionsDropdown({
 	entity,
 	gameId,
 	onDelete,
+	onEdit,
 	showDelete = true,
 }: ActionsDropdownProps) {
 	const capitalizedType = entityType.charAt(0).toUpperCase() + entityType.slice(1);
@@ -196,15 +198,7 @@ export function ActionsDropdown({
 						>
 							View {entityName}
 						</DropdownMenuItem>
-						<DropdownMenuItem
-							render={
-								<RouterLink
-									to={
-										`/games/${gameId}/${entityType}s/${entity.id}/edit` as string
-									}
-								/>
-							}
-						>
+						<DropdownMenuItem onClick={onEdit}>
 							Edit {entityName}
 						</DropdownMenuItem>
 						{showDelete && (

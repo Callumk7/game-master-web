@@ -14,7 +14,8 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/edit")({
 });
 
 function RouteComponent() {
-	const { gameId, id } = Route.useParams();
+	const params = Route.useParams();
+	const { gameId, id } = params;
 	const { data, isLoading, isSuccess } = useGetFactionQuery({
 		path: { game_id: gameId, id: id },
 	});
@@ -23,5 +24,9 @@ function RouteComponent() {
 		return <div>Loading...</div>;
 	}
 
-	return <div>{isSuccess && <EditFactionForm initialData={data.data} />}</div>;
+	return (
+		<div>
+			{isSuccess && <EditFactionForm initialData={data.data} params={params} />}
+		</div>
+	);
 }
