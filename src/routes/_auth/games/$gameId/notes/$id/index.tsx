@@ -3,7 +3,7 @@ import type { Note } from "~/api";
 import { useGetNoteLinksQuery } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
-import { CreateNoteLink } from "~/components/notes/create-note-link";
+import { NoteLinksPopover } from "~/components/notes/note-links-popover";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
@@ -85,7 +85,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 
 	const linksTab = (
 		<div className="space-y-4">
-			<CreateNoteLink gameId={gameId} noteId={note.id} />
+			<NoteLinksPopover gameId={gameId} noteId={note.id} />
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
 			)}

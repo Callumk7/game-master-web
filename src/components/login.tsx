@@ -1,10 +1,34 @@
 import { useRouter } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
+import { createServerFn, useServerFn } from "@tanstack/react-start";
+import { loginUser } from "~/api";
 import { signupFn } from "~/routes/signup";
+import { getAppSession } from "~/utils/session";
 import { useMutationLite } from "../hooks/useMutationLite";
-import { loginFn } from "../routes/_auth";
 import { Auth } from "./auth";
 import { Button } from "./ui/button";
+
+export const loginFn = createServerFn({ method: "POST" })
+	.inputValidator((d: { email: string; password: string }) => d)
+	.handler(async ({ data }) => {
+		const { data: loginData, error } = await loginUser({ body: data });
+
+		if (error) {
+			return {
+				error: true,
+				message: "There was an error",
+				userNotFound: true,
+			};
+		}
+
+		// Create a session
+		const session = await getAppSession();
+
+		// Store the user's email in the session
+		await session.update({
+			user: loginData.user,
+			token: loginData.token,
+		});
+	});
 
 export function Login() {
 	const router = useRouter();

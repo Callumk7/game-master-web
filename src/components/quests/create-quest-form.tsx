@@ -3,6 +3,7 @@ import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
 	createQuestMutation,
+	getQuestTreeQueryKey,
 	listQuestsQueryKey,
 	useListQuestsQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -31,8 +32,13 @@ export function CreateQuestForm({ container }: CreateQuestFormProps) {
 		entityName: "quest",
 		onSuccess: async () => {
 			toast("Quest created successfully!");
-			await queryClient.refetchQueries({
+			queryClient.invalidateQueries({
 				queryKey: listQuestsQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			queryClient.invalidateQueries({
+				queryKey: getQuestTreeQueryKey({
 					path: { game_id: gameId },
 				}),
 			});

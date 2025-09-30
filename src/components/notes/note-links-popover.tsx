@@ -5,20 +5,20 @@ import {
 	PopoverPositioner,
 	PopoverTrigger,
 } from "../ui/popover";
-import { CreateCharacterLink } from "./create-character-link";
+import { CreateNoteLink } from "./create-note-link";
 
-interface CharacterLinksProps {
+interface NoteLinksPopoverProps {
 	gameId: string;
-	characterId: string;
+	noteId: string;
 }
 
-export function CharacterLinksPopover({ gameId, characterId }: CharacterLinksProps) {
+export function NoteLinksPopover({ gameId, noteId }: NoteLinksPopoverProps) {
 	return (
 		<Popover>
 			<PopoverTrigger render={<Button />}>Create Link</PopoverTrigger>
 			<PopoverPositioner align="start">
 				<PopoverContent>
-					<CreateCharacterLink gameId={gameId} characterId={characterId} />
+					<CreateNoteLink gameId={gameId} noteId={noteId} />
 				</PopoverContent>
 			</PopoverPositioner>
 		</Popover>

@@ -3,7 +3,7 @@ import type { Quest } from "~/api";
 import { useGetQuestLinksQuery } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
-import { CreateQuestLink } from "~/components/quests/create-quest-link";
+import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
@@ -85,7 +85,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 
 	const linksTab = (
 		<div className="space-y-4">
-			<CreateQuestLink gameId={gameId} questId={quest.id} />
+			<QuestLinksPopover gameId={gameId} questId={quest.id} />
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
 			)}

@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteFactionMutation,
 	getFactionLinksOptions,
@@ -57,7 +56,6 @@ export const useUpdateFactionMutation = (gameId: string, factionId: string) => {
 };
 
 export const useDeleteFactionMutation = (gameId: string) => {
-	const navigate = useNavigate();
 	const client = useQueryClient();
 	return useMutation({
 		...deleteFactionMutation(),
@@ -67,7 +65,6 @@ export const useDeleteFactionMutation = (gameId: string) => {
 					path: { game_id: gameId },
 				}),
 			});
-			navigate({ to: ".." });
 		},
 	});
 };

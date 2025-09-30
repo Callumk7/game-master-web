@@ -3,6 +3,7 @@ import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
 	createLocationMutation,
+	getLocationTreeQueryKey,
 	listLocationsQueryKey,
 	useListLocationsQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -30,8 +31,13 @@ export function CreateLocationForm() {
 		entityName: "location",
 		onSuccess: async () => {
 			toast("Location created successfully!");
-			await queryClient.refetchQueries({
+			queryClient.invalidateQueries({
 				queryKey: listLocationsQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			queryClient.invalidateQueries({
+				queryKey: getLocationTreeQueryKey({
 					path: { game_id: gameId },
 				}),
 			});
