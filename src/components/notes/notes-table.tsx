@@ -56,6 +56,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 		},
 		{
 			id: "actions",
+			maxSize: 60,
 			enableHiding: false,
 			cell: ({ row }) => {
 				const note = row.original;

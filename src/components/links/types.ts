@@ -7,16 +7,6 @@ export interface EntityOption {
 	type: EntityType;
 }
 
-export interface CreateLinkFormProps {
-	gameId: string;
-	sourceEntityType: EntityType;
-	sourceEntityId: string;
-	onSuccess?: () => void;
-	onError?: (error: Error) => void;
-	excludeTypes?: EntityType[];
-	excludeIds?: string[];
-}
-
 export interface CreateLinkParams extends LinkRequest {
 	gameId: string;
 	sourceType: EntityType;

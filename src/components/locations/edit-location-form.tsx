@@ -24,7 +24,7 @@ export function EditLocationForm({ initialData }: EditLocationFormProps) {
 					id: id,
 				},
 			}),
-		onSuccess: async () => {
+		onSuccess: () => {
 			context.queryClient.invalidateQueries({
 				queryKey: listLocationsQueryKey({
 					path: { game_id: gameId },

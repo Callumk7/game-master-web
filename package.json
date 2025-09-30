@@ -6,14 +6,15 @@
 	"scripts": {
 		"dev": "vite dev --port 3000",
 		"start": "node .output/server/index.mjs",
-		"build": "vite build && tsc --noEmit",
+		"build": "vite build",
 		"serve": "vite preview",
 		"test": "vitest run",
 		"format": "biome format",
 		"lint": "biome lint",
 		"check": "biome check",
 		"typecheck": "tsc --noEmit",
-		"codegen": "openapi-ts"
+		"codegen": "openapi-ts",
+		"deploy": "wrangler deploy"
 	},
 	"dependencies": {
 		"@base-ui-components/react": "1.0.0-beta.3",

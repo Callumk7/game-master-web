@@ -1,13 +1,13 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Faction } from "~/api/types.gen";
-import { 
-	EntityTable, 
-	SortableHeader, 
-	EntityLink, 
-	TagsDisplay, 
-	DateDisplay, 
-	ActionsDropdown 
+import {
+	ActionsDropdown,
+	DateDisplay,
+	EntityLink,
+	EntityTable,
+	SortableHeader,
+	TagsDisplay,
 } from "~/components/ui/entity-table";
 import { useDeleteFactionMutation } from "~/queries/factions";
 
@@ -24,9 +24,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 	return [
 		{
 			accessorKey: "name",
-			header: ({ column }) => (
-				<SortableHeader column={column}>Name</SortableHeader>
-			),
+			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
 				<EntityLink
 					entityType="faction"
@@ -42,26 +40,25 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			filterFn: (row, columnId, value) => {
 				if (!value) return true;
 				const tags = row.getValue(columnId) as string[];
-				return tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ?? false;
+				return (
+					tags?.some((tag) =>
+						tag.toLowerCase().includes(value.toLowerCase()),
+					) ?? false
+				);
 			},
-			cell: ({ row }) => (
-				<TagsDisplay tags={row.getValue("tags")} />
-			),
+			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
 			accessorKey: "created_at",
 			header: ({ column }) => (
 				<SortableHeader column={column}>Created</SortableHeader>
 			),
-			cell: ({ row }) => (
-				<DateDisplay date={row.getValue("created_at")} />
-			),
-			maxSize: 60,
+			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
 		},
 		{
 			id: "actions",
 			enableHiding: false,
-			maxSize: 40,
+			maxSize: 80,
 			cell: ({ row }) => {
 				const faction = row.original;
 				const deleteFaction = useDeleteFactionMutation(gameId);

@@ -18,7 +18,16 @@ import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { useCreateLink } from "./hooks/useCreateLink";
 import { useGameEntities } from "./hooks/useGameEntities";
-import type { CreateLinkFormProps } from "./types";
+
+export interface CreateLinkFormProps {
+	gameId: string;
+	sourceEntityType: EntityType;
+	sourceEntityId: string;
+	onSuccess?: () => void;
+	onError?: (error: Error) => void;
+	excludeTypes?: EntityType[];
+	excludeIds?: string[];
+}
 
 export function CreateLinkForm({
 	gameId,

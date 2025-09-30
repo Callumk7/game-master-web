@@ -2,12 +2,12 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Location } from "~/api/types.gen";
 import {
+	ActionsDropdown,
+	DateDisplay,
+	EntityLink,
 	EntityTable,
 	SortableHeader,
-	EntityLink,
 	TagsDisplay,
-	DateDisplay,
-	ActionsDropdown,
 } from "~/components/ui/entity-table";
 import { Badge } from "../ui/badge";
 
@@ -66,6 +66,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 		},
 		{
 			id: "actions",
+			maxSize: 80,
 			enableHiding: false,
 			cell: ({ row }) => {
 				const location = row.original;

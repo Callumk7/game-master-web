@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: factory component */
 
 import type { UseMutationOptions } from "@tanstack/react-query";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { CheckCircle, XCircle } from "lucide-react";
 
 import { z } from "zod";
@@ -73,8 +73,6 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 	initialValues,
 }: SmartFormOptions<TData, TError, TMutationData>) {
 	return function SmartFormComponent() {
-		const queryClient = useQueryClient();
-
 		// Auto-generate fields from schema
 		const fields = generateFieldsFromSchema(schema, fieldOverrides);
 		const defaultValues = processInitialValues(
@@ -85,7 +83,6 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 		const mutationInstance = useMutation({
 			...mutation(),
 			onSuccess: (data) => {
-				queryClient.invalidateQueries();
 				onSuccess?.(data);
 				form.reset();
 			},
@@ -293,8 +290,6 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 	onSuccess,
 	initialValues,
 }: HookFormOptions<TData, TError, TMutationData>) {
-	const queryClient = useQueryClient();
-
 	// Auto-generate fields from schema (needed for processing)
 	const fields = generateFieldsFromSchema(schema, {});
 	const defaultValues = processInitialValues(
@@ -305,7 +300,6 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 	const mutationInstance = useMutation({
 		...mutation(),
 		onSuccess: (data) => {
-			queryClient.invalidateQueries();
 			onSuccess?.(data);
 			form.reset();
 		},

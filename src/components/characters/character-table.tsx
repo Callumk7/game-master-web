@@ -87,6 +87,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 		},
 		{
 			id: "actions",
+			maxSize: 60,
 			enableHiding: false,
 			cell: ({ row }) => {
 				const character = row.original;
@@ -106,7 +107,6 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 					/>
 				);
 			},
-			maxSize: 60,
 		},
 	];
 }

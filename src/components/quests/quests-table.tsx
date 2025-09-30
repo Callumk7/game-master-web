@@ -1,14 +1,14 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Quest } from "~/api/types.gen";
-import { 
-	EntityTable, 
-	SortableHeader, 
-	EntityLink, 
-	TagsDisplay, 
-	DateDisplay, 
-	ContentDisplay, 
-	ActionsDropdown 
+import {
+	EntityTable,
+	SortableHeader,
+	EntityLink,
+	TagsDisplay,
+	DateDisplay,
+	ContentDisplay,
+	ActionsDropdown,
 } from "~/components/ui/entity-table";
 
 interface QuestsTableProps {
@@ -24,9 +24,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 	return [
 		{
 			accessorKey: "name",
-			header: ({ column }) => (
-				<SortableHeader column={column}>Name</SortableHeader>
-			),
+			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
 				<EntityLink
 					entityType="quest"
@@ -40,8 +38,8 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			accessorKey: "content_plain_text",
 			header: "Content",
 			cell: ({ row }) => (
-				<ContentDisplay 
-					content={row.getValue("content_plain_text")} 
+				<ContentDisplay
+					content={row.getValue("content_plain_text")}
 					maxWidth="max-w-[300px]"
 					placeholder="No content"
 				/>
@@ -53,23 +51,24 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			filterFn: (row, columnId, value) => {
 				if (!value) return true;
 				const tags = row.getValue(columnId) as string[];
-				return tags?.some((tag) => tag.toLowerCase().includes(value.toLowerCase())) ?? false;
+				return (
+					tags?.some((tag) =>
+						tag.toLowerCase().includes(value.toLowerCase()),
+					) ?? false
+				);
 			},
-			cell: ({ row }) => (
-				<TagsDisplay tags={row.getValue("tags")} />
-			),
+			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
 			accessorKey: "created_at",
 			header: ({ column }) => (
 				<SortableHeader column={column}>Created</SortableHeader>
 			),
-			cell: ({ row }) => (
-				<DateDisplay date={row.getValue("created_at")} />
-			),
+			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
 		},
 		{
 			id: "actions",
+			maxSize: 80,
 			enableHiding: false,
 			cell: ({ row }) => {
 				const quest = row.original;
