@@ -10,7 +10,7 @@ export function CreateCharacterSheet({ isOpen, setIsOpen }: CreateCharacterSheet
 	return (
 		<Sheet open={isOpen} onOpenChange={setIsOpen}>
 			<SheetContent className="p-4 pt-10 overflow-scroll" width="lg">
-				<CreateCharacterForm />
+				<CreateCharacterForm onSuccess={() => setIsOpen(false)} />
 			</SheetContent>
 		</Sheet>
 	);

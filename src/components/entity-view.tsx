@@ -35,7 +35,7 @@ export function EntityView({
 	tabs,
 }: EntityViewProps) {
 	return (
-		<div className="space-y-10 mt-2">
+		<div className="space-y-10 mt-2 mx-auto max-w-5xl">
 			<EntityTabs tabs={tabs}>
 				<EntityViewHeader
 					name={name}

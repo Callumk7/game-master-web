@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
 	createLocationMutation,
@@ -12,9 +12,14 @@ import { useSmartForm } from "../forms/smart-factory";
 import { schemas } from "../forms/type-utils";
 import { ParentLocationSelect } from "./parent-location-select";
 
-export function CreateLocationForm() {
+interface CreateLocationFormProps {
+	onSuccess?: () => void;
+}
+
+export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
 	// Fetch existing locations for parent selection
 	const { data: locationsData, isLoading: locationsLoading } = useListLocationsQuery({
@@ -29,7 +34,7 @@ export function CreateLocationForm() {
 			}),
 		schema: schemas.location,
 		entityName: "location",
-		onSuccess: async () => {
+		onSuccess: async ({ data }) => {
 			toast("Location created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listLocationsQueryKey({
@@ -41,6 +46,17 @@ export function CreateLocationForm() {
 					path: { game_id: gameId },
 				}),
 			});
+
+			if (onSuccess) {
+				onSuccess();
+			}
+
+			if (data) {
+				navigate({
+					to: "/games/$gameId/locations/$id",
+					params: { gameId, id: data.id },
+				});
+			}
 		},
 	});
 

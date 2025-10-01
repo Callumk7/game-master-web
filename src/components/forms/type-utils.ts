@@ -52,7 +52,7 @@ export function generateFieldsFromSchema<T extends z.ZodRawShape>(
 
 	for (const [key, zodType] of Object.entries(schema.shape)) {
 		const fieldName = key as keyof T;
-		
+
 		// Skip field if override is null (excludes the field)
 		if (overrides[fieldName] === null) {
 			continue;
@@ -184,7 +184,7 @@ export function createSchemaFor() {
 		faction: z.object({
 			name: z.string().min(1, "Faction name is required"),
 			tags: z.array(z.string()).optional(),
-			content: z.string(),
+			content: z.string().optional(),
 		}),
 
 		// Add more schemas as needed
@@ -201,14 +201,14 @@ export function createSchemaFor() {
 			parent_type: z
 				.enum(["note", "quest", "location", "character", "faction"])
 				.optional(),
-			content: z.string().min(1, "Note content is required"),
+			content: z.string().optional(),
 		}),
 
 		quest: z.object({
 			name: z.string().min(1, "Quest name is required"),
 			parent_id: z.string().optional(),
 			tags: z.array(z.string()).optional(),
-			content: z.string().min(1, "Quest content is required"),
+			content: z.string().optional(),
 		}),
 
 		location: z.object({

@@ -10,7 +10,7 @@ export function CreateFactionSheet({ isOpen, setIsOpen }: CreateFactionSheetProp
 	return (
 		<Sheet open={isOpen} onOpenChange={setIsOpen}>
 			<SheetContent className="p-4 pt-10" width="lg">
-				<CreateFactionForm />
+				<CreateFactionForm onSuccess={() => setIsOpen(false)} />
 			</SheetContent>
 		</Sheet>
 	);

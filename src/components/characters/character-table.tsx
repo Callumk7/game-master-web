@@ -29,18 +29,21 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 		{
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
+			minSize: 200,
 			cell: ({ row }) => (
 				<EntityLink
 					entityType="character"
 					gameId={gameId}
 					entityId={row.original.id}
 					name={row.getValue("name")}
+					className="whitespace-pre-wrap"
 				/>
 			),
 		},
 		{
 			accessorKey: "class",
 			header: "Class",
+			maxSize: 50,
 			cell: ({ row }) => (
 				<Badge variant="secondary" className="capitalize">
 					{row.getValue("class")}

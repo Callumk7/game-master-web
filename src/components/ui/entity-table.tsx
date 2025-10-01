@@ -117,9 +117,9 @@ interface DateDisplayProps {
 	className?: string;
 }
 
-export function DateDisplay({ date, className = "text-sm" }: DateDisplayProps) {
+export function DateDisplay({ date, className = "text-xs" }: DateDisplayProps) {
 	if (!date) {
-		return <span className="text-muted-foreground">-</span>;
+		return <span className="text-muted-foreground text-xs">-</span>;
 	}
 
 	return <div className={className}>{new Date(date).toLocaleDateString()}</div>;
