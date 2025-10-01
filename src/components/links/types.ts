@@ -20,3 +20,17 @@ export interface DeleteLinkParams {
 	targetType: EntityType;
 	targetId: string;
 }
+
+export interface UpdateLinkParams {
+	gameId: string;
+	sourceType: EntityType;
+	sourceId: string;
+	targetType: EntityType;
+	targetId: string;
+	data: {
+		relationship_type?: string;
+		description?: string;
+		is_active?: boolean;
+		strength?: number;
+	};
+}

@@ -36,6 +36,7 @@ import type { EntityType } from "~/types";
 import type { EntityLink } from "~/utils/linkHelpers";
 import { DeleteLink } from "../links/delete-link";
 import { Link } from "./link";
+import { UpdateLinkDialog } from "./update-link-dialog";
 
 interface EntityLinksTableProps {
 	links: EntityLink[];
@@ -112,6 +113,20 @@ export function EntityLinksTable({
 			enableHiding: false,
 			cell: ({ row }) => {
 				return <EntityLinkButton entity={row.original} />;
+			},
+		},
+		{
+			id: "edit",
+			enableHiding: false,
+			cell: ({ row }) => {
+				return (
+					<UpdateLinkDialog
+						link={row.original}
+						gameId={gameId}
+						sourceId={sourceId}
+						sourceType={sourceType}
+					/>
+				);
 			},
 		},
 		{
