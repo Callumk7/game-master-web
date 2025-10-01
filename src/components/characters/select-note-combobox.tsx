@@ -16,13 +16,13 @@ import {
 	ComboboxPositioner,
 	ComboboxTrigger,
 } from "../ui/combobox";
+import { Label } from "../ui/label";
 import {
 	Popover,
 	PopoverContent,
 	PopoverPositioner,
 	PopoverTrigger,
 } from "../ui/popover";
-import { Label } from "../ui/label";
 
 interface SelectNoteComboboxProps {
 	gameId: string;

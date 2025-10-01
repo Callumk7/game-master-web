@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import {
 	createCharacterMutation,
 	listCharactersQueryKey,
+	listGameEntitiesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm } from "~/components/forms/smart-factory";
 import { schemas } from "~/components/forms/type-utils";
@@ -28,6 +29,11 @@ export function CreateCharacterForm({ onSuccess }: CreateCharacterFormProps) {
 			toast("Character created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listCharactersQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			queryClient.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
 					path: { game_id: gameId },
 				}),
 			});

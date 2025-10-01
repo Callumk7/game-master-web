@@ -1,7 +1,11 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { createNoteMutation, listNotesQueryKey } from "~/api/@tanstack/react-query.gen";
+import {
+	createNoteMutation,
+	listGameEntitiesQueryKey,
+	listNotesQueryKey,
+} from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
 import type { EntityType } from "~/types";
 import { useSmartForm } from "../forms/smart-factory";
@@ -46,8 +50,13 @@ export function CreateNoteForm({
 		initialValues,
 		onSuccess: async () => {
 			toast("Note created successfully!");
-			await queryClient.refetchQueries({
+			queryClient.invalidateQueries({
 				queryKey: listNotesQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			queryClient.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
 					path: { game_id: gameId },
 				}),
 			});

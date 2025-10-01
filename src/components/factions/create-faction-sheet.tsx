@@ -1,16 +1,14 @@
+import { useIsCreateFactionOpen, useUIActions } from "~/state/ui";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { CreateFactionForm } from "./create-faction-form";
 
-interface CreateFactionSheetProps {
-	isOpen: boolean;
-	setIsOpen: (isOpen: boolean) => void;
-}
-
-export function CreateFactionSheet({ isOpen, setIsOpen }: CreateFactionSheetProps) {
+export function CreateFactionSheet() {
+	const isCreateFactionOpen = useIsCreateFactionOpen();
+	const { setIsCreateFactionOpen } = useUIActions();
 	return (
-		<Sheet open={isOpen} onOpenChange={setIsOpen}>
-			<SheetContent className="p-4 pt-10" width="lg">
-				<CreateFactionForm onSuccess={() => setIsOpen(false)} />
+		<Sheet open={isCreateFactionOpen} onOpenChange={setIsCreateFactionOpen}>
+			<SheetContent className="p-4 pt-10 overflow-scroll" width="lg">
+				<CreateFactionForm onSuccess={() => setIsCreateFactionOpen(false)} />
 			</SheetContent>
 		</Sheet>
 	);

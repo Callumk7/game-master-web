@@ -1,16 +1,14 @@
+import { useIsCreateCharacterOpen, useUIActions } from "~/state/ui";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { CreateCharacterForm } from "./create-character-form";
 
-interface CreateCharacterSheetProps {
-	isOpen: boolean;
-	setIsOpen: (isOpen: boolean) => void;
-}
-
-export function CreateCharacterSheet({ isOpen, setIsOpen }: CreateCharacterSheetProps) {
+export function CreateCharacterSheet() {
+	const isCreateCharacterOpen = useIsCreateCharacterOpen();
+	const { setIsCreateCharacterOpen } = useUIActions();
 	return (
-		<Sheet open={isOpen} onOpenChange={setIsOpen}>
+		<Sheet open={isCreateCharacterOpen} onOpenChange={setIsCreateCharacterOpen}>
 			<SheetContent className="p-4 pt-10 overflow-scroll" width="lg">
-				<CreateCharacterForm onSuccess={() => setIsOpen(false)} />
+				<CreateCharacterForm onSuccess={() => setIsCreateCharacterOpen(false)} />
 			</SheetContent>
 		</Sheet>
 	);

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import {
 	createFactionMutation,
 	listFactionsQueryKey,
+	listGameEntitiesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm } from "~/components/forms/smart-factory";
 import { schemas } from "../forms/type-utils";
@@ -28,6 +29,11 @@ export function CreateFactionForm({ onSuccess }: CreateFactionFormProps) {
 			toast("Faction created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listFactionsQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			queryClient.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
 					path: { game_id: gameId },
 				}),
 			});

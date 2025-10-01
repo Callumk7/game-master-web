@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import {
 	createLocationMutation,
 	getLocationTreeQueryKey,
+	listGameEntitiesQueryKey,
 	listLocationsQueryKey,
 	useListLocationsQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -43,6 +44,11 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 			});
 			queryClient.invalidateQueries({
 				queryKey: getLocationTreeQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			queryClient.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
 					path: { game_id: gameId },
 				}),
 			});

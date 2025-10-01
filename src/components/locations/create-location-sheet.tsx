@@ -1,16 +1,14 @@
+import { useIsCreateLocationOpen, useUIActions } from "~/state/ui";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { CreateLocationForm } from "./create-location-form";
 
-interface CreateLocationSheetProps {
-	isOpen: boolean;
-	setIsOpen: (isOpen: boolean) => void;
-}
-
-export function CreateLocationSheet({ isOpen, setIsOpen }: CreateLocationSheetProps) {
+export function CreateLocationSheet() {
+	const isCreateLocationOpen = useIsCreateLocationOpen();
+	const { setIsCreateLocationOpen } = useUIActions();
 	return (
-		<Sheet open={isOpen} onOpenChange={setIsOpen} modal={false}>
-			<SheetContent className="p-4 pt-10" width="lg">
-				<CreateLocationForm onSuccess={() => setIsOpen(false)} />
+		<Sheet open={isCreateLocationOpen} onOpenChange={setIsCreateLocationOpen}>
+			<SheetContent className="p-4 pt-10 overflow-scroll" width="lg">
+				<CreateLocationForm onSuccess={() => setIsCreateLocationOpen(false)} />
 			</SheetContent>
 		</Sheet>
 	);

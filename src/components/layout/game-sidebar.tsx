@@ -36,22 +36,9 @@ import {
 } from "~/queries/quests";
 import { SidebarTree } from "./tree";
 import { NavUser } from "./user-sidebar";
+import { useUIActions } from "~/state/ui";
 
-interface GameSidebarProps {
-	setNewCharSheetOpen: (isOpen: boolean) => void;
-	setNewFactionSheetOpen: (isOpen: boolean) => void;
-	setNewLocationSheetOpen: (isOpen: boolean) => void;
-	setNewNoteSheetOpen: (isOpen: boolean) => void;
-	setNewQuestSheetOpen: (isOpen: boolean) => void;
-}
-
-export function GameSidebar({
-	setNewCharSheetOpen,
-	setNewFactionSheetOpen,
-	setNewLocationSheetOpen,
-	setNewNoteSheetOpen,
-	setNewQuestSheetOpen,
-}: GameSidebarProps) {
+export function GameSidebar() {
 	const { theme, setTheme } = useTheme();
 	const [mounted, setMounted] = React.useState(false);
 
@@ -65,6 +52,14 @@ export function GameSidebar({
 	const locations = resolveEntityArray(links?.data?.entities?.locations);
 	const notes = resolveEntityArray(links?.data?.entities?.notes);
 	const quests = resolveEntityArray(links?.data?.entities?.quests);
+
+	const {
+		setIsCreateCharacterOpen,
+		setIsCreateFactionOpen,
+		setIsCreateLocationOpen,
+		setIsCreateNoteOpen,
+		setIsCreateQuestOpen,
+	} = useUIActions();
 
 	const { data: locationTree } = useGetLocationTreeSuspenseQuery(gameId);
 	const { data: questTree } = useGetQuestTreeSuspenseQuery(gameId);
@@ -285,7 +280,7 @@ export function GameSidebar({
 
 					<div className="mt-4 space-y-2">
 						<Button
-							onClick={() => setNewNoteSheetOpen(true)}
+							onClick={() => setIsCreateNoteOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
@@ -294,7 +289,7 @@ export function GameSidebar({
 							New Note
 						</Button>
 						<Button
-							onClick={() => setNewCharSheetOpen(true)}
+							onClick={() => setIsCreateCharacterOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
@@ -303,7 +298,7 @@ export function GameSidebar({
 							New Character
 						</Button>
 						<Button
-							onClick={() => setNewFactionSheetOpen(true)}
+							onClick={() => setIsCreateFactionOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
@@ -312,7 +307,7 @@ export function GameSidebar({
 							New Faction
 						</Button>
 						<Button
-							onClick={() => setNewLocationSheetOpen(true)}
+							onClick={() => setIsCreateLocationOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
@@ -321,7 +316,7 @@ export function GameSidebar({
 							New Location
 						</Button>
 						<Button
-							onClick={() => setNewQuestSheetOpen(true)}
+							onClick={() => setIsCreateQuestOpen(true)}
 							size="sm"
 							variant="outline"
 							className="w-full justify-start"
