@@ -21,28 +21,38 @@ export function TodoItem({ todo }: TodoItemProps) {
 	};
 
 	return (
-		<div 
-			className="flex items-center gap-3 p-2 rounded-md hover:bg-accent/50 group cursor-pointer"
-			onClick={handleToggle}
-		>
-			<Checkbox
-				checked={todo.completed}
-				onCheckedChange={handleToggle}
-				className="shrink-0 pointer-events-none"
-			/>
-			<span
-				className={cn(
-					"flex-1 text-sm transition-all select-none",
-					todo.completed && "line-through text-muted-foreground"
-				)}
+		<div className="relative group">
+			<div 
+				className="flex items-center gap-3 p-2 rounded-md hover:bg-accent/50 cursor-pointer w-full pr-10"
+				onClick={handleToggle}
+				role="button"
+				tabIndex={0}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						handleToggle();
+					}
+				}}
 			>
-				{todo.text}
-			</span>
+				<Checkbox
+					checked={todo.completed}
+					className="shrink-0 pointer-events-none"
+					tabIndex={-1}
+				/>
+				<span
+					className={cn(
+						"flex-1 text-sm transition-all select-none",
+						todo.completed && "line-through text-muted-foreground"
+					)}
+				>
+					{todo.text}
+				</span>
+			</div>
 			<Button
 				variant="ghost"
 				size="icon"
 				onClick={handleDelete}
-				className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+				className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
 			>
 				<X className="h-3 w-3" />
 			</Button>
