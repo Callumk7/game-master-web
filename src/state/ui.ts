@@ -7,6 +7,7 @@ interface State {
 	isCreateNoteOpen: boolean;
 	isCreateQuestOpen: boolean;
 	isCommanderOpen: boolean;
+	isTodoDrawerOpen: boolean;
 }
 
 interface Actions {
@@ -16,6 +17,7 @@ interface Actions {
 	setIsCreateNoteOpen: (isOpen: boolean) => void;
 	setIsCreateQuestOpen: (isOpen: boolean) => void;
 	setIsCommanderOpen: (isOpen: boolean) => void;
+	setIsTodoDrawerOpen: (isOpen: boolean) => void;
 }
 
 export type Store = State & {
@@ -29,6 +31,7 @@ const useUIStore = create<Store>()((set) => ({
 	isCreateNoteOpen: false,
 	isCreateQuestOpen: false,
 	isCommanderOpen: false,
+	isTodoDrawerOpen: false,
 	actions: {
 		setIsCreateFactionOpen: (isOpen: boolean) => set({ isCreateFactionOpen: isOpen }),
 		setIsCreateCharacterOpen: (isOpen: boolean) =>
@@ -38,6 +41,7 @@ const useUIStore = create<Store>()((set) => ({
 		setIsCreateNoteOpen: (isOpen: boolean) => set({ isCreateNoteOpen: isOpen }),
 		setIsCreateQuestOpen: (isOpen: boolean) => set({ isCreateQuestOpen: isOpen }),
 		setIsCommanderOpen: (isOpen: boolean) => set({ isCommanderOpen: isOpen }),
+		setIsTodoDrawerOpen: (isOpen: boolean) => set({ isTodoDrawerOpen: isOpen }),
 	},
 }));
 
@@ -51,6 +55,7 @@ export const useIsCreateLocationOpen = () =>
 export const useIsCreateNoteOpen = () => useUIStore((state) => state.isCreateNoteOpen);
 export const useIsCreateQuestOpen = () => useUIStore((state) => state.isCreateQuestOpen);
 export const useIsCommanderOpen = () => useUIStore((state) => state.isCommanderOpen);
+export const useIsTodoDrawerOpen = () => useUIStore((state) => state.isTodoDrawerOpen);
 
 // Actions
 export const useUIActions = () => useUIStore((state) => state.actions);

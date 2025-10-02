@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute, Outlet } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import {
 	getGameOptions,
@@ -21,6 +21,7 @@ import { GameSidebar } from "~/components/layout/game-sidebar";
 import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
+import { TodosDrawer } from "~/components/todos/todos-drawer";
 import { Badge } from "~/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { useUIActions } from "~/state/ui";
@@ -108,6 +109,9 @@ function RouteComponent() {
 						<CreateNoteSheet />
 						<CreateLocationSheet />
 						<CreateQuestSheet />
+						<ClientOnly>
+							<TodosDrawer />
+						</ClientOnly>
 					</div>
 				</div>
 			</SidebarProvider>
