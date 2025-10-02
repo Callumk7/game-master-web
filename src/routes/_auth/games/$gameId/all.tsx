@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import * as React from "react";
 import { useState } from "react";
 import { AllEntitiesTable, type AllEntity } from "~/components/all-entities-table";
 import { PageHeader } from "~/components/page-header";
@@ -17,61 +18,63 @@ function RouteComponent() {
 	const [paginationSize, setPaginationSize] = useState(15);
 
 	// Transform the API response into our AllEntity format
-	const allEntities: AllEntity[] = [];
+	const allEntities: AllEntity[] = React.useMemo(() => {
+		const entitiesList: AllEntity[] = [];
+		if (data.data?.entities) {
+			const { entities } = data.data;
 
-	if (data.data?.entities) {
-		const { entities } = data.data;
+			// Add characters
+			if (entities.characters) {
+				for (const character of entities.characters) {
+					entitiesList.push({
+						...character,
+						type: "character" as EntityType,
+					});
+				}
+			}
 
-		// Add characters
-		if (entities.characters) {
-			for (const character of entities.characters) {
-				allEntities.push({
-					...character,
-					type: "character" as EntityType,
-				});
+			// Add factions
+			if (entities.factions) {
+				for (const faction of entities.factions) {
+					entitiesList.push({
+						...faction,
+						type: "faction" as EntityType,
+					});
+				}
+			}
+
+			// Add locations
+			if (entities.locations) {
+				for (const location of entities.locations) {
+					entitiesList.push({
+						...location,
+						type: "location" as EntityType,
+					});
+				}
+			}
+
+			// Add notes
+			if (entities.notes) {
+				for (const note of entities.notes) {
+					entitiesList.push({
+						...note,
+						type: "note" as EntityType,
+					});
+				}
+			}
+
+			// Add quests
+			if (entities.quests) {
+				for (const quest of entities.quests) {
+					entitiesList.push({
+						...quest,
+						type: "quest" as EntityType,
+					});
+				}
 			}
 		}
-
-		// Add factions
-		if (entities.factions) {
-			for (const faction of entities.factions) {
-				allEntities.push({
-					...faction,
-					type: "faction" as EntityType,
-				});
-			}
-		}
-
-		// Add locations
-		if (entities.locations) {
-			for (const location of entities.locations) {
-				allEntities.push({
-					...location,
-					type: "location" as EntityType,
-				});
-			}
-		}
-
-		// Add notes
-		if (entities.notes) {
-			for (const note of entities.notes) {
-				allEntities.push({
-					...note,
-					type: "note" as EntityType,
-				});
-			}
-		}
-
-		// Add quests
-		if (entities.quests) {
-			for (const quest of entities.quests) {
-				allEntities.push({
-					...quest,
-					type: "quest" as EntityType,
-				});
-			}
-		}
-	}
+		return entitiesList;
+	}, [data.data]);
 
 	return (
 		<div className="container mx-auto py-8">
@@ -79,8 +82,8 @@ function RouteComponent() {
 				title="All Entities"
 				description="Browse all characters, factions, locations, notes, and quests in your game."
 			/>
-			<AllEntitiesTable 
-				entities={allEntities} 
+			<AllEntitiesTable
+				entities={allEntities}
 				gameId={gameId}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

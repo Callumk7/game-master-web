@@ -25,6 +25,7 @@ import { Button } from "../button";
 import { Separator } from "../separator";
 import { Toggle } from "../toggle";
 import { type MentionItem, SimpleMention } from "./mention-extension-simple";
+import { debounce } from "~/utils/debounce";
 
 export interface TiptapProps {
 	content?: object | null;
@@ -110,7 +111,17 @@ export function Tiptap({
 		});
 
 		return items;
-	}, [entitiesData, gameId]);
+	}, [entitiesData?.data, gameId]);
+
+	const getDebouncedSuggestions = debounce(
+		(query: string, callback: (items: MentionItem[]) => void) => {
+			const filteredItems = mentionItems
+				.filter((item) => item.label.toLowerCase().includes(query.toLowerCase()))
+				.slice(0, 10);
+			callback(filteredItems);
+		},
+		200,
+	);
 
 	const editor = useEditor({
 		extensions: [
@@ -127,11 +138,11 @@ export function Tiptap({
 			SimpleMention.configure({
 				suggestion: {
 					items: ({ query }: { query: string }) => {
-						return mentionItems
-							.filter((item) =>
-								item.label.toLowerCase().includes(query.toLowerCase()),
-							)
-							.slice(0, 10);
+						return new Promise((resolve) => {
+							getDebouncedSuggestions(query, (items) => {
+								resolve(items);
+							});
+						});
 					},
 				},
 			}),
