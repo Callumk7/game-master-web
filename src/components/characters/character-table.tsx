@@ -22,6 +22,8 @@ interface CharacterTableProps {
 	tagFilter: string;
 	onTagFilterChange: (tag: string) => void;
 	gameId: string;
+	paginationSize?: number;
+	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
@@ -72,15 +74,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 		{
 			accessorKey: "tags",
 			header: "Tags",
-			filterFn: (row, columnId, value) => {
-				if (!value) return true;
-				const tags = row.getValue(columnId) as string[];
-				return (
-					tags?.some((tag) =>
-						tag.toLowerCase().includes(value.toLowerCase()),
-					) ?? false
-				);
-			},
+			filterFn: "fuzzy",
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
@@ -132,6 +126,8 @@ export function CharacterTable({
 	tagFilter,
 	onTagFilterChange,
 	gameId,
+	paginationSize = 10,
+	onPaginationSizeChange,
 }: CharacterTableProps) {
 	const columns = createCharacterColumns(gameId);
 
@@ -146,6 +142,10 @@ export function CharacterTable({
 			entityName="character"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
+			paginationSize={paginationSize}
+			onPaginationSizeChange={onPaginationSizeChange}
+			enableColumnVisibility={true}
+			enablePaginationSizeSelector={true}
 		/>
 	);
 }

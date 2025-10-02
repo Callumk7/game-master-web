@@ -19,6 +19,7 @@ function RouteComponent() {
 	const { data } = useListLocationsSuspenseQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
+	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	const locations = data?.data || [];
@@ -41,6 +42,8 @@ function RouteComponent() {
 				onSearchChange={setSearchQuery}
 				tagFilter={tagFilter}
 				onTagFilterChange={setTagFilter}
+				paginationSize={paginationSize}
+				onPaginationSizeChange={setPaginationSize}
 			/>
 		</div>
 	);

@@ -21,6 +21,8 @@ interface QuestsTableProps {
 	tagFilter: string;
 	onTagFilterChange: (tag: string) => void;
 	gameId: string;
+	paginationSize?: number;
+	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
@@ -51,15 +53,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 		{
 			accessorKey: "tags",
 			header: "Tags",
-			filterFn: (row, columnId, value) => {
-				if (!value) return true;
-				const tags = row.getValue(columnId) as string[];
-				return (
-					tags?.some((tag) =>
-						tag.toLowerCase().includes(value.toLowerCase()),
-					) ?? false
-				);
-			},
+			filterFn: "fuzzy",
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
@@ -113,6 +107,8 @@ export function QuestsTable({
 	tagFilter,
 	onTagFilterChange,
 	gameId,
+	paginationSize = 10,
+	onPaginationSizeChange,
 }: QuestsTableProps) {
 	const columns = createQuestColumns(gameId);
 
@@ -127,6 +123,10 @@ export function QuestsTable({
 			entityName="quest"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
+			paginationSize={paginationSize}
+			onPaginationSizeChange={onPaginationSizeChange}
+			enableColumnVisibility={true}
+			enablePaginationSizeSelector={true}
 		/>
 	);
 }
