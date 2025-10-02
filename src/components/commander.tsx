@@ -1,7 +1,14 @@
 import { useNavigate } from "@tanstack/react-router";
-import { User } from "lucide-react";
-import * as React from "react";
-
+import {
+	CheckSquare,
+	FileText,
+	MapPin,
+	Plus,
+	Shield,
+	Sword,
+	User,
+	Users,
+} from "lucide-react";
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -12,8 +19,14 @@ import {
 	CommandSeparator,
 	CommandShortcut,
 } from "~/components/ui/command";
+import {
+	createPlatformShortcut,
+	createPlatformShiftShortcut,
+	useKeyboardShortcut,
+} from "~/hooks/useKeyboardShortcut";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
 import { useIsCommanderOpen, useUIActions } from "~/state/ui";
+import { Badge } from "./ui/badge";
 
 export function Commander({ gameId }: { gameId: string }) {
 	const navigate = useNavigate();
@@ -38,18 +51,62 @@ export function Commander({ gameId }: { gameId: string }) {
 	} = useUIActions();
 	const isCommanderOpen = useIsCommanderOpen();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: Intent is to set up a global keyboard shortcut
-	React.useEffect(() => {
-		const down = (e: KeyboardEvent) => {
-			if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-				e.preventDefault();
-				setIsCommanderOpen(!isCommanderOpen);
-			}
-		};
-
-		document.addEventListener("keydown", down);
-		return () => document.removeEventListener("keydown", down);
-	}, []);
+	// Set up keyboard shortcuts
+	useKeyboardShortcut([
+		// Global shortcut to toggle commander
+		createPlatformShortcut("j", () => {
+			setIsCommanderOpen(!isCommanderOpen);
+		}),
+		// Commander-specific shortcuts (Cmd+Shift to avoid browser conflicts)
+		createPlatformShiftShortcut(
+			"c",
+			() => {
+				setIsCommanderOpen(false);
+				setIsCreateCharacterOpen(true);
+			},
+			{ scope: () => isCommanderOpen, allowInInputs: true },
+		),
+		createPlatformShiftShortcut(
+			"f",
+			() => {
+				setIsCommanderOpen(false);
+				setIsCreateFactionOpen(true);
+			},
+			{ scope: () => isCommanderOpen, allowInInputs: true },
+		),
+		createPlatformShiftShortcut(
+			"l",
+			() => {
+				setIsCommanderOpen(false);
+				setIsCreateLocationOpen(true);
+			},
+			{ scope: () => isCommanderOpen, allowInInputs: true },
+		),
+		createPlatformShiftShortcut(
+			"n",
+			() => {
+				setIsCommanderOpen(false);
+				setIsCreateNoteOpen(true);
+			},
+			{ scope: () => isCommanderOpen, allowInInputs: true },
+		),
+		createPlatformShiftShortcut(
+			"q",
+			() => {
+				setIsCommanderOpen(false);
+				setIsCreateQuestOpen(true);
+			},
+			{ scope: () => isCommanderOpen, allowInInputs: true },
+		),
+		createPlatformShiftShortcut(
+			"t",
+			() => {
+				setIsCommanderOpen(false);
+				setIsTodoDrawerOpen(true);
+			},
+			{ scope: () => isCommanderOpen, allowInInputs: true },
+		),
+	]);
 
 	return (
 		<CommandDialog open={isCommanderOpen} onOpenChange={setIsCommanderOpen}>
@@ -74,7 +131,7 @@ export function Commander({ gameId }: { gameId: string }) {
 									});
 								}}
 							>
-								<User />
+								<Users />
 								<span className="font-semibold">All Characters</span>
 							</CommandItem>
 							<CommandItem
@@ -83,9 +140,9 @@ export function Commander({ gameId }: { gameId: string }) {
 									setIsCreateCharacterOpen(true);
 								}}
 							>
-								<User />
+								<Plus />
 								<span>New Character</span>
-								<CommandShortcut>⌘C</CommandShortcut>
+								<CommandShortcut>⌘⇧C</CommandShortcut>
 							</CommandItem>
 							{characters?.map((character) => (
 								<CommandItem
@@ -98,8 +155,15 @@ export function Commander({ gameId }: { gameId: string }) {
 										});
 									}}
 								>
-									<User />
-									<span>{character.name}</span>
+									<div className="flex items-center justify-between w-full">
+										<div className="flex items-center gap-2">
+											<User />
+											<span>{character.name}</span>
+										</div>
+										<Badge size={"sm"} variant={"secondary"}>
+											{character.class}
+										</Badge>
+									</div>
 								</CommandItem>
 							))}
 						</CommandGroup>
@@ -114,7 +178,7 @@ export function Commander({ gameId }: { gameId: string }) {
 									});
 								}}
 							>
-								<User />
+								<Shield />
 								<span className="font-semibold">All Factions</span>
 							</CommandItem>
 							<CommandItem
@@ -123,9 +187,9 @@ export function Commander({ gameId }: { gameId: string }) {
 									setIsCreateFactionOpen(true);
 								}}
 							>
-								<User />
+								<Plus />
 								<span>New Faction</span>
-								<CommandShortcut>⌘F</CommandShortcut>
+								<CommandShortcut>⌘⇧F</CommandShortcut>
 							</CommandItem>
 							{factions?.map((faction) => (
 								<CommandItem
@@ -138,7 +202,7 @@ export function Commander({ gameId }: { gameId: string }) {
 										});
 									}}
 								>
-									<User />
+									<Shield />
 									<span>{faction.name}</span>
 								</CommandItem>
 							))}
@@ -154,7 +218,7 @@ export function Commander({ gameId }: { gameId: string }) {
 									});
 								}}
 							>
-								<User />
+								<MapPin />
 								<span className="font-semibold">All Locations</span>
 							</CommandItem>
 							<CommandItem
@@ -163,9 +227,9 @@ export function Commander({ gameId }: { gameId: string }) {
 									setIsCreateLocationOpen(true);
 								}}
 							>
-								<User />
+								<Plus />
 								<span>New Location</span>
-								<CommandShortcut>⌘L</CommandShortcut>
+								<CommandShortcut>⌘⇧L</CommandShortcut>
 							</CommandItem>
 							{locations?.map((location) => (
 								<CommandItem
@@ -178,7 +242,7 @@ export function Commander({ gameId }: { gameId: string }) {
 										});
 									}}
 								>
-									<User />
+									<MapPin />
 									<span>{location.name}</span>
 								</CommandItem>
 							))}
@@ -194,7 +258,7 @@ export function Commander({ gameId }: { gameId: string }) {
 									});
 								}}
 							>
-								<User />
+								<FileText />
 								<span className="font-semibold">All Notes</span>
 							</CommandItem>
 							<CommandItem
@@ -203,9 +267,9 @@ export function Commander({ gameId }: { gameId: string }) {
 									setIsCreateNoteOpen(true);
 								}}
 							>
-								<User />
+								<Plus />
 								<span>New Note</span>
-								<CommandShortcut>⌘N</CommandShortcut>
+								<CommandShortcut>⌘⇧N</CommandShortcut>
 							</CommandItem>
 							{notes?.map((note) => (
 								<CommandItem
@@ -218,7 +282,7 @@ export function Commander({ gameId }: { gameId: string }) {
 										});
 									}}
 								>
-									<User />
+									<FileText />
 									<span>{note.name}</span>
 								</CommandItem>
 							))}
@@ -234,7 +298,7 @@ export function Commander({ gameId }: { gameId: string }) {
 									});
 								}}
 							>
-								<User />
+								<Sword />
 								<span className="font-semibold">All Quests</span>
 							</CommandItem>
 							<CommandItem
@@ -243,9 +307,9 @@ export function Commander({ gameId }: { gameId: string }) {
 									setIsCreateQuestOpen(true);
 								}}
 							>
-								<User />
+								<Plus />
 								<span>New Quest</span>
-								<CommandShortcut>⌘Q</CommandShortcut>
+								<CommandShortcut>⌘⇧Q</CommandShortcut>
 							</CommandItem>
 							{quests?.map((quest) => (
 								<CommandItem
@@ -258,7 +322,7 @@ export function Commander({ gameId }: { gameId: string }) {
 										});
 									}}
 								>
-									<User />
+									<Sword />
 									<span>{quest.name}</span>
 								</CommandItem>
 							))}
@@ -271,7 +335,9 @@ export function Commander({ gameId }: { gameId: string }) {
 									setIsTodoDrawerOpen(true);
 								}}
 							>
+								<CheckSquare />
 								<span>Todos</span>
+								<CommandShortcut>⌘⇧T</CommandShortcut>
 							</CommandItem>
 						</CommandGroup>
 					</>
@@ -280,3 +346,4 @@ export function Commander({ gameId }: { gameId: string }) {
 		</CommandDialog>
 	);
 }
+
