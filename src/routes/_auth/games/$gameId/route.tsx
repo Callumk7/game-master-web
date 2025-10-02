@@ -1,6 +1,5 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute, Outlet } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import * as React from "react";
 import {
 	getGameOptions,
 	getLocationTreeOptions,
@@ -22,8 +21,10 @@ import { GameSidebar } from "~/components/layout/game-sidebar";
 import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
+import { TodosDrawer } from "~/components/todos/todos-drawer";
 import { Badge } from "~/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
+import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
 	component: RouteComponent,
@@ -66,39 +67,23 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 // Games Layout
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-
-	const [commanderOpen, setCommanderOpen] = React.useState(false);
-	const [newCharSheetOpen, setNewCharSheetOpen] = React.useState(false);
-	const [newFactionSheetOpen, setNewFactionSheetOpen] = React.useState(false);
-	const [newLocationSheetOpen, setNewLocationSheetOpen] = React.useState(false);
-	const [newNoteSheetOpen, setNewNoteSheetOpen] = React.useState(false);
-	const [newQuestSheetOpen, setNewQuestSheetOpen] = React.useState(false);
+	const { setIsCommanderOpen } = useUIActions();
 
 	return (
 		<EntityTabsProvider>
 			<SidebarProvider>
 				<div className="flex h-screen w-full">
-					<GameSidebar
-						setNewCharSheetOpen={setNewCharSheetOpen}
-						setNewFactionSheetOpen={setNewFactionSheetOpen}
-						setNewLocationSheetOpen={setNewLocationSheetOpen}
-						setNewNoteSheetOpen={setNewNoteSheetOpen}
-						setNewQuestSheetOpen={setNewQuestSheetOpen}
-					/>
+					<GameSidebar />
 					{/* Main Content */}
 					<div className="flex-1 flex flex-col">
 						<main className="flex-1 overflow-auto">
 							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20">
 								<SidebarTrigger />
-								<Commander
-									gameId={gameId}
-									isOpen={commanderOpen}
-									setIsOpen={setCommanderOpen}
-								/>
+								<Commander gameId={gameId} />
 								<div className="flex-1 max-w-md">
 									<button
 										type="button"
-										onClick={() => setCommanderOpen(true)}
+										onClick={() => setIsCommanderOpen(true)}
 										className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
 									>
 										<Search className="mr-3 w-4 h-4 text-muted-foreground" />
@@ -119,26 +104,14 @@ function RouteComponent() {
 								<Outlet />
 							</div>
 						</main>
-						<CreateCharacterSheet
-							isOpen={newCharSheetOpen}
-							setIsOpen={setNewCharSheetOpen}
-						/>
-						<CreateFactionSheet
-							isOpen={newFactionSheetOpen}
-							setIsOpen={setNewFactionSheetOpen}
-						/>
-						<CreateNoteSheet
-							isOpen={newNoteSheetOpen}
-							setIsOpen={setNewNoteSheetOpen}
-						/>
-						<CreateLocationSheet
-							isOpen={newLocationSheetOpen}
-							setIsOpen={setNewLocationSheetOpen}
-						/>
-						<CreateQuestSheet
-							isOpen={newQuestSheetOpen}
-							setIsOpen={setNewQuestSheetOpen}
-						/>
+						<CreateCharacterSheet />
+						<CreateFactionSheet />
+						<CreateNoteSheet />
+						<CreateLocationSheet />
+						<CreateQuestSheet />
+						<ClientOnly>
+							<TodosDrawer />
+						</ClientOnly>
 					</div>
 				</div>
 			</SidebarProvider>

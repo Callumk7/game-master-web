@@ -67,8 +67,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body>
 				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
 					{children}
-					<TanStackRouterDevtools />
-					<ReactQueryDevtools />
+					<TanStackRouterDevtools position="top-right" />
+					<ReactQueryDevtools buttonPosition="bottom-left" />
 					<Scripts />
 					<Toaster position="top-center" theme={"dark"} />
 				</ThemeProvider>

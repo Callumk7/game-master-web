@@ -22,6 +22,7 @@ function RouteComponent() {
 	const characters = data?.data || [];
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
+	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	if (isLoading) {
@@ -46,6 +47,8 @@ function RouteComponent() {
 				onSearchChange={setSearchQuery}
 				tagFilter={tagFilter}
 				onTagFilterChange={setTagFilter}
+				paginationSize={paginationSize}
+				onPaginationSizeChange={setPaginationSize}
 			/>
 		</div>
 	);

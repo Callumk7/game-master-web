@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import {
 	createQuestMutation,
 	getQuestTreeQueryKey,
+	listGameEntitiesQueryKey,
 	listQuestsQueryKey,
 	useListQuestsQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -39,6 +40,11 @@ export function CreateQuestForm({ container }: CreateQuestFormProps) {
 			});
 			queryClient.invalidateQueries({
 				queryKey: getQuestTreeQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			queryClient.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
 					path: { game_id: gameId },
 				}),
 			});

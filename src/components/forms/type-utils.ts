@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Zod internal types */
 import { z } from "zod";
 import type { FieldConfig } from "./factory-v2";
+import { _Statuses } from "~/types";
 
 /**
  * Extract default values from a Zod schema
@@ -206,9 +207,10 @@ export function createSchemaFor() {
 
 		quest: z.object({
 			name: z.string().min(1, "Quest name is required"),
-			parent_id: z.string().optional(),
+			parent_id: z.string().nullable().optional(),
 			tags: z.array(z.string()).optional(),
 			content: z.string().optional(),
+			status: z.enum(_Statuses),
 		}),
 
 		location: z.object({

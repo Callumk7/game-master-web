@@ -19,6 +19,8 @@ interface NotesTableProps {
 	tagFilter: string;
 	onTagFilterChange: (tag: string) => void;
 	gameId: string;
+	paginationSize?: number;
+	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createNoteColumns(gameId: string): ColumnDef<Note>[] {
@@ -38,15 +40,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 		{
 			accessorKey: "tags",
 			header: "Tags",
-			filterFn: (row, columnId, value) => {
-				if (!value) return true;
-				const tags = row.getValue(columnId) as string[];
-				return (
-					tags?.some((tag) =>
-						tag.toLowerCase().includes(value.toLowerCase()),
-					) ?? false
-				);
-			},
+			filterFn: "fuzzy",
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
@@ -93,6 +87,8 @@ export function NotesTable({
 	tagFilter,
 	onTagFilterChange,
 	gameId,
+	paginationSize = 10,
+	onPaginationSizeChange,
 }: NotesTableProps) {
 	const columns = createNoteColumns(gameId);
 
@@ -107,6 +103,10 @@ export function NotesTable({
 			entityName="note"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
+			paginationSize={paginationSize}
+			onPaginationSizeChange={onPaginationSizeChange}
+			enableColumnVisibility={true}
+			enablePaginationSizeSelector={true}
 		/>
 	);
 }

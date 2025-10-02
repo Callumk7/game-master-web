@@ -19,6 +19,7 @@ function RouteComponent() {
 	const { data, isLoading } = useListFactionsSuspenseQuery(gameId);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
+	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	const factions = data?.data || [];
@@ -45,6 +46,8 @@ function RouteComponent() {
 				onSearchChange={setSearchQuery}
 				tagFilter={tagFilter}
 				onTagFilterChange={setTagFilter}
+				paginationSize={paginationSize}
+				onPaginationSizeChange={setPaginationSize}
 			/>
 		</div>
 	);

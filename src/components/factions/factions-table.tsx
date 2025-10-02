@@ -20,6 +20,8 @@ interface FactionsTableProps {
 	tagFilter: string;
 	onTagFilterChange: (tag: string) => void;
 	gameId: string;
+	paginationSize?: number;
+	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
@@ -39,15 +41,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 		{
 			accessorKey: "tags",
 			header: "Tags",
-			filterFn: (row, columnId, value) => {
-				if (!value) return true;
-				const tags = row.getValue(columnId) as string[];
-				return (
-					tags?.some((tag) =>
-						tag.toLowerCase().includes(value.toLowerCase()),
-					) ?? false
-				);
-			},
+			filterFn: "fuzzy",
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
@@ -99,6 +93,8 @@ export function FactionsTable({
 	tagFilter,
 	onTagFilterChange,
 	gameId,
+	paginationSize = 10,
+	onPaginationSizeChange,
 }: FactionsTableProps) {
 	const columns = createFactionColumns(gameId);
 
@@ -113,6 +109,10 @@ export function FactionsTable({
 			entityName="faction"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
+			paginationSize={paginationSize}
+			onPaginationSizeChange={onPaginationSizeChange}
+			enableColumnVisibility={true}
+			enablePaginationSizeSelector={true}
 		/>
 	);
 }
