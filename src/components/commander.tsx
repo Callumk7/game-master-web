@@ -34,6 +34,7 @@ export function Commander({ gameId }: { gameId: string }) {
 		setIsCreateNoteOpen,
 		setIsCreateLocationOpen,
 		setIsCreateQuestOpen,
+		setIsTodoDrawerOpen,
 	} = useUIActions();
 	const isCommanderOpen = useIsCommanderOpen();
 
@@ -261,6 +262,17 @@ export function Commander({ gameId }: { gameId: string }) {
 									<span>{quest.name}</span>
 								</CommandItem>
 							))}
+						</CommandGroup>
+						<CommandSeparator />
+						<CommandGroup heading="Todos">
+							<CommandItem
+								onSelect={() => {
+									setIsCommanderOpen(false);
+									setIsTodoDrawerOpen(true);
+								}}
+							>
+								<span>Todos</span>
+							</CommandItem>
 						</CommandGroup>
 					</>
 				)}
