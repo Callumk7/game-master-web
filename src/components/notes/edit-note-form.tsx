@@ -52,7 +52,6 @@ export function EditNoteForm({ initialData, params }: EditNoteFormProps) {
 		entityName: "note",
 		initialValues: {
 			...initialData,
-			image_url: initialData?.image_url || undefined,
 		},
 		fieldOverrides: {
 			content: null,

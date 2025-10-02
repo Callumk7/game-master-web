@@ -1,6 +1,7 @@
 import {
 	type ColumnDef,
 	type ColumnFiltersState,
+	filterFns,
 	flexRender,
 	getCoreRowModel,
 	getFilteredRowModel,
@@ -156,6 +157,9 @@ export function EntityLinksTable({
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
+		filterFns: {
+			fuzzy: filterFns.includesString,
+		},
 		state: {
 			sorting,
 			columnFilters,

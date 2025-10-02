@@ -52,7 +52,6 @@ export function EditLocationForm({ initialData, params }: EditLocationFormProps)
 		entityName: "location",
 		initialValues: {
 			...initialData,
-			image_url: initialData?.image_url || undefined,
 		},
 		fieldOverrides: {
 			content: null,

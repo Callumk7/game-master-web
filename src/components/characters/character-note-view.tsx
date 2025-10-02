@@ -65,6 +65,14 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 		});
 	};
 
+	const handleSuccess = () => {
+		client.invalidateQueries({
+			queryKey: getCharacterNotesTreeQueryKey({
+				path: { game_id: gameId, id: characterId },
+			}),
+		});
+	};
+
 	return (
 		<>
 			<div className="space-y-4">
@@ -158,6 +166,7 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 				setIsOpen={setIsOpen}
 				parentType="character"
 				parentId={characterId}
+				onSuccess={handleSuccess}
 			/>
 		</>
 	);

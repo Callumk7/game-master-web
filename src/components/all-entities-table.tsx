@@ -21,9 +21,7 @@ import {
 	ContentDisplay,
 } from "~/components/ui/entity-table";
 import type { EntityType } from "~/types";
-import { tableFilterFns } from "~/utils/table-filters";
 
-// Combined entity type that includes all possible entity properties
 export type AllEntity = {
 	id: string;
 	name: string;
