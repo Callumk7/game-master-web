@@ -117,6 +117,12 @@ export function LocationsTable({
 			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
+			columnRelativeWidths={{
+				name: 1.2,
+				actions: 0.5,
+				type: 0.6,
+				created_at: 0.6,
+			}}
 		/>
 	);
 }

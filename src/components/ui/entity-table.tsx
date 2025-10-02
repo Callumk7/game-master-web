@@ -26,6 +26,8 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { Input } from "~/components/ui/input";
+import { Link } from "~/components/ui/link";
 import {
 	Select,
 	SelectContent,
@@ -35,9 +37,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
-import { Input } from "~/components/ui/input";
-import { Link } from "~/components/ui/link";
 import {
+	calculateColumnWidths,
 	Table,
 	TableBody,
 	TableCell,
@@ -45,7 +46,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
-import { Status } from "~/types";
+import type { Status } from "~/types";
 import { tableFilterFns } from "~/utils/table-filters";
 
 // ============================================================================
@@ -265,6 +266,7 @@ interface EntityTableProps<TData, TValue> {
 	onPaginationSizeChange?: (size: number) => void;
 	enableColumnVisibility?: boolean;
 	enablePaginationSizeSelector?: boolean;
+	columnRelativeWidths?: Record<string, number>; // e.g., { "name": 2, "status": 1, "actions": 0.5 }
 }
 
 export function EntityTable<TData, TValue>({
@@ -281,10 +283,23 @@ export function EntityTable<TData, TValue>({
 	onPaginationSizeChange,
 	enableColumnVisibility = true,
 	enablePaginationSizeSelector = true,
+	columnRelativeWidths,
 }: EntityTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+
+	// Calculate percentage widths from relative widths
+	const columnWidths = React.useMemo(() => {
+		if (!columnRelativeWidths) return {};
+		const allColumnIds = columns.map((col) => {
+			if (col.id) return col.id;
+			if ("accessorKey" in col && typeof col.accessorKey === "string")
+				return col.accessorKey;
+			return "";
+		});
+		return calculateColumnWidths(columnRelativeWidths, allColumnIds);
+	}, [columnRelativeWidths, columns]);
 
 	const table = useReactTable({
 		data,
@@ -346,7 +361,9 @@ export function EntityTable<TData, TValue>({
 						</span>
 						<Select
 							value={paginationSize}
-							onValueChange={(value) => onPaginationSizeChange(value as number)}
+							onValueChange={(value) =>
+								onPaginationSizeChange(value as number)
+							}
 						>
 							<SelectTrigger size="sm" className="w-fit">
 								<SelectValue />
@@ -411,10 +428,7 @@ export function EntityTable<TData, TValue>({
 											<TableHead
 												key={header.id}
 												style={{
-													width:
-														header.id === "actions"
-															? header.getSize()
-															: undefined,
+													width: columnWidths[header.id],
 												}}
 											>
 												{header.isPlaceholder

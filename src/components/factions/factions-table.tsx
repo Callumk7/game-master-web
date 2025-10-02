@@ -113,6 +113,10 @@ export function FactionsTable({
 			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
+			columnRelativeWidths={{
+				name: 2,
+				actions: 0.5,
+			}}
 		/>
 	);
 }

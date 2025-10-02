@@ -146,6 +146,12 @@ export function CharacterTable({
 			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
+			columnRelativeWidths={{
+				name: 2,
+				class: 0.6,
+				actions: 0.5,
+				content_plain_text: 2,
+			}}
 		/>
 	);
 }

@@ -127,6 +127,11 @@ export function QuestsTable({
 			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
+			columnRelativeWidths={{
+				name: 2,
+				actions: 0.5,
+				content_plain_text: 2,
+			}}
 		/>
 	);
 }

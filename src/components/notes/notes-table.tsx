@@ -107,6 +107,11 @@ export function NotesTable({
 			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
+			columnRelativeWidths={{
+				name: 2,
+				actions: 0.5,
+				created_at: 0.5,
+			}}
 		/>
 	);
 }
