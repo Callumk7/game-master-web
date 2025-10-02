@@ -102,6 +102,14 @@ export const zEntityQuest = z.object({
     id: z.uuid(),
     name: z.string(),
     parent_id: z.optional(z.uuid()),
+    status: z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ]),
     tags: z.optional(z.array(z.string())),
     updated_at: z.optional(z.string())
 });
@@ -221,6 +229,14 @@ export const zQuestUpdateParams = z.object({
     name: z.optional(z.string()),
     parent_id: z.optional(z.uuid()),
     pinned: z.optional(z.boolean()),
+    status: z.optional(z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ])),
     tags: z.optional(z.array(z.string()))
 });
 
@@ -310,6 +326,14 @@ export const zQuestTreeNode = z.object({
     id: z.uuid(),
     name: z.string(),
     parent_id: z.optional(z.uuid()),
+    status: z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ]),
     tags: z.optional(z.array(z.string()))
 });
 
@@ -522,6 +546,14 @@ export const zQuest = z.object({
     name: z.string(),
     parent_id: z.optional(z.uuid()),
     pinned: z.boolean(),
+    status: z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ]),
     tags: z.optional(z.array(z.string())),
     updated_at: z.optional(z.string()),
     user_id: z.int()
@@ -680,6 +712,14 @@ export const zQuestCreateParams = z.object({
     content_plain_text: z.optional(z.string()),
     name: z.string(),
     parent_id: z.optional(z.uuid()),
+    status: z.optional(z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ])),
     tags: z.optional(z.array(z.string()))
 });
 

@@ -535,6 +535,7 @@
         "id": "623e4567-e89b-12d3-a456-426614174005",
         "name": "The Lost Treasure",
         "parent_id": "723e4567-e89b-12d3-a456-426614174006",
+        "status": "preparing",
         "tags": [
           "main",
           "treasure",
@@ -578,6 +579,18 @@
           "format": "uuid",
           "type": "string"
         },
+        "status": {
+          "description": "Quest status",
+          "enum": [
+            "preparing",
+            "ready",
+            "active",
+            "paused",
+            "completed",
+            "cancelled"
+          ],
+          "type": "string"
+        },
         "tags": {
           "description": "Tags associated with this quest",
           "items": {
@@ -588,6 +601,7 @@
       },
       "required": [
         "entity_type",
+        "status",
         "name",
         "id"
       ],
@@ -917,6 +931,7 @@
         "name": "The Lost Treasure",
         "parent_id": "723e4567-e89b-12d3-a456-426614174006",
         "pinned": false,
+        "status": "preparing",
         "tags": [
           "main",
           "treasure",
@@ -962,6 +977,18 @@
           "description": "Whether this quest is pinned",
           "type": "boolean"
         },
+        "status": {
+          "description": "Quest status",
+          "enum": [
+            "preparing",
+            "ready",
+            "active",
+            "paused",
+            "completed",
+            "cancelled"
+          ],
+          "type": "string"
+        },
         "tags": {
           "description": "Tags associated with this quest",
           "items": {
@@ -982,6 +1009,7 @@
       "required": [
         "user_id",
         "game_id",
+        "status",
         "pinned",
         "name",
         "id"
@@ -1135,6 +1163,18 @@
         "pinned": {
           "description": "Whether this quest is pinned",
           "type": "boolean"
+        },
+        "status": {
+          "description": "Quest status",
+          "enum": [
+            "preparing",
+            "ready",
+            "active",
+            "paused",
+            "completed",
+            "cancelled"
+          ],
+          "type": "string"
         },
         "tags": {
           "description": "Tags for this quest",
@@ -1671,6 +1711,7 @@
         "id": "623e4567-e89b-12d3-a456-426614174005",
         "name": "The Lost Treasure",
         "parent_id": "723e4567-e89b-12d3-a456-426614174006",
+        "status": "preparing",
         "tags": [
           "main",
           "treasure",
@@ -1706,6 +1747,18 @@
           "format": "uuid",
           "type": "string"
         },
+        "status": {
+          "description": "Quest status",
+          "enum": [
+            "preparing",
+            "ready",
+            "active",
+            "paused",
+            "completed",
+            "cancelled"
+          ],
+          "type": "string"
+        },
         "tags": {
           "description": "Tags associated with this quest",
           "items": {
@@ -1720,6 +1773,7 @@
         }
       },
       "required": [
+        "status",
         "name",
         "id"
       ],
@@ -3509,6 +3563,18 @@
         "parent_id": {
           "description": "Parent quest ID for hierarchical structure",
           "format": "uuid",
+          "type": "string"
+        },
+        "status": {
+          "description": "Quest status",
+          "enum": [
+            "preparing",
+            "ready",
+            "active",
+            "paused",
+            "completed",
+            "cancelled"
+          ],
           "type": "string"
         },
         "tags": {

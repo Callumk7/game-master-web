@@ -1,5 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { QuestUpdateParams } from "~/api";
 import {
@@ -21,7 +20,6 @@ interface EditQuestFormProps {
 export function EditQuestForm({ initialData, params }: EditQuestFormProps) {
 	const { gameId, id } = params;
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 
 	const FormComponent = createSmartForm({
 		mutation: () =>
@@ -46,13 +44,11 @@ export function EditQuestForm({ initialData, params }: EditQuestFormProps) {
 					},
 				}),
 			});
-			navigate({ to: ".." });
 		},
 		schema: schemas.quest,
 		entityName: "quest",
 		initialValues: {
 			...initialData,
-			image_url: initialData?.image_url || undefined,
 		},
 		fieldOverrides: {
 			content: null,

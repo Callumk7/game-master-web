@@ -365,6 +365,10 @@ export type QuestTreeNode = {
      */
     parent_id?: string;
     /**
+     * Quest status
+     */
+    status: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
+    /**
      * Tags associated with this quest
      */
     tags?: Array<string>;
@@ -585,6 +589,10 @@ export type Quest = {
      */
     pinned: boolean;
     /**
+     * Quest status
+     */
+    status: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
+    /**
      * Tags associated with this quest
      */
     tags?: Array<string>;
@@ -695,6 +703,10 @@ export type QuestUpdateParams = {
      * Whether this quest is pinned
      */
     pinned?: boolean;
+    /**
+     * Quest status
+     */
+    status?: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
     /**
      * Tags for this quest
      */
@@ -1068,6 +1080,10 @@ export type EntityQuest = {
      * Parent quest ID for hierarchical structure
      */
     parent_id?: string;
+    /**
+     * Quest status
+     */
+    status: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
     /**
      * Tags associated with this quest
      */
@@ -2277,6 +2293,10 @@ export type QuestCreateParams = {
      * Parent quest ID for hierarchical structure
      */
     parent_id?: string;
+    /**
+     * Quest status
+     */
+    status?: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
     /**
      * Tags for this quest
      */

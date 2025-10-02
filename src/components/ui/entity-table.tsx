@@ -36,6 +36,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import { Status } from "~/types";
 
 // ============================================================================
 // REUSABLE CELL COMPONENTS
@@ -109,6 +110,29 @@ export function TagsDisplay({ tags, maxVisible = 3 }: TagsDisplayProps) {
 				</Badge>
 			)}
 		</div>
+	);
+}
+
+interface StatusDisplayProps {
+	status: Status;
+}
+
+export function StatusDisplay({ status }: StatusDisplayProps) {
+	const variant =
+		status === "cancelled"
+			? "destructive"
+			: status === "completed"
+				? "success"
+				: status === "ready"
+					? "ready"
+					: status === "active"
+						? "warning"
+						: "outline";
+
+	return (
+		<Badge variant={variant} className="text-xs">
+			{status}
+		</Badge>
 	);
 }
 

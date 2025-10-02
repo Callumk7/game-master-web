@@ -10,6 +10,7 @@ import {
 	DateDisplay,
 	ContentDisplay,
 	ActionsDropdown,
+	StatusDisplay,
 } from "~/components/ui/entity-table";
 import { EditQuestDialog } from "./edit-quest-dialog";
 
@@ -67,6 +68,13 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 				<SortableHeader column={column}>Created</SortableHeader>
 			),
 			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+		},
+		{
+			accessorKey: "status",
+			header: ({ column }) => (
+				<SortableHeader column={column}>Status</SortableHeader>
+			),
+			cell: ({ row }) => <StatusDisplay status={row.getValue("status")} />,
 		},
 		{
 			id: "actions",
