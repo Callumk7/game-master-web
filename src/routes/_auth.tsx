@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { useLayoutEffect } from "react";
 import { Login } from "~/components/login";
-import { clearApiAuth, updateApiAuth } from "~/utils/api-client";
+import { updateApiAuth } from "~/utils/api-client";
 
 export const Route = createFileRoute("/_auth")({
 	beforeLoad: ({ context }) => {
@@ -22,14 +21,5 @@ export const Route = createFileRoute("/_auth")({
 });
 
 function AuthLayout() {
-	const { token } = Route.useRouteContext();
-	useLayoutEffect(() => {
-		if (token) {
-			updateApiAuth(token);
-		} else {
-			clearApiAuth();
-		}
-	}, [token]);
-
 	return <Outlet />;
 }
