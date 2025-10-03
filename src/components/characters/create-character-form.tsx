@@ -14,14 +14,12 @@ import { FactionSelect } from "./faction-select";
 interface CreateCharacterFormProps {
 	onSuccess?: () => void;
 	factionId?: string;
-	factionRole?: string;
 	container?: React.RefObject<HTMLElement | null>;
 }
 
 export function CreateCharacterForm({
 	onSuccess,
 	factionId,
-	factionRole,
 	container,
 }: CreateCharacterFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
@@ -30,7 +28,6 @@ export function CreateCharacterForm({
 
 	const initialValues = {
 		...(factionId && { member_of_faction_id: factionId }),
-		...(factionRole && { faction_role: factionRole }),
 	};
 
 	const { data: factionsData, isLoading: factionsLoading } = useQuery({
@@ -86,32 +83,34 @@ export function CreateCharacterForm({
 						{renderSmartField("class")}
 						{renderSmartField("level")}
 						{renderSmartField("tags")}
-						<form.AppField name="member_of_faction_id">
-							{(field) => (
-								<form.Item>
-									<field.Label>Faction</field.Label>
-									<field.Control>
-										{factionsLoading ? (
-											<div className="text-muted-foreground text-sm p-2">
-												Loading factions...
-											</div>
-										) : (
-											<FactionSelect
-												factions={factionsData?.data ?? []}
-												value={field.state.value}
-												onChange={field.handleChange}
-												placeholder="Select faction"
-												container={container}
-											/>
-										)}
-									</field.Control>
-									<field.Description>
-										Choose a faction to create a character within.
-									</field.Description>
-									<field.Message />
-								</form.Item>
-							)}
-						</form.AppField>
+						{!factionId && (
+							<form.AppField name="member_of_faction_id">
+								{(field) => (
+									<form.Item>
+										<field.Label>Faction</field.Label>
+										<field.Control>
+											{factionsLoading ? (
+												<div className="text-muted-foreground text-sm p-2">
+													Loading factions...
+												</div>
+											) : (
+												<FactionSelect
+													factions={factionsData?.data ?? []}
+													value={field.state.value}
+													onChange={field.handleChange}
+													placeholder="Select faction"
+													container={container}
+												/>
+											)}
+										</field.Control>
+										<field.Description>
+											Choose a faction to create a character within.
+										</field.Description>
+										<field.Message />
+									</form.Item>
+								)}
+							</form.AppField>
+						)}
 						{renderSmartField("faction_role")}
 						{renderSmartField("content")}
 

@@ -6,10 +6,12 @@ import {
 	useGetFactionMembersQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
+import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateFactionLink } from "~/components/factions/create-faction-link";
 import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { useFactionSuspenseQuery, useUpdateFactionMutation } from "~/queries/factions";
@@ -154,15 +156,24 @@ function MembersView({ factionId, gameId }: FactionMembersViewProps) {
 	const members = memberData?.data?.members || [];
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [tagFilter, setTagFilter] = React.useState("");
+	const [isOpen, setIsOpen] = React.useState(false);
 
 	return (
-		<CharacterTable
-			gameId={gameId}
-			data={members}
-			searchQuery={searchQuery}
-			onSearchChange={setSearchQuery}
-			tagFilter={tagFilter}
-			onTagFilterChange={setTagFilter}
-		/>
+		<div className="space-y-4">
+			<Button onClick={() => setIsOpen(true)}>Create Character</Button>
+			<CharacterTable
+				gameId={gameId}
+				data={members}
+				searchQuery={searchQuery}
+				onSearchChange={setSearchQuery}
+				tagFilter={tagFilter}
+				onTagFilterChange={setTagFilter}
+			/>
+			<CreateCharacterSheet
+				isOpen={isOpen}
+				setIsOpen={setIsOpen}
+				factionId={factionId}
+			/>
+		</div>
 	);
 }
