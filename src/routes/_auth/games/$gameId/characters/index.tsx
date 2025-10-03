@@ -1,16 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-	listCharactersOptions,
-	useListCharactersQuery,
-} from "~/api/@tanstack/react-query.gen";
+import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
 import { PageHeader } from "~/components/page-header";
+import { useListCharactersSuspenseQuery } from "~/queries/characters";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 	component: RouteComponent,
-	loader: ({ params, context }) => {
-		return context.queryClient.ensureQueryData(
+	loader: async ({ params, context }) => {
+		await context.queryClient.ensureQueryData(
 			listCharactersOptions({ path: { game_id: params.gameId } }),
 		);
 	},
@@ -18,16 +16,12 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListCharactersQuery({ path: { game_id: gameId } });
+	const { data } = useListCharactersSuspenseQuery(gameId);
 	const characters = data?.data || [];
 	const [searchQuery, setSearchQuery] = useState("");
 	const [tagFilter, setTagFilter] = useState("");
 	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
-
-	if (isLoading) {
-		return <div className="text-muted-foreground">Loading characters...</div>;
-	}
 
 	const handleCreate = () => {
 		navigate({ to: "/games/$gameId/characters/new", params: { gameId } });
