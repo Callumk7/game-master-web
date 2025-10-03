@@ -5,6 +5,7 @@ import {
 	getCharacterLinksQueryKey,
 	getCharacterOptions,
 	getCharacterQueryKey,
+	listCharactersOptions,
 	listCharactersQueryKey,
 	setCharacterPrimaryFactionMutation,
 	updateCharacterMutation,
@@ -16,6 +17,10 @@ import {
 
 export const useGetCharacterSuspenseQuery = (gameId: string, id: string) => {
 	return useSuspenseQuery(getCharacterOptions({ path: { game_id: gameId, id } }));
+};
+
+export const useListCharactersSuspenseQuery = (gameId: string) => {
+	return useSuspenseQuery(listCharactersOptions({ path: { game_id: gameId } }));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
