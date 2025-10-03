@@ -76,7 +76,7 @@ function RouteComponent() {
 					<GameSidebar />
 					{/* Main Content */}
 					<div className="flex-1 flex flex-col">
-						<main className="flex-1 overflow-auto">
+						<main className="flex-1 overflow-y-scoll">
 							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20">
 								<SidebarTrigger />
 								<Commander gameId={gameId} />
