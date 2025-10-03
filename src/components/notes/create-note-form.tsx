@@ -7,8 +7,8 @@ import {
 	listNotesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
+import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import type { EntityType } from "~/types";
-import { useSmartForm, schemas } from "~/lib/smart-form-factory";
 
 interface CreateNoteFormProps {
 	/** Optional parent entity ID */
@@ -62,7 +62,6 @@ export function CreateNoteForm({
 
 			if (customOnSuccess) {
 				customOnSuccess();
-			} else {
 			}
 		},
 	});

@@ -18,6 +18,8 @@ export function createSchemaFor() {
 			tags: z.array(z.string()).optional(),
 			content: z.string().optional(),
 			alive: z.boolean().optional(),
+			member_of_faction_id: z.string().optional(),
+			faction_role: z.string().optional(),
 		}),
 
 		faction: z.object({
@@ -70,3 +72,4 @@ export function createSchemaFor() {
 }
 
 export const schemas = createSchemaFor();
+
