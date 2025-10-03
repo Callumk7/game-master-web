@@ -30,11 +30,6 @@ import {
 	useSidebar,
 } from "~/components/ui/sidebar";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
-import { useGetLocationTreeSuspenseQuery } from "~/queries/locations";
-import {
-	useGetQuestTreeSuspenseQuery,
-	useListPinnedEntitiesSuspenseQuery,
-} from "~/queries/quests";
 import { SidebarTree } from "./tree";
 import { NavUser } from "./user-sidebar";
 import { useUIActions } from "~/state/ui";
@@ -44,6 +39,11 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import {
+	useGetLocationTreeQuery,
+	useGetQuestTreeQuery,
+	useListPinnedEntitiesQuery,
+} from "~/api/@tanstack/react-query.gen";
 
 export function GameSidebar() {
 	const { theme, setTheme } = useTheme();
@@ -60,9 +60,11 @@ export function GameSidebar() {
 	const notes = resolveEntityArray(links?.data?.entities?.notes);
 	const quests = resolveEntityArray(links?.data?.entities?.quests);
 
-	const { data: locationTree } = useGetLocationTreeSuspenseQuery(gameId);
-	const { data: questTree } = useGetQuestTreeSuspenseQuery(gameId);
-	const { data: pinnedEntities } = useListPinnedEntitiesSuspenseQuery(gameId);
+	const { data: locationTree } = useGetLocationTreeQuery({ path: { game_id: gameId } });
+	const { data: questTree } = useGetQuestTreeQuery({ path: { game_id: gameId } });
+	const { data: pinnedEntities } = useListPinnedEntitiesQuery({
+		path: { game_id: gameId },
+	});
 
 	React.useEffect(() => {
 		setMounted(true);
@@ -256,7 +258,7 @@ export function GameSidebar() {
 						<SidebarGroupLabel>Pinned Entities</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								{pinnedEntities.data?.pinned_entities.notes?.map(
+								{pinnedEntities?.data?.pinned_entities.notes?.map(
 									(item) => (
 										<SidebarMenuLink
 											to={"/games/$gameId/notes/$id"}
@@ -267,7 +269,7 @@ export function GameSidebar() {
 										</SidebarMenuLink>
 									),
 								)}
-								{pinnedEntities.data?.pinned_entities.characters?.map(
+								{pinnedEntities?.data?.pinned_entities.characters?.map(
 									(item) => (
 										<SidebarMenuLink
 											to={"/games/$gameId/characters/$id"}
