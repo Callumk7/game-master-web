@@ -180,6 +180,7 @@ export function createSchemaFor() {
 			image_url: z.union([z.url(), z.literal("")]).optional(),
 			tags: z.array(z.string()).optional(),
 			content: z.string().optional(),
+			alive: z.boolean().optional(),
 		}),
 
 		faction: z.object({

@@ -39,19 +39,19 @@ export function NavUser({
 					<SidebarMenuButton
 						size="lg"
 						className="data-[popup-open]:bg-sidebar-accent data-[popup-open]:text-sidebar-accent-foreground"
-					>
-						<Avatar className="h-8 w-8 rounded-lg">
-							<AvatarImage src={user.avatar} alt={user.name} />
-							<AvatarFallback className="rounded-lg">CN</AvatarFallback>
-						</Avatar>
-						<div className="grid flex-1 text-left text-sm leading-tight">
-							<span className="truncate font-medium">{user.name}</span>
-							<span className="truncate text-xs">{user.email}</span>
-						</div>
-						<ChevronsUpDown className="ml-auto size-4" />
-					</SidebarMenuButton>
+					/>
 				}
-			/>
+			>
+				<Avatar className="h-8 w-8 rounded-lg">
+					<AvatarImage src={user.avatar} alt={user.name} />
+					<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+				</Avatar>
+				<div className="grid flex-1 text-left text-sm leading-tight">
+					<span className="truncate font-medium">{user.name}</span>
+					<span className="truncate text-xs">{user.email}</span>
+				</div>
+				<ChevronsUpDown className="ml-auto size-4" />
+			</DropdownMenuTrigger>
 			<DropdownMenuPositioner
 				side={isMobile ? "bottom" : "right"}
 				align="end"

@@ -21,29 +21,43 @@ interface SelectFactionComboboxProps {
 	gameId: string;
 	characterId: string;
 	factions: Faction[];
+	currentFactionId?: string;
 }
 export function SelectFactionCombobox({
 	gameId,
 	characterId,
 	factions,
+	currentFactionId,
 }: SelectFactionComboboxProps) {
 	const id = React.useId();
 	const [selectedFaction, setSelectedFaction] = React.useState<Faction | null>(null);
 	const [role, setRole] = React.useState<string>("");
 
+	// Set initial faction if one is currently assigned
+	React.useEffect(() => {
+		if (currentFactionId && factions.length > 0) {
+			const currentFaction = factions.find(f => f.id === currentFactionId);
+			if (currentFaction) {
+				setSelectedFaction(currentFaction);
+			}
+		}
+	}, [currentFactionId, factions]);
+
 	const selectFaction = useSetCharacterPrimaryFactionMutation(gameId, characterId);
 
 	const handleSave = () => {
-		if (selectedFaction) {
-			selectFaction.mutateAsync({
-				body: {
-					faction_id: selectedFaction?.id,
-					role,
-				},
-				path: { game_id: gameId, character_id: characterId },
-			});
-		}
+		selectFaction.mutateAsync({
+			body: {
+				faction_id: selectedFaction?.id || null,
+				role,
+			},
+			path: { game_id: gameId, character_id: characterId },
+		});
 	};
+
+	const hasChanges = currentFactionId ? 
+		selectedFaction?.id !== currentFactionId : 
+		selectedFaction !== null;
 
 	return (
 		<div className="max-w-3xs w-full">
@@ -54,7 +68,10 @@ export function SelectFactionCombobox({
 				onValueChange={(faction) => setSelectedFaction(faction)}
 			>
 				<div className="relative flex flex-col gap-2">
-					<ComboboxInput placeholder="Select a primary faction" id={id} />
+					<ComboboxInput 
+						placeholder={currentFactionId ? "Change faction" : "Select a faction"} 
+						id={id} 
+					/>
 					<div className="absolute right-2 bottom-0 flex h-9 items-center justify-center text-muted-foreground">
 						<ComboboxClear />
 						<ComboboxTrigger
@@ -87,13 +104,20 @@ export function SelectFactionCombobox({
 				value={role}
 				onInput={(e) => setRole(e.currentTarget.value)}
 			/>
-			<Button
-				variant={"secondary"}
-				onClick={handleSave}
-				disabled={!selectedFaction}
-			>
-				Save
-			</Button>
+			{hasChanges && (
+				<Button
+					variant="secondary"
+					onClick={handleSave}
+					disabled={selectFaction.isPending}
+				>
+					{selectFaction.isPending 
+						? "Saving..." 
+						: selectedFaction 
+							? "Assign Faction" 
+							: "Remove Faction"
+					}
+				</Button>
+			)}
 		</div>
 	);
 }

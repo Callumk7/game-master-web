@@ -27,6 +27,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuLink,
+	useSidebar,
 } from "~/components/ui/sidebar";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
 import { useGetLocationTreeSuspenseQuery } from "~/queries/locations";
@@ -37,6 +38,12 @@ import {
 import { SidebarTree } from "./tree";
 import { NavUser } from "./user-sidebar";
 import { useUIActions } from "~/state/ui";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuPositioner,
+	DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export function GameSidebar() {
 	const { theme, setTheme } = useTheme();
@@ -52,14 +59,6 @@ export function GameSidebar() {
 	const locations = resolveEntityArray(links?.data?.entities?.locations);
 	const notes = resolveEntityArray(links?.data?.entities?.notes);
 	const quests = resolveEntityArray(links?.data?.entities?.quests);
-
-	const {
-		setIsCreateCharacterOpen,
-		setIsCreateFactionOpen,
-		setIsCreateLocationOpen,
-		setIsCreateNoteOpen,
-		setIsCreateQuestOpen,
-	} = useUIActions();
 
 	const { data: locationTree } = useGetLocationTreeSuspenseQuery(gameId);
 	const { data: questTree } = useGetQuestTreeSuspenseQuery(gameId);
@@ -102,6 +101,11 @@ export function GameSidebar() {
 				</div>
 			</SidebarHeader>
 			<SidebarContent className="p-4 flex flex-col">
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<SidebarCreateNewMenu />
+					</SidebarMenuItem>
+				</SidebarMenu>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuLink to="/games/$gameId" params={params}>
@@ -277,54 +281,6 @@ export function GameSidebar() {
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
-
-					<div className="mt-4 space-y-2">
-						<Button
-							onClick={() => setIsCreateNoteOpen(true)}
-							size="sm"
-							variant="outline"
-							className="w-full justify-start"
-						>
-							<Plus className="w-4 h-4 mr-2" />
-							New Note
-						</Button>
-						<Button
-							onClick={() => setIsCreateCharacterOpen(true)}
-							size="sm"
-							variant="outline"
-							className="w-full justify-start"
-						>
-							<Plus className="w-4 h-4 mr-2" />
-							New Character
-						</Button>
-						<Button
-							onClick={() => setIsCreateFactionOpen(true)}
-							size="sm"
-							variant="outline"
-							className="w-full justify-start"
-						>
-							<Plus className="w-4 h-4 mr-2" />
-							New Faction
-						</Button>
-						<Button
-							onClick={() => setIsCreateLocationOpen(true)}
-							size="sm"
-							variant="outline"
-							className="w-full justify-start"
-						>
-							<Plus className="w-4 h-4 mr-2" />
-							New Location
-						</Button>
-						<Button
-							onClick={() => setIsCreateQuestOpen(true)}
-							size="sm"
-							variant="outline"
-							className="w-full justify-start"
-						>
-							<Plus className="w-4 h-4 mr-2" />
-							New Quest
-						</Button>
-					</div>
 				</div>
 				<div className="flex-1" />
 				<SidebarMenu>
@@ -340,6 +296,73 @@ export function GameSidebar() {
 				</SidebarMenu>
 			</SidebarContent>
 		</Sidebar>
+	);
+}
+
+function SidebarCreateNewMenu() {
+	const { isMobile } = useSidebar();
+	const {
+		setIsCreateCharacterOpen,
+		setIsCreateFactionOpen,
+		setIsCreateLocationOpen,
+		setIsCreateNoteOpen,
+		setIsCreateQuestOpen,
+	} = useUIActions();
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger
+				render={
+					<SidebarMenuButton className="data-[popup-open]:bg-sidebar-accent data-[popup-open]:text-sidebar-accent-foreground" />
+				}
+			>
+				<Plus className="w-4 h-4" />
+				Create New
+			</DropdownMenuTrigger>
+			<DropdownMenuPositioner
+				side={isMobile ? "bottom" : "right"}
+				align="end"
+				sideOffset={24}
+				className="z-20"
+			>
+				<DropdownMenuContent className="w-56">
+					<SidebarMenuButton
+						onClick={() => setIsCreateNoteOpen(true)}
+						className="w-full justify-start"
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Note
+					</SidebarMenuButton>
+					<SidebarMenuButton
+						onClick={() => setIsCreateCharacterOpen(true)}
+						className="w-full justify-start"
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Character
+					</SidebarMenuButton>
+					<SidebarMenuButton
+						onClick={() => setIsCreateFactionOpen(true)}
+						className="w-full justify-start"
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Faction
+					</SidebarMenuButton>
+					<SidebarMenuButton
+						onClick={() => setIsCreateLocationOpen(true)}
+						className="w-full justify-start"
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Location
+					</SidebarMenuButton>
+					<SidebarMenuButton
+						onClick={() => setIsCreateQuestOpen(true)}
+						className="w-full justify-start"
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Quest
+					</SidebarMenuButton>
+				</DropdownMenuContent>
+			</DropdownMenuPositioner>
+		</DropdownMenu>
 	);
 }
 

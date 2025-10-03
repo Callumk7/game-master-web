@@ -1,16 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { useMemo } from "react";
 import type { Character } from "~/api";
 import {
-	getFactionOptions,
 	listPinnedEntitiesQueryKey,
 	useGetCharacterLinksQuery,
-	useListFactionsQuery,
 } from "~/api/@tanstack/react-query.gen";
+import { CharacterFactionView } from "~/components/characters/character-faction-view";
 import { CharacterNotesView } from "~/components/characters/character-note-view";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
-import { SelectFactionCombobox } from "~/components/characters/select-faction-combobox";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
@@ -162,84 +158,26 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		{
 			id: "faction",
 			label: "Faction",
-			content: <CharacterFactionView gameId={gameId} characterId={character.id} />,
+			content: (
+				<CharacterFactionView
+					gameId={gameId}
+					characterId={character.id}
+					primaryFactionId={character.member_of_faction_id}
+				/>
+			),
 		},
 	];
 
 	const navigate = Route.useNavigate();
 
 	return (
-		<>
-			<div>{character.member_of_faction_id || "no faction"}</div>
-			<EntityView
-				name={character.name}
-				badges={badges}
-				tabs={tabs}
-				pinned={character.pinned}
-				onEdit={() => navigate({ to: "edit" })}
-				onTogglePin={handleTogglePin}
-			/>
-		</>
-	);
-}
-
-interface CharacterFactionViewProps {
-	gameId: string;
-	characterId: string;
-	primaryFactionId?: string;
-}
-function CharacterFactionView({
-	gameId,
-	characterId,
-	primaryFactionId,
-}: CharacterFactionViewProps) {
-	// Fetch the primary faction if it exists
-	const { data: factionData, isEnabled } = useQuery({
-		...getFactionOptions({ path: { game_id: gameId, id: primaryFactionId! } }),
-		enabled: !!primaryFactionId,
-	});
-
-	const faction = factionData?.data;
-
-	// Fetch faction list for switcher
-	const { data: factionList, isLoading: isFactionListLoading } = useListFactionsQuery({
-		path: { game_id: gameId },
-	});
-
-	const factions = useMemo(() => factionList?.data ?? [], [factionList?.data]);
-
-	if (!isEnabled) {
-		return (
-			<div>
-				<h2>Faction View</h2>
-				{isFactionListLoading ? (
-					<div>Loading factions...</div>
-				) : (
-					<SelectFactionCombobox
-						gameId={gameId}
-						characterId={characterId}
-						factions={factions}
-					/>
-				)}
-			</div>
-		);
-	}
-
-	return (
-		<div>
-			<h2>Faction View</h2>
-			{faction && (
-				<div className="flex flex-col gap-2">
-					<div className="flex items-center gap-2">
-						<div className="text-muted-foreground">Primary Faction</div>
-						<div className="text-muted-foreground">{faction.name}</div>
-					</div>
-					<div className="flex items-center gap-2">
-						<div className="text-muted-foreground">Secondary Faction</div>
-						<div className="text-muted-foreground">{faction.name}</div>
-					</div>
-				</div>
-			)}
-		</div>
+		<EntityView
+			name={character.name}
+			badges={badges}
+			tabs={tabs}
+			pinned={character.pinned}
+			onEdit={() => navigate({ to: "edit" })}
+			onTogglePin={handleTogglePin}
+		/>
 	);
 }

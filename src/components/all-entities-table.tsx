@@ -1,4 +1,4 @@
-import { type ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
@@ -13,12 +13,12 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
-	EntityTable,
+	ContentDisplay,
+	DateDisplay,
 	EntityLink,
+	EntityTable,
 	SortableHeader,
 	TagsDisplay,
-	DateDisplay,
-	ContentDisplay,
 } from "~/components/ui/entity-table";
 import type { EntityType } from "~/types";
 
@@ -94,7 +94,7 @@ export function AllEntitiesTable({
 		},
 		{
 			accessorKey: "content_plain_text",
-			header: "Description",
+			header: "Content",
 			cell: ({ row }) => (
 				<ContentDisplay
 					content={row.getValue("content_plain_text")}
@@ -176,6 +176,10 @@ export function AllEntitiesTable({
 				onPaginationSizeChange={onPaginationSizeChange}
 				enableColumnVisibility={true}
 				enablePaginationSizeSelector={true}
+				defaultHidden={["content_plain_text"]}
+				columnRelativeWidths={{
+					name: 2,
+				}}
 			/>
 		</div>
 	);

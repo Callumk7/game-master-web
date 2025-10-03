@@ -78,6 +78,14 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
+			accessorKey: "alive",
+			header: "Alive",
+			cell: ({ row }) => (
+				<div className="text-center">{row.getValue("alive") ? "Yes" : "No"}</div>
+			),
+			maxSize: 50,
+		},
+		{
 			accessorKey: "created_at",
 			header: ({ column }) => (
 				<SortableHeader column={column}>Created</SortableHeader>
@@ -152,6 +160,7 @@ export function CharacterTable({
 				actions: 0.5,
 				content_plain_text: 2,
 			}}
+			defaultHidden={["content_plain_text"]}
 		/>
 	);
 }

@@ -267,6 +267,7 @@ interface EntityTableProps<TData, TValue> {
 	enableColumnVisibility?: boolean;
 	enablePaginationSizeSelector?: boolean;
 	columnRelativeWidths?: Record<string, number>; // e.g., { "name": 2, "status": 1, "actions": 0.5 }
+	defaultHidden?: string[];
 }
 
 export function EntityTable<TData, TValue>({
@@ -284,10 +285,18 @@ export function EntityTable<TData, TValue>({
 	enableColumnVisibility = true,
 	enablePaginationSizeSelector = true,
 	columnRelativeWidths,
+	defaultHidden,
 }: EntityTableProps<TData, TValue>) {
-	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [sorting, setSorting] = React.useState<SortingState>([
+		{ id: "updated_at", desc: true },
+	]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+		...defaultHidden?.reduce<Record<string, boolean>>((acc, key) => {
+			acc[key] = false;
+			return acc;
+		}, {}),
+	});
 
 	// Calculate percentage widths from relative widths
 	const columnWidths = React.useMemo(() => {
