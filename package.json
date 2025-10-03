@@ -13,7 +13,8 @@
 		"check": "biome check",
 		"typecheck": "tsc --noEmit",
 		"codegen": "openapi-ts",
-		"deploy": "wrangler deploy"
+		"deploy:raw": "wrangler deploy",
+		"deploy": "pnpm build && pnpm deploy:raw"
 	},
 	"dependencies": {
 		"@base-ui-components/react": "1.0.0-beta.3",

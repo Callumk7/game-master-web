@@ -1,7 +1,10 @@
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
 import type { Faction } from "~/api";
-import { useSetCharacterPrimaryFactionMutation } from "~/queries/characters";
+import {
+	useRemoveCharacterFromFactionMutation,
+	useSetCharacterPrimaryFactionMutation,
+} from "~/queries/characters";
 import { Button } from "../ui/button";
 import {
 	Combobox,
@@ -36,7 +39,7 @@ export function SelectFactionCombobox({
 	// Set initial faction if one is currently assigned
 	React.useEffect(() => {
 		if (currentFactionId && factions.length > 0) {
-			const currentFaction = factions.find(f => f.id === currentFactionId);
+			const currentFaction = factions.find((f) => f.id === currentFactionId);
 			if (currentFaction) {
 				setSelectedFaction(currentFaction);
 			}
@@ -44,20 +47,27 @@ export function SelectFactionCombobox({
 	}, [currentFactionId, factions]);
 
 	const selectFaction = useSetCharacterPrimaryFactionMutation(gameId, characterId);
+	const removeFaction = useRemoveCharacterFromFactionMutation(gameId, characterId);
 
 	const handleSave = () => {
-		selectFaction.mutateAsync({
-			body: {
-				faction_id: selectedFaction?.id || null,
-				role,
-			},
-			path: { game_id: gameId, character_id: characterId },
-		});
+		if (selectedFaction) {
+			selectFaction.mutateAsync({
+				body: {
+					faction_id: selectedFaction.id,
+					role,
+				},
+				path: { game_id: gameId, character_id: characterId },
+			});
+		} else {
+			removeFaction.mutateAsync({
+				path: { game_id: gameId, character_id: characterId },
+			});
+		}
 	};
 
-	const hasChanges = currentFactionId ? 
-		selectedFaction?.id !== currentFactionId : 
-		selectedFaction !== null;
+	const hasChanges = currentFactionId
+		? selectedFaction?.id !== currentFactionId
+		: selectedFaction !== null;
 
 	return (
 		<div className="max-w-3xs w-full">
@@ -68,9 +78,11 @@ export function SelectFactionCombobox({
 				onValueChange={(faction) => setSelectedFaction(faction)}
 			>
 				<div className="relative flex flex-col gap-2">
-					<ComboboxInput 
-						placeholder={currentFactionId ? "Change faction" : "Select a faction"} 
-						id={id} 
+					<ComboboxInput
+						placeholder={
+							currentFactionId ? "Change faction" : "Select a faction"
+						}
+						id={id}
 					/>
 					<div className="absolute right-2 bottom-0 flex h-9 items-center justify-center text-muted-foreground">
 						<ComboboxClear />
@@ -110,12 +122,11 @@ export function SelectFactionCombobox({
 					onClick={handleSave}
 					disabled={selectFaction.isPending}
 				>
-					{selectFaction.isPending 
-						? "Saving..." 
-						: selectedFaction 
-							? "Assign Faction" 
-							: "Remove Faction"
-					}
+					{selectFaction.isPending
+						? "Saving..."
+						: selectedFaction
+							? "Assign Faction"
+							: "Remove Faction"}
 				</Button>
 			)}
 		</div>

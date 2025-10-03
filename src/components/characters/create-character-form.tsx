@@ -6,8 +6,7 @@ import {
 	listCharactersQueryKey,
 	listGameEntitiesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
-import { createSmartForm } from "~/components/forms/smart-factory";
-import { schemas } from "~/components/forms/type-utils";
+import { createSmartForm, schemas } from "~/lib/smart-form-factory";
 
 interface CreateCharacterFormProps {
 	onSuccess?: () => void;

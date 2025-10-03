@@ -9,8 +9,7 @@ import {
 	useListQuestsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
-import { useSmartForm } from "../forms/smart-factory";
-import { schemas } from "../forms/type-utils";
+import { useSmartForm, schemas } from "~/lib/smart-form-factory";
 import { ParentQuestSelect } from "./parent-quest-select";
 
 interface CreateQuestFormProps {

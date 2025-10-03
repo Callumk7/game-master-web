@@ -1,58 +1,16 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: factory component */
-
-import type { UseMutationOptions } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle, XCircle } from "lucide-react";
-
 import { z } from "zod";
 import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
-import { type ApiError, type FieldConfig, FormFieldControl } from "./factory-v2";
-import { extractDefaultValues, generateFieldsFromSchema } from "./type-utils";
+import type { ApiError, FieldConfig, HookFormOptions, SmartFormOptions } from "../types";
+import { FormFieldControl } from "./field-control";
+import { extractDefaultValues, generateFieldsFromSchema } from "../utils/schema-utils";
+import { processFormValuesForSubmission, processInitialValues } from "../utils/form-utils";
 
 const { useAppForm } = createFormHook();
-
-// ===================================
-// SMART FACTORY TYPES
-// ===================================
-
-export interface SmartFormOptions<TData, TError, TMutationData extends TDataShape> {
-	/** Generated mutation function from OpenAPI */
-	mutation: (
-		options?: Partial<Options<TMutationData>>,
-	) => UseMutationOptions<TData, TError, Options<TMutationData>>;
-	/** Zod schema for validation */
-	schema: z.ZodObject<z.ZodRawShape>;
-	/** Entity name for API request body wrapping */
-	entityName: string;
-	/** Success callback */
-	onSuccess?: (data: TData) => void;
-	/** Field configuration overrides (use null to exclude a field) */
-	fieldOverrides?: Partial<Record<string, Partial<FieldConfig> | null>>;
-	/** CSS class for form container */
-	className?: string;
-	/** Custom submit button text */
-	submitText?: string;
-	/** Initial values for form fields (for edit forms) */
-	initialValues?: Record<string, any>;
-}
-
-export interface HookFormOptions<TData, TError, TMutationData extends TDataShape> {
-	/** Generated mutation function from OpenAPI */
-	mutation: (
-		options?: Partial<Options<TMutationData>>,
-	) => UseMutationOptions<TData, TError, Options<TMutationData>>;
-	/** Zod schema for validation */
-	schema: z.ZodObject<z.ZodRawShape>;
-	/** Entity name for API request body wrapping */
-	entityName: string;
-	/** Success callback */
-	onSuccess?: (data: TData) => void;
-	/** Initial values for form fields (for edit forms) */
-	initialValues?: Record<string, any>;
-}
 
 // ===================================
 // SMART FORM FACTORY
@@ -459,89 +417,3 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		},
 	};
 }
-
-const processInitialValues = (
-	initialValues: Record<string, any>,
-	fields: FieldConfig[],
-) => {
-	if (!initialValues) return initialValues;
-
-	const processed = { ...initialValues };
-
-	fields.forEach((field) => {
-		if (field.type === "editor" && typeof processed[field.name] === "string") {
-			const stringValue = processed[field.name] as string;
-
-			// Try to parse as JSON first
-			try {
-				const parsed = JSON.parse(stringValue);
-				// Verify it's a valid TipTap document structure
-				if (parsed && typeof parsed === "object" && parsed.type) {
-					processed[field.name] = parsed;
-					return;
-				}
-			} catch {
-				// Not JSON, continue to plain text handling
-			}
-
-			// Handle as plain text - convert to TipTap document structure
-			if (stringValue.trim()) {
-				processed[field.name] = {
-					type: "doc",
-					content: [
-						{
-							type: "paragraph",
-							content: [
-								{
-									type: "text",
-									text: stringValue,
-								},
-							],
-						},
-					],
-				};
-			} else {
-				// Empty string becomes null
-				processed[field.name] = null;
-			}
-		}
-	});
-
-	return processed;
-};
-
-const processFormValuesForSubmission = (
-	value: Record<string, any>,
-	fields: FieldConfig[],
-) => {
-	const processed = { ...value };
-
-	fields.forEach((field) => {
-		const fieldValue = processed[field.name];
-
-		// Handle new editor format with both JSON and text
-		if (
-			field.type === "editor" &&
-			typeof fieldValue === "object" &&
-			fieldValue !== null &&
-			"json" in fieldValue &&
-			"text" in fieldValue
-		) {
-			// Set the main field to the JSON string
-			processed[field.name] = JSON.stringify(fieldValue.json);
-			// Set the plain text field
-			processed[`${field.name}_plain_text`] = fieldValue.text;
-		} else if (
-			field.type === "editor" &&
-			typeof fieldValue === "object" &&
-			fieldValue !== null
-		) {
-			// Backward compatibility: if it's just a TipTap object
-			processed[field.name] = JSON.stringify(fieldValue);
-		}
-		// If it's already a string, leave it as is
-		// If it's null/undefined, leave it as is
-	});
-
-	return processed;
-};

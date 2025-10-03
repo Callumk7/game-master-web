@@ -6,8 +6,7 @@ import {
 	listQuestsQueryKey,
 	updateQuestMutation,
 } from "~/api/@tanstack/react-query.gen";
-import { createSmartForm } from "../forms/smart-factory";
-import { schemas } from "../forms/type-utils";
+import { createSmartForm, schemas } from "~/lib/smart-form-factory";
 
 interface EditQuestFormProps {
 	params: {
