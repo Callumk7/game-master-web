@@ -6,7 +6,7 @@ import {
 	getFactionOptions,
 	useListFactionsQuery,
 } from "~/api/@tanstack/react-query.gen";
-import { SelectFactionCombobox } from "~/components/characters/select-faction-combobox";
+import { SelectFactionCombobox } from "~/components/characters/select-faction-popover";
 import { Badge } from "~/components/ui/badge";
 import {
 	Card,
@@ -56,6 +56,20 @@ export function CharacterFactionView({
 	if (!primaryFactionId) {
 		return (
 			<div className="space-y-4">
+				<div className="max-w-md">
+					{isFactionListLoading ? (
+						<div className="text-sm text-muted-foreground">
+							Loading factions...
+						</div>
+					) : (
+						<SelectFactionCombobox
+							gameId={gameId}
+							characterId={characterId}
+							factions={factions}
+							currentFactionId={primaryFactionId}
+						/>
+					)}
+				</div>
 				<div className="text-center py-8">
 					<Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
 					<h3 className="text-lg font-medium mb-2">No Faction Assigned</h3>
@@ -96,6 +110,20 @@ export function CharacterFactionView({
 
 	return (
 		<div className="space-y-6">
+			<div className="max-w-md">
+				{isFactionListLoading ? (
+					<div className="text-sm text-muted-foreground">
+						Loading factions...
+					</div>
+				) : (
+					<SelectFactionCombobox
+						gameId={gameId}
+						characterId={characterId}
+						factions={factions}
+						currentFactionId={primaryFactionId}
+					/>
+				)}
+			</div>
 			{faction && (
 				<Card>
 					<CardHeader>
@@ -199,22 +227,6 @@ export function CharacterFactionView({
 					</CardContent>
 				</Card>
 			)}
-
-			<div className="max-w-md">
-				<h4 className="text-sm font-medium mb-2">Change Faction</h4>
-				{isFactionListLoading ? (
-					<div className="text-sm text-muted-foreground">
-						Loading factions...
-					</div>
-				) : (
-					<SelectFactionCombobox
-						gameId={gameId}
-						characterId={characterId}
-						factions={factions}
-						currentFactionId={primaryFactionId}
-					/>
-				)}
-			</div>
 		</div>
 	);
 }
