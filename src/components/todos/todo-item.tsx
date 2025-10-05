@@ -22,10 +22,10 @@ export function TodoItem({ todo }: TodoItemProps) {
 
 	return (
 		<div className="relative group">
-			<div 
+			<button
+				type="button"
 				className="flex items-center gap-3 p-2 rounded-md hover:bg-accent/50 cursor-pointer w-full pr-10"
 				onClick={handleToggle}
-				role="button"
 				tabIndex={0}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" || e.key === " ") {
@@ -42,12 +42,12 @@ export function TodoItem({ todo }: TodoItemProps) {
 				<span
 					className={cn(
 						"flex-1 text-sm transition-all select-none",
-						todo.completed && "line-through text-muted-foreground"
+						todo.completed && "line-through text-muted-foreground",
 					)}
 				>
 					{todo.text}
 				</span>
-			</div>
+			</button>
 			<Button
 				variant="ghost"
 				size="icon"
@@ -59,3 +59,4 @@ export function TodoItem({ todo }: TodoItemProps) {
 		</div>
 	);
 }
+

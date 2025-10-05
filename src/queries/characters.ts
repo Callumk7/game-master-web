@@ -2,7 +2,6 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
-	getCharacterLinksQueryKey,
 	getCharacterOptions,
 	getCharacterQueryKey,
 	listCharactersOptions,

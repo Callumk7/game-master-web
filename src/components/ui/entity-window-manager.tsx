@@ -1,5 +1,4 @@
 import { useParams } from "@tanstack/react-router";
-import * as React from "react";
 import DraggableWindow from "~/components/draggable";
 import { Badge } from "~/components/ui/badge";
 import { TiptapViewer } from "~/components/ui/editor/viewer";
@@ -8,7 +7,7 @@ import { useEntityWindows, useUIActions } from "~/state/ui";
 export function EntityWindowManager() {
 	const params = useParams({ from: "/_auth/games/$gameId" });
 	const entityWindows = useEntityWindows();
-	const { closeEntityWindow, updateWindowPosition, updateWindowSize, bringWindowToFront } = useUIActions();
+	const { closeEntityWindow, bringWindowToFront } = useUIActions();
 
 	const openWindows = entityWindows.filter((window) => window.isOpen);
 
@@ -62,3 +61,4 @@ export function EntityWindowManager() {
 		</>
 	);
 }
+
