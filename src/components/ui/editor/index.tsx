@@ -125,6 +125,9 @@ export function Tiptap({
 		return items;
 	}, [entitiesData, gameId]);
 
+	// Force re-render when selection changes to update button states
+	const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -166,6 +169,10 @@ export function Tiptap({
 					text: editor.getText(),
 				});
 			});
+		},
+		onSelectionUpdate: () => {
+			// Force re-render when selection changes to update button states
+			forceUpdate();
 		},
 		editorProps: {
 			attributes: {
