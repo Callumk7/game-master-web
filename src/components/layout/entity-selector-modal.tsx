@@ -11,7 +11,12 @@ import {
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useEntitySelector } from "~/hooks/use-entity-selector";
-import type { Entity, EntityPath, EntityType } from "~/types/split-view";
+import type { Character, Entity, EntityPath, EntityType } from "~/types/split-view";
+
+// Type guards for entity types
+function isCharacter(entity: Entity): entity is Character {
+	return "class" in entity || "level" in entity;
+}
 
 interface EntitySelectorModalProps {
 	isOpen: boolean;
@@ -208,8 +213,6 @@ function EntityItem({ entity, entityType, onSelect }: EntityItemProps) {
 		onSelect(entityType, entity.id);
 	};
 
-	const typedEntity = entity as any; // For accessing type-specific properties
-
 	return (
 		<div className="border-b border-border/40 last:border-b-0">
 			<Button
@@ -224,14 +227,14 @@ function EntityItem({ entity, entityType, onSelect }: EntityItemProps) {
 							{entity.name}
 						</span>
 						<div className="flex items-center gap-2 flex-shrink-0">
-							{typedEntity.class && (
+							{isCharacter(entity) && entity.class && (
 								<Badge variant="outline" className="text-xs">
-									{typedEntity.class}
+									{entity.class}
 								</Badge>
 							)}
-							{typedEntity.level && (
+							{isCharacter(entity) && entity.level && (
 								<Badge variant="outline" className="text-xs">
-									Level {typedEntity.level}
+									Level {entity.level}
 								</Badge>
 							)}
 						</div>
