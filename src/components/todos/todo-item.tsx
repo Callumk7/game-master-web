@@ -24,7 +24,7 @@ export function TodoItem({ todo }: TodoItemProps) {
 		<div className="relative group">
 			<button
 				type="button"
-				className="flex items-center gap-3 p-2 rounded-md hover:bg-accent/50 cursor-pointer w-full pr-10"
+				className="flex items-center gap-3 p-2 text-left rounded-md hover:bg-accent/50 cursor-pointer w-full pr-10"
 				onClick={handleToggle}
 				tabIndex={0}
 				onKeyDown={(e) => {
@@ -59,4 +59,3 @@ export function TodoItem({ todo }: TodoItemProps) {
 		</div>
 	);
 }
-
