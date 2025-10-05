@@ -19,6 +19,7 @@ import { Route as AuthGamesNewRouteImport } from './routes/_auth/games/new'
 import { Route as AuthGamesGameIdRouteRouteImport } from './routes/_auth/games/$gameId/route'
 import { Route as AuthGamesGameIdIndexRouteImport } from './routes/_auth/games/$gameId/index'
 import { Route as AuthGamesGameIdTreeRouteImport } from './routes/_auth/games/$gameId/tree'
+import { Route as AuthGamesGameIdSplitRouteImport } from './routes/_auth/games/$gameId/split'
 import { Route as AuthGamesGameIdEditRouteImport } from './routes/_auth/games/$gameId/edit'
 import { Route as AuthGamesGameIdAllRouteImport } from './routes/_auth/games/$gameId/all'
 import { Route as AuthGamesGameIdQuestsIndexRouteImport } from './routes/_auth/games/$gameId/quests/index'
@@ -94,6 +95,11 @@ const AuthGamesGameIdIndexRoute = AuthGamesGameIdIndexRouteImport.update({
 const AuthGamesGameIdTreeRoute = AuthGamesGameIdTreeRouteImport.update({
   id: '/tree',
   path: '/tree',
+  getParentRoute: () => AuthGamesGameIdRouteRoute,
+} as any)
+const AuthGamesGameIdSplitRoute = AuthGamesGameIdSplitRouteImport.update({
+  id: '/split',
+  path: '/split',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
 const AuthGamesGameIdEditRoute = AuthGamesGameIdEditRouteImport.update({
@@ -266,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
+  '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
   '/games/$gameId/': typeof AuthGamesGameIdIndexRoute
   '/games/$gameId/characters/$id': typeof AuthGamesGameIdCharactersIdRouteRouteWithChildren
@@ -303,6 +310,7 @@ export interface FileRoutesByTo {
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
+  '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
   '/games/$gameId': typeof AuthGamesGameIdIndexRoute
   '/games/$gameId/characters/new': typeof AuthGamesGameIdCharactersNewRoute
@@ -338,6 +346,7 @@ export interface FileRoutesById {
   '/_auth/games/': typeof AuthGamesIndexRoute
   '/_auth/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/_auth/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
+  '/_auth/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/_auth/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
   '/_auth/games/$gameId/': typeof AuthGamesGameIdIndexRoute
   '/_auth/games/$gameId/characters/$id': typeof AuthGamesGameIdCharactersIdRouteRouteWithChildren
@@ -378,6 +387,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/games/$gameId/all'
     | '/games/$gameId/edit'
+    | '/games/$gameId/split'
     | '/games/$gameId/tree'
     | '/games/$gameId/'
     | '/games/$gameId/characters/$id'
@@ -415,6 +425,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/games/$gameId/all'
     | '/games/$gameId/edit'
+    | '/games/$gameId/split'
     | '/games/$gameId/tree'
     | '/games/$gameId'
     | '/games/$gameId/characters/new'
@@ -449,6 +460,7 @@ export interface FileRouteTypes {
     | '/_auth/games/'
     | '/_auth/games/$gameId/all'
     | '/_auth/games/$gameId/edit'
+    | '/_auth/games/$gameId/split'
     | '/_auth/games/$gameId/tree'
     | '/_auth/games/$gameId/'
     | '/_auth/games/$gameId/characters/$id'
@@ -556,6 +568,13 @@ declare module '@tanstack/react-router' {
       path: '/tree'
       fullPath: '/games/$gameId/tree'
       preLoaderRoute: typeof AuthGamesGameIdTreeRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/split': {
+      id: '/_auth/games/$gameId/split'
+      path: '/split'
+      fullPath: '/games/$gameId/split'
+      preLoaderRoute: typeof AuthGamesGameIdSplitRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
     '/_auth/games/$gameId/edit': {
@@ -834,6 +853,7 @@ const AuthGamesGameIdQuestsIdRouteRouteWithChildren =
 interface AuthGamesGameIdRouteRouteChildren {
   AuthGamesGameIdAllRoute: typeof AuthGamesGameIdAllRoute
   AuthGamesGameIdEditRoute: typeof AuthGamesGameIdEditRoute
+  AuthGamesGameIdSplitRoute: typeof AuthGamesGameIdSplitRoute
   AuthGamesGameIdTreeRoute: typeof AuthGamesGameIdTreeRoute
   AuthGamesGameIdIndexRoute: typeof AuthGamesGameIdIndexRoute
   AuthGamesGameIdCharactersIdRouteRoute: typeof AuthGamesGameIdCharactersIdRouteRouteWithChildren
@@ -856,6 +876,7 @@ interface AuthGamesGameIdRouteRouteChildren {
 const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
   AuthGamesGameIdAllRoute: AuthGamesGameIdAllRoute,
   AuthGamesGameIdEditRoute: AuthGamesGameIdEditRoute,
+  AuthGamesGameIdSplitRoute: AuthGamesGameIdSplitRoute,
   AuthGamesGameIdTreeRoute: AuthGamesGameIdTreeRoute,
   AuthGamesGameIdIndexRoute: AuthGamesGameIdIndexRoute,
   AuthGamesGameIdCharactersIdRouteRoute:

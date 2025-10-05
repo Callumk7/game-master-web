@@ -1,4 +1,5 @@
-import { Menu, Pencil, Pin, SquareArrowDownRight, Trash2 } from "lucide-react";
+import { Menu, Pencil, Pin, SquareArrowDownRight, Trash2, SplitSquareHorizontal } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { Button } from "./ui/button";
@@ -121,6 +122,8 @@ export function EntityControls({
 	onTogglePin,
 }: EntityControlsProps) {
 	const { openEntityWindow } = useUIActions();
+	const navigate = useNavigate();
+	
 	const entity = {
 		id: entityId,
 		name: entityName,
@@ -128,6 +131,26 @@ export function EntityControls({
 		content: content,
 		content_plain_text: content_plain_text,
 	};
+
+	const openInSplitView = () => {
+		// Determine the entity type for the URL
+		let urlEntityType = entityType;
+		if (entityType === "character") urlEntityType = "characters";
+		if (entityType === "faction") urlEntityType = "factions";
+		if (entityType === "location") urlEntityType = "locations";
+		if (entityType === "note") urlEntityType = "notes";
+		if (entityType === "quest") urlEntityType = "quests";
+
+		// Extract gameId from current URL path
+		const gameId = window.location.pathname.split("/")[2];
+		
+		navigate({
+			to: "/games/$gameId/split",
+			params: { gameId },
+			search: { left: `${urlEntityType}/${entityId}` },
+		});
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger render={<Button size={"icon"} variant={"ghost"} />}>
@@ -138,6 +161,10 @@ export function EntityControls({
 					<DropdownMenuItem onClick={() => openEntityWindow(entity)}>
 						<SquareArrowDownRight />
 						Popout
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={openInSplitView}>
+						<SplitSquareHorizontal />
+						Split View
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={onEdit}>
 						<Pencil />
