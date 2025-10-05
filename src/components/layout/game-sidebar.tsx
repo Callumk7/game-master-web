@@ -35,8 +35,6 @@ import {
 	useGetQuestTreeSuspenseQuery,
 	useListPinnedEntitiesSuspenseQuery,
 } from "~/queries/quests";
-import { SidebarTree } from "./tree";
-import { NavUser } from "./user-sidebar";
 import { useUIActions } from "~/state/ui";
 import {
 	DropdownMenu,
@@ -44,6 +42,8 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { SidebarTree } from "./tree";
+import { NavUser } from "./user-sidebar";
 
 export function GameSidebar() {
 	const { theme, setTheme } = useTheme();
@@ -120,6 +120,34 @@ export function GameSidebar() {
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
+
+				<SidebarGroup>
+					<SidebarGroupLabel>Pinned Entities</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{pinnedEntities.data?.pinned_entities.notes?.map((item) => (
+								<SidebarMenuLink
+									to={"/games/$gameId/notes/$id"}
+									params={{ gameId, id: item.id }}
+									key={item.id}
+								>
+									{item.name}
+								</SidebarMenuLink>
+							))}
+							{pinnedEntities.data?.pinned_entities.characters?.map(
+								(item) => (
+									<SidebarMenuLink
+										to={"/games/$gameId/characters/$id"}
+										params={{ gameId, id: item.id }}
+										key={item.id}
+									>
+										{item.name}
+									</SidebarMenuLink>
+								),
+							)}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
 				<div className="mt-6">
 					<div className="flex items-center justify-between mb-3">
 						<h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
@@ -248,36 +276,6 @@ export function GameSidebar() {
 										parentNode={item}
 									/>
 								))}
-							</SidebarMenu>
-						</SidebarGroupContent>
-					</SidebarGroup>
-
-					<SidebarGroup>
-						<SidebarGroupLabel>Pinned Entities</SidebarGroupLabel>
-						<SidebarGroupContent>
-							<SidebarMenu>
-								{pinnedEntities.data?.pinned_entities.notes?.map(
-									(item) => (
-										<SidebarMenuLink
-											to={"/games/$gameId/notes/$id"}
-											params={{ gameId, id: item.id }}
-											key={item.id}
-										>
-											{item.name}
-										</SidebarMenuLink>
-									),
-								)}
-								{pinnedEntities.data?.pinned_entities.characters?.map(
-									(item) => (
-										<SidebarMenuLink
-											to={"/games/$gameId/characters/$id"}
-											params={{ gameId, id: item.id }}
-											key={item.id}
-										>
-											{item.name}
-										</SidebarMenuLink>
-									),
-								)}
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { SplitViewLayout } from "~/components/layout/split-view-layout";
+import { SplitViewLayout } from "~/components/layout/split-view";
 
 const splitViewSearchSchema = z.object({
 	left: z.string().optional(),

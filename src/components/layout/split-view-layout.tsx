@@ -1,14 +1,14 @@
-import { useNavigate } from "@tanstack/react-router";
 import { PlusCircle, X } from "lucide-react";
-import * as React from "react";
 import { Button } from "~/components/ui/button";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "~/components/ui/resizable";
-import { EntityPane } from "./entity-pane";
-import { EntitySelector } from "./entity-selector";
+import { SplitViewProvider, useSplitView } from "~/state/split-view-context";
+import type { EntityPath } from "~/types/split-view";
+import { EntityPaneView } from "./entity-pane-view";
+import { EntitySelectorModal } from "./entity-selector-modal";
 
 interface SplitViewLayoutProps {
 	gameId: string;
@@ -17,25 +17,44 @@ interface SplitViewLayoutProps {
 }
 
 export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayoutProps) {
-	const navigate = useNavigate({ from: "/games/$gameId/split" });
-	const [leftSelectorOpen, setLeftSelectorOpen] = React.useState(false);
-	const [rightSelectorOpen, setRightSelectorOpen] = React.useState(false);
-
-	const updatePanes = React.useCallback(
-		(newLeft?: string, newRight?: string) => {
-			navigate({
-				search: {
-					left: newLeft,
-					right: newRight,
-				},
-			});
-		},
-		[navigate],
+	return (
+		<SplitViewProvider
+			gameId={gameId}
+			initialLeftPane={leftPane}
+			initialRightPane={rightPane}
+		>
+			<SplitViewLayoutContent gameId={gameId} />
+		</SplitViewProvider>
 	);
+}
 
-	const closeSplitView = React.useCallback(() => {
-		navigate({ to: "/games/$gameId", params: { gameId } });
-	}, [navigate, gameId]);
+function SplitViewLayoutContent({ gameId }: { gameId: string }) {
+	const {
+		state,
+		updatePanes,
+		openLeftSelector,
+		openRightSelector,
+		closeSelectors,
+		closeSplitView,
+	} = useSplitView();
+
+	const handleLeftPaneSelect = (entityPath: EntityPath) => {
+		updatePanes(entityPath, state.rightPane);
+		closeSelectors();
+	};
+
+	const handleRightPaneSelect = (entityPath: EntityPath) => {
+		updatePanes(state.leftPane, entityPath);
+		closeSelectors();
+	};
+
+	const clearLeftPane = () => {
+		updatePanes(undefined, state.rightPane);
+	};
+
+	const clearRightPane = () => {
+		updatePanes(state.leftPane, undefined);
+	};
 
 	return (
 		<div className="h-full flex flex-col">
@@ -57,139 +76,101 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 				<ResizablePanelGroup direction="horizontal" className="h-full">
 					{/* Left Pane */}
 					<ResizablePanel defaultSize={50} minSize={30}>
-						<div className="h-full flex flex-col">
-							<div className="flex items-center justify-between p-3 border-b bg-muted/50">
-								<span className="text-sm font-medium">Left Pane</span>
-								<div className="flex gap-2">
-									{leftPane && (
-										<Button
-											variant="ghost"
-											size="sm"
-											onClick={() =>
-												updatePanes(undefined, rightPane)
-											}
-										>
-											<X className="h-3 w-3" />
-										</Button>
-									)}
-									<Button
-										variant="ghost"
-										size="sm"
-										onClick={() => setLeftSelectorOpen(true)}
-									>
-										<PlusCircle className="h-3 w-3" />
-									</Button>
-								</div>
-							</div>
-							<div className="flex-1 overflow-hidden">
-								{leftPane ? (
-									<EntityPane
-										gameId={gameId}
-										entityPath={leftPane}
-										onEntityChange={(newPath) =>
-											updatePanes(newPath, rightPane)
-										}
-									/>
-								) : (
-									<div className="flex items-center justify-center h-full text-muted-foreground">
-										<div className="text-center">
-											<PlusCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-											<p>Select an entity to view</p>
-											<Button
-												variant="outline"
-												className="mt-2"
-												onClick={() => setLeftSelectorOpen(true)}
-											>
-												Choose Entity
-											</Button>
-										</div>
-									</div>
-								)}
-							</div>
-						</div>
+						<SplitPane
+							title="Left Pane"
+							entityPath={state.leftPane}
+							gameId={gameId}
+							onAddEntity={openLeftSelector}
+							onClearEntity={clearLeftPane}
+						/>
 					</ResizablePanel>
 
 					<ResizableHandle withHandle />
 
 					{/* Right Pane */}
 					<ResizablePanel defaultSize={50} minSize={30}>
-						<div className="h-full flex flex-col">
-							<div className="flex items-center justify-between p-3 border-b bg-muted/50">
-								<span className="text-sm font-medium">Right Pane</span>
-								<div className="flex gap-2">
-									{rightPane && (
-										<Button
-											variant="ghost"
-											size="sm"
-											onClick={() =>
-												updatePanes(leftPane, undefined)
-											}
-										>
-											<X className="h-3 w-3" />
-										</Button>
-									)}
-									<Button
-										variant="ghost"
-										size="sm"
-										onClick={() => setRightSelectorOpen(true)}
-									>
-										<PlusCircle className="h-3 w-3" />
-									</Button>
-								</div>
-							</div>
-							<div className="flex-1 overflow-hidden">
-								{rightPane ? (
-									<EntityPane
-										gameId={gameId}
-										entityPath={rightPane}
-										onEntityChange={(newPath) =>
-											updatePanes(leftPane, newPath)
-										}
-									/>
-								) : (
-									<div className="flex items-center justify-center h-full text-muted-foreground">
-										<div className="text-center">
-											<PlusCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-											<p>Select an entity to view</p>
-											<Button
-												variant="outline"
-												className="mt-2"
-												onClick={() => setRightSelectorOpen(true)}
-											>
-												Choose Entity
-											</Button>
-										</div>
-									</div>
-								)}
-							</div>
-						</div>
+						<SplitPane
+							title="Right Pane"
+							entityPath={state.rightPane}
+							gameId={gameId}
+							onAddEntity={openRightSelector}
+							onClearEntity={clearRightPane}
+						/>
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</div>
 
 			{/* Entity Selectors */}
-			<EntitySelector
-				isOpen={leftSelectorOpen}
-				onOpenChange={setLeftSelectorOpen}
+			<EntitySelectorModal
+				isOpen={state.leftSelectorOpen}
+				onOpenChange={(open) => !open && closeSelectors()}
 				gameId={gameId}
-				onSelect={(entityPath) => {
-					updatePanes(entityPath, rightPane);
-					setLeftSelectorOpen(false);
-				}}
+				onSelect={handleLeftPaneSelect}
 				title="Select Entity for Left Pane"
 			/>
 
-			<EntitySelector
-				isOpen={rightSelectorOpen}
-				onOpenChange={setRightSelectorOpen}
+			<EntitySelectorModal
+				isOpen={state.rightSelectorOpen}
+				onOpenChange={(open) => !open && closeSelectors()}
 				gameId={gameId}
-				onSelect={(entityPath) => {
-					updatePanes(leftPane, entityPath);
-					setRightSelectorOpen(false);
-				}}
+				onSelect={handleRightPaneSelect}
 				title="Select Entity for Right Pane"
 			/>
 		</div>
 	);
 }
 
+interface SplitPaneProps {
+	title: string;
+	entityPath?: EntityPath;
+	gameId: string;
+	onAddEntity: () => void;
+	onClearEntity: () => void;
+}
+
+function SplitPane({
+	title,
+	entityPath,
+	gameId,
+	onAddEntity,
+	onClearEntity,
+}: SplitPaneProps) {
+	return (
+		<div className="h-full flex flex-col">
+			<div className="flex items-center justify-between p-3 border-b bg-muted/50">
+				<span className="text-sm font-medium">{title}</span>
+				<div className="flex gap-2">
+					{entityPath && (
+						<Button variant="ghost" size="sm" onClick={onClearEntity}>
+							<X className="h-3 w-3" />
+						</Button>
+					)}
+					<Button variant="ghost" size="sm" onClick={onAddEntity}>
+						<PlusCircle className="h-3 w-3" />
+					</Button>
+				</div>
+			</div>
+			<div className="flex-1 overflow-hidden">
+				{entityPath ? (
+					<EntityPaneView gameId={gameId} entityPath={entityPath} />
+				) : (
+					<EmptyPaneContent onAddEntity={onAddEntity} />
+				)}
+			</div>
+		</div>
+	);
+}
+
+function EmptyPaneContent({ onAddEntity }: { onAddEntity: () => void }) {
+	return (
+		<div className="flex items-center justify-center h-full text-muted-foreground">
+			<div className="text-center">
+				<PlusCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+				<p>Select an entity to view</p>
+				<Button variant="outline" className="mt-2" onClick={onAddEntity}>
+					Choose Entity
+				</Button>
+			</div>
+		</div>
+	);
+}
