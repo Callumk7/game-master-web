@@ -25,8 +25,6 @@ function RouteComponent() {
 	}
 
 	return (
-		<div>
-			{isSuccess && <EditNoteForm initialData={data.data} params={params} />}
-		</div>
+		<div>{isSuccess && <EditNoteForm initialData={data.data} params={params} />}</div>
 	);
 }

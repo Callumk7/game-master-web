@@ -79,8 +79,8 @@ function RouteComponent() {
 				title="All Entities"
 				description="Browse all characters, factions, locations, notes, and quests in your game."
 			/>
-			<AllEntitiesTable 
-				entities={allEntities} 
+			<AllEntitiesTable
+				entities={allEntities}
 				gameId={gameId}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}

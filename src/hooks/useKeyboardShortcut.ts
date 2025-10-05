@@ -23,19 +23,16 @@ export type KeyboardShortcut = {
 
 const getModifierKey = () => {
 	const userAgent = navigator.userAgent.toLowerCase();
-	return userAgent.includes('mac') ? 'meta' : 'ctrl';
+	return userAgent.includes("mac") ? "meta" : "ctrl";
 };
 
-const matchesShortcut = (
-	event: KeyboardEvent,
-	shortcut: KeyboardShortcut
-): boolean => {
+const matchesShortcut = (event: KeyboardEvent, shortcut: KeyboardShortcut): boolean => {
 	if (event.key.toLowerCase() !== shortcut.key.toLowerCase()) {
 		return false;
 	}
 
 	const modifiers = shortcut.modifiers || {};
-	
+
 	if (modifiers.ctrl !== undefined && event.ctrlKey !== modifiers.ctrl) {
 		return false;
 	}
@@ -54,46 +51,49 @@ const matchesShortcut = (
 
 const isInputElement = (target: EventTarget | null): boolean => {
 	if (!target || !(target instanceof HTMLElement)) return false;
-	
+
 	const tagName = target.tagName.toLowerCase();
-	const isInput = ['input', 'textarea', 'select'].includes(tagName);
-	const isContentEditable = target.contentEditable === 'true';
-	
+	const isInput = ["input", "textarea", "select"].includes(tagName);
+	const isContentEditable = target.contentEditable === "true";
+
 	return isInput || isContentEditable;
 };
 
 export const useKeyboardShortcut = (shortcuts: KeyboardShortcut[]) => {
-	const handleKeyDown = React.useCallback((event: KeyboardEvent) => {
-		for (const shortcut of shortcuts) {
-			const options = shortcut.options || {};
-			
-			if (options.enabled === false) continue;
-			if (options.scope && !options.scope()) continue;
-			if (!options.allowInInputs && isInputElement(event.target)) continue;
-			if (!matchesShortcut(event, shortcut)) continue;
-			
-			if (options.preventDefault !== false) {
-				event.preventDefault();
+	const handleKeyDown = React.useCallback(
+		(event: KeyboardEvent) => {
+			for (const shortcut of shortcuts) {
+				const options = shortcut.options || {};
+
+				if (options.enabled === false) continue;
+				if (options.scope && !options.scope()) continue;
+				if (!options.allowInInputs && isInputElement(event.target)) continue;
+				if (!matchesShortcut(event, shortcut)) continue;
+
+				if (options.preventDefault !== false) {
+					event.preventDefault();
+				}
+
+				shortcut.callback();
+				break;
 			}
-			
-			shortcut.callback();
-			break;
-		}
-	}, [shortcuts]);
+		},
+		[shortcuts],
+	);
 
 	React.useEffect(() => {
-		document.addEventListener('keydown', handleKeyDown);
-		return () => document.removeEventListener('keydown', handleKeyDown);
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, [handleKeyDown]);
 };
 
 export const createPlatformShortcut = (
 	key: string,
 	callback: () => void,
-	options?: KeyboardShortcutOptions
+	options?: KeyboardShortcutOptions,
 ): KeyboardShortcut => {
 	const modifierKey = getModifierKey();
-	
+
 	return {
 		key,
 		modifiers: { [modifierKey]: true },
@@ -105,10 +105,10 @@ export const createPlatformShortcut = (
 export const createPlatformShiftShortcut = (
 	key: string,
 	callback: () => void,
-	options?: KeyboardShortcutOptions
+	options?: KeyboardShortcutOptions,
 ): KeyboardShortcut => {
 	const modifierKey = getModifierKey();
-	
+
 	return {
 		key,
 		modifiers: { [modifierKey]: true, shift: true },
@@ -120,7 +120,7 @@ export const createPlatformShiftShortcut = (
 export const usePlatformShortcut = (
 	key: string,
 	callback: () => void,
-	options?: KeyboardShortcutOptions
+	options?: KeyboardShortcutOptions,
 ) => {
 	const shortcut = createPlatformShortcut(key, callback, options);
 	useKeyboardShortcut([shortcut]);

@@ -1,6 +1,6 @@
-import * as React from "react";
-import { SplitSquareHorizontal } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { SplitSquareHorizontal } from "lucide-react";
+import * as React from "react";
 import type { Optional } from "~/types";
 import { Button } from "./ui/button";
 import { Link } from "./ui/link";
@@ -74,23 +74,23 @@ export const useAddTab = (tab: Optional<Tab, "data">) => {
 export function EntityTabs() {
 	const { tabList, removeTab, clearAllTabs } = useEntityTabs();
 	const navigate = useNavigate();
-	
+
 	const openTabsInSplitView = () => {
 		if (tabList.length >= 2) {
 			const firstTab = tabList[0];
 			const secondTab = tabList[1];
-			
+
 			navigate({
 				to: "/games/$gameId/split",
 				params: { gameId: firstTab.gameId },
-				search: { 
+				search: {
 					left: `${firstTab.entityType}/${firstTab.data.id}`,
 					right: `${secondTab.entityType}/${secondTab.data.id}`,
 				},
 			});
 		}
 	};
-	
+
 	// TODO: Add pin button
 	// TODO: Add drag to reorder
 	return (

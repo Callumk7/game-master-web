@@ -43,4 +43,3 @@ export type {
 	SmartFormOptions,
 	UseFormWithMutationOptions,
 } from "./types";
-

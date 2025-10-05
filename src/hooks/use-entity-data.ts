@@ -7,6 +7,7 @@ import {
 	getQuestOptions,
 } from "~/api/@tanstack/react-query.gen";
 import type { EntityType, Entity } from "~/types/split-view";
+import type { Character as APICharacter, Faction as APIFaction, Location as APILocation, Note as APINote, Quest as APIQuest } from "~/api/types.gen";
 
 interface UseEntityDataParams {
 	gameId: string;
@@ -27,15 +28,54 @@ export function useEntityData({
 	entityId,
 }: UseEntityDataParams): UseEntityDataResult {
 	const queryOptions = getQueryOptions(entityType, gameId, entityId);
-	
-	const { data, isLoading, isError, error } = useQuery(queryOptions);
 
+	const { data, isLoading, isError, error } = useQuery(queryOptions as any);
+
+	const apiData = (data as any)?.data;
+	
 	return {
-		data: data?.data,
+		data: apiData ? transformApiEntityToSplitViewEntity(apiData, entityType) : undefined,
 		isLoading,
 		isError,
 		error: error as Error | null,
 	};
+}
+
+function transformApiEntityToSplitViewEntity(
+	entity: APICharacter | APIFaction | APILocation | APINote | APIQuest,
+	entityType: EntityType
+): Entity {
+	const baseEntity = {
+		id: entity.id,
+		name: entity.name,
+		content: entity.content || "",
+		content_plain_text: entity.content_plain_text || "",
+		tags: entity.tags,
+		pinned: entity.pinned,
+	};
+
+	switch (entityType) {
+		case "characters": {
+			const char = entity as APICharacter;
+			return {
+				...baseEntity,
+				class: char.class,
+				level: char.level,
+			};
+		}
+		case "quests": {
+			const quest = entity as APIQuest;
+			return {
+				...baseEntity,
+				status: quest.status,
+			};
+		}
+		case "factions":
+		case "locations":
+		case "notes":
+		default:
+			return baseEntity;
+	}
 }
 
 function getQueryOptions(entityType: EntityType, gameId: string, entityId: string) {

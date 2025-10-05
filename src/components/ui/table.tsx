@@ -3,22 +3,22 @@ import { cn } from "~/utils/cn";
 
 // Helper function to calculate column widths from relative values
 export function calculateColumnWidths(
-	relativeWidths: Record<string, number>, 
-	allColumnIds: string[]
+	relativeWidths: Record<string, number>,
+	allColumnIds: string[],
 ): Record<string, string> {
 	// Create full weights object with defaults
 	const fullWeights: Record<string, number> = {};
 	for (const columnId of allColumnIds) {
 		fullWeights[columnId] = relativeWidths[columnId] ?? 1; // Default to 1 for undefined columns
 	}
-	
+
 	const total = Object.values(fullWeights).reduce((sum, width) => sum + width, 0);
 	const percentageWidths: Record<string, string> = {};
-	
+
 	for (const [columnId, width] of Object.entries(fullWeights)) {
-		percentageWidths[columnId] = `${(width / total * 100).toFixed(2)}%`;
+		percentageWidths[columnId] = `${((width / total) * 100).toFixed(2)}%`;
 	}
-	
+
 	return percentageWidths;
 }
 

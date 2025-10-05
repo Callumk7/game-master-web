@@ -2,7 +2,22 @@ import { EntityViewHeader } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { Spinner } from "~/components/ui/spinner";
-import type { Entity, EntityType, EntityMutationPayload } from "~/types/split-view";
+import type { EntityType as SingularEntityType } from "~/types";
+import type {
+	Character,
+	Entity,
+	EntityMutationPayload,
+	EntityType,
+	Quest,
+} from "~/types/split-view";
+
+const singularTypeMap: Record<EntityType, SingularEntityType> = {
+	characters: "character",
+	factions: "faction",
+	locations: "location",
+	notes: "note",
+	quests: "quest",
+};
 
 interface EntityContentDisplayProps {
 	entity: Entity;
@@ -34,18 +49,19 @@ export function EntityContentDisplay({
 	if (isError || !entity) {
 		return (
 			<div className="p-4 text-center text-muted-foreground">
-				{entityType.slice(0, -1)} not found
+				{singularTypeMap[entityType]} not found
 			</div>
 		);
 	}
 
 	const badges = createEntityBadges(entity, entityType);
+	const singularType = singularTypeMap[entityType];
 
 	return (
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={entity.id}
-				type={entityType.slice(0, -1) as any} // Remove 's' suffix
+				type={singularType}
 				content={entity.content}
 				content_plain_text={entity.content_plain_text}
 				name={entity.name}
@@ -55,7 +71,7 @@ export function EntityContentDisplay({
 			<EntityEditor
 				content={entity.content}
 				gameId={gameId}
-				entityType={entityType.slice(0, -1) as any} // Remove 's' suffix
+				entityType={singularType}
 				entityId={entity.id}
 				onSave={onSave}
 				isSaving={isSaving}
@@ -78,7 +94,7 @@ function createEntityBadges(entity: Entity, entityType: EntityType): React.React
 
 	switch (entityType) {
 		case "characters": {
-			const character = entity as any;
+			const character = entity as Character;
 			return (
 				<div className="flex flex-wrap gap-2">
 					{character.class && <Badge>{character.class}</Badge>}
@@ -88,7 +104,7 @@ function createEntityBadges(entity: Entity, entityType: EntityType): React.React
 			);
 		}
 		case "quests": {
-			const quest = entity as any;
+			const quest = entity as Quest;
 			return (
 				<div className="flex flex-wrap gap-2">
 					<Badge>{quest.status}</Badge>

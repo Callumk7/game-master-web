@@ -1,4 +1,11 @@
-import { Menu, Pencil, Pin, SquareArrowDownRight, Trash2, SplitSquareHorizontal } from "lucide-react";
+import {
+	Menu,
+	Pencil,
+	Pin,
+	SquareArrowDownRight,
+	Trash2,
+	SplitSquareHorizontal,
+} from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
@@ -123,7 +130,7 @@ export function EntityControls({
 }: EntityControlsProps) {
 	const { openEntityWindow } = useUIActions();
 	const navigate = useNavigate();
-	
+
 	const entity = {
 		id: entityId,
 		name: entityName,
@@ -136,17 +143,17 @@ export function EntityControls({
 		// Convert singular entity type to plural for the URL
 		const urlEntityTypeMap = {
 			character: "characters",
-			faction: "factions", 
+			faction: "factions",
 			location: "locations",
 			note: "notes",
-			quest: "quests"
+			quest: "quests",
 		} as const;
-		
+
 		const urlEntityType = urlEntityTypeMap[entityType];
 
 		// Extract gameId from current URL path
 		const gameId = window.location.pathname.split("/")[2];
-		
+
 		navigate({
 			to: "/games/$gameId/split",
 			params: { gameId },

@@ -167,7 +167,10 @@ export function EntitySelector({
 								{filteredCharacters.length}
 							</Badge>
 						</TabsTrigger>
-						<TabsTrigger value="factions" className="flex items-center justify-center gap-1 text-xs sm:text-sm min-w-0 px-2 py-1.5">
+						<TabsTrigger
+							value="factions"
+							className="flex items-center justify-center gap-1 text-xs sm:text-sm min-w-0 px-2 py-1.5"
+						>
 							<Sword className="h-3 w-3 flex-shrink-0" />
 							<span className="hidden md:inline truncate">Factions</span>
 							<span className="md:hidden truncate">Fact</span>
@@ -186,7 +189,10 @@ export function EntitySelector({
 								{filteredLocations.length}
 							</Badge>
 						</TabsTrigger>
-						<TabsTrigger value="notes" className="flex items-center justify-center gap-1 text-xs sm:text-sm min-w-0 px-2 py-1.5">
+						<TabsTrigger
+							value="notes"
+							className="flex items-center justify-center gap-1 text-xs sm:text-sm min-w-0 px-2 py-1.5"
+						>
 							<ScrollText className="h-3 w-3 flex-shrink-0" />
 							<span className="hidden md:inline truncate">Notes</span>
 							<span className="md:hidden truncate">Note</span>
@@ -194,7 +200,10 @@ export function EntitySelector({
 								{filteredNotes.length}
 							</Badge>
 						</TabsTrigger>
-						<TabsTrigger value="quests" className="flex items-center justify-center gap-1 text-xs sm:text-sm min-w-0 px-2 py-1.5">
+						<TabsTrigger
+							value="quests"
+							className="flex items-center justify-center gap-1 text-xs sm:text-sm min-w-0 px-2 py-1.5"
+						>
 							<Target className="h-3 w-3 flex-shrink-0" />
 							<span className="hidden md:inline truncate">Quests</span>
 							<span className="md:hidden truncate">Quest</span>
@@ -320,7 +329,9 @@ function EntityItem({ entity, entityType, onSelect }: EntityItemProps) {
 				<div className="flex-1 min-w-0 space-y-2">
 					{/* Entity name and primary info */}
 					<div className="flex items-center justify-between gap-3">
-						<span className="font-medium truncate text-base">{entity.name}</span>
+						<span className="font-medium truncate text-base">
+							{entity.name}
+						</span>
 						<div className="flex items-center gap-2 flex-shrink-0">
 							{entity.class && (
 								<Badge variant="outline" className="text-xs">
@@ -334,7 +345,7 @@ function EntityItem({ entity, entityType, onSelect }: EntityItemProps) {
 							)}
 						</div>
 					</div>
-					
+
 					{/* Tags row */}
 					{entity.tags && entity.tags.length > 0 && (
 						<div className="flex flex-wrap gap-1.5">
@@ -376,4 +387,3 @@ function EmptyState({ type, hasSearchQuery }: EmptyStateProps) {
 		</div>
 	);
 }
-

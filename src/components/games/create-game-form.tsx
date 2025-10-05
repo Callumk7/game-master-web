@@ -50,11 +50,13 @@ export function CreateGameForm() {
 				}}
 				className="space-y-6"
 			>
-				<form.AppField 
+				<form.AppField
 					name="name"
 					validators={{
-						onChange: ({ value }) => 
-							!value || value.trim().length === 0 ? "Game name is required" : undefined,
+						onChange: ({ value }) =>
+							!value || value.trim().length === 0
+								? "Game name is required"
+								: undefined,
 					}}
 				>
 					{(field) => (

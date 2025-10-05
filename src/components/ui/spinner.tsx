@@ -17,7 +17,7 @@ export function Spinner({ className, size = "md", ...props }: SpinnerProps) {
 			className={cn(
 				"animate-spin rounded-full border-2 border-current border-t-transparent text-muted-foreground",
 				sizeClasses[size],
-				className
+				className,
 			)}
 			{...props}
 		>

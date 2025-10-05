@@ -3,8 +3,8 @@ import { Dialog } from "@base-ui-components/react/dialog";
 import { XIcon } from "lucide-react";
 import * as React from "react";
 import { Link } from "~/components/ui/link";
-import { cn } from "~/utils/cn";
 import type { EntityType } from "~/types";
+import { cn } from "~/utils/cn";
 
 interface DraggableWindowProps {
 	children: React.ReactNode;
@@ -143,10 +143,10 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 			}
 
 			e.preventDefault();
-			
+
 			// Bring window to front when drag starts
 			onBringToFront?.();
-			
+
 			const data = dragDataRef.current;
 
 			data.isDragging = true;
@@ -286,7 +286,9 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 						>
 							{entityId && entityType && gameId ? (
 								<Link
-									to={`/games/${gameId}/${entityType}s/${entityId}` as string}
+									to={
+										`/games/${gameId}/${entityType}s/${entityId}` as string
+									}
 									className="hover:underline focus:underline focus:outline-none"
 									onClick={(e) => e.stopPropagation()}
 								>

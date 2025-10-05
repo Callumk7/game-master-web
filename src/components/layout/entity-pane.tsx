@@ -500,4 +500,3 @@ function QuestPaneContent({ gameId, questId }: { gameId: string; questId: string
 		</div>
 	);
 }
-

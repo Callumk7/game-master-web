@@ -20,31 +20,75 @@ export function useUpdateLink(onSuccess?: () => void, onError?: (error: Error) =
 			targetId,
 			data,
 		}: UpdateLinkParams) => {
-			// Create the path parameter based on source entity type
-			const pathParam = {
-				game_id: gameId,
-				[`${sourceType}_id`]: sourceId,
-				entity_type: targetType,
-				entity_id: targetId,
-			};
-
-			const mutationMap = {
-				character: updateCharacterLinkMutation(),
-				faction: updateFactionLinkMutation(),
-				location: updateLocationLinkMutation(),
-				note: updateNoteLinkMutation(),
-				quest: updateQuestLinkMutation(),
-			};
-
-			const mutation = mutationMap[sourceType];
-			if (!mutation.mutationFn) {
-				throw new Error(`Unsupported entity type: ${sourceType}`);
+			switch (sourceType) {
+				case "character": {
+					const path = {
+						game_id: gameId,
+						character_id: sourceId,
+						entity_type: targetType,
+						entity_id: targetId,
+					};
+					const mutation = updateCharacterLinkMutation();
+					if (!mutation.mutationFn) {
+						throw new Error("Character link mutation not available");
+					}
+					return mutation.mutationFn({ path, body: data });
+				}
+				case "faction": {
+					const path = {
+						game_id: gameId,
+						faction_id: sourceId,
+						entity_type: targetType,
+						entity_id: targetId,
+					};
+					const mutation = updateFactionLinkMutation();
+					if (!mutation.mutationFn) {
+						throw new Error("Faction link mutation not available");
+					}
+					return mutation.mutationFn({ path, body: data });
+				}
+				case "location": {
+					const path = {
+						game_id: gameId,
+						location_id: sourceId,
+						entity_type: targetType,
+						entity_id: targetId,
+					};
+					const mutation = updateLocationLinkMutation();
+					if (!mutation.mutationFn) {
+						throw new Error("Location link mutation not available");
+					}
+					return mutation.mutationFn({ path, body: data });
+				}
+				case "note": {
+					const path = {
+						game_id: gameId,
+						note_id: sourceId,
+						entity_type: targetType,
+						entity_id: targetId,
+					};
+					const mutation = updateNoteLinkMutation();
+					if (!mutation.mutationFn) {
+						throw new Error("Note link mutation not available");
+					}
+					return mutation.mutationFn({ path, body: data });
+				}
+				case "quest": {
+					const path = {
+						game_id: gameId,
+						quest_id: sourceId,
+						entity_type: targetType,
+						entity_id: targetId,
+					};
+					const mutation = updateQuestLinkMutation();
+					if (!mutation.mutationFn) {
+						throw new Error("Quest link mutation not available");
+					}
+					return mutation.mutationFn({ path, body: data });
+				}
+				default:
+					throw new Error(`Unsupported entity type: ${sourceType}`);
 			}
-
-			return mutation.mutationFn({
-				path: pathParam as any,
-				body: data,
-			});
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: [{ _id: "listGameEntities" }] });

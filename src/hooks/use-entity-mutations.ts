@@ -13,7 +13,7 @@ interface UseEntityMutationsParams {
 
 interface EntityMutationResult {
 	mutate: (payload: EntityMutationPayload) => void;
-	mutateAsync: (payload: EntityMutationPayload) => Promise<void>;
+	mutateAsync: (payload: EntityMutationPayload) => Promise<any>;
 	isPending: boolean;
 	isError: boolean;
 	error: Error | null;
@@ -50,19 +50,45 @@ export function useEntityMutations({
 	const mutation = getCurrentMutation();
 
 	const mutate = (payload: EntityMutationPayload) => {
-		const body = { [entityType.slice(0, -1)]: payload }; // Remove 's' from entity type
-		mutation.mutate({
-			body,
-			path: { game_id: gameId, id: entityId },
-		} as any);
+		const path = { game_id: gameId, id: entityId };
+		switch (entityType) {
+			case "characters":
+				return characterMutation.mutate({ body: { character: payload }, path });
+			case "factions":
+				return factionMutation.mutate({ body: { faction: payload }, path });
+			case "locations":
+				return locationMutation.mutate({ body: { location: payload }, path });
+			case "notes":
+				return noteMutation.mutate({ body: { note: payload }, path });
+			case "quests":
+				return questMutation.mutate({ body: { quest: payload }, path });
+			default:
+				throw new Error(`Unsupported entity type: ${entityType}`);
+		}
 	};
 
 	const mutateAsync = async (payload: EntityMutationPayload) => {
-		const body = { [entityType.slice(0, -1)]: payload }; // Remove 's' from entity type
-		return mutation.mutateAsync({
-			body,
-			path: { game_id: gameId, id: entityId },
-		} as any);
+		const path = { game_id: gameId, id: entityId };
+		switch (entityType) {
+			case "characters":
+				return characterMutation.mutateAsync({
+					body: { character: payload },
+					path,
+				});
+			case "factions":
+				return factionMutation.mutateAsync({ body: { faction: payload }, path });
+			case "locations":
+				return locationMutation.mutateAsync({
+					body: { location: payload },
+					path,
+				});
+			case "notes":
+				return noteMutation.mutateAsync({ body: { note: payload }, path });
+			case "quests":
+				return questMutation.mutateAsync({ body: { quest: payload }, path });
+			default:
+				throw new Error(`Unsupported entity type: ${entityType}`);
+		}
 	};
 
 	return {
