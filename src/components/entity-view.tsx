@@ -1,5 +1,6 @@
 import { Menu, Pencil, Pin, SquareArrowDownRight, Trash2 } from "lucide-react";
 import { useUIActions } from "~/state/ui";
+import type { EntityType } from "~/types";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
@@ -9,7 +10,6 @@ import {
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { EntityType } from "~/types";
 
 type EntityTab = {
 	id: string;

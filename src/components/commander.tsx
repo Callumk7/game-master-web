@@ -9,6 +9,7 @@ import {
 	User,
 	Users,
 } from "lucide-react";
+import * as React from "react";
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -20,12 +21,13 @@ import {
 	CommandShortcut,
 } from "~/components/ui/command";
 import {
-	createPlatformShortcut,
 	createPlatformShiftShortcut,
+	createPlatformShortcut,
 	useKeyboardShortcut,
 } from "~/hooks/useKeyboardShortcut";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
 import { useIsCommanderOpen, useUIActions } from "~/state/ui";
+import type { EntityType } from "~/types";
 import { Badge } from "./ui/badge";
 
 export function Commander({ gameId }: { gameId: string }) {
@@ -48,8 +50,59 @@ export function Commander({ gameId }: { gameId: string }) {
 		setIsCreateLocationOpen,
 		setIsCreateQuestOpen,
 		setIsTodoDrawerOpen,
+		openEntityWindow,
 	} = useUIActions();
 	const isCommanderOpen = useIsCommanderOpen();
+	const modifierKeyPressed = React.useRef(false);
+
+	const handleEntitySelect = (entity: {
+		id: string;
+		name: string;
+		type: EntityType;
+		content?: string;
+	}) => {
+		if (modifierKeyPressed.current) {
+			setIsCommanderOpen(false);
+			openEntityWindow({
+				id: entity.id,
+				name: entity.name,
+				type: entity.type,
+				content: entity.content,
+			});
+		} else {
+			setIsCommanderOpen(false);
+			navigate({
+				to: `/games/$gameId/${entity.type}s/$id`,
+				params: { gameId, id: entity.id },
+			});
+		}
+	};
+
+	// Track modifier keys globally when commander is open
+	React.useEffect(() => {
+		if (!isCommanderOpen) return;
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.metaKey || event.ctrlKey) {
+				modifierKeyPressed.current = true;
+			}
+		};
+
+		const handleKeyUp = (event: KeyboardEvent) => {
+			if (!event.metaKey && !event.ctrlKey) {
+				modifierKeyPressed.current = false;
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+		document.addEventListener("keyup", handleKeyUp);
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+			document.removeEventListener("keyup", handleKeyUp);
+			modifierKeyPressed.current = false;
+		};
+	}, [isCommanderOpen]);
 
 	// Set up keyboard shortcuts
 	useKeyboardShortcut([
@@ -147,13 +200,14 @@ export function Commander({ gameId }: { gameId: string }) {
 							{characters?.map((character) => (
 								<CommandItem
 									key={character.id}
-									onSelect={() => {
-										setIsCommanderOpen(false);
-										navigate({
-											to: "/games/$gameId/characters/$id",
-											params: { gameId, id: character.id },
-										});
-									}}
+									onSelect={() =>
+										handleEntitySelect({
+											id: character.id,
+											name: character.name,
+											type: "character",
+											content: character.content,
+										})
+									}
 								>
 									<div className="flex items-center justify-between w-full">
 										<div className="flex items-center gap-2">
@@ -194,13 +248,14 @@ export function Commander({ gameId }: { gameId: string }) {
 							{factions?.map((faction) => (
 								<CommandItem
 									key={faction.id}
-									onSelect={() => {
-										setIsCommanderOpen(false);
-										navigate({
-											to: "/games/$gameId/factions/$id",
-											params: { gameId, id: faction.id },
-										});
-									}}
+									onSelect={() =>
+										handleEntitySelect({
+											id: faction.id,
+											name: faction.name,
+											type: "faction",
+											content: faction.content,
+										})
+									}
 								>
 									<Shield />
 									<span>{faction.name}</span>
@@ -234,13 +289,14 @@ export function Commander({ gameId }: { gameId: string }) {
 							{locations?.map((location) => (
 								<CommandItem
 									key={location.id}
-									onSelect={() => {
-										setIsCommanderOpen(false);
-										navigate({
-											to: "/games/$gameId/locations/$id",
-											params: { gameId, id: location.id },
-										});
-									}}
+									onSelect={() =>
+										handleEntitySelect({
+											id: location.id,
+											name: location.name,
+											type: "location",
+											content: location.content,
+										})
+									}
 								>
 									<MapPin />
 									<span>{location.name}</span>
@@ -274,13 +330,14 @@ export function Commander({ gameId }: { gameId: string }) {
 							{notes?.map((note) => (
 								<CommandItem
 									key={note.id}
-									onSelect={() => {
-										setIsCommanderOpen(false);
-										navigate({
-											to: "/games/$gameId/notes/$id",
-											params: { gameId, id: note.id },
-										});
-									}}
+									onSelect={() =>
+										handleEntitySelect({
+											id: note.id,
+											name: note.name,
+											type: "note",
+											content: note.content,
+										})
+									}
 								>
 									<FileText />
 									<span>{note.name}</span>
@@ -314,13 +371,14 @@ export function Commander({ gameId }: { gameId: string }) {
 							{quests?.map((quest) => (
 								<CommandItem
 									key={quest.id}
-									onSelect={() => {
-										setIsCommanderOpen(false);
-										navigate({
-											to: "/games/$gameId/quests/$id",
-											params: { gameId, id: quest.id },
-										});
-									}}
+									onSelect={() =>
+										handleEntitySelect({
+											id: quest.id,
+											name: quest.name,
+											type: "quest",
+											content: quest.content,
+										})
+									}
 								>
 									<Sword />
 									<span>{quest.name}</span>
@@ -346,4 +404,3 @@ export function Commander({ gameId }: { gameId: string }) {
 		</CommandDialog>
 	);
 }
-
