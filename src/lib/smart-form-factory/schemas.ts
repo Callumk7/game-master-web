@@ -72,4 +72,3 @@ export function createSchemaFor() {
 }
 
 export const schemas = createSchemaFor();
-

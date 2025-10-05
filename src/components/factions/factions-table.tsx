@@ -10,6 +10,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import { useDeleteFactionMutation } from "~/queries/factions";
 import { EditFactionDialog } from "./edit-faction-dialog";
 
@@ -50,6 +51,26 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 				<SortableHeader column={column}>Created</SortableHeader>
 			),
 			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+		},
+		{
+			id: "view",
+			header: "View",
+			enableHiding: false,
+			maxSize: 60,
+			cell: ({ row }) => {
+				const faction = row.original;
+				return (
+					<EntityLinkButton
+						entity={{
+							id: faction.id,
+							name: faction.name,
+							type: "faction",
+							content: faction.content,
+							content_plain_text: faction.content_plain_text,
+						}}
+					/>
+				);
+			},
 		},
 		{
 			id: "actions",

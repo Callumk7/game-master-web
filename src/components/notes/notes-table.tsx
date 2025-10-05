@@ -10,6 +10,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import { EditNoteDialog } from "./edit-note-dialog";
 
 interface NotesTableProps {
@@ -49,6 +50,26 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 				<SortableHeader column={column}>Created</SortableHeader>
 			),
 			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+		},
+		{
+			id: "view",
+			header: "View",
+			maxSize: 60,
+			enableHiding: false,
+			cell: ({ row }) => {
+				const note = row.original;
+				return (
+					<EntityLinkButton
+						entity={{
+							id: note.id,
+							name: note.name,
+							type: "note",
+							content: note.content,
+							content_plain_text: note.content_plain_text,
+						}}
+					/>
+				);
+			},
 		},
 		{
 			id: "actions",

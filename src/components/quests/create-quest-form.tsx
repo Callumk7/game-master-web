@@ -65,6 +65,7 @@ export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) 
 				>
 					<div className="space-y-6">
 						{renderSmartField("name")}
+						{renderSmartField("status")}
 
 						{/* Custom parent quest selector */}
 						<form.AppField name="parent_id">
