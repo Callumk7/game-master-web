@@ -2,7 +2,9 @@
 import { Dialog } from "@base-ui-components/react/dialog";
 import { XIcon } from "lucide-react";
 import * as React from "react";
+import { Link } from "~/components/ui/link";
 import { cn } from "~/utils/cn";
+import type { EntityType } from "~/types";
 
 interface DraggableWindowProps {
 	children: React.ReactNode;
@@ -16,6 +18,12 @@ interface DraggableWindowProps {
 	className?: string;
 	contentClassName?: string;
 	initialOffset?: { x: number; y: number };
+	zIndex?: number;
+	onBringToFront?: () => void;
+	// Props for making title a link
+	entityId?: string;
+	entityType?: EntityType;
+	gameId?: string;
 }
 
 const DraggableWindow: React.FC<DraggableWindowProps> = ({
@@ -30,6 +38,11 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 	className = "",
 	contentClassName = "",
 	initialOffset = { x: 0, y: 0 },
+	zIndex = 50,
+	onBringToFront,
+	entityId,
+	entityType,
+	gameId,
 }) => {
 	const popupRef = React.useRef<HTMLDivElement>(null);
 	const dragDataRef = React.useRef({
@@ -130,6 +143,10 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 			}
 
 			e.preventDefault();
+			
+			// Bring window to front when drag starts
+			onBringToFront?.();
+			
 			const data = dragDataRef.current;
 
 			data.isDragging = true;
@@ -145,7 +162,7 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 			document.addEventListener("mousemove", handleMouseMove, { passive: true });
 			document.addEventListener("mouseup", handleMouseUp);
 		},
-		[handleMouseMove, handleMouseUp],
+		[handleMouseMove, handleMouseUp, onBringToFront],
 	);
 
 	const handleResizeStart = React.useCallback(
@@ -232,7 +249,7 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 				<Dialog.Popup
 					ref={popupRef}
 					className={cn(
-						"bg-background data-[open]:animate-in data-[open]:fade-in-0 data-[open]:zoom-in-95 data-[closed]:animate-out data-[closed]:fade-out-0 data-[closed]:zoom-out-95 fixed z-50 flex flex-col gap-4 rounded-lg border p-0 shadow-lg duration-200 overflow-hidden",
+						"bg-background data-[open]:animate-in data-[open]:fade-in-0 data-[open]:zoom-in-95 data-[closed]:animate-out data-[closed]:fade-out-0 data-[closed]:zoom-out-95 fixed flex flex-col gap-4 rounded-lg border p-0 shadow-lg duration-200 overflow-hidden",
 						className,
 					)}
 					style={{
@@ -245,7 +262,9 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 						willChange: "transform",
 						transform: `translate(${dragDataRef.current.currentX}px, ${dragDataRef.current.currentY}px)`,
 						transition: "opacity 200ms, transform 200ms",
+						zIndex: zIndex,
 					}}
+					onMouseDown={() => onBringToFront?.()}
 				>
 					{/* Header */}
 					<div
@@ -265,7 +284,17 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 						<Dialog.Title
 							className={cn("text-lg leading-none font-semibold")}
 						>
-							{title}
+							{entityId && entityType && gameId ? (
+								<Link
+									to={`/games/${gameId}/${entityType}s/${entityId}` as string}
+									className="hover:underline focus:underline focus:outline-none"
+									onClick={(e) => e.stopPropagation()}
+								>
+									{title}
+								</Link>
+							) : (
+								title
+							)}
 						</Dialog.Title>
 						<Dialog.Close
 							className={cn(

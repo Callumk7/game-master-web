@@ -2,11 +2,11 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
-	getCharacterLinksQueryKey,
 	getCharacterOptions,
 	getCharacterQueryKey,
 	listCharactersOptions,
 	listCharactersQueryKey,
+	removeCharacterPrimaryFactionMutation,
 	setCharacterPrimaryFactionMutation,
 	updateCharacterMutation,
 } from "~/api/@tanstack/react-query.gen";
@@ -66,10 +66,22 @@ export const useSetCharacterPrimaryFactionMutation = (
 		...setCharacterPrimaryFactionMutation(),
 		onSuccess: () => {
 			client.invalidateQueries({
-				queryKey: getCharacterLinksQueryKey({
-					path: { game_id: gameId, character_id: characterId },
+				queryKey: getCharacterQueryKey({
+					path: { game_id: gameId, id: characterId },
 				}),
 			});
+		},
+	});
+};
+
+export const useRemoveCharacterFromFactionMutation = (
+	gameId: string,
+	characterId: string,
+) => {
+	const client = useQueryClient();
+	return useMutation({
+		...removeCharacterPrimaryFactionMutation(),
+		onSuccess: () => {
 			client.invalidateQueries({
 				queryKey: getCharacterQueryKey({
 					path: { game_id: gameId, id: characterId },

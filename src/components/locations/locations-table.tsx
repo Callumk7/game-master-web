@@ -10,6 +10,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import { Badge } from "../ui/badge";
 import { EditLocationDialog } from "./edit-location-dialog";
 
@@ -59,6 +60,26 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 				<SortableHeader column={column}>Created</SortableHeader>
 			),
 			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+		},
+		{
+			id: "view",
+			header: "View",
+			maxSize: 60,
+			enableHiding: false,
+			cell: ({ row }) => {
+				const location = row.original;
+				return (
+					<EntityLinkButton
+						entity={{
+							id: location.id,
+							name: location.name,
+							type: "location",
+							content: location.content,
+							content_plain_text: location.content_plain_text,
+						}}
+					/>
+				);
+			},
 		},
 		{
 			id: "actions",

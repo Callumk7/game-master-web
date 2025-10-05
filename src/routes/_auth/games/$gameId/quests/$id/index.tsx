@@ -1,13 +1,19 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { Quest } from "~/api";
 import { useGetQuestLinksQuery } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { ObjectivesView } from "~/components/quests/objectives-view";
 import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { useGetQuestSuspenseQuery, useUpdateQuestMutation } from "~/queries/quests";
+import {
+	useDeleteQuestMutation,
+	useGetQuestSuspenseQuery,
+	useUpdateQuestMutation,
+} from "~/queries/quests";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/")({
@@ -50,6 +56,8 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		path: { game_id: gameId, quest_id: quest.id },
 	});
 
+	const navigate = Route.useNavigate();
+
 	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
 
 	const handleSave = async (payload: {
@@ -60,6 +68,15 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 			body: { quest: payload },
 			path: { game_id: gameId, id: quest.id },
 		});
+	};
+
+	const deleteQuest = useDeleteQuestMutation(gameId);
+	const handleDelete = () => {
+		deleteQuest.mutate({
+			path: { game_id: gameId, id: quest.id },
+		});
+		toast("Quest deleted successfully!");
+		navigate({ to: "." });
 	};
 
 	const badges = quest.tags && quest.tags.length > 0 && (
@@ -124,11 +141,9 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		{
 			id: "objectives",
 			label: "Objectives",
-			content: <div>Objectives tabs tbc</div>,
+			content: <ObjectivesView gameId={gameId} questId={quest.id} />,
 		},
 	];
-
-	const navigate = Route.useNavigate();
 
 	return (
 		<EntityView
@@ -136,6 +151,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onDelete={handleDelete}
 		/>
 	);
 }

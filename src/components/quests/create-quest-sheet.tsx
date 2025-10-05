@@ -10,7 +10,10 @@ export function CreateQuestSheet() {
 	return (
 		<Sheet open={isCreateQuestOpen} onOpenChange={setIsCreateQuestOpen}>
 			<SheetContent className="p-4 pt-10 overflow-scroll" width="lg" ref={sheetRef}>
-				<CreateQuestForm container={sheetRef} />
+				<CreateQuestForm
+					onSuccess={() => setIsCreateQuestOpen(false)}
+					container={sheetRef}
+				/>
 			</SheetContent>
 		</Sheet>
 	);

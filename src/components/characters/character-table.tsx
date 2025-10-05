@@ -11,6 +11,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import { useDeleteCharacterMutation } from "~/queries/characters";
 import { Badge } from "../ui/badge";
 import { EditCharacterDialog } from "./edit-character-dialog";
@@ -91,6 +92,26 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 				<SortableHeader column={column}>Created</SortableHeader>
 			),
 			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+		},
+		{
+			id: "view",
+			header: "View",
+			maxSize: 60,
+			enableHiding: false,
+			cell: ({ row }) => {
+				const character = row.original;
+				return (
+					<EntityLinkButton
+						entity={{
+							id: character.id,
+							name: character.name,
+							type: "character",
+							content: character.content,
+							content_plain_text: character.content_plain_text,
+						}}
+					/>
+				);
+			},
 		},
 		{
 			id: "actions",

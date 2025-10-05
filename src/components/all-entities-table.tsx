@@ -20,6 +20,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import type { EntityType } from "~/types";
 
 export type AllEntity = {
@@ -118,6 +119,26 @@ export function AllEntitiesTable({
 			),
 			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 			size: 120,
+		},
+		{
+			id: "view",
+			header: "View",
+			enableHiding: false,
+			cell: ({ row }) => {
+				const entity = row.original;
+				return (
+					<EntityLinkButton
+						entity={{
+							id: entity.id,
+							name: entity.name,
+							type: entity.type,
+							content: entity.content,
+							content_plain_text: entity.content_plain_text,
+						}}
+					/>
+				);
+			},
+			size: 60,
 		},
 	];
 

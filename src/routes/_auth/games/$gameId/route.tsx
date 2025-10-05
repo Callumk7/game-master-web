@@ -23,6 +23,7 @@ import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
 import { TodosDrawer } from "~/components/todos/todos-drawer";
 import { Badge } from "~/components/ui/badge";
+import { EntityWindowManager } from "~/components/ui/entity-window-manager";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { useUIActions } from "~/state/ui";
 
@@ -76,7 +77,7 @@ function RouteComponent() {
 					<GameSidebar />
 					{/* Main Content */}
 					<div className="flex-1 flex flex-col">
-						<main className="flex-1 overflow-auto">
+						<main className="flex-1 overflow-y-scoll">
 							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20">
 								<SidebarTrigger />
 								<Commander gameId={gameId} />
@@ -109,6 +110,7 @@ function RouteComponent() {
 						<CreateNoteSheet />
 						<CreateLocationSheet />
 						<CreateQuestSheet />
+						<EntityWindowManager />
 						<ClientOnly>
 							<TodosDrawer />
 						</ClientOnly>

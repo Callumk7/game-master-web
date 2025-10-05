@@ -9,15 +9,15 @@ import {
 	useListQuestsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
-import { useSmartForm } from "../forms/smart-factory";
-import { schemas } from "../forms/type-utils";
+import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import { ParentQuestSelect } from "./parent-quest-select";
 
 interface CreateQuestFormProps {
 	container?: React.RefObject<HTMLElement | null>;
+	onSuccess?: () => void;
 }
 
-export function CreateQuestForm({ container }: CreateQuestFormProps) {
+export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
 
@@ -48,6 +48,9 @@ export function CreateQuestForm({ container }: CreateQuestFormProps) {
 					path: { game_id: gameId },
 				}),
 			});
+			if (onSuccess) {
+				onSuccess();
+			}
 		},
 	});
 
@@ -62,6 +65,7 @@ export function CreateQuestForm({ container }: CreateQuestFormProps) {
 				>
 					<div className="space-y-6">
 						{renderSmartField("name")}
+						{renderSmartField("status")}
 
 						{/* Custom parent quest selector */}
 						<form.AppField name="parent_id">

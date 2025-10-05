@@ -1,7 +1,9 @@
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
 	Bold,
+	ChevronDown,
 	Code,
 	Heading1,
 	Heading2,
@@ -10,9 +12,12 @@ import {
 	List,
 	ListOrdered,
 	Minus,
+	Plus,
 	Quote,
 	Redo,
 	Strikethrough,
+	Table as TableIcon,
+	Trash2,
 	Undo,
 } from "lucide-react";
 import * as React from "react";
@@ -22,6 +27,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { listGameEntitiesOptions } from "~/api/@tanstack/react-query.gen";
 import { Button } from "../button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuPositioner,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "../dropdown-menu";
 import { Separator } from "../separator";
 import { Toggle } from "../toggle";
 import { type MentionItem, SimpleMention } from "./mention-extension-simple";
@@ -112,6 +125,9 @@ export function Tiptap({
 		return items;
 	}, [entitiesData, gameId]);
 
+	// Force re-render when selection changes to update button states
+	const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -124,6 +140,12 @@ export function Tiptap({
 					keepAttributes: false,
 				},
 			}),
+			Table.configure({
+				resizable: true,
+			}),
+			TableRow,
+			TableHeader,
+			TableCell,
 			SimpleMention.configure({
 				suggestion: {
 					items: ({ query }: { query: string }) => {
@@ -147,6 +169,10 @@ export function Tiptap({
 					text: editor.getText(),
 				});
 			});
+		},
+		onSelectionUpdate: () => {
+			// Force re-render when selection changes to update button states
+			forceUpdate();
 		},
 		editorProps: {
 			attributes: {
@@ -292,6 +318,94 @@ export function Tiptap({
 				>
 					<Quote className="h-4 w-4" />
 				</Toggle>
+
+				<Separator orientation="vertical" className="h-6" />
+
+				<DropdownMenu>
+					<DropdownMenuTrigger render={<Button variant="ghost" size="sm" title="Table options" />}>
+						<TableIcon className="h-4 w-4" />
+						<ChevronDown className="h-3 w-3" />
+					</DropdownMenuTrigger>
+					<DropdownMenuPositioner>
+						<DropdownMenuContent className="w-48">
+						<DropdownMenuItem
+							onClick={() =>
+								editor
+									.chain()
+									.focus()
+									.insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+									.run()
+							}
+							disabled={!editor.can().insertTable()}
+						>
+							<TableIcon className="h-4 w-4 mr-2" />
+							Insert Table
+						</DropdownMenuItem>
+						
+						<DropdownMenuSeparator />
+						
+						<DropdownMenuItem
+							onClick={() => editor.chain().focus().addColumnBefore().run()}
+							disabled={!editor.can().addColumnBefore()}
+						>
+							<Plus className="h-4 w-4 mr-2" />
+							Add Column Before
+						</DropdownMenuItem>
+						
+						<DropdownMenuItem
+							onClick={() => editor.chain().focus().addColumnAfter().run()}
+							disabled={!editor.can().addColumnAfter()}
+						>
+							<Plus className="h-4 w-4 mr-2" />
+							Add Column After
+						</DropdownMenuItem>
+						
+						<DropdownMenuItem
+							onClick={() => editor.chain().focus().deleteColumn().run()}
+							disabled={!editor.can().deleteColumn()}
+						>
+							<Trash2 className="h-4 w-4 mr-2" />
+							Delete Column
+						</DropdownMenuItem>
+						
+						<DropdownMenuSeparator />
+						
+						<DropdownMenuItem
+							onClick={() => editor.chain().focus().addRowBefore().run()}
+							disabled={!editor.can().addRowBefore()}
+						>
+							<Plus className="h-4 w-4 mr-2" />
+							Add Row Before
+						</DropdownMenuItem>
+						
+						<DropdownMenuItem
+							onClick={() => editor.chain().focus().addRowAfter().run()}
+							disabled={!editor.can().addRowAfter()}
+						>
+							<Plus className="h-4 w-4 mr-2" />
+							Add Row After
+						</DropdownMenuItem>
+						
+						<DropdownMenuItem
+							onClick={() => editor.chain().focus().deleteRow().run()}
+							disabled={!editor.can().deleteRow()}
+						>
+							<Trash2 className="h-4 w-4 mr-2" />
+							Delete Row
+						</DropdownMenuItem>
+						
+						<DropdownMenuSeparator />
+						
+						<DropdownMenuItem
+							onClick={() => editor.chain().focus().deleteTable().run()}
+							disabled={!editor.can().deleteTable()}
+						>
+							<Trash2 className="h-4 w-4 mr-2" />
+							Delete Table
+						</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenuPositioner>
+				</DropdownMenu>
 
 				<Separator orientation="vertical" className="h-6" />
 

@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { Note } from "~/api";
 import { useGetNoteLinksQuery } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
@@ -7,7 +8,11 @@ import { NoteLinksPopover } from "~/components/notes/note-links-popover";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { useNoteSuspenseQuery, useUpdateNoteMutation } from "~/queries/notes";
+import {
+	useDeleteNoteMutation,
+	useNoteSuspenseQuery,
+	useUpdateNoteMutation,
+} from "~/queries/notes";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/")({
@@ -50,6 +55,8 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		path: { game_id: gameId, note_id: note.id },
 	});
 
+	const navigate = Route.useNavigate();
+
 	const updateNote = useUpdateNoteMutation(gameId, note.id);
 
 	const handleSave = async (payload: {
@@ -60,6 +67,15 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			body: { note: payload },
 			path: { game_id: gameId, id: note.id },
 		});
+	};
+
+	const deleteNote = useDeleteNoteMutation(gameId);
+	const handleDelete = () => {
+		deleteNote.mutate({
+			path: { game_id: gameId, id: note.id },
+		});
+		toast("Note deleted successfully!");
+		navigate({ to: "." });
 	};
 
 	const badges = note.tags && note.tags.length > 0 && (
@@ -123,14 +139,13 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		},
 	];
 
-	const navigate = Route.useNavigate();
-
 	return (
 		<EntityView
 			name={note.name}
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onDelete={handleDelete}
 		/>
 	);
 }

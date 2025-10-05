@@ -1,226 +1,18 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: factory component */
-
-import type { UseMutationOptions } from "@tanstack/react-query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, XCircle } from "lucide-react";
-import type * as React from "react";
 import { z } from "zod";
 import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
-import { TagInput } from "~/components/ui/composite/tag-input";
 import { createFormHook } from "~/components/ui/form-tanstack";
-import { Input } from "~/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectPositioner,
-	SelectTrigger,
-	SelectValue,
-} from "~/components/ui/select";
-import { Textarea } from "~/components/ui/textarea";
-import { Tiptap } from "../ui/editor";
+import type { ApiError, FieldConfig, FormFactoryOptions, UseFormWithMutationOptions } from "../types";
+import { FormFieldControl } from "./field-control";
 
 // Create form hook outside component
 const { useAppForm } = createFormHook();
 
 // ===================================
-// TYPES
-// ===================================
-
-export interface FormFactoryOptions<
-	TData,
-	TError,
-	TMutationData extends TDataShape,
-	TFormData = Record<string, any>,
-> {
-	mutationOptions: () => UseMutationOptions<TData, TError, Options<TMutationData>>;
-	schema: z.ZodSchema<TFormData>;
-	fields: FieldConfig[];
-	onSuccess?: (data: TData) => void;
-	defaultValues?: Partial<TFormData>;
-	className?: string;
-	entityName?: string;
-}
-
-export interface FieldConfig {
-	name: string;
-	label: string;
-	type:
-		| "text"
-		| "number"
-		| "textarea"
-		| "editor"
-		| "select"
-		| "checkbox"
-		| "email"
-		| "password"
-		| "date"
-		| "tags";
-	placeholder?: string;
-	required?: boolean;
-	options?: { value: string; label: string }[];
-	description?: string;
-	disabled?: boolean;
-	className?: string;
-	validation?: {
-		min?: number;
-		max?: number;
-		minLength?: number;
-		maxLength?: number;
-		pattern?: RegExp;
-	};
-}
-
-// Error interface for better type safety
-export interface ApiError {
-	message: string;
-	fields?: Record<string, string[]>;
-	code?: string;
-}
-
-// ===================================
-// COMPONENTS
-// ===================================
-
-// Extract field control outside component to prevent recreation on each render
-export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> = ({
-	field,
-	fieldApi,
-}) => {
-	const hasErrors = fieldApi.state?.meta?.errors?.length > 0;
-
-	const commonProps = {
-		name: fieldApi.name,
-		value: fieldApi.state?.value ?? "",
-		onBlur: fieldApi.handleBlur,
-		disabled: field.disabled,
-		required: field.required,
-		"aria-invalid": hasErrors,
-		className: field.className,
-	};
-
-	switch (field.type) {
-		case "textarea":
-			return (
-				<Textarea
-					{...commonProps}
-					placeholder={field.placeholder}
-					onChange={(e) => fieldApi.handleChange(e.target.value)}
-					rows={4}
-				/>
-			);
-
-		case "editor":
-			return (
-				<Tiptap
-					content={fieldApi.state?.value ?? null}
-					onChange={fieldApi.handleChange}
-					placeholder={field.placeholder}
-					editable={!field.disabled}
-					className={field.className}
-				/>
-			);
-
-		case "select":
-			return (
-				<Select
-					value={fieldApi.state?.value ?? ""}
-					onValueChange={(value) => {
-						fieldApi.handleChange(value);
-					}}
-					disabled={field.disabled}
-					required={field.required}
-				>
-					<SelectTrigger className="w-full" aria-invalid={hasErrors}>
-						<SelectValue
-							placeholder={field.placeholder || `Select ${field.label}`}
-						/>
-					</SelectTrigger>
-					<SelectPositioner>
-						<SelectContent>
-							{field.options?.map((option) => (
-								<SelectItem key={option.value} value={option.value}>
-									{option.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</SelectPositioner>
-				</Select>
-			);
-
-		case "checkbox":
-			return (
-				<Checkbox
-					checked={fieldApi.state?.value ?? false}
-					onCheckedChange={(checked) => fieldApi.handleChange(checked)}
-					disabled={field.disabled}
-					required={field.required}
-					aria-invalid={hasErrors}
-				/>
-			);
-
-		case "number":
-			return (
-				<Input
-					{...commonProps}
-					type="number"
-					placeholder={field.placeholder}
-					onChange={(e) => {
-						const value = e.target.value;
-						if (value === "") {
-							fieldApi.handleChange(undefined);
-						} else {
-							const numValue = e.target.valueAsNumber;
-							if (!Number.isNaN(numValue)) {
-								fieldApi.handleChange(numValue);
-							}
-							// For invalid input, don't update the form value yet
-						}
-					}}
-					min={field.validation?.min}
-					max={field.validation?.max}
-				/>
-			);
-
-		case "date":
-			return (
-				<Input
-					{...commonProps}
-					type="date"
-					onChange={(e) => fieldApi.handleChange(e.target.value)}
-				/>
-			);
-
-		case "tags":
-			return (
-				<TagInput
-					value={fieldApi.state?.value ?? []}
-					onChange={fieldApi.handleChange}
-					placeholder={field.placeholder}
-					disabled={field.disabled}
-				/>
-			);
-
-		default:
-			return (
-				<Input
-					{...commonProps}
-					type={field.type}
-					placeholder={field.placeholder}
-					onChange={(e) => fieldApi.handleChange(e.target.value)}
-					minLength={field.validation?.minLength}
-					maxLength={field.validation?.maxLength}
-					pattern={field.validation?.pattern?.source}
-				/>
-			);
-	}
-};
-
-// ===================================
-// FACTORIES
+// LEGACY FORM FACTORY
 // ===================================
 
 export function createFormComponent<
@@ -416,13 +208,7 @@ export function useFormWithMutation<
 	onSuccess,
 	defaultValues = {},
 	entityName = "game",
-}: {
-	mutationOptions: () => UseMutationOptions<TData, TError, Options<TMutationData>>;
-	schema: z.ZodSchema<TFormData>;
-	onSuccess?: (data: TData) => void;
-	defaultValues?: Partial<TFormData>;
-	entityName?: string;
-}) {
+}: UseFormWithMutationOptions<TData, TError, TMutationData, TFormData>) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -516,10 +302,6 @@ export function useFormWithMutation<
 		),
 	};
 }
-
-// ===================================
-// EXPORTS
-// ===================================
 
 // Export the form hook for direct usage
 export { useAppForm };

@@ -12,6 +12,7 @@ import {
 	ActionsDropdown,
 	StatusDisplay,
 } from "~/components/ui/entity-table";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import { EditQuestDialog } from "./edit-quest-dialog";
 
 interface QuestsTableProps {
@@ -69,6 +70,26 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 				<SortableHeader column={column}>Status</SortableHeader>
 			),
 			cell: ({ row }) => <StatusDisplay status={row.getValue("status")} />,
+		},
+		{
+			id: "view",
+			header: "View",
+			maxSize: 60,
+			enableHiding: false,
+			cell: ({ row }) => {
+				const quest = row.original;
+				return (
+					<EntityLinkButton
+						entity={{
+							id: quest.id,
+							name: quest.name,
+							type: "quest",
+							content: quest.content,
+							content_plain_text: quest.content_plain_text,
+						}}
+					/>
+				);
+			},
 		},
 		{
 			id: "actions",

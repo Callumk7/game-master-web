@@ -1,3 +1,4 @@
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { cn } from "~/utils/cn";
@@ -23,6 +24,12 @@ export function TiptapViewer({ content, className }: TiptapViewerProps) {
 					keepAttributes: false,
 				},
 			}),
+			Table.configure({
+				resizable: false, // Disable resizing in viewer
+			}),
+			TableRow,
+			TableHeader,
+			TableCell,
 			// Add mention extension for rendering saved mentions
 			SimpleMention.configure({
 				suggestion: {
