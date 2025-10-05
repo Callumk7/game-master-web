@@ -1,159 +1,53 @@
 import * as React from "react";
-import { GripVertical } from "lucide-react";
+import { GripVerticalIcon } from "lucide-react";
+import * as ResizablePrimitive from "react-resizable-panels";
 import { cn } from "~/utils/cn";
 
-interface ResizablePanelGroupProps {
-	direction: "horizontal" | "vertical";
-	className?: string;
-	children: React.ReactNode;
-}
-
-interface ResizablePanelProps {
-	defaultSize?: number;
-	minSize?: number;
-	maxSize?: number;
-	className?: string;
-	children: React.ReactNode;
-}
-
-interface ResizableHandleProps {
-	withHandle?: boolean;
-	className?: string;
-}
-
-const ResizablePanelGroupContext = React.createContext<{
-	direction: "horizontal" | "vertical";
-	panels: Array<{ id: string; size: number; minSize: number; maxSize: number }>;
-	updatePanelSize: (id: string, size: number) => void;
-} | null>(null);
-
-export function ResizablePanelGroup({ 
-	direction, 
-	className, 
-	children 
-}: ResizablePanelGroupProps) {
-	const [panels, setPanels] = React.useState<Array<{
-		id: string;
-		size: number;
-		minSize: number;
-		maxSize: number;
-	}>>([]);
-
-	const updatePanelSize = React.useCallback((id: string, size: number) => {
-		setPanels(prev => prev.map(panel => 
-			panel.id === id ? { ...panel, size } : panel
-		));
-	}, []);
-
-	const contextValue = React.useMemo(() => ({
-		direction,
-		panels,
-		updatePanelSize,
-	}), [direction, panels, updatePanelSize]);
-
-	return (
-		<ResizablePanelGroupContext.Provider value={contextValue}>
-			<div
-				className={cn(
-					"flex h-full w-full",
-					direction === "horizontal" ? "flex-row" : "flex-col",
-					className
-				)}
-			>
-				{children}
-			</div>
-		</ResizablePanelGroupContext.Provider>
-	);
-}
-
-export function ResizablePanel({
-	defaultSize = 50,
-	minSize = 10,
-	maxSize = 90,
+function ResizablePanelGroup({
 	className,
-	children,
-}: ResizablePanelProps) {
-	const context = React.useContext(ResizablePanelGroupContext);
-	const panelId = React.useId();
-	const [size, setSize] = React.useState(defaultSize);
-
-	React.useEffect(() => {
-		if (context) {
-			context.updatePanelSize(panelId, size);
-		}
-	}, [context, panelId, size]);
-
-	const style = React.useMemo(() => {
-		if (context?.direction === "horizontal") {
-			return { width: `${size}%`, height: "100%" };
-		}
-		return { height: `${size}%`, width: "100%" };
-	}, [context?.direction, size]);
-
+	...props
+}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) {
 	return (
-		<div
-			className={cn("overflow-hidden", className)}
-			style={style}
-		>
-			{children}
-		</div>
+		<ResizablePrimitive.PanelGroup
+			data-slot="resizable-panel-group"
+			className={cn(
+				"flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
+				className,
+			)}
+			{...props}
+		/>
 	);
 }
 
-export function ResizableHandle({ withHandle = false, className }: ResizableHandleProps) {
-	const context = React.useContext(ResizablePanelGroupContext);
-	const [isDragging, setIsDragging] = React.useState(false);
+function ResizablePanel({
+	...props
+}: React.ComponentProps<typeof ResizablePrimitive.Panel>) {
+	return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />;
+}
 
-	const handleMouseDown = React.useCallback((e: React.MouseEvent) => {
-		e.preventDefault();
-		setIsDragging(true);
-
-		const handleMouseMove = (e: MouseEvent) => {
-			// Basic resize logic - this is a simplified implementation
-			// In a production app, you'd want more sophisticated resize handling
-		};
-
-		const handleMouseUp = () => {
-			setIsDragging(false);
-			document.removeEventListener("mousemove", handleMouseMove);
-			document.removeEventListener("mouseup", handleMouseUp);
-		};
-
-		document.addEventListener("mousemove", handleMouseMove);
-		document.addEventListener("mouseup", handleMouseUp);
-	}, []);
-
-	if (!context) return null;
-
-	const isHorizontal = context.direction === "horizontal";
-
+function ResizableHandle({
+	withHandle,
+	className,
+	...props
+}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+	withHandle?: boolean;
+}) {
 	return (
-		<div
+		<ResizablePrimitive.PanelResizeHandle
+			data-slot="resizable-handle"
 			className={cn(
-				"group relative flex items-center justify-center bg-border transition-colors hover:bg-accent",
-				isHorizontal 
-					? "w-px min-w-px cursor-col-resize" 
-					: "h-px min-h-px cursor-row-resize",
-				isDragging && "bg-accent",
-				className
+				"bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:translate-x-0 data-[panel-group-direction=vertical]:after:-translate-y-1/2 [&[data-panel-group-direction=vertical]>div]:rotate-90",
+				className,
 			)}
-			onMouseDown={handleMouseDown}
+			{...props}
 		>
 			{withHandle && (
-				<div className={cn(
-					"flex items-center justify-center rounded-sm border bg-border transition-colors group-hover:bg-accent",
-					isHorizontal 
-						? "h-4 w-3 -translate-x-px" 
-						: "h-3 w-4 -translate-y-px"
-				)}>
-					<GripVertical 
-						className={cn(
-							"h-2.5 w-2.5 text-muted-foreground",
-							!isHorizontal && "rotate-90"
-						)} 
-					/>
+				<div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
+					<GripVerticalIcon className="size-2.5" />
 				</div>
 			)}
-		</div>
+		</ResizablePrimitive.PanelResizeHandle>
 	);
 }
+
+export { ResizablePanelGroup, ResizablePanel, ResizableHandle };

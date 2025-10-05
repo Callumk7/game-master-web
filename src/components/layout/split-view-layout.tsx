@@ -1,9 +1,13 @@
-import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "~/components/ui/resizable";
-import { EntityPane } from "./entity-pane";
-import { Button } from "~/components/ui/button";
 import { PlusCircle, X } from "lucide-react";
+import * as React from "react";
+import { Button } from "~/components/ui/button";
+import {
+	ResizableHandle,
+	ResizablePanel,
+	ResizablePanelGroup,
+} from "~/components/ui/resizable";
+import { EntityPane } from "./entity-pane";
 import { EntitySelector } from "./entity-selector";
 
 interface SplitViewLayoutProps {
@@ -13,18 +17,21 @@ interface SplitViewLayoutProps {
 }
 
 export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayoutProps) {
-	const navigate = useNavigate();
+	const navigate = useNavigate({ from: "/games/$gameId/split" });
 	const [leftSelectorOpen, setLeftSelectorOpen] = React.useState(false);
 	const [rightSelectorOpen, setRightSelectorOpen] = React.useState(false);
 
-	const updatePanes = React.useCallback((newLeft?: string, newRight?: string) => {
-		navigate({
-			search: {
-				left: newLeft,
-				right: newRight,
-			},
-		});
-	}, [navigate]);
+	const updatePanes = React.useCallback(
+		(newLeft?: string, newRight?: string) => {
+			navigate({
+				search: {
+					left: newLeft,
+					right: newRight,
+				},
+			});
+		},
+		[navigate],
+	);
 
 	const closeSplitView = React.useCallback(() => {
 		navigate({ to: "/games/$gameId", params: { gameId } });
@@ -46,8 +53,8 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 			</div>
 
 			{/* Resizable Panes */}
-			<div className="flex-1">
-				<ResizablePanelGroup direction="horizontal">
+			<div className="flex-1 overflow-hidden">
+				<ResizablePanelGroup direction="horizontal" className="h-full">
 					{/* Left Pane */}
 					<ResizablePanel defaultSize={50} minSize={30}>
 						<div className="h-full flex flex-col">
@@ -58,7 +65,9 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 										<Button
 											variant="ghost"
 											size="sm"
-											onClick={() => updatePanes(undefined, rightPane)}
+											onClick={() =>
+												updatePanes(undefined, rightPane)
+											}
 										>
 											<X className="h-3 w-3" />
 										</Button>
@@ -77,7 +86,9 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 									<EntityPane
 										gameId={gameId}
 										entityPath={leftPane}
-										onEntityChange={(newPath) => updatePanes(newPath, rightPane)}
+										onEntityChange={(newPath) =>
+											updatePanes(newPath, rightPane)
+										}
 									/>
 								) : (
 									<div className="flex items-center justify-center h-full text-muted-foreground">
@@ -110,7 +121,9 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 										<Button
 											variant="ghost"
 											size="sm"
-											onClick={() => updatePanes(leftPane, undefined)}
+											onClick={() =>
+												updatePanes(leftPane, undefined)
+											}
 										>
 											<X className="h-3 w-3" />
 										</Button>
@@ -129,7 +142,9 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 									<EntityPane
 										gameId={gameId}
 										entityPath={rightPane}
-										onEntityChange={(newPath) => updatePanes(leftPane, newPath)}
+										onEntityChange={(newPath) =>
+											updatePanes(leftPane, newPath)
+										}
 									/>
 								) : (
 									<div className="flex items-center justify-center h-full text-muted-foreground">
@@ -177,3 +192,4 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 		</div>
 	);
 }
+

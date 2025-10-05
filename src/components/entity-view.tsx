@@ -133,13 +133,16 @@ export function EntityControls({
 	};
 
 	const openInSplitView = () => {
-		// Determine the entity type for the URL
-		let urlEntityType = entityType;
-		if (entityType === "character") urlEntityType = "characters";
-		if (entityType === "faction") urlEntityType = "factions";
-		if (entityType === "location") urlEntityType = "locations";
-		if (entityType === "note") urlEntityType = "notes";
-		if (entityType === "quest") urlEntityType = "quests";
+		// Convert singular entity type to plural for the URL
+		const urlEntityTypeMap = {
+			character: "characters",
+			faction: "factions", 
+			location: "locations",
+			note: "notes",
+			quest: "quests"
+		} as const;
+		
+		const urlEntityType = urlEntityTypeMap[entityType];
 
 		// Extract gameId from current URL path
 		const gameId = window.location.pathname.split("/")[2];

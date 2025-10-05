@@ -1,35 +1,25 @@
-import * as React from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ExternalLink, RefreshCw } from "lucide-react";
-import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
-import { EntityViewHeader } from "~/components/entity-view";
-import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { 
+import * as React from "react";
+import {
 	getCharacterOptions,
 	getFactionOptions,
 	getLocationOptions,
 	getNoteOptions,
 	getQuestOptions,
 } from "~/api/@tanstack/react-query.gen";
-import { useQuery } from "@tanstack/react-query";
-import { 
-	useUpdateFactionMutation 
-} from "~/queries/factions";
-import { 
-	useUpdateCharacterMutation
-} from "~/queries/characters";
-import {
-	useUpdateLocationMutation
-} from "~/queries/locations";
-import {
-	useUpdateNoteMutation
-} from "~/queries/notes";
-import {
-	useUpdateQuestMutation
-} from "~/queries/quests";
+import { EntityViewHeader } from "~/components/entity-view";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { Spinner } from "~/components/ui/spinner";
+import { useUpdateCharacterMutation } from "~/queries/characters";
+import { useUpdateFactionMutation } from "~/queries/factions";
+import { useUpdateLocationMutation } from "~/queries/locations";
+import { useUpdateNoteMutation } from "~/queries/notes";
+import { useUpdateQuestMutation } from "~/queries/quests";
 
 interface EntityPaneProps {
 	gameId: string;
@@ -55,7 +45,7 @@ export function EntityPane({ gameId, entityPath /*, onEntityChange*/ }: EntityPa
 			notes: "/games/$gameId/notes/$id" as const,
 			quests: "/games/$gameId/quests/$id" as const,
 		};
-		
+
 		const route = routeMap[entityType];
 		if (route) {
 			navigate({
@@ -71,17 +61,20 @@ export function EntityPane({ gameId, entityPath /*, onEntityChange*/ }: EntityPa
 		queryClient.invalidateQueries({
 			predicate: (query) => {
 				const queryKey = query.queryKey;
-				return Array.isArray(queryKey) && 
-					queryKey.some(key => 
-						typeof key === "object" && 
-						key !== null && 
-						"path" in key &&
-						typeof key.path === "object" &&
-						key.path !== null &&
-						"game_id" in key.path &&
-						key.path.game_id === gameId &&
-						Object.values(key.path).includes(entityId)
-					);
+				return (
+					Array.isArray(queryKey) &&
+					queryKey.some(
+						(key) =>
+							typeof key === "object" &&
+							key !== null &&
+							"path" in key &&
+							typeof key.path === "object" &&
+							key.path !== null &&
+							"game_id" in key.path &&
+							key.path.game_id === gameId &&
+							Object.values(key.path).includes(entityId),
+					)
+				);
 			},
 		});
 	}, [queryClient, gameId, entityId]);
@@ -89,14 +82,12 @@ export function EntityPane({ gameId, entityPath /*, onEntityChange*/ }: EntityPa
 	return (
 		<div className="h-full flex flex-col">
 			{/* Pane Header */}
-			<div className="flex items-center justify-between p-2 border-b bg-card">
+			<div className="flex-shrink-0 flex items-center justify-between p-2 border-b bg-card">
 				<div className="flex items-center gap-2">
 					<Badge variant="outline" className="text-xs">
 						{entityType.slice(0, -1)} {/* Remove 's' suffix */}
 					</Badge>
-					<span className="text-sm font-medium truncate">
-						{entityId}
-					</span>
+					<span className="text-sm font-medium truncate">{entityId}</span>
 				</div>
 				<div className="flex gap-1">
 					<Button
@@ -121,13 +112,15 @@ export function EntityPane({ gameId, entityPath /*, onEntityChange*/ }: EntityPa
 			</div>
 
 			{/* Entity Content */}
-			<div className="flex-1 overflow-auto">
-				<EntityPaneContent 
-					key={`${entityType}-${entityId}`}
-					gameId={gameId}
-					entityType={entityType}
-					entityId={entityId}
-				/>
+			<div className="flex-1 min-h-0">
+				<ScrollArea className="h-[75vh]">
+					<EntityPaneContent
+						key={`${entityType}-${entityId}`}
+						gameId={gameId}
+						entityType={entityType}
+						entityId={entityId}
+					/>
+				</ScrollArea>
 			</div>
 		</div>
 	);
@@ -168,17 +161,23 @@ function EntityPaneContent({ gameId, entityType, entityId }: EntityPaneContentPr
 	}
 }
 
-function CharacterPaneContent({ gameId, characterId }: { gameId: string; characterId: string }) {
+function CharacterPaneContent({
+	gameId,
+	characterId,
+}: {
+	gameId: string;
+	characterId: string;
+}) {
 	const { data, isLoading, isError } = useQuery(
-		getCharacterOptions({ path: { game_id: gameId, id: characterId } })
+		getCharacterOptions({ path: { game_id: gameId, id: characterId } }),
 	);
-	
+
 	const updateCharacter = useUpdateCharacterMutation(gameId, characterId);
-	
+
 	if (isLoading) {
 		return <EntityPaneLoading />;
 	}
-	
+
 	if (isError || !data?.data) {
 		return (
 			<div className="p-4 text-center text-muted-foreground">
@@ -186,7 +185,7 @@ function CharacterPaneContent({ gameId, characterId }: { gameId: string; charact
 			</div>
 		);
 	}
-	
+
 	const character = data.data;
 
 	const handleSave = async (payload: {
@@ -203,18 +202,18 @@ function CharacterPaneContent({ gameId, characterId }: { gameId: string; charact
 		<div className="flex flex-wrap gap-2">
 			<Badge>{character.class}</Badge>
 			<Badge>Level: {character.level}</Badge>
-			{character.tags && character.tags.length > 0 && (
+			{character.tags &&
+				character.tags.length > 0 &&
 				character.tags.map((tag) => (
 					<Badge key={tag} variant="secondary">
 						{tag}
 					</Badge>
-				))
-			)}
+				))}
 		</div>
 	);
 
 	return (
-		<div className="p-2 space-y-3">
+		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={character.id}
 				type="character"
@@ -231,31 +230,35 @@ function CharacterPaneContent({ gameId, characterId }: { gameId: string; charact
 				entityId={character.id}
 				onSave={handleSave}
 				isSaving={updateCharacter.isPending}
-				className="min-h-[300px]"
+				className="min-h-[200px]"
 			/>
 		</div>
 	);
 }
 
-function FactionPaneContent({ gameId, factionId }: { gameId: string; factionId: string }) {
+function FactionPaneContent({
+	gameId,
+	factionId,
+}: {
+	gameId: string;
+	factionId: string;
+}) {
 	const { data, isLoading, isError } = useQuery(
-		getFactionOptions({ path: { game_id: gameId, id: factionId } })
+		getFactionOptions({ path: { game_id: gameId, id: factionId } }),
 	);
-	
+
 	const updateFaction = useUpdateFactionMutation(gameId, factionId);
-	
+
 	if (isLoading) {
 		return <EntityPaneLoading />;
 	}
-	
+
 	if (isError || !data?.data) {
 		return (
-			<div className="p-4 text-center text-muted-foreground">
-				Faction not found
-			</div>
+			<div className="p-4 text-center text-muted-foreground">Faction not found</div>
 		);
 	}
-	
+
 	const faction = data.data;
 
 	const handleSave = async (payload: {
@@ -279,7 +282,7 @@ function FactionPaneContent({ gameId, factionId }: { gameId: string; factionId: 
 	);
 
 	return (
-		<div className="p-2 space-y-3">
+		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={faction.id}
 				type="faction"
@@ -295,23 +298,29 @@ function FactionPaneContent({ gameId, factionId }: { gameId: string; factionId: 
 				entityId={faction.id}
 				onSave={handleSave}
 				isSaving={updateFaction.isPending}
-				className="min-h-[300px]"
+				className="min-h-[200px]"
 			/>
 		</div>
 	);
 }
 
-function LocationPaneContent({ gameId, locationId }: { gameId: string; locationId: string }) {
+function LocationPaneContent({
+	gameId,
+	locationId,
+}: {
+	gameId: string;
+	locationId: string;
+}) {
 	const { data, isLoading, isError } = useQuery(
-		getLocationOptions({ path: { game_id: gameId, id: locationId } })
+		getLocationOptions({ path: { game_id: gameId, id: locationId } }),
 	);
-	
+
 	const updateLocation = useUpdateLocationMutation(gameId, locationId);
-	
+
 	if (isLoading) {
 		return <EntityPaneLoading />;
 	}
-	
+
 	if (isError || !data?.data) {
 		return (
 			<div className="p-4 text-center text-muted-foreground">
@@ -319,7 +328,7 @@ function LocationPaneContent({ gameId, locationId }: { gameId: string; locationI
 			</div>
 		);
 	}
-	
+
 	const location = data.data;
 
 	const handleSave = async (payload: {
@@ -343,7 +352,7 @@ function LocationPaneContent({ gameId, locationId }: { gameId: string; locationI
 	);
 
 	return (
-		<div className="p-2 space-y-3">
+		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={location.id}
 				type="location"
@@ -359,7 +368,7 @@ function LocationPaneContent({ gameId, locationId }: { gameId: string; locationI
 				entityId={location.id}
 				onSave={handleSave}
 				isSaving={updateLocation.isPending}
-				className="min-h-[300px]"
+				className="min-h-[200px]"
 			/>
 		</div>
 	);
@@ -367,23 +376,21 @@ function LocationPaneContent({ gameId, locationId }: { gameId: string; locationI
 
 function NotePaneContent({ gameId, noteId }: { gameId: string; noteId: string }) {
 	const { data, isLoading, isError } = useQuery(
-		getNoteOptions({ path: { game_id: gameId, id: noteId } })
+		getNoteOptions({ path: { game_id: gameId, id: noteId } }),
 	);
-	
+
 	const updateNote = useUpdateNoteMutation(gameId, noteId);
-	
+
 	if (isLoading) {
 		return <EntityPaneLoading />;
 	}
-	
+
 	if (isError || !data?.data) {
 		return (
-			<div className="p-4 text-center text-muted-foreground">
-				Note not found
-			</div>
+			<div className="p-4 text-center text-muted-foreground">Note not found</div>
 		);
 	}
-	
+
 	const note = data.data;
 
 	const handleSave = async (payload: {
@@ -407,7 +414,7 @@ function NotePaneContent({ gameId, noteId }: { gameId: string; noteId: string })
 	);
 
 	return (
-		<div className="p-2 space-y-3">
+		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={note.id}
 				type="note"
@@ -423,7 +430,7 @@ function NotePaneContent({ gameId, noteId }: { gameId: string; noteId: string })
 				entityId={note.id}
 				onSave={handleSave}
 				isSaving={updateNote.isPending}
-				className="min-h-[300px]"
+				className="min-h-[200px]"
 			/>
 		</div>
 	);
@@ -431,23 +438,21 @@ function NotePaneContent({ gameId, noteId }: { gameId: string; noteId: string })
 
 function QuestPaneContent({ gameId, questId }: { gameId: string; questId: string }) {
 	const { data, isLoading, isError } = useQuery(
-		getQuestOptions({ path: { game_id: gameId, id: questId } })
+		getQuestOptions({ path: { game_id: gameId, id: questId } }),
 	);
-	
+
 	const updateQuest = useUpdateQuestMutation(gameId, questId);
-	
+
 	if (isLoading) {
 		return <EntityPaneLoading />;
 	}
-	
+
 	if (isError || !data?.data) {
 		return (
-			<div className="p-4 text-center text-muted-foreground">
-				Quest not found
-			</div>
+			<div className="p-4 text-center text-muted-foreground">Quest not found</div>
 		);
 	}
-	
+
 	const quest = data.data;
 
 	const handleSave = async (payload: {
@@ -463,18 +468,18 @@ function QuestPaneContent({ gameId, questId }: { gameId: string; questId: string
 	const badges = (
 		<div className="flex flex-wrap gap-2">
 			<Badge>{quest.status}</Badge>
-			{quest.tags && quest.tags.length > 0 && (
+			{quest.tags &&
+				quest.tags.length > 0 &&
 				quest.tags.map((tag) => (
 					<Badge key={tag} variant="secondary">
 						{tag}
 					</Badge>
-				))
-			)}
+				))}
 		</div>
 	);
 
 	return (
-		<div className="p-2 space-y-3">
+		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={quest.id}
 				type="quest"
@@ -490,8 +495,9 @@ function QuestPaneContent({ gameId, questId }: { gameId: string; questId: string
 				entityId={quest.id}
 				onSave={handleSave}
 				isSaving={updateQuest.isPending}
-				className="min-h-[300px]"
+				className="min-h-[200px]"
 			/>
 		</div>
 	);
 }
+
