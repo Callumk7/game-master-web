@@ -147,6 +147,10 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 
 	return (
 		<EntityView
+			id={quest.id}
+			type="quest"
+			content={quest.content}
+			content_plain_text={quest.content_plain_text}
 			name={quest.name}
 			badges={badges}
 			tabs={tabs}

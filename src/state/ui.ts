@@ -66,13 +66,15 @@ const useUIStore = create<Store>()((set, get) => ({
 		setIsCommanderOpen: (isOpen: boolean) => set({ isCommanderOpen: isOpen }),
 		setIsTodoDrawerOpen: (isOpen: boolean) => set({ isTodoDrawerOpen: isOpen }),
 		openEntityWindow: (entity: EntityLink) => {
-			const existingWindow = get().entityWindows.find((w) => w.entity.id === entity.id && w.entity.type === entity.type);
-			
+			const existingWindow = get().entityWindows.find(
+				(w) => w.entity.id === entity.id && w.entity.type === entity.type,
+			);
+
 			if (existingWindow) {
 				// Window already exists, just bring it to front or ensure it's open
 				set({
 					entityWindows: get().entityWindows.map((w) =>
-						w.id === existingWindow.id ? { ...w, isOpen: true } : w
+						w.id === existingWindow.id ? { ...w, isOpen: true } : w,
 					),
 				});
 				return;
@@ -82,7 +84,7 @@ const useUIStore = create<Store>()((set, get) => ({
 			const offset = windowCounter * 30;
 			windowCounter = (windowCounter + 1) % 10;
 			globalLayerCounter += 1;
-			
+
 			const newWindow: EntityWindow = {
 				id: `${entity.type}-${entity.id}-${Date.now()}`,
 				entity,
@@ -100,33 +102,33 @@ const useUIStore = create<Store>()((set, get) => ({
 		closeEntityWindow: (windowId: string) => {
 			set({
 				entityWindows: get().entityWindows.map((w) =>
-					w.id === windowId ? { ...w, isOpen: false } : w
+					w.id === windowId ? { ...w, isOpen: false } : w,
 				),
 			});
 		},
 		updateWindowPosition: (windowId: string, position: { x: number; y: number }) => {
 			set({
 				entityWindows: get().entityWindows.map((w) =>
-					w.id === windowId ? { ...w, position } : w
+					w.id === windowId ? { ...w, position } : w,
 				),
 			});
 		},
 		updateWindowSize: (windowId: string, size: { width: number; height: number }) => {
 			set({
 				entityWindows: get().entityWindows.map((w) =>
-					w.id === windowId ? { ...w, size } : w
+					w.id === windowId ? { ...w, size } : w,
 				),
 			});
 		},
 		bringWindowToFront: (windowId: string) => {
 			globalLayerCounter += 1;
 			const newZIndex = BASE_Z_INDEX + globalLayerCounter;
-			
+
 			set({
 				entityWindows: get().entityWindows.map((w) =>
-					w.id === windowId 
+					w.id === windowId
 						? { ...w, zIndex: newZIndex, layerOrder: globalLayerCounter }
-						: w
+						: w,
 				),
 			});
 		},

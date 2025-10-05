@@ -141,6 +141,10 @@ function NoteView({ note, gameId }: NoteViewProps) {
 
 	return (
 		<EntityView
+			id={note.id}
+			type="note"
+			content={note.content}
+			content_plain_text={note.content_plain_text}
 			name={note.name}
 			badges={badges}
 			tabs={tabs}

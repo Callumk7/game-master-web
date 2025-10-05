@@ -172,6 +172,10 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 
 	return (
 		<EntityView
+			id={character.id}
+			type="character"
+			content={character.content}
+			content_plain_text={character.content_plain_text}
 			name={character.name}
 			badges={badges}
 			tabs={tabs}

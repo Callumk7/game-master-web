@@ -137,6 +137,10 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 
 	return (
 		<EntityView
+			id={faction.id}
+			type="faction"
+			content={faction.content}
+			content_plain_text={faction.content_plain_text}
 			name={faction.name}
 			badges={badges}
 			tabs={tabs}

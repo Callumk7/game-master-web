@@ -137,6 +137,10 @@ function LocationView({ location, gameId }: LocationViewProps) {
 
 	return (
 		<EntityView
+			id={location.id}
+			type="location"
+			content={location.content}
+			content_plain_text={location.content_plain_text}
 			name={location.name}
 			badges={badges}
 			tabs={tabs}
