@@ -68,34 +68,13 @@ export function NodeMap({ data, gameId }: NodeMapProps) {
 	}
 
 	return (
-		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-2xl font-bold tracking-tight">
-						Entity Relationship Map
-					</h2>
-					<p className="text-muted-foreground">
-						Interactive visualization of your game entities and their
-						connections
-					</p>
-				</div>
-				<Link
-					to="/games/$gameId/tree"
-					params={{ gameId }}
-					className="text-sm text-primary hover:text-primary/80 transition-colors"
-				>
-					View Raw Data →
-				</Link>
-			</div>
-
-			<NodeViewer
-				data={data}
-				nodeExtractor={nodeExtractor}
-				nodeTypeConfig={NODE_TYPE_CONFIG}
-				onNodeClick={handleNodeClick}
-				height={600}
-				showControls={true}
-			/>
-		</div>
+		<NodeViewer
+			data={data}
+			nodeExtractor={nodeExtractor}
+			nodeTypeConfig={NODE_TYPE_CONFIG}
+			onNodeClick={handleNodeClick}
+			height={600}
+			showControls={true}
+		/>
 	);
 }
