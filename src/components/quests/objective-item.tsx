@@ -27,4 +27,3 @@ export function ObjectiveItem({ objective, onToggleComplete }: ObjectiveItemProp
 		</div>
 	);
 }
-

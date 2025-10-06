@@ -8,11 +8,7 @@ interface EditNoteDialogProps {
 	note: Note;
 }
 
-export function EditNoteDialog({
-	isOpen,
-	setIsOpen,
-	note,
-}: EditNoteDialogProps) {
+export function EditNoteDialog({ isOpen, setIsOpen, note }: EditNoteDialogProps) {
 	return (
 		<EditEntityDialog entity={note} isOpen={isOpen} setIsOpen={setIsOpen}>
 			<EditNoteForm

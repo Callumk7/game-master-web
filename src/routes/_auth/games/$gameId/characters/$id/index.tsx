@@ -1,5 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import type { Character } from "~/api";
+import type { Character, CharacterLinksResponse } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
 	useGetCharacterLinksQuery,
@@ -12,6 +12,8 @@ import { EntityView } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
+import { NodeViewer } from "~/lib/node-viewer";
+import type { Connection, NodePosition, NodeTypeConfig } from "~/lib/node-viewer/types";
 import {
 	useGetCharacterSuspenseQuery,
 	useUpdateCharacterMutation,
@@ -59,6 +61,158 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 
 	const context = Route.useRouteContext();
 	const updateCharacter = useUpdateCharacterMutation(gameId, character.id);
+
+	// Node extractor for character links visualization
+	const nodeExtractor = (response: CharacterLinksResponse) => {
+		const nodes = new Map<string, NodePosition>();
+		const connections: Connection[] = [];
+
+		if (!response.data?.links) {
+			return { nodes, connections };
+		}
+
+		const { links } = response.data;
+
+		// Add the main character as the central node
+		nodes.set(character.id, {
+			x: 0,
+			y: 0,
+			vx: 0,
+			vy: 0,
+			id: character.id,
+			name: character.name,
+			type: "character",
+			children: [],
+			connectionCount: 0,
+		});
+
+		// Add linked entities as nodes
+		if (links.characters) {
+			for (const char of links.characters) {
+				nodes.set(char.id, {
+					x: 0,
+					y: 0,
+					vx: 0,
+					vy: 0,
+					id: char.id,
+					name: char.name,
+					type: "character",
+					children: [],
+					connectionCount: 0,
+				});
+				connections.push({
+					from: character.id,
+					to: char.id,
+				});
+			}
+		}
+
+		if (links.factions) {
+			for (const faction of links.factions) {
+				nodes.set(faction.id, {
+					x: 0,
+					y: 0,
+					vx: 0,
+					vy: 0,
+					id: faction.id,
+					name: faction.name,
+					type: "faction",
+					children: [],
+					connectionCount: 0,
+				});
+				connections.push({
+					from: character.id,
+					to: faction.id,
+				});
+			}
+		}
+
+		if (links.locations) {
+			for (const location of links.locations) {
+				nodes.set(location.id, {
+					x: 0,
+					y: 0,
+					vx: 0,
+					vy: 0,
+					id: location.id,
+					name: location.name,
+					type: "location",
+					children: [],
+					connectionCount: 0,
+				});
+				connections.push({
+					from: character.id,
+					to: location.id,
+				});
+			}
+		}
+
+		if (links.quests) {
+			for (const quest of links.quests) {
+				nodes.set(quest.id, {
+					x: 0,
+					y: 0,
+					vx: 0,
+					vy: 0,
+					id: quest.id,
+					name: quest.name,
+					type: "quest",
+					children: [],
+					connectionCount: 0,
+				});
+				connections.push({
+					from: character.id,
+					to: quest.id,
+				});
+			}
+		}
+
+		if (links.notes) {
+			for (const note of links.notes) {
+				nodes.set(note.id, {
+					x: 0,
+					y: 0,
+					vx: 0,
+					vy: 0,
+					id: note.id,
+					name: note.name,
+					type: "note",
+					children: [],
+					connectionCount: 0,
+				});
+				connections.push({
+					from: character.id,
+					to: note.id,
+				});
+			}
+		}
+
+		return { nodes, connections };
+	};
+
+	// Node type configuration for styling
+	const nodeTypeConfig: NodeTypeConfig = {
+		character: {
+			color: "#3b82f6",
+			label: "Character",
+		},
+		faction: {
+			color: "#8b5cf6",
+			label: "Faction",
+		},
+		location: {
+			color: "#10b981",
+			label: "Location",
+		},
+		quest: {
+			color: "#f59e0b",
+			label: "Quest",
+		},
+		note: {
+			color: "#ef4444",
+			label: "Note",
+		},
+	};
 
 	const handleSave = async (payload: {
 		content: string;
@@ -129,12 +283,26 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 				</div>
 			)}
 			{!linksLoading && !linksError && linksResponse && (
-				<EntityLinksTable
-					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
-					gameId={gameId}
-					sourceType="character"
-					sourceId={character.id}
-				/>
+				<>
+					<NodeViewer
+						data={linksResponse}
+						nodeExtractor={nodeExtractor}
+						nodeTypeConfig={nodeTypeConfig}
+						height={400}
+						onNodeClick={(nodeId) => {
+							// Handle node click - could navigate to the entity
+							console.log("Clicked node:", nodeId);
+						}}
+					/>
+					<EntityLinksTable
+						links={flattenLinksForTable(
+							linksResponse as GenericLinksResponse,
+						)}
+						gameId={gameId}
+						sourceType="character"
+						sourceId={character.id}
+					/>
+				</>
 			)}
 		</div>
 	);

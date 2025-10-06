@@ -8,7 +8,10 @@ import { createFormHook } from "~/components/ui/form-tanstack";
 import type { ApiError, FieldConfig, HookFormOptions, SmartFormOptions } from "../types";
 import { FormFieldControl } from "./field-control";
 import { extractDefaultValues, generateFieldsFromSchema } from "../utils/schema-utils";
-import { processFormValuesForSubmission, processInitialValues } from "../utils/form-utils";
+import {
+	processFormValuesForSubmission,
+	processInitialValues,
+} from "../utils/form-utils";
 
 const { useAppForm } = createFormHook();
 

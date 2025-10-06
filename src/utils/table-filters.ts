@@ -4,15 +4,13 @@ import type { FilterFn } from "@tanstack/react-table";
  * Fuzzy filter function that performs case-insensitive substring matching.
  * Works with both string values and string arrays (like tags).
  */
-export const fuzzyFilter: FilterFn<any> = (row, columnId, value) => {
+export const fuzzyFilter: FilterFn<unknown> = (row, columnId, value) => {
 	const itemValue = row.getValue(columnId) as string | string[];
-	
+
 	if (Array.isArray(itemValue)) {
-		return itemValue.some((item) =>
-			item.toLowerCase().includes(value.toLowerCase()),
-		);
+		return itemValue.some((item) => item.toLowerCase().includes(value.toLowerCase()));
 	}
-	
+
 	return itemValue?.toLowerCase().includes(value.toLowerCase()) ?? false;
 };
 

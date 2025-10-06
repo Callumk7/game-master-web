@@ -12,7 +12,7 @@ export interface ExtractedMention {
  */
 export function extractMentionsFromJSON(json: JSONContent): ExtractedMention[] {
 	const mentions: ExtractedMention[] = [];
-	
+
 	function traverse(node: JSONContent) {
 		// Check if this node is a mention
 		if (node.type === "mention" && node.attrs) {
@@ -26,7 +26,7 @@ export function extractMentionsFromJSON(json: JSONContent): ExtractedMention[] {
 				});
 			}
 		}
-		
+
 		// Recursively traverse child nodes
 		if (node.content) {
 			for (const child of node.content) {
@@ -34,7 +34,7 @@ export function extractMentionsFromJSON(json: JSONContent): ExtractedMention[] {
 			}
 		}
 	}
-	
+
 	traverse(json);
 	return mentions;
 }
@@ -44,7 +44,7 @@ export function extractMentionsFromJSON(json: JSONContent): ExtractedMention[] {
  */
 export function getUniqueMentions(mentions: ExtractedMention[]): ExtractedMention[] {
 	const seen = new Set<string>();
-	return mentions.filter(mention => {
+	return mentions.filter((mention) => {
 		const key = `${mention.type}:${mention.id}`;
 		if (seen.has(key)) {
 			return false;

@@ -1,6 +1,12 @@
 import { useListObjectivesQuery } from "~/api/@tanstack/react-query.gen";
 import { Badge } from "~/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "~/components/ui/card";
 import { useObjectiveMutations } from "./hooks/useObjectiveMutations";
 import { ObjectiveForm } from "./objective-form";
 import { ObjectiveItem } from "./objective-item";
@@ -21,7 +27,7 @@ export function ObjectivesView({ gameId, questId }: ObjectivesViewProps) {
 	});
 
 	const objectives = data?.data || [];
-	const completedCount = objectives.filter(obj => obj.complete).length;
+	const completedCount = objectives.filter((obj) => obj.complete).length;
 	const totalCount = objectives.length;
 
 	if (isLoading) {
@@ -45,7 +51,11 @@ export function ObjectivesView({ gameId, questId }: ObjectivesViewProps) {
 						</CardDescription>
 					</div>
 					{totalCount > 0 && (
-						<Badge variant={completedCount === totalCount ? "success" : "outline"}>
+						<Badge
+							variant={
+								completedCount === totalCount ? "success" : "outline"
+							}
+						>
 							{completedCount}/{totalCount} complete
 						</Badge>
 					)}

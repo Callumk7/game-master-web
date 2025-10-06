@@ -60,7 +60,8 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 		removeNote.mutateAsync({
 			path: { game_id: gameId, id: noteId },
 			body: {
-				note: { parent_id: null, parent_type: null as any },
+				// @ts-expect-error: Limitation on swagger codegen
+				note: { parent_id: null, parent_type: null },
 			},
 		});
 	};

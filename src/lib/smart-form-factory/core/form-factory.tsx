@@ -5,7 +5,12 @@ import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
-import type { ApiError, FieldConfig, FormFactoryOptions, UseFormWithMutationOptions } from "../types";
+import type {
+	ApiError,
+	FieldConfig,
+	FormFactoryOptions,
+	UseFormWithMutationOptions,
+} from "../types";
 import { FormFieldControl } from "./field-control";
 
 // Create form hook outside component
