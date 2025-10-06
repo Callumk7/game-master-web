@@ -29,8 +29,8 @@ export function useForceSimulation<T>(
 				(c) => c.from === node.id || c.to === node.id,
 			).length;
 			return {
-				x: Math.random() * 1400 + 200,
-				y: Math.random() * 1000 + 200,
+				x: Math.random() * 50 + 775, // Start very close to center (775-825)
+				y: Math.random() * 50 + 575, // Start very close to center (575-625)
 				vx: 0,
 				vy: 0,
 				id: node.id,

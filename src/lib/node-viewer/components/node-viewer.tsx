@@ -39,8 +39,8 @@ export function NodeViewer<T>({
 
 	const svgRef = React.useRef<SVGSVGElement>(null);
 	const [transform, setTransform] = React.useState<ViewTransform>({
-		x: 0,
-		y: 0,
+		x: -400, // Center the 800px simulation width in viewport
+		y: -200, // Center the 600px simulation height in viewport
 		scale: 1,
 	});
 	const [isDragging, setIsDragging] = React.useState(false);
@@ -108,7 +108,7 @@ export function NodeViewer<T>({
 	}, []);
 
 	const resetView = React.useCallback(() => {
-		setTransform({ x: 0, y: 0, scale: 1 });
+		setTransform({ x: -400, y: -200, scale: 1 });
 	}, []);
 
 	const toggleRenderer = React.useCallback(() => {
