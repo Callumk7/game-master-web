@@ -18,7 +18,6 @@
 	},
 	"dependencies": {
 		"@base-ui-components/react": "1.0.0-beta.3",
-		"@radix-ui/react-dialog": "^1.1.15",
 		"@tailwindcss/vite": "^4.0.6",
 		"@tanstack/match-sorter-utils": "^8.19.4",
 		"@tanstack/react-form": "^1.19.3",

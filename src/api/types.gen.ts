@@ -521,7 +521,7 @@ export type User = {
     /**
      * User ID
      */
-    id: number;
+    id: string;
 };
 
 /**
@@ -652,7 +652,7 @@ export type Game = {
     /**
      * Owner user ID
      */
-    owner_id: number;
+    owner_id: string;
     /**
      * Game setting
      */
@@ -822,7 +822,7 @@ export type Location = {
     /**
      * Creator user ID
      */
-    user_id: number;
+    user_id: string;
 };
 
 /**
@@ -1178,7 +1178,7 @@ export type Quest = {
     /**
      * Creator user ID
      */
-    user_id: number;
+    user_id: string;
 };
 
 /**
@@ -1983,7 +1983,7 @@ export type Faction = {
     /**
      * Creator user ID
      */
-    user_id: number;
+    user_id: string;
 };
 
 /**
@@ -2197,7 +2197,7 @@ export type Note = {
     /**
      * Author user ID
      */
-    user_id: number;
+    user_id: string;
 };
 
 /**
@@ -2360,7 +2360,7 @@ export type Member = {
     /**
      * User ID
      */
-    user_id: number;
+    user_id: string;
 };
 
 /**
@@ -2435,7 +2435,7 @@ export type Character = {
     /**
      * Creator user ID
      */
-    user_id: number;
+    user_id: string;
 };
 
 export type GetFactionLinksData = {
@@ -2827,7 +2827,7 @@ export type AddGameMemberData = {
         /**
          * User ID to add
          */
-        user_id: number;
+        user_id: string;
         /**
          * Member role (default: 'member')
          */
@@ -5324,7 +5324,7 @@ export type RemoveGameMemberData = {
         /**
          * User ID to remove
          */
-        user_id: number;
+        user_id: string;
     };
     query?: never;
     url: '/api/games/{game_id}/members/{user_id}';

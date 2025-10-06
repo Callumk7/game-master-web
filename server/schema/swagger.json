@@ -51,7 +51,7 @@
         "user": {
           "confirmed_at": "2023-08-20T12:00:00Z",
           "email": "user@example.com",
-          "id": 1
+          "id": "123e4567-e89b-12d3-a456-426614174001"
         }
       },
       "properties": {
@@ -731,7 +731,7 @@
       "example": {
         "confirmed_at": "2023-08-20T12:00:00Z",
         "email": "user@example.com",
-        "id": 1
+        "id": "123e4567-e89b-12d3-a456-426614174001"
       },
       "properties": {
         "confirmed_at": {
@@ -745,7 +745,8 @@
         },
         "id": {
           "description": "User ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         }
       },
       "required": [
@@ -895,7 +896,7 @@
         "created_at": "2023-08-20T12:00:00Z",
         "id": "123e4567-e89b-12d3-a456-426614174000",
         "name": "My Campaign",
-        "owner_id": 1,
+        "owner_id": "123e4567-e89b-12d3-a456-426614174001",
         "setting": "Fantasy",
         "updated_at": "2023-08-20T12:00:00Z"
       },
@@ -924,7 +925,8 @@
         },
         "owner_id": {
           "description": "Owner user ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         },
         "setting": {
           "description": "Game setting",
@@ -1136,7 +1138,7 @@
         ],
         "type": "building",
         "updated_at": "2023-08-20T12:00:00Z",
-        "user_id": 1
+        "user_id": "123e4567-e89b-12d3-a456-426614174001"
       },
       "properties": {
         "content": {
@@ -1202,7 +1204,8 @@
         },
         "user_id": {
           "description": "Creator user ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         }
       },
       "required": [
@@ -1745,7 +1748,7 @@
           "exploration"
         ],
         "updated_at": "2023-08-20T12:00:00Z",
-        "user_id": 1
+        "user_id": "123e4567-e89b-12d3-a456-426614174001"
       },
       "properties": {
         "content": {
@@ -1810,7 +1813,8 @@
         },
         "user_id": {
           "description": "Creator user ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         }
       },
       "required": [
@@ -2977,7 +2981,7 @@
         "user": {
           "confirmed_at": "2023-08-20T12:00:00Z",
           "email": "user@example.com",
-          "id": 1
+          "id": "123e4567-e89b-12d3-a456-426614174001"
         }
       },
       "properties": {
@@ -3012,7 +3016,7 @@
           "antagonist"
         ],
         "updated_at": "2023-08-20T12:00:00Z",
-        "user_id": 1
+        "user_id": "123e4567-e89b-12d3-a456-426614174001"
       },
       "properties": {
         "content": {
@@ -3060,7 +3064,8 @@
         },
         "user_id": {
           "description": "Creator user ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         }
       },
       "required": [
@@ -3343,7 +3348,7 @@
           "quest"
         ],
         "updated_at": "2023-08-20T12:00:00Z",
-        "user_id": 1
+        "user_id": "123e4567-e89b-12d3-a456-426614174001"
       },
       "properties": {
         "content": {
@@ -3406,7 +3411,8 @@
         },
         "user_id": {
           "description": "Author user ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         }
       },
       "required": [
@@ -3646,7 +3652,7 @@
         "email": "user@example.com",
         "joined_at": "2023-08-20T12:00:00Z",
         "role": "member",
-        "user_id": 1
+        "user_id": "123e4567-e89b-12d3-a456-426614174000"
       },
       "properties": {
         "email": {
@@ -3664,7 +3670,8 @@
         },
         "user_id": {
           "description": "User ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         }
       },
       "required": [
@@ -3698,7 +3705,7 @@
           "wizard"
         ],
         "updated_at": "2023-08-20T12:00:00Z",
-        "user_id": 1
+        "user_id": "123e4567-e89b-12d3-a456-426614174001"
       },
       "properties": {
         "alive": {
@@ -3775,7 +3782,8 @@
         },
         "user_id": {
           "description": "Creator user ID",
-          "type": "integer"
+          "format": "uuid",
+          "type": "string"
         }
       },
       "required": [
@@ -4400,10 +4408,11 @@
           },
           {
             "description": "User ID to add",
+            "format": "uuid",
             "in": "formData",
             "name": "user_id",
             "required": true,
-            "type": "integer"
+            "type": "string"
           },
           {
             "description": "Member role (default: 'member')",
@@ -8059,10 +8068,11 @@
           },
           {
             "description": "User ID to remove",
+            "format": "uuid",
             "in": "path",
             "name": "user_id",
             "required": true,
-            "type": "integer"
+            "type": "string"
           }
         ],
         "responses": {

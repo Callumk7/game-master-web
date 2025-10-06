@@ -20,7 +20,7 @@ export const zFactionCreateParams = z.object({
 export const zUser = z.object({
     confirmed_at: z.optional(z.string()),
     email: z.string(),
-    id: z.int()
+    id: z.uuid()
 });
 
 /**
@@ -154,7 +154,7 @@ export const zQuest = z.object({
     ]),
     tags: z.optional(z.array(z.string())),
     updated_at: z.optional(z.string()),
-    user_id: z.int()
+    user_id: z.uuid()
 });
 
 /**
@@ -188,7 +188,7 @@ export const zFaction = z.object({
     pinned: z.boolean(),
     tags: z.optional(z.array(z.string())),
     updated_at: z.optional(z.string()),
-    user_id: z.int()
+    user_id: z.uuid()
 });
 
 /**
@@ -396,7 +396,7 @@ export const zCharacter = z.object({
     race: z.optional(z.string()),
     tags: z.optional(z.array(z.string())),
     updated_at: z.optional(z.string()),
-    user_id: z.int()
+    user_id: z.uuid()
 });
 
 /**
@@ -572,7 +572,7 @@ export const zGame = z.object({
     created_at: z.optional(z.string()),
     id: z.uuid(),
     name: z.string(),
-    owner_id: z.int(),
+    owner_id: z.uuid(),
     setting: z.optional(z.string()),
     updated_at: z.optional(z.string())
 });
@@ -647,7 +647,7 @@ export const zLocation = z.object({
         'complex'
     ]),
     updated_at: z.optional(z.string()),
-    user_id: z.int()
+    user_id: z.uuid()
 });
 
 /**
@@ -808,7 +808,7 @@ export const zNote = z.object({
     pinned: z.boolean(),
     tags: z.optional(z.array(z.string())),
     updated_at: z.optional(z.string()),
-    user_id: z.int()
+    user_id: z.uuid()
 });
 
 /**
@@ -1118,7 +1118,7 @@ export const zMember = z.object({
     email: z.string(),
     joined_at: z.optional(z.string()),
     role: z.string(),
-    user_id: z.int()
+    user_id: z.uuid()
 });
 
 /**
@@ -1466,7 +1466,7 @@ export const zListGameMembersResponse = zMembersResponse;
 
 export const zAddGameMemberData = z.object({
     body: z.object({
-        user_id: z.int(),
+        user_id: z.uuid(),
         role: z.optional(z.string())
     }),
     path: z.object({
@@ -2228,7 +2228,7 @@ export const zRemoveGameMemberData = z.object({
     body: z.optional(z.never()),
     path: z.object({
         game_id: z.uuid(),
-        user_id: z.int()
+        user_id: z.uuid()
     }),
     query: z.optional(z.never())
 });
