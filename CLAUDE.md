@@ -12,6 +12,8 @@ pnpm dev
 # Runs on port 3000
 ```
 
+Never run the development server yourself, instead inform the user when direct testing is required with instructions on what you want them to test.
+
 **Build and test:**
 ```bash
 pnpm build      # Build for production
@@ -41,7 +43,7 @@ This is a **TanStack Start** application - a full-stack React meta-framework wit
 - **TanStack Query** - Server state management with SSR integration
 - **TanStack Start** - Full-stack framework with SSR
 - **Tailwind CSS 4** - Styling framework
-- **React Aria Components** - Accessible UI components
+- **Base-UI headless component library** - Accessible UI components
 - **Biome** - Linting and formatting
 
 ### Key Architectural Patterns
@@ -82,6 +84,15 @@ The app appears to be a game master tool with resources for:
 - Route tree is auto-generated - do not edit `routeTree.gen.ts` directly
 - API types are generated from `server/schema/swagger.json`
 - The app uses dark mode by default (`className="dark"` in root layout)
+
+## Programming Guidelines
+- Always use components in the `/src/components/ui` folder where possible
+- we do NOT use radix components, so when using components ensure you adhere to base-ui APIs
+    - this means NOT using asChild, we use the render prop instead
+- When designing components, ensure that we stick to a single responsibility design where possible
+- Always organise complex component logic into its own folder
+- **ALWAYS** avoid using `as any`
+- **ALWAYS** import react using `import * as React from "react"`, and call react functions using method syntax, such as `React.useState()`
 
 <!-- BACKLOG.MD GUIDELINES START -->
 # Instructions for the usage of Backlog.md CLI Tool

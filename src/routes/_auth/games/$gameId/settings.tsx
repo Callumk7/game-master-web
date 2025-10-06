@@ -5,6 +5,7 @@ import * as React from "react";
 import { useListGameMembersQuery } from "~/api/@tanstack/react-query.gen";
 import { Member } from "~/api/types.gen";
 import { BlanketPermissions } from "~/components/admin/blanket-permissions";
+import { EditPermissionsDialog } from "~/components/admin/edit-permissions-dialog";
 import { Avatar } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";

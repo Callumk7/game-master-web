@@ -1,5 +1,5 @@
-import { useRef, useEffect, useCallback, useState } from "react";
-import type { NodePosition, Connection, ViewTransform } from "./node-map";
+import * as React from "react";
+import type { NodePosition, Connection, ViewTransform } from "~/lib/node-viewer";
 
 interface CanvasNodeMapProps {
   nodes: NodePosition[];
@@ -7,6 +7,7 @@ interface CanvasNodeMapProps {
   transform: ViewTransform;
   onTransformChange: (transform: ViewTransform) => void;
   onNodeClick: (nodeId: string) => void;
+  height?: number;
 }
 
 const NODE_COLORS = {
@@ -31,34 +32,38 @@ export function CanvasNodeMap({
   transform,
   onTransformChange,
   onNodeClick,
+  height,
 }: CanvasNodeMapProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
-  const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
+  const [hoveredNodeId, setHoveredNodeId] = React.useState<string | null>(null);
+  const [canvasSize, setCanvasSize] = React.useState({ width: 800, height: 600 });
 
   // Check if dark mode is active
   const isDarkMode = document.documentElement.classList.contains('dark');
   const nodeColors = isDarkMode ? NODE_COLORS_DARK : NODE_COLORS;
 
-  // Update canvas size when container resizes
-  useEffect(() => {
+  // Update canvas size when container resizes or height prop changes
+  React.useEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        setCanvasSize({ width: rect.width, height: rect.height });
+        setCanvasSize({ 
+          width: rect.width, 
+          height: height || rect.height 
+        });
       }
     };
 
     updateSize();
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
-  }, []);
+  }, [height]);
 
   // Canvas coordinate conversion helpers
-  const screenToWorld = useCallback((screenX: number, screenY: number) => {
+  const screenToWorld = React.useCallback((screenX: number, screenY: number) => {
     return {
       x: (screenX - transform.x) / transform.scale,
       y: (screenY - transform.y) / transform.scale,
@@ -68,7 +73,7 @@ export function CanvasNodeMap({
   // Removed unused worldToScreen helper
 
   // Find node at screen coordinates
-  const getNodeAtPosition = useCallback((screenX: number, screenY: number): NodePosition | null => {
+  const getNodeAtPosition = React.useCallback((screenX: number, screenY: number): NodePosition | null => {
     const worldPos = screenToWorld(screenX, screenY);
     
     for (const node of nodes) {
@@ -85,7 +90,7 @@ export function CanvasNodeMap({
   }, [nodes, screenToWorld]);
 
   // Render the canvas
-  const render = useCallback(() => {
+  const render = React.useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -171,12 +176,12 @@ export function CanvasNodeMap({
   }, [nodes, connections, transform, canvasSize, hoveredNodeId, nodeColors, isDarkMode]);
 
   // Render on every update
-  useEffect(() => {
+  React.useEffect(() => {
     render();
   }, [render]);
 
   // Mouse event handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const handleMouseDown = React.useCallback((e: React.MouseEvent) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
 
@@ -192,7 +197,7 @@ export function CanvasNodeMap({
     }
   }, [getNodeAtPosition, onNodeClick]);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  const handleMouseMove = React.useCallback((e: React.MouseEvent) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
 
@@ -215,11 +220,11 @@ export function CanvasNodeMap({
     }
   }, [isDragging, dragStart, transform, onTransformChange, getNodeAtPosition]);
 
-  const handleMouseUp = useCallback(() => {
+  const handleMouseUp = React.useCallback(() => {
     setIsDragging(false);
   }, []);
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
+  const handleWheel = React.useCallback((e: React.WheelEvent) => {
     e.preventDefault();
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
