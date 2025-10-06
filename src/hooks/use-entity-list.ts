@@ -7,7 +7,13 @@ import {
 	useListQuestsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import type { EntityType, Entity } from "~/types/split-view";
-import type { Character as APICharacter, Faction as APIFaction, Location as APILocation, Note as APINote, Quest as APIQuest } from "~/api/types.gen";
+import type {
+	Character as APICharacter,
+	Faction as APIFaction,
+	Location as APILocation,
+	Note as APINote,
+	Quest as APIQuest,
+} from "~/api/types.gen";
 
 interface UseEntityListParams {
 	gameId: string;
@@ -24,7 +30,7 @@ interface UseEntityListResult {
 }
 
 function transformCharacters(characters: APICharacter[]): Entity[] {
-	return characters.map(char => ({
+	return characters.map((char) => ({
 		id: char.id,
 		name: char.name,
 		content: char.content || "",
@@ -37,7 +43,7 @@ function transformCharacters(characters: APICharacter[]): Entity[] {
 }
 
 function transformFactions(factions: APIFaction[]): Entity[] {
-	return factions.map(faction => ({
+	return factions.map((faction) => ({
 		id: faction.id,
 		name: faction.name,
 		content: faction.content || "",
@@ -48,7 +54,7 @@ function transformFactions(factions: APIFaction[]): Entity[] {
 }
 
 function transformLocations(locations: APILocation[]): Entity[] {
-	return locations.map(location => ({
+	return locations.map((location) => ({
 		id: location.id,
 		name: location.name,
 		content: location.content || "",
@@ -59,7 +65,7 @@ function transformLocations(locations: APILocation[]): Entity[] {
 }
 
 function transformNotes(notes: APINote[]): Entity[] {
-	return notes.map(note => ({
+	return notes.map((note) => ({
 		id: note.id,
 		name: note.name,
 		content: note.content || "",
@@ -70,7 +76,7 @@ function transformNotes(notes: APINote[]): Entity[] {
 }
 
 function transformQuests(quests: APIQuest[]): Entity[] {
-	return quests.map(quest => ({
+	return quests.map((quest) => ({
 		id: quest.id,
 		name: quest.name,
 		content: quest.content || "",

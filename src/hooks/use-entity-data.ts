@@ -6,8 +6,14 @@ import {
 	getNoteOptions,
 	getQuestOptions,
 } from "~/api/@tanstack/react-query.gen";
-import type { EntityType, Entity } from "~/types/split-view";
-import type { Character as APICharacter, Faction as APIFaction, Location as APILocation, Note as APINote, Quest as APIQuest } from "~/api/types.gen";
+import type {
+	Character as APICharacter,
+	Faction as APIFaction,
+	Location as APILocation,
+	Note as APINote,
+	Quest as APIQuest,
+} from "~/api/types.gen";
+import type { Entity, EntityType } from "~/types/split-view";
 
 interface UseEntityDataParams {
 	gameId: string;
@@ -32,9 +38,11 @@ export function useEntityData({
 	const { data, isLoading, isError, error } = useQuery(queryOptions as any);
 
 	const apiData = (data as any)?.data;
-	
+
 	return {
-		data: apiData ? transformApiEntityToSplitViewEntity(apiData, entityType) : undefined,
+		data: apiData
+			? transformApiEntityToSplitViewEntity(apiData, entityType)
+			: undefined,
 		isLoading,
 		isError,
 		error: error as Error | null,
@@ -43,7 +51,7 @@ export function useEntityData({
 
 function transformApiEntityToSplitViewEntity(
 	entity: APICharacter | APIFaction | APILocation | APINote | APIQuest,
-	entityType: EntityType
+	entityType: EntityType,
 ): Entity {
 	const baseEntity = {
 		id: entity.id,

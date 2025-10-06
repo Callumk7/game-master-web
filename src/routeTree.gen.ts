@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthGamesIndexRouteImport } from './routes/_auth/games/index'
@@ -20,6 +21,7 @@ import { Route as AuthGamesGameIdRouteRouteImport } from './routes/_auth/games/$
 import { Route as AuthGamesGameIdIndexRouteImport } from './routes/_auth/games/$gameId/index'
 import { Route as AuthGamesGameIdTreeRouteImport } from './routes/_auth/games/$gameId/tree'
 import { Route as AuthGamesGameIdSplitRouteImport } from './routes/_auth/games/$gameId/split'
+import { Route as AuthGamesGameIdSettingsRouteImport } from './routes/_auth/games/$gameId/settings'
 import { Route as AuthGamesGameIdEditRouteImport } from './routes/_auth/games/$gameId/edit'
 import { Route as AuthGamesGameIdAllRouteImport } from './routes/_auth/games/$gameId/all'
 import { Route as AuthGamesGameIdQuestsIndexRouteImport } from './routes/_auth/games/$gameId/quests/index'
@@ -63,6 +65,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -100,6 +107,11 @@ const AuthGamesGameIdTreeRoute = AuthGamesGameIdTreeRouteImport.update({
 const AuthGamesGameIdSplitRoute = AuthGamesGameIdSplitRouteImport.update({
   id: '/split',
   path: '/split',
+  getParentRoute: () => AuthGamesGameIdRouteRoute,
+} as any)
+const AuthGamesGameIdSettingsRoute = AuthGamesGameIdSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
 const AuthGamesGameIdEditRoute = AuthGamesGameIdEditRouteImport.update({
@@ -264,6 +276,7 @@ const AuthGamesGameIdCharactersIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
@@ -272,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
+  '/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
   '/games/$gameId/': typeof AuthGamesGameIdIndexRoute
@@ -303,6 +317,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
@@ -310,6 +325,7 @@ export interface FileRoutesByTo {
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
+  '/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
   '/games/$gameId': typeof AuthGamesGameIdIndexRoute
@@ -338,6 +354,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
+  '/account': typeof AccountRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
@@ -346,6 +363,7 @@ export interface FileRoutesById {
   '/_auth/games/': typeof AuthGamesIndexRoute
   '/_auth/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/_auth/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
+  '/_auth/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/_auth/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/_auth/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
   '/_auth/games/$gameId/': typeof AuthGamesGameIdIndexRoute
@@ -379,6 +397,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/login'
     | '/logout'
     | '/signup'
@@ -387,6 +406,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/games/$gameId/all'
     | '/games/$gameId/edit'
+    | '/games/$gameId/settings'
     | '/games/$gameId/split'
     | '/games/$gameId/tree'
     | '/games/$gameId/'
@@ -418,6 +438,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/login'
     | '/logout'
     | '/signup'
@@ -425,6 +446,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/games/$gameId/all'
     | '/games/$gameId/edit'
+    | '/games/$gameId/settings'
     | '/games/$gameId/split'
     | '/games/$gameId/tree'
     | '/games/$gameId'
@@ -452,6 +474,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_auth'
+    | '/account'
     | '/login'
     | '/logout'
     | '/signup'
@@ -460,6 +483,7 @@ export interface FileRouteTypes {
     | '/_auth/games/'
     | '/_auth/games/$gameId/all'
     | '/_auth/games/$gameId/edit'
+    | '/_auth/games/$gameId/settings'
     | '/_auth/games/$gameId/split'
     | '/_auth/games/$gameId/tree'
     | '/_auth/games/$gameId/'
@@ -493,6 +517,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  AccountRoute: typeof AccountRoute
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   SignupRoute: typeof SignupRoute
@@ -519,6 +544,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -575,6 +607,13 @@ declare module '@tanstack/react-router' {
       path: '/split'
       fullPath: '/games/$gameId/split'
       preLoaderRoute: typeof AuthGamesGameIdSplitRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/settings': {
+      id: '/_auth/games/$gameId/settings'
+      path: '/settings'
+      fullPath: '/games/$gameId/settings'
+      preLoaderRoute: typeof AuthGamesGameIdSettingsRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
     '/_auth/games/$gameId/edit': {
@@ -853,6 +892,7 @@ const AuthGamesGameIdQuestsIdRouteRouteWithChildren =
 interface AuthGamesGameIdRouteRouteChildren {
   AuthGamesGameIdAllRoute: typeof AuthGamesGameIdAllRoute
   AuthGamesGameIdEditRoute: typeof AuthGamesGameIdEditRoute
+  AuthGamesGameIdSettingsRoute: typeof AuthGamesGameIdSettingsRoute
   AuthGamesGameIdSplitRoute: typeof AuthGamesGameIdSplitRoute
   AuthGamesGameIdTreeRoute: typeof AuthGamesGameIdTreeRoute
   AuthGamesGameIdIndexRoute: typeof AuthGamesGameIdIndexRoute
@@ -876,6 +916,7 @@ interface AuthGamesGameIdRouteRouteChildren {
 const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
   AuthGamesGameIdAllRoute: AuthGamesGameIdAllRoute,
   AuthGamesGameIdEditRoute: AuthGamesGameIdEditRoute,
+  AuthGamesGameIdSettingsRoute: AuthGamesGameIdSettingsRoute,
   AuthGamesGameIdSplitRoute: AuthGamesGameIdSplitRoute,
   AuthGamesGameIdTreeRoute: AuthGamesGameIdTreeRoute,
   AuthGamesGameIdIndexRoute: AuthGamesGameIdIndexRoute,
@@ -921,6 +962,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  AccountRoute: AccountRoute,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   SignupRoute: SignupRoute,

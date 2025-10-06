@@ -9,6 +9,7 @@ import {
 	Network,
 	Plus,
 	Scroll,
+	Settings,
 	Sun,
 	Users,
 } from "lucide-react";
@@ -114,10 +115,10 @@ export function GameSidebar() {
 						</SidebarMenuLink>
 					</SidebarMenuItem>
 					<SidebarMenuItem>
-						<SidebarMenuButton>
-							<Network className="w-4 h-4" />
-							Relationship Graph
-						</SidebarMenuButton>
+						<SidebarMenuLink to="/games/$gameId/settings" params={params}>
+							<Settings className="w-4 h-4" />
+							Game Settings
+						</SidebarMenuLink>
 					</SidebarMenuItem>
 				</SidebarMenu>
 
