@@ -6,7 +6,6 @@ import {
 	Home,
 	MapPin,
 	Moon,
-	Network,
 	Plus,
 	Scroll,
 	Settings,
@@ -146,6 +145,37 @@ export function GameSidebar() {
 									</SidebarMenuLink>
 								),
 							)}
+							{pinnedEntities.data?.pinned_entities.factions?.map(
+								(item) => (
+									<SidebarMenuLink
+										to={"/games/$gameId/factions/$id"}
+										params={{ gameId, id: item.id }}
+										key={item.id}
+									>
+										{item.name}
+									</SidebarMenuLink>
+								),
+							)}
+							{pinnedEntities.data?.pinned_entities.locations?.map(
+								(item) => (
+									<SidebarMenuLink
+										to={"/games/$gameId/locations/$id"}
+										params={{ gameId, id: item.id }}
+										key={item.id}
+									>
+										{item.name}
+									</SidebarMenuLink>
+								),
+							)}
+							{pinnedEntities.data?.pinned_entities.quests?.map((item) => (
+								<SidebarMenuLink
+									to={"/games/$gameId/quests/$id"}
+									params={{ gameId, id: item.id }}
+									key={item.id}
+								>
+									{item.name}
+								</SidebarMenuLink>
+							))}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

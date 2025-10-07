@@ -1,7 +1,10 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Quest } from "~/api";
-import { useGetQuestLinksQuery } from "~/api/@tanstack/react-query.gen";
+import {
+	listPinnedEntitiesQueryKey,
+	useGetQuestLinksQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { ObjectivesView } from "~/components/quests/objectives-view";
@@ -58,6 +61,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 
 	const navigate = Route.useNavigate();
 
+	const context = Route.useRouteContext();
 	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
 
 	const handleSave = async (payload: {
@@ -68,6 +72,24 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 			body: { quest: payload },
 			path: { game_id: gameId, id: quest.id },
 		});
+	};
+
+	const handleTogglePin = async () => {
+		updateQuest.mutateAsync(
+			{
+				body: { quest: { pinned: !quest.pinned } },
+				path: { game_id: gameId, id: quest.id },
+			},
+			{
+				onSuccess: () => {
+					context.queryClient.invalidateQueries({
+						queryKey: listPinnedEntitiesQueryKey({
+							path: { game_id: gameId },
+						}),
+					});
+				},
+			},
+		);
 	};
 
 	const deleteQuest = useDeleteQuestMutation(gameId);
@@ -156,6 +178,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
 			onDelete={handleDelete}
+			onTogglePin={handleTogglePin}
 		/>
 	);
 }

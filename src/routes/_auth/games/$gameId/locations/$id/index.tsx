@@ -1,6 +1,9 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import type { Location } from "~/api";
-import { useGetLocationLinksQuery } from "~/api/@tanstack/react-query.gen";
+import {
+	listPinnedEntitiesQueryKey,
+	useGetLocationLinksQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateLocationLink } from "~/components/locations/create-location-link";
@@ -50,6 +53,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		path: { game_id: gameId, location_id: location.id },
 	});
 
+	const context = Route.useRouteContext();
 	const updateLocation = useUpdateLocationMutation(gameId, location.id);
 
 	const handleSave = async (payload: {
@@ -60,6 +64,24 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			body: { location: payload },
 			path: { game_id: gameId, id: location.id },
 		});
+	};
+
+	const handleTogglePin = async () => {
+		updateLocation.mutateAsync(
+			{
+				body: { location: { pinned: !location.pinned } },
+				path: { game_id: gameId, id: location.id },
+			},
+			{
+				onSuccess: () => {
+					context.queryClient.invalidateQueries({
+						queryKey: listPinnedEntitiesQueryKey({
+							path: { game_id: gameId },
+						}),
+					});
+				},
+			},
+		);
 	};
 
 	const badges = (
@@ -145,6 +167,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onTogglePin={handleTogglePin}
 		/>
 	);
 }
