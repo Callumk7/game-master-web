@@ -1,7 +1,10 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Note } from "~/api";
-import { useGetNoteLinksQuery } from "~/api/@tanstack/react-query.gen";
+import {
+	listPinnedEntitiesQueryKey,
+	useGetNoteLinksQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { NoteLinksPopover } from "~/components/notes/note-links-popover";
@@ -57,6 +60,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 
 	const navigate = Route.useNavigate();
 
+	const context = Route.useRouteContext();
 	const updateNote = useUpdateNoteMutation(gameId, note.id);
 
 	const handleSave = async (payload: {
@@ -67,6 +71,24 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			body: { note: payload },
 			path: { game_id: gameId, id: note.id },
 		});
+	};
+
+	const handleTogglePin = async () => {
+		updateNote.mutateAsync(
+			{
+				body: { note: { pinned: !note.pinned } },
+				path: { game_id: gameId, id: note.id },
+			},
+			{
+				onSuccess: () => {
+					context.queryClient.invalidateQueries({
+						queryKey: listPinnedEntitiesQueryKey({
+							path: { game_id: gameId },
+						}),
+					});
+				},
+			},
+		);
 	};
 
 	const deleteNote = useDeleteNoteMutation(gameId);
@@ -149,6 +171,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onTogglePin={handleTogglePin}
 			onDelete={handleDelete}
 		/>
 	);

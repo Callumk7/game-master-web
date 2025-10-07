@@ -2,6 +2,7 @@ import { createFileRoute, Navigate } from "@tanstack/react-router";
 import * as React from "react";
 import type { Faction } from "~/api";
 import {
+	listPinnedEntitiesQueryKey,
 	useGetFactionLinksQuery,
 	useGetFactionMembersQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -55,6 +56,7 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		error: linksQueryError,
 	} = useGetFactionLinksQuery({ path: { game_id: gameId, faction_id: faction.id } });
 
+	const context = Route.useRouteContext();
 	const updateFaction = useUpdateFactionMutation(gameId, faction.id);
 
 	const handleSave = async (payload: {
@@ -65,6 +67,24 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			body: { faction: payload },
 			path: { game_id: gameId, id: faction.id },
 		});
+	};
+
+	const handleTogglePin = async () => {
+		updateFaction.mutateAsync(
+			{
+				body: { faction: { pinned: !faction.pinned } },
+				path: { game_id: gameId, id: faction.id },
+			},
+			{
+				onSuccess: () => {
+					context.queryClient.invalidateQueries({
+						queryKey: listPinnedEntitiesQueryKey({
+							path: { game_id: gameId },
+						}),
+					});
+				},
+			},
+		);
 	};
 
 	const badges = faction.tags && faction.tags.length > 0 && (
@@ -145,6 +165,7 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onTogglePin={handleTogglePin}
 		/>
 	);
 }
