@@ -35,6 +35,8 @@ export function TodoItem({ todo }: TodoItemProps) {
 				}}
 			>
 				<Checkbox
+					render={<span />}
+					nativeButton={false}
 					checked={todo.completed}
 					className="shrink-0 pointer-events-none"
 					tabIndex={-1}
