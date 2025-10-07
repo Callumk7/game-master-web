@@ -84,8 +84,14 @@ export const MentionComponent: React.FC<ReactNodeViewProps> = ({ node }) => {
 					"no-underline font-medium transition-colors cursor-pointer",
 					"mention-link", // Add specific class for CSS targeting
 				)}
-				onMouseDown={(e) => e.stopPropagation()}
-				onClick={(e) => e.stopPropagation()}
+				onMouseDown={(e) => {
+					e.stopPropagation();
+					e.preventDefault();
+				}}
+				onClick={(e) => {
+					e.stopPropagation();
+				}}
+				onMouseUp={(e) => e.stopPropagation()}
 			>
 				<span className="text-xs">{getEntityIcon()}</span>
 				<span>{label}</span>

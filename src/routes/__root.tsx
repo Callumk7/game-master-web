@@ -8,6 +8,8 @@ import { ThemeProvider } from "~/components/theme-provider";
 import { getAppSession } from "~/utils/session";
 import appCss from "../styles.css?url";
 
+export const SERVER_URL = "https://gamemastercore-production.up.railway.app";
+
 interface MyRouterContext {
 	queryClient: QueryClient;
 }

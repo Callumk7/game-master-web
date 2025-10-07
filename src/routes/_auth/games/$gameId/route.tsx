@@ -101,7 +101,7 @@ function RouteComponent() {
 								</div>
 							</header>
 							<EntityTabs />
-							<div className="p-6">
+							<div className="pb-16">
 								<Outlet />
 							</div>
 						</main>

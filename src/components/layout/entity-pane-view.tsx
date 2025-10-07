@@ -1,4 +1,4 @@
-import { ExternalLink, RefreshCw } from "lucide-react";
+import { ExternalLink, PlusCircle, RefreshCw, X } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -11,9 +11,16 @@ import { EntityContentDisplay } from "./entity-content-display";
 interface EntityPaneViewProps {
 	gameId: string;
 	entityPath: EntityPath;
+	onClearEntity: () => void;
+	onAddEntity: () => void;
 }
 
-export function EntityPaneView({ gameId, entityPath }: EntityPaneViewProps) {
+export function EntityPaneView({
+	gameId,
+	entityPath,
+	onClearEntity,
+	onAddEntity,
+}: EntityPaneViewProps) {
 	const {
 		data: entity,
 		isLoading,
@@ -55,9 +62,9 @@ export function EntityPaneView({ gameId, entityPath }: EntityPaneViewProps) {
 					<Badge variant="outline" className="text-xs">
 						{entityPath.type.slice(0, -1)} {/* Remove 's' suffix */}
 					</Badge>
-					<span className="text-sm font-medium truncate">{entityPath.id}</span>
+					<span className="text-sm font-medium truncate">{entity?.name}</span>
 				</div>
-				<div className="flex gap-1">
+				<div className="flex gap-3">
 					<Button
 						variant="ghost"
 						size="icon"
@@ -75,6 +82,24 @@ export function EntityPaneView({ gameId, entityPath }: EntityPaneViewProps) {
 						title="Open in full view"
 					>
 						<ExternalLink className="h-3 w-3" />
+					</Button>
+					{entityPath && (
+						<Button
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							onClick={onClearEntity}
+						>
+							<X className="h-3 w-3" />
+						</Button>
+					)}
+					<Button
+						variant="ghost"
+						size="icon"
+						className="h-6 w-6"
+						onClick={onAddEntity}
+					>
+						<PlusCircle className="h-3 w-3" />
 					</Button>
 				</div>
 			</div>

@@ -15,6 +15,7 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuLink,
 	DropdownMenuPositioner,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
@@ -83,10 +84,10 @@ export function NavUser({
 							Upgrade to Pro
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
+						<DropdownMenuLink to="/account">
 							<BadgeCheck />
 							Account
-						</DropdownMenuItem>
+						</DropdownMenuLink>
 						<DropdownMenuItem>
 							<CreditCard />
 							Billing

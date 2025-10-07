@@ -29,14 +29,8 @@ export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayout
 }
 
 function SplitViewLayoutContent({ gameId }: { gameId: string }) {
-	const {
-		state,
-		updatePanes,
-		openLeftSelector,
-		openRightSelector,
-		closeSelectors,
-		closeSplitView,
-	} = useSplitView();
+	const { state, updatePanes, openLeftSelector, openRightSelector, closeSelectors } =
+		useSplitView();
 
 	const handleLeftPaneSelect = (entityPath: EntityPath) => {
 		updatePanes(entityPath, state.rightPane);
@@ -58,19 +52,6 @@ function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 
 	return (
 		<div className="h-full flex flex-col">
-			{/* Split View Header */}
-			<div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-				<h2 className="text-lg font-semibold">Split View</h2>
-				<Button
-					variant="ghost"
-					size="icon"
-					onClick={closeSplitView}
-					className="h-8 w-8"
-				>
-					<X className="h-4 w-4" />
-				</Button>
-			</div>
-
 			{/* Resizable Panes */}
 			<div className="flex-1 overflow-hidden">
 				<ResizablePanelGroup direction="horizontal" className="h-full">
@@ -139,20 +120,15 @@ function SplitPane({
 		<div className="h-full flex flex-col">
 			<div className="flex items-center justify-between p-3 border-b bg-muted/50">
 				<span className="text-sm font-medium">{title}</span>
-				<div className="flex gap-2">
-					{entityPath && (
-						<Button variant="ghost" size="sm" onClick={onClearEntity}>
-							<X className="h-3 w-3" />
-						</Button>
-					)}
-					<Button variant="ghost" size="sm" onClick={onAddEntity}>
-						<PlusCircle className="h-3 w-3" />
-					</Button>
-				</div>
 			</div>
 			<div className="flex-1 overflow-hidden">
 				{entityPath ? (
-					<EntityPaneView gameId={gameId} entityPath={entityPath} />
+					<EntityPaneView
+						gameId={gameId}
+						entityPath={entityPath}
+						onClearEntity={onClearEntity}
+						onAddEntity={onAddEntity}
+					/>
 				) : (
 					<EmptyPaneContent onAddEntity={onAddEntity} />
 				)}

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { useEntityList } from "./use-entity-list";
+import * as React from "react";
 import type { EntitySelectorState } from "~/types/split-view";
+import { useEntityList } from "./use-entity-list";
 
 interface UseEntitySelectorParams {
 	gameId: string;
@@ -11,7 +11,7 @@ export function useEntitySelector({
 	gameId,
 	isOpen,
 }: UseEntitySelectorParams): EntitySelectorState {
-	const [searchQuery, setSearchQuery] = useState("");
+	const [searchQuery, setSearchQuery] = React.useState("");
 
 	const { filteredEntities } = useEntityList({
 		gameId,
@@ -19,7 +19,7 @@ export function useEntitySelector({
 	});
 
 	// Reset search when selector closes
-	useEffect(() => {
+	React.useEffect(() => {
 		if (!isOpen) {
 			setSearchQuery("");
 		}

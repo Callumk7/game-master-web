@@ -5,6 +5,7 @@ import {
 	useGetCharacterLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterFactionView } from "~/components/characters/character-faction-view";
+import { CharacterImages } from "~/components/characters/character-images";
 import { CharacterNotesView } from "~/components/characters/character-note-view";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
 import { useAddTab } from "~/components/entity-tabs";
@@ -333,6 +334,11 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 					primaryFactionId={character.member_of_faction_id}
 				/>
 			),
+		},
+		{
+			id: "images",
+			label: "Images",
+			content: <CharacterImages gameId={gameId} characterId={character.id} />,
 		},
 	];
 

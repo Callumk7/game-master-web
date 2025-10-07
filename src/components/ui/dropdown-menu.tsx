@@ -1,4 +1,5 @@
 import { Menu as MenuPrimitive } from "@base-ui-components/react/menu";
+import { createLink } from "@tanstack/react-router";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import type * as React from "react";
 import { cn } from "~/utils/cn";
@@ -78,6 +79,8 @@ function DropdownMenuItem({
 		/>
 	);
 }
+
+const DropdownMenuLink = createLink(DropdownMenuItem);
 
 function DropdownMenuCheckboxItem({
 	className,
@@ -233,6 +236,7 @@ export {
 	DropdownMenuGroup,
 	DropdownMenuLabel,
 	DropdownMenuItem,
+	DropdownMenuLink,
 	DropdownMenuCheckboxItem,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
