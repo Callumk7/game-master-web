@@ -4,6 +4,7 @@ import {
 	getCharacterNotesTreeOptions,
 	getCharacterOptions,
 } from "~/api/@tanstack/react-query.gen";
+import { Container } from "~/components/container";
 import { BasicErrorComponent } from "~/components/error";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
@@ -29,5 +30,9 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 });
 
 function RouteComponent() {
-	return <Outlet />;
+	return (
+		<Container>
+			<Outlet />
+		</Container>
+	);
 }

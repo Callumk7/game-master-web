@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
+import { Container } from "~/components/container";
 import { LocationsTable } from "~/components/locations/locations-table";
 import { PageHeader } from "~/components/page-header";
 import { useListLocationsSuspenseQuery } from "~/queries/locations";
@@ -29,7 +30,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="container mx-auto py-8">
+		<Container>
 			<PageHeader
 				title="All Locations"
 				description="Browse all locations in your game."
@@ -45,6 +46,6 @@ function RouteComponent() {
 				paginationSize={paginationSize}
 				onPaginationSizeChange={setPaginationSize}
 			/>
-		</div>
+		</Container>
 	);
 }

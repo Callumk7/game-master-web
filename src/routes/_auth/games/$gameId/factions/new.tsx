@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Container } from "~/components/container";
 import { CreateFactionForm } from "~/components/factions/create-faction-form";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/new")({
@@ -7,8 +8,8 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/new")({
 
 function RouteComponent() {
 	return (
-		<div>
+		<Container>
 			<CreateFactionForm />
-		</div>
+		</Container>
 	);
 }

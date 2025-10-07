@@ -1,14 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listQuestsOptions } from "~/api/@tanstack/react-query.gen";
+import { Container } from "~/components/container";
 import { PageHeader } from "~/components/page-header";
 import { QuestsTable } from "~/components/quests/quests-table";
 import { useListQuestsSuspenseQuery } from "~/queries/quests";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/")({
 	component: RouteComponent,
-	loader: ({ params, context }) => {
-		return context.queryClient.ensureQueryData(
+	loader: async ({ params, context }) => {
+		await context.queryClient.ensureQueryData(
 			listQuestsOptions({ path: { game_id: params.gameId } }),
 		);
 	},
@@ -33,7 +34,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="container mx-auto py-8">
+		<Container>
 			<PageHeader
 				title="All Quests"
 				description="Browse all quests in your game."
@@ -49,6 +50,6 @@ function RouteComponent() {
 				paginationSize={paginationSize}
 				onPaginationSizeChange={setPaginationSize}
 			/>
-		</div>
+		</Container>
 	);
 }

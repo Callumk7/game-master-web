@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
+import { Container } from "~/components/container";
 import { FactionsTable } from "~/components/factions/factions-table";
 import { PageHeader } from "~/components/page-header";
 import { useListFactionsSuspenseQuery } from "~/queries/factions";
@@ -33,7 +34,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="container mx-auto py-8">
+		<Container>
 			<PageHeader
 				title="All Factions"
 				description="Browse all factions in your game."
@@ -49,6 +50,6 @@ function RouteComponent() {
 				paginationSize={paginationSize}
 				onPaginationSizeChange={setPaginationSize}
 			/>
-		</div>
+		</Container>
 	);
 }

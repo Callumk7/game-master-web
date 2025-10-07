@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AllEntitiesTable, type AllEntity } from "~/components/all-entities-table";
+import { Container } from "~/components/container";
 import { PageHeader } from "~/components/page-header";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
 import type { EntityType } from "~/types";
@@ -74,7 +75,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="container mx-auto py-8">
+		<Container>
 			<PageHeader
 				title="All Entities"
 				description="Browse all characters, factions, locations, notes, and quests in your game."
@@ -89,6 +90,6 @@ function RouteComponent() {
 				paginationSize={paginationSize}
 				onPaginationSizeChange={setPaginationSize}
 			/>
-		</div>
+		</Container>
 	);
 }

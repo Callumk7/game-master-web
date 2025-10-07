@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
+import { Container } from "~/components/container";
 import { PageHeader } from "~/components/page-header";
 import { useListCharactersSuspenseQuery } from "~/queries/characters";
 
@@ -28,7 +29,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="container mx-auto py-8">
+		<Container>
 			<PageHeader
 				title="All Characters"
 				description="Browse all characters in your game."
@@ -44,6 +45,6 @@ function RouteComponent() {
 				paginationSize={paginationSize}
 				onPaginationSizeChange={setPaginationSize}
 			/>
-		</div>
+		</Container>
 	);
 }

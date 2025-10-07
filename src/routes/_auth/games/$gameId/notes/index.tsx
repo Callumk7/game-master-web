@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
+import { Container } from "~/components/container";
 import { NotesTable } from "~/components/notes/notes-table";
 import { PageHeader } from "~/components/page-header";
 import { useListNotesSuspenseQuery } from "~/queries/notes";
@@ -33,7 +34,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="container mx-auto py-8">
+		<Container>
 			<PageHeader
 				title="All Notes"
 				description="Browse all notes in your game."
@@ -49,6 +50,6 @@ function RouteComponent() {
 				paginationSize={paginationSize}
 				onPaginationSizeChange={setPaginationSize}
 			/>
-		</div>
+		</Container>
 	);
 }

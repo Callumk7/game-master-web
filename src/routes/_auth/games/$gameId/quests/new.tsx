@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Container } from "~/components/container";
 import { CreateQuestForm } from "~/components/quests/create-quest-form";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/new")({
@@ -7,8 +8,8 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/new")({
 
 function RouteComponent() {
 	return (
-		<div>
+		<Container>
 			<CreateQuestForm />
-		</div>
+		</Container>
 	);
 }

@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { getQuestLinksOptions, getQuestOptions } from "~/api/@tanstack/react-query.gen";
+import { Container } from "~/components/container";
 import { BasicErrorComponent } from "~/components/error";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id")({
@@ -26,5 +27,9 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/$id")({
 });
 
 function RouteComponent() {
-	return <Outlet />;
+	return (
+		<Container>
+			<Outlet />
+		</Container>
+	);
 }
