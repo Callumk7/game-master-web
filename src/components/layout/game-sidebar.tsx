@@ -11,6 +11,7 @@ import {
 	Settings,
 	Sun,
 	Users,
+	Wrench,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
@@ -132,6 +133,24 @@ export function GameSidebar() {
 						<SidebarMenuLink to="/games/$gameId/settings" params={params}>
 							<Settings className="w-4 h-4" />
 							Game Settings
+						</SidebarMenuLink>
+					</SidebarMenuItem>
+					<SidebarMenuItem>
+						<SidebarMenuLink to="/games/$gameId/beasts" params={params}>
+							<Wrench className="w-4 h-4" />
+							<span>Beasts</span>
+							<Badge size={"sm"} variant={"outline"}>
+								WIP
+							</Badge>
+						</SidebarMenuLink>
+					</SidebarMenuItem>
+					<SidebarMenuItem>
+						<SidebarMenuLink to="/games/$gameId/spells" params={params}>
+							<Wrench className="w-4 h-4" />
+							<span>Spells</span>
+							<Badge size={"sm"} variant={"outline"}>
+								WIP
+							</Badge>
 						</SidebarMenuLink>
 					</SidebarMenuItem>
 				</SidebarMenu>

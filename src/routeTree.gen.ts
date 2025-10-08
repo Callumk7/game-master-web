@@ -24,11 +24,13 @@ import { Route as AuthGamesGameIdSplitRouteImport } from './routes/_auth/games/$
 import { Route as AuthGamesGameIdSettingsRouteImport } from './routes/_auth/games/$gameId/settings'
 import { Route as AuthGamesGameIdEditRouteImport } from './routes/_auth/games/$gameId/edit'
 import { Route as AuthGamesGameIdAllRouteImport } from './routes/_auth/games/$gameId/all'
+import { Route as AuthGamesGameIdSpellsIndexRouteImport } from './routes/_auth/games/$gameId/spells/index'
 import { Route as AuthGamesGameIdQuestsIndexRouteImport } from './routes/_auth/games/$gameId/quests/index'
 import { Route as AuthGamesGameIdNotesIndexRouteImport } from './routes/_auth/games/$gameId/notes/index'
 import { Route as AuthGamesGameIdLocationsIndexRouteImport } from './routes/_auth/games/$gameId/locations/index'
 import { Route as AuthGamesGameIdFactionsIndexRouteImport } from './routes/_auth/games/$gameId/factions/index'
 import { Route as AuthGamesGameIdCharactersIndexRouteImport } from './routes/_auth/games/$gameId/characters/index'
+import { Route as AuthGamesGameIdBeastsIndexRouteImport } from './routes/_auth/games/$gameId/beasts/index'
 import { Route as AuthGamesGameIdQuestsNewRouteImport } from './routes/_auth/games/$gameId/quests/new'
 import { Route as AuthGamesGameIdNotesNewRouteImport } from './routes/_auth/games/$gameId/notes/new'
 import { Route as AuthGamesGameIdLocationsNewRouteImport } from './routes/_auth/games/$gameId/locations/new'
@@ -124,6 +126,12 @@ const AuthGamesGameIdAllRoute = AuthGamesGameIdAllRouteImport.update({
   path: '/all',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
+const AuthGamesGameIdSpellsIndexRoute =
+  AuthGamesGameIdSpellsIndexRouteImport.update({
+    id: '/spells/',
+    path: '/spells/',
+    getParentRoute: () => AuthGamesGameIdRouteRoute,
+  } as any)
 const AuthGamesGameIdQuestsIndexRoute =
   AuthGamesGameIdQuestsIndexRouteImport.update({
     id: '/quests/',
@@ -152,6 +160,12 @@ const AuthGamesGameIdCharactersIndexRoute =
   AuthGamesGameIdCharactersIndexRouteImport.update({
     id: '/characters/',
     path: '/characters/',
+    getParentRoute: () => AuthGamesGameIdRouteRoute,
+  } as any)
+const AuthGamesGameIdBeastsIndexRoute =
+  AuthGamesGameIdBeastsIndexRouteImport.update({
+    id: '/beasts/',
+    path: '/beasts/',
     getParentRoute: () => AuthGamesGameIdRouteRoute,
   } as any)
 const AuthGamesGameIdQuestsNewRoute =
@@ -299,11 +313,13 @@ export interface FileRoutesByFullPath {
   '/games/$gameId/locations/new': typeof AuthGamesGameIdLocationsNewRoute
   '/games/$gameId/notes/new': typeof AuthGamesGameIdNotesNewRoute
   '/games/$gameId/quests/new': typeof AuthGamesGameIdQuestsNewRoute
+  '/games/$gameId/beasts': typeof AuthGamesGameIdBeastsIndexRoute
   '/games/$gameId/characters': typeof AuthGamesGameIdCharactersIndexRoute
   '/games/$gameId/factions': typeof AuthGamesGameIdFactionsIndexRoute
   '/games/$gameId/locations': typeof AuthGamesGameIdLocationsIndexRoute
   '/games/$gameId/notes': typeof AuthGamesGameIdNotesIndexRoute
   '/games/$gameId/quests': typeof AuthGamesGameIdQuestsIndexRoute
+  '/games/$gameId/spells': typeof AuthGamesGameIdSpellsIndexRoute
   '/games/$gameId/characters/$id/edit': typeof AuthGamesGameIdCharactersIdEditRoute
   '/games/$gameId/factions/$id/edit': typeof AuthGamesGameIdFactionsIdEditRoute
   '/games/$gameId/locations/$id/edit': typeof AuthGamesGameIdLocationsIdEditRoute
@@ -334,11 +350,13 @@ export interface FileRoutesByTo {
   '/games/$gameId/locations/new': typeof AuthGamesGameIdLocationsNewRoute
   '/games/$gameId/notes/new': typeof AuthGamesGameIdNotesNewRoute
   '/games/$gameId/quests/new': typeof AuthGamesGameIdQuestsNewRoute
+  '/games/$gameId/beasts': typeof AuthGamesGameIdBeastsIndexRoute
   '/games/$gameId/characters': typeof AuthGamesGameIdCharactersIndexRoute
   '/games/$gameId/factions': typeof AuthGamesGameIdFactionsIndexRoute
   '/games/$gameId/locations': typeof AuthGamesGameIdLocationsIndexRoute
   '/games/$gameId/notes': typeof AuthGamesGameIdNotesIndexRoute
   '/games/$gameId/quests': typeof AuthGamesGameIdQuestsIndexRoute
+  '/games/$gameId/spells': typeof AuthGamesGameIdSpellsIndexRoute
   '/games/$gameId/characters/$id/edit': typeof AuthGamesGameIdCharactersIdEditRoute
   '/games/$gameId/factions/$id/edit': typeof AuthGamesGameIdFactionsIdEditRoute
   '/games/$gameId/locations/$id/edit': typeof AuthGamesGameIdLocationsIdEditRoute
@@ -377,11 +395,13 @@ export interface FileRoutesById {
   '/_auth/games/$gameId/locations/new': typeof AuthGamesGameIdLocationsNewRoute
   '/_auth/games/$gameId/notes/new': typeof AuthGamesGameIdNotesNewRoute
   '/_auth/games/$gameId/quests/new': typeof AuthGamesGameIdQuestsNewRoute
+  '/_auth/games/$gameId/beasts/': typeof AuthGamesGameIdBeastsIndexRoute
   '/_auth/games/$gameId/characters/': typeof AuthGamesGameIdCharactersIndexRoute
   '/_auth/games/$gameId/factions/': typeof AuthGamesGameIdFactionsIndexRoute
   '/_auth/games/$gameId/locations/': typeof AuthGamesGameIdLocationsIndexRoute
   '/_auth/games/$gameId/notes/': typeof AuthGamesGameIdNotesIndexRoute
   '/_auth/games/$gameId/quests/': typeof AuthGamesGameIdQuestsIndexRoute
+  '/_auth/games/$gameId/spells/': typeof AuthGamesGameIdSpellsIndexRoute
   '/_auth/games/$gameId/characters/$id/edit': typeof AuthGamesGameIdCharactersIdEditRoute
   '/_auth/games/$gameId/factions/$id/edit': typeof AuthGamesGameIdFactionsIdEditRoute
   '/_auth/games/$gameId/locations/$id/edit': typeof AuthGamesGameIdLocationsIdEditRoute
@@ -420,11 +440,13 @@ export interface FileRouteTypes {
     | '/games/$gameId/locations/new'
     | '/games/$gameId/notes/new'
     | '/games/$gameId/quests/new'
+    | '/games/$gameId/beasts'
     | '/games/$gameId/characters'
     | '/games/$gameId/factions'
     | '/games/$gameId/locations'
     | '/games/$gameId/notes'
     | '/games/$gameId/quests'
+    | '/games/$gameId/spells'
     | '/games/$gameId/characters/$id/edit'
     | '/games/$gameId/factions/$id/edit'
     | '/games/$gameId/locations/$id/edit'
@@ -455,11 +477,13 @@ export interface FileRouteTypes {
     | '/games/$gameId/locations/new'
     | '/games/$gameId/notes/new'
     | '/games/$gameId/quests/new'
+    | '/games/$gameId/beasts'
     | '/games/$gameId/characters'
     | '/games/$gameId/factions'
     | '/games/$gameId/locations'
     | '/games/$gameId/notes'
     | '/games/$gameId/quests'
+    | '/games/$gameId/spells'
     | '/games/$gameId/characters/$id/edit'
     | '/games/$gameId/factions/$id/edit'
     | '/games/$gameId/locations/$id/edit'
@@ -497,11 +521,13 @@ export interface FileRouteTypes {
     | '/_auth/games/$gameId/locations/new'
     | '/_auth/games/$gameId/notes/new'
     | '/_auth/games/$gameId/quests/new'
+    | '/_auth/games/$gameId/beasts/'
     | '/_auth/games/$gameId/characters/'
     | '/_auth/games/$gameId/factions/'
     | '/_auth/games/$gameId/locations/'
     | '/_auth/games/$gameId/notes/'
     | '/_auth/games/$gameId/quests/'
+    | '/_auth/games/$gameId/spells/'
     | '/_auth/games/$gameId/characters/$id/edit'
     | '/_auth/games/$gameId/factions/$id/edit'
     | '/_auth/games/$gameId/locations/$id/edit'
@@ -630,6 +656,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGamesGameIdAllRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
+    '/_auth/games/$gameId/spells/': {
+      id: '/_auth/games/$gameId/spells/'
+      path: '/spells'
+      fullPath: '/games/$gameId/spells'
+      preLoaderRoute: typeof AuthGamesGameIdSpellsIndexRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
     '/_auth/games/$gameId/quests/': {
       id: '/_auth/games/$gameId/quests/'
       path: '/quests'
@@ -663,6 +696,13 @@ declare module '@tanstack/react-router' {
       path: '/characters'
       fullPath: '/games/$gameId/characters'
       preLoaderRoute: typeof AuthGamesGameIdCharactersIndexRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/beasts/': {
+      id: '/_auth/games/$gameId/beasts/'
+      path: '/beasts'
+      fullPath: '/games/$gameId/beasts'
+      preLoaderRoute: typeof AuthGamesGameIdBeastsIndexRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
     '/_auth/games/$gameId/quests/new': {
@@ -906,11 +946,13 @@ interface AuthGamesGameIdRouteRouteChildren {
   AuthGamesGameIdLocationsNewRoute: typeof AuthGamesGameIdLocationsNewRoute
   AuthGamesGameIdNotesNewRoute: typeof AuthGamesGameIdNotesNewRoute
   AuthGamesGameIdQuestsNewRoute: typeof AuthGamesGameIdQuestsNewRoute
+  AuthGamesGameIdBeastsIndexRoute: typeof AuthGamesGameIdBeastsIndexRoute
   AuthGamesGameIdCharactersIndexRoute: typeof AuthGamesGameIdCharactersIndexRoute
   AuthGamesGameIdFactionsIndexRoute: typeof AuthGamesGameIdFactionsIndexRoute
   AuthGamesGameIdLocationsIndexRoute: typeof AuthGamesGameIdLocationsIndexRoute
   AuthGamesGameIdNotesIndexRoute: typeof AuthGamesGameIdNotesIndexRoute
   AuthGamesGameIdQuestsIndexRoute: typeof AuthGamesGameIdQuestsIndexRoute
+  AuthGamesGameIdSpellsIndexRoute: typeof AuthGamesGameIdSpellsIndexRoute
 }
 
 const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
@@ -935,11 +977,13 @@ const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
   AuthGamesGameIdLocationsNewRoute: AuthGamesGameIdLocationsNewRoute,
   AuthGamesGameIdNotesNewRoute: AuthGamesGameIdNotesNewRoute,
   AuthGamesGameIdQuestsNewRoute: AuthGamesGameIdQuestsNewRoute,
+  AuthGamesGameIdBeastsIndexRoute: AuthGamesGameIdBeastsIndexRoute,
   AuthGamesGameIdCharactersIndexRoute: AuthGamesGameIdCharactersIndexRoute,
   AuthGamesGameIdFactionsIndexRoute: AuthGamesGameIdFactionsIndexRoute,
   AuthGamesGameIdLocationsIndexRoute: AuthGamesGameIdLocationsIndexRoute,
   AuthGamesGameIdNotesIndexRoute: AuthGamesGameIdNotesIndexRoute,
   AuthGamesGameIdQuestsIndexRoute: AuthGamesGameIdQuestsIndexRoute,
+  AuthGamesGameIdSpellsIndexRoute: AuthGamesGameIdSpellsIndexRoute,
 }
 
 const AuthGamesGameIdRouteRouteWithChildren =
