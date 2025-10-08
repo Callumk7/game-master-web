@@ -7,7 +7,7 @@ interface PrimaryImageBannerProps {
 
 export function PrimaryImageBanner({ image }: PrimaryImageBannerProps) {
 	return (
-		<div className="mx-auto max-w-fit overflow-hidden rounded-lg">
+		<div className="max-w-fit overflow-hidden rounded-lg">
 			<img
 				src={`${SERVER_URL}${image.file_url}`}
 				alt={image.alt_text}

@@ -106,7 +106,7 @@ export function EntityPaneView({
 
 			{/* Entity Content */}
 			<div className="flex-1 min-h-0">
-				<ScrollArea className="h-[75vh]">
+				<ScrollArea className="h-[85vh]">
 					{entity && (
 						<EntityContentDisplay
 							entity={entity}

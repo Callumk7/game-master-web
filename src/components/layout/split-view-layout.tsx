@@ -1,4 +1,4 @@
-import { PlusCircle, X } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
 	ResizableHandle,
@@ -58,7 +58,6 @@ function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 					{/* Left Pane */}
 					<ResizablePanel defaultSize={50} minSize={30}>
 						<SplitPane
-							title="Left Pane"
 							entityPath={state.leftPane}
 							gameId={gameId}
 							onAddEntity={openLeftSelector}
@@ -71,7 +70,6 @@ function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 					{/* Right Pane */}
 					<ResizablePanel defaultSize={50} minSize={30}>
 						<SplitPane
-							title="Right Pane"
 							entityPath={state.rightPane}
 							gameId={gameId}
 							onAddEntity={openRightSelector}
@@ -102,25 +100,15 @@ function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 }
 
 interface SplitPaneProps {
-	title: string;
 	entityPath?: EntityPath;
 	gameId: string;
 	onAddEntity: () => void;
 	onClearEntity: () => void;
 }
 
-function SplitPane({
-	title,
-	entityPath,
-	gameId,
-	onAddEntity,
-	onClearEntity,
-}: SplitPaneProps) {
+function SplitPane({ entityPath, gameId, onAddEntity, onClearEntity }: SplitPaneProps) {
 	return (
 		<div className="h-full flex flex-col">
-			<div className="flex items-center justify-between p-3 border-b bg-muted/50">
-				<span className="text-sm font-medium">{title}</span>
-			</div>
 			<div className="flex-1 overflow-hidden">
 				{entityPath ? (
 					<EntityPaneView

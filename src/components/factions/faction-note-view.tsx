@@ -1,28 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import {
-	getCharacterNotesTreeQueryKey,
+	getFactionNotesTreeQueryKey,
 	updateNoteMutation,
-	useGetCharacterNotesTreeQuery,
+	useGetFactionNotesTreeQuery,
 } from "~/api/@tanstack/react-query.gen";
-import { SelectNoteCombobox } from "~/components/characters/select-note-combobox";
-import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
-import { Button } from "~/components/ui/button";
+import { CreateNoteSheet } from "../notes/create-note-sheet";
+import { Button } from "../ui/button";
 import { EntityNotesView } from "../views/entity-notes-view";
 
-interface CharacterNotesViewProps {
+interface FactionNoteViewProps {
 	gameId: string;
-	characterId: string;
+	factionId: string;
 }
 
-export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewProps) {
+export function FactionNoteView({ gameId, factionId }: FactionNoteViewProps) {
 	const client = useQueryClient();
 
 	const [isNewNoteSheetOpen, setIsNewNoteSheetOpen] = React.useState(false);
 	const [selectedNoteId, setSelectedNoteId] = React.useState<string | null>(null);
 
-	const { data: noteTree } = useGetCharacterNotesTreeQuery({
-		path: { game_id: gameId, id: characterId },
+	const { data: noteTree } = useGetFactionNotesTreeQuery({
+		path: { game_id: gameId, id: factionId },
 	});
 
 	const notes = noteTree?.data?.notes_tree || [];
@@ -38,8 +37,8 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 		...updateNoteMutation(),
 		onSuccess: () => {
 			client.invalidateQueries({
-				queryKey: getCharacterNotesTreeQueryKey({
-					path: { game_id: gameId, id: characterId },
+				queryKey: getFactionNotesTreeQueryKey({
+					path: { game_id: gameId, id: factionId },
 				}),
 			});
 		},
@@ -63,10 +62,11 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 
 	const handleSuccess = () => {
 		client.invalidateQueries({
-			queryKey: getCharacterNotesTreeQueryKey({
-				path: { game_id: gameId, id: characterId },
+			queryKey: getFactionNotesTreeQueryKey({
+				path: { game_id: gameId, id: factionId },
 			}),
 		});
+		setIsNewNoteSheetOpen(false);
 	};
 
 	return (
@@ -76,7 +76,6 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 					<Button onClick={() => setIsNewNoteSheetOpen(true)}>
 						Create Note
 					</Button>
-					<SelectNoteCombobox gameId={gameId} characterId={characterId} />
 				</div>
 
 				<EntityNotesView
@@ -88,8 +87,8 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 			<CreateNoteSheet
 				isOpen={isNewNoteSheetOpen}
 				setIsOpen={setIsNewNoteSheetOpen}
-				parentType="character"
-				parentId={characterId}
+				parentType="faction"
+				parentId={factionId}
 				onSuccess={handleSuccess}
 			/>
 		</>

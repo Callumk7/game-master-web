@@ -7,6 +7,7 @@ import {
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateLocationLink } from "~/components/locations/create-location-link";
+import { LocationImages } from "~/components/locations/location-images";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
@@ -153,6 +154,11 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			label: "NPCs",
 			content: <div>NPCs tabs tbc</div>,
 		},
+		{
+			id: "images",
+			label: "Images",
+			content: <LocationImages gameId={gameId} locationId={location.id} />,
+		},
 	];
 
 	const navigate = Route.useNavigate();
@@ -160,6 +166,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 	return (
 		<EntityView
 			id={location.id}
+			gameId={gameId}
 			type="location"
 			content={location.content}
 			content_plain_text={location.content_plain_text}

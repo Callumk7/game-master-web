@@ -170,6 +170,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 	return (
 		<EntityView
 			id={quest.id}
+			gameId={gameId}
 			type="quest"
 			content={quest.content}
 			content_plain_text={quest.content_plain_text}

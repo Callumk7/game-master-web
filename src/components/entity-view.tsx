@@ -18,6 +18,8 @@ import {
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { PrimaryImageBanner } from "./images/primary-image-banner";
+import { useGetEntityPrimaryImageQuery } from "~/api/@tanstack/react-query.gen";
 
 type EntityTab = {
 	id: string;
@@ -27,6 +29,7 @@ type EntityTab = {
 
 interface EntityViewProps {
 	id: string;
+	gameId: string;
 	type: EntityType;
 	name: string;
 	content?: string;
@@ -41,6 +44,7 @@ interface EntityViewProps {
 
 export function EntityView({
 	id,
+	gameId,
 	type,
 	content,
 	content_plain_text,
@@ -57,6 +61,7 @@ export function EntityView({
 			<EntityTabs tabs={tabs}>
 				<EntityViewHeader
 					id={id}
+					gameId={gameId}
 					type={type}
 					content={content}
 					content_plain_text={content_plain_text}
@@ -74,6 +79,7 @@ export function EntityView({
 
 export function EntityViewHeader({
 	id,
+	gameId,
 	type,
 	content,
 	content_plain_text,
@@ -84,23 +90,35 @@ export function EntityViewHeader({
 	pinned,
 	onTogglePin,
 }: Omit<EntityViewProps, "tabs">) {
+	const { data: primaryImageData } = useGetEntityPrimaryImageQuery({
+		path: {
+			game_id: gameId,
+			entity_id: id,
+			entity_type: type,
+		},
+	});
+
+	const primaryImage = primaryImageData?.data;
 	return (
-		<div className="space-y-2 mb-4">
-			<div className="flex items-center gap-3">
-				<h1 className="text-3xl font-bold">{name}</h1>
-				<EntityControls
-					entityId={id}
-					entityName={name}
-					entityType={type}
-					content={content}
-					content_plain_text={content_plain_text}
-					onEdit={onEdit}
-					onDelete={onDelete}
-					pinned={pinned}
-					onTogglePin={onTogglePin}
-				/>
+		<div className="flex justify-between items-baseline w-full">
+			<div className="space-y-2 mb-4">
+				<div className="flex items-center gap-3">
+					<h1 className="text-3xl font-bold">{name}</h1>
+					<EntityControls
+						entityId={id}
+						entityName={name}
+						entityType={type}
+						content={content}
+						content_plain_text={content_plain_text}
+						onEdit={onEdit}
+						onDelete={onDelete}
+						pinned={pinned}
+						onTogglePin={onTogglePin}
+					/>
+				</div>
+				{badges && <div className="mt-1">{badges}</div>}
 			</div>
-			{badges && <div className="mt-1">{badges}</div>}
+			{primaryImage && <PrimaryImageBanner image={primaryImage} />}
 		</div>
 	);
 }
