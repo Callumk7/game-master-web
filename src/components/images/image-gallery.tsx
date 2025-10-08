@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { MoreHorizontalIcon, StarIcon } from "lucide-react";
+import { MoreHorizontalIcon, StarIcon, TrashIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 import type { Image } from "~/api";
 import {
+	deleteEntityImageMutation,
+	listEntityImagesQueryKey,
 	setEntityImageAsPrimaryMutation,
 	useListEntityImagesQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -35,6 +37,7 @@ interface ImageModalProps {
 	image: Image;
 }
 
+// TODO: improve image modal
 function ImageModal({ isOpen, onClose, image }: ImageModalProps) {
 	return (
 		<Dialog open={isOpen}>
@@ -100,7 +103,13 @@ export function ImageGallery({ gameId, entityId, entityType }: ImageGalleryProps
 		...setEntityImageAsPrimaryMutation(),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ["listEntityImages"],
+				queryKey: listEntityImagesQueryKey({
+					path: {
+						game_id: gameId,
+						entity_type: entityType,
+						entity_id: entityId,
+					},
+				}),
 			});
 			toast.success("Primary image updated");
 		},
@@ -112,6 +121,37 @@ export function ImageGallery({ gameId, entityId, entityType }: ImageGalleryProps
 
 	const handleSetPrimary = (imageId: string) => {
 		setPrimaryMutation.mutate({
+			path: {
+				game_id: gameId,
+				entity_type: entityType,
+				entity_id: entityId,
+				id: imageId,
+			},
+		});
+	};
+
+	const deleteMutation = useMutation({
+		...deleteEntityImageMutation(),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: listEntityImagesQueryKey({
+					path: {
+						game_id: gameId,
+						entity_type: entityType,
+						entity_id: entityId,
+					},
+				}),
+			});
+			toast.success("Image deleted");
+		},
+		onError: (error) => {
+			console.error("Delete error:", error);
+			toast.error("Failed to delete image");
+		},
+	});
+
+	const handleDelete = (imageId: string) => {
+		deleteMutation.mutate({
 			path: {
 				game_id: gameId,
 				entity_type: entityType,
@@ -320,6 +360,16 @@ export function ImageGallery({ gameId, entityId, entityType }: ImageGalleryProps
 														Primary Image
 													</DropdownMenuItem>
 												)}
+												<DropdownMenuItem
+													onClick={(e) => {
+														e.stopPropagation();
+														handleDelete(image.id);
+													}}
+													disabled={deleteMutation.isPending}
+												>
+													<TrashIcon className="h-4 w-4 mr-2" />
+													Delete
+												</DropdownMenuItem>
 											</DropdownMenuContent>
 										</DropdownMenuPositioner>
 									</DropdownMenu>
