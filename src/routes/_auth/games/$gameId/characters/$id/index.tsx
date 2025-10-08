@@ -3,6 +3,7 @@ import type { Character, CharacterLinksResponse } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
 	useGetCharacterLinksQuery,
+	useGetEntityPrimaryImageQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { CharacterFactionView } from "~/components/characters/character-faction-view";
 import { CharacterImages } from "~/components/characters/character-images";
@@ -10,6 +11,7 @@ import { CharacterNotesView } from "~/components/characters/character-note-view"
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { PrimaryImageBanner } from "~/components/images/primary-image-banner";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
@@ -19,6 +21,7 @@ import {
 	useGetCharacterSuspenseQuery,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
+import { SERVER_URL } from "~/routes/__root";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
@@ -59,6 +62,16 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 	} = useGetCharacterLinksQuery({
 		path: { game_id: gameId, character_id: character.id },
 	});
+
+	const { data: primaryImageData } = useGetEntityPrimaryImageQuery({
+		path: {
+			game_id: gameId,
+			entity_id: character.id,
+			entity_type: "character",
+		},
+	});
+
+	const primaryImage = primaryImageData?.data;
 
 	const context = Route.useRouteContext();
 	const updateCharacter = useUpdateCharacterMutation(gameId, character.id);
@@ -345,17 +358,20 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 	const navigate = Route.useNavigate();
 
 	return (
-		<EntityView
-			id={character.id}
-			type="character"
-			content={character.content}
-			content_plain_text={character.content_plain_text}
-			name={character.name}
-			badges={badges}
-			tabs={tabs}
-			pinned={character.pinned}
-			onEdit={() => navigate({ to: "edit" })}
-			onTogglePin={handleTogglePin}
-		/>
+		<>
+			{primaryImage && <PrimaryImageBanner image={primaryImage} />}
+			<EntityView
+				id={character.id}
+				type="character"
+				content={character.content}
+				content_plain_text={character.content_plain_text}
+				name={character.name}
+				badges={badges}
+				tabs={tabs}
+				pinned={character.pinned}
+				onEdit={() => navigate({ to: "edit" })}
+				onTogglePin={handleTogglePin}
+			/>
+		</>
 	);
 }

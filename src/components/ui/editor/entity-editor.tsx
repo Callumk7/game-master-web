@@ -76,6 +76,13 @@ export function EntityEditor({
 
 	return (
 		<div className={`space-y-4 ${className || ""}`}>
+			<Button
+				variant={saveButtonVariant}
+				onClick={handleSave}
+				disabled={!isUpdated || isSaving || isCreatingLinks}
+			>
+				{isSaving || isCreatingLinks ? "Saving..." : saveButtonText}
+			</Button>
 			<Tiptap
 				content={
 					typeof content === "object" ? content : parseContentForEditor(content)
