@@ -1,14 +1,16 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
 	Menu,
 	Pencil,
 	Pin,
+	SplitSquareHorizontal,
 	SquareArrowDownRight,
 	Trash2,
-	SplitSquareHorizontal,
 } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
+import { useGetEntityPrimaryImageQuery } from "~/api/@tanstack/react-query.gen";
 import { useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
+import { PrimaryImageBanner } from "./images/primary-image-banner";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
@@ -18,8 +20,6 @@ import {
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { PrimaryImageBanner } from "./images/primary-image-banner";
-import { useGetEntityPrimaryImageQuery } from "~/api/@tanstack/react-query.gen";
 
 type EntityTab = {
 	id: string;

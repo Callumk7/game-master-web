@@ -37,6 +37,9 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 			}),
 		);
 	},
+	onError: ({ error }) => {
+		console.error(error);
+	},
 	errorComponent: BasicErrorComponent,
 });
 

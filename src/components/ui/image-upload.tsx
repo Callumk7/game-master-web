@@ -2,12 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import { toast } from "sonner";
 import { uploadEntityImageMutation } from "~/api/@tanstack/react-query.gen";
+import type { EntityType } from "~/types";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "./dropzone";
 
 interface ImageUploadProps {
 	gameId: string;
 	entityId: string;
-	entityType: "character" | "faction" | "location" | "quest";
+	entityType: EntityType;
 	onUploadSuccess?: () => void;
 	disabled?: boolean;
 	className?: string;

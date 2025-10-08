@@ -2,7 +2,7 @@ import { useSession } from "@tanstack/react-start/server";
 
 type Session = {
 	user: {
-		id: number;
+		id: string;
 		email: string;
 	};
 	token: string;

@@ -92,7 +92,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		);
 	};
 
-	const deleteQuest = useDeleteQuestMutation(gameId);
+	const deleteQuest = useDeleteQuestMutation(gameId, quest.id);
 	const handleDelete = () => {
 		deleteQuest.mutate({
 			path: { game_id: gameId, id: quest.id },

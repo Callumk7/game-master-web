@@ -216,6 +216,7 @@ function CharacterPaneContent({
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={character.id}
+				gameId={gameId}
 				type="character"
 				content={character.content}
 				content_plain_text={character.content_plain_text}
@@ -285,6 +286,7 @@ function FactionPaneContent({
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={faction.id}
+				gameId={gameId}
 				type="faction"
 				content={faction.content}
 				content_plain_text={faction.content_plain_text}
@@ -355,6 +357,7 @@ function LocationPaneContent({
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={location.id}
+				gameId={gameId}
 				type="location"
 				content={location.content}
 				content_plain_text={location.content_plain_text}
@@ -417,6 +420,7 @@ function NotePaneContent({ gameId, noteId }: { gameId: string; noteId: string })
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={note.id}
+				gameId={gameId}
 				type="note"
 				content={note.content}
 				content_plain_text={note.content_plain_text}
@@ -482,6 +486,7 @@ function QuestPaneContent({ gameId, questId }: { gameId: string; questId: string
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={quest.id}
+				gameId={gameId}
 				type="quest"
 				content={quest.content}
 				content_plain_text={quest.content_plain_text}

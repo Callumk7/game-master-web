@@ -119,7 +119,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			enableHiding: false,
 			cell: ({ row }) => {
 				const character = row.original;
-				const deleteCharacter = useDeleteCharacterMutation(gameId);
+				const deleteCharacter = useDeleteCharacterMutation(gameId, character.id);
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (

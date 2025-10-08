@@ -52,7 +52,6 @@ export function EditCharacterForm({ initialData, params }: EditCharacterFormProp
 		entityName: "character",
 		initialValues: {
 			...initialData,
-			image_url: initialData?.image_url || undefined,
 		},
 		fieldOverrides: {
 			content: null,

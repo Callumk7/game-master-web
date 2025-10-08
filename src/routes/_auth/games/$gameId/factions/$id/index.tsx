@@ -1,5 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import * as React from "react";
+import { toast } from "sonner";
 import type { Faction } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
@@ -17,7 +18,11 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { useFactionSuspenseQuery, useUpdateFactionMutation } from "~/queries/factions";
+import {
+	useDeleteFactionMutation,
+	useFactionSuspenseQuery,
+	useUpdateFactionMutation,
+} from "~/queries/factions";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/")({
@@ -69,6 +74,16 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			body: { faction: payload },
 			path: { game_id: gameId, id: faction.id },
 		});
+	};
+
+	const deleteFaction = useDeleteFactionMutation(gameId, faction.id);
+
+	const handleDelete = () => {
+		deleteFaction.mutate({
+			path: { game_id: gameId, id: faction.id },
+		});
+		toast("Faction deleted successfully!");
+		navigate({ to: "." });
 	};
 
 	const handleTogglePin = async () => {
@@ -173,6 +188,7 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
 		/>
 	);

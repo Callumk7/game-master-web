@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { Location } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
@@ -11,7 +12,11 @@ import { LocationImages } from "~/components/locations/location-images";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { useLocationSuspenseQuery, useUpdateLocationMutation } from "~/queries/locations";
+import {
+	useDeleteLocationMutation,
+	useLocationSuspenseQuery,
+	useUpdateLocationMutation,
+} from "~/queries/locations";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/")({
@@ -83,6 +88,15 @@ function LocationView({ location, gameId }: LocationViewProps) {
 				},
 			},
 		);
+	};
+
+	const deleteLocation = useDeleteLocationMutation(gameId, location.id);
+	const handleDelete = () => {
+		deleteLocation.mutate({
+			path: { game_id: gameId, id: location.id },
+		});
+		toast("Location deleted successfully!");
+		navigate({ to: "." });
 	};
 
 	const badges = (
@@ -174,6 +188,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
 		/>
 	);

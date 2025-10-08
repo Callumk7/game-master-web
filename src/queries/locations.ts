@@ -1,14 +1,16 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteLocationMutation,
 	getLocationOptions,
 	getLocationQueryKey,
 	getLocationTreeOptions,
+	getLocationTreeQueryKey,
+	listGameEntitiesQueryKey,
 	listLocationsOptions,
 	listLocationsQueryKey,
 	updateLocationMutation,
 } from "~/api/@tanstack/react-query.gen";
+import { useEntityTabs } from "~/components/entity-tabs";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                QUERIES
@@ -30,9 +32,9 @@ export const useGetLocationTreeSuspenseQuery = (gameId: string) => {
 //                                MUTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useDeleteLocationMutation = (gameId: string) => {
-	const navigate = useNavigate();
+export const useDeleteLocationMutation = (gameId: string, locationId: string) => {
 	const client = useQueryClient();
+	const { removeTab } = useEntityTabs();
 	return useMutation({
 		...deleteLocationMutation(),
 		onSuccess: () => {
@@ -41,7 +43,22 @@ export const useDeleteLocationMutation = (gameId: string) => {
 					path: { game_id: gameId },
 				}),
 			});
-			navigate({ to: ".." });
+			client.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			client.invalidateQueries({
+				queryKey: getLocationTreeQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			client.removeQueries({
+				queryKey: getLocationQueryKey({
+					path: { game_id: gameId, id: locationId },
+				}),
+			});
+			removeTab(locationId);
 		},
 	});
 };

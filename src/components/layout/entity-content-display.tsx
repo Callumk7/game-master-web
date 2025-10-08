@@ -61,6 +61,7 @@ export function EntityContentDisplay({
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={entity.id}
+				gameId={gameId}
 				type={singularType}
 				content={entity.content}
 				content_plain_text={entity.content_plain_text}

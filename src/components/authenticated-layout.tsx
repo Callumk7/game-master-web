@@ -2,7 +2,7 @@ import { Link } from "./ui/link";
 
 interface AuthenticatedLayoutProps {
 	user: {
-		id: number;
+		id: string;
 		email: string;
 	};
 	children: React.ReactNode;

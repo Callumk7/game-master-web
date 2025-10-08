@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { Character, CharacterLinksResponse } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
@@ -16,6 +17,7 @@ import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import { NodeViewer } from "~/lib/node-viewer";
 import type { Connection, NodePosition, NodeTypeConfig } from "~/lib/node-viewer/types";
 import {
+	useDeleteCharacterMutation,
 	useGetCharacterSuspenseQuery,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
@@ -225,6 +227,16 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		});
 	};
 
+	const deleteCharacter = useDeleteCharacterMutation(gameId, character.id);
+
+	const handleDelete = () => {
+		deleteCharacter.mutate({
+			path: { game_id: gameId, id: character.id },
+		});
+		toast("Character deleted successfully!");
+		navigate({ to: "." });
+	};
+
 	// We also have pinCharacterMutation, but since the character mutation is already
 	// being used, we can just use it for both actions.
 	const handleTogglePin = async () => {
@@ -356,6 +368,7 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 			tabs={tabs}
 			pinned={character.pinned}
 			onEdit={() => navigate({ to: "edit" })}
+			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
 		/>
 	);
