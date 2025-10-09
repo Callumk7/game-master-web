@@ -11,7 +11,6 @@ export function CreateQuestLink({ gameId, questId }: CreateQuestLinkProps) {
 			gameId={gameId}
 			sourceEntityType="quest"
 			sourceEntityId={questId}
-			excludeTypes={["quest"]}
 		/>
 	);
 }

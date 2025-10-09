@@ -486,6 +486,7 @@ function QuestPaneContent({ gameId, questId }: { gameId: string; questId: string
 		<div className="p-4 space-y-4">
 			<EntityViewHeader
 				id={quest.id}
+				gameId={gameId}
 				type="quest"
 				content={quest.content}
 				content_plain_text={quest.content_plain_text}
