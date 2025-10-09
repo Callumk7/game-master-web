@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	Menu,
@@ -7,7 +8,7 @@ import {
 	SquareArrowDownRight,
 	Trash2,
 } from "lucide-react";
-import { useGetEntityPrimaryImageQuery } from "~/api/@tanstack/react-query.gen";
+import { getEntityPrimaryImageOptions } from "~/api/@tanstack/react-query.gen";
 import { useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { PrimaryImageBanner } from "./images/primary-image-banner";
@@ -90,12 +91,11 @@ export function EntityViewHeader({
 	pinned,
 	onTogglePin,
 }: Omit<EntityViewProps, "tabs">) {
-	const { data: primaryImageData } = useGetEntityPrimaryImageQuery({
-		path: {
-			game_id: gameId,
-			entity_id: id,
-			entity_type: type,
-		},
+	const { data: primaryImageData } = useQuery({
+		...getEntityPrimaryImageOptions({
+			path: { game_id: gameId, entity_id: id, entity_type: type },
+		}),
+		retry: false,
 	});
 
 	const primaryImage = primaryImageData?.data;

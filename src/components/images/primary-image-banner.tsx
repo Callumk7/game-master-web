@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ClientOnly } from "@tanstack/react-router";
 import * as React from "react";
 import type { Image } from "~/api";
 import {
@@ -22,45 +23,45 @@ interface PrimaryImageBannerProps {
 }
 
 export function PrimaryImageBanner({ image, gameId }: PrimaryImageBannerProps) {
-	const [positionY, setPositionY] = React.useState([image.position_y ?? 50]);
+	const [tempPosition, setTempPosition] = React.useState<number | null>(null);
 
-	// Update local state when image prop changes (from server updates)
-	React.useEffect(() => {
-		setPositionY([image.position_y ?? 50]);
-	}, [image.position_y]);
+	// Current position: temporary position during dragging, otherwise server data
+	const currentPosition = tempPosition ?? image.position_y ?? 50;
 
 	return (
-		<div className="w-full space-y-3">
-			<PositionControl
-				image={image}
-				gameId={gameId}
-				positionY={positionY}
-				setPositionY={setPositionY}
-			/>
-			<div className="w-full overflow-hidden rounded-lg">
-				<img
-					src={`${SERVER_URL}${image.file_url}`}
-					alt={image.alt_text}
-					className="max-h-64 w-full object-cover"
-					style={{ objectPosition: `center ${positionY[0]}%` }}
+		<ClientOnly>
+			<div className="relative w-full space-y-3">
+				<PositionControl
+					image={image}
+					gameId={gameId}
+					currentPosition={currentPosition}
+					setTempPosition={setTempPosition}
 				/>
+				<div className="w-full overflow-hidden rounded-lg">
+					<img
+						src={`${SERVER_URL}${image.file_url}`}
+						alt={image.alt_text}
+						className="max-h-64 w-full object-cover"
+						style={{ objectPosition: `center ${currentPosition}%` }}
+					/>
+				</div>
 			</div>
-		</div>
+		</ClientOnly>
 	);
 }
 
 interface PositionControlProps {
 	image: Image;
 	gameId: string;
-	positionY: number[];
-	setPositionY: (value: number[]) => void;
+	currentPosition: number;
+	setTempPosition: (position: number | null) => void;
 }
 
 function PositionControl({
 	image,
 	gameId,
-	positionY,
-	setPositionY,
+	currentPosition,
+	setTempPosition,
 }: PositionControlProps) {
 	const queryClient = useQueryClient();
 	const [isDebouncing, setIsDebouncing] = React.useState(false);
@@ -119,7 +120,10 @@ function PositionControl({
 
 	const handleSliderChange = (value: number | readonly number[]) => {
 		const values = Array.isArray(value) ? value : [value];
-		setPositionY(values);
+		const newPosition = values[0];
+
+		// Set temporary position for immediate UI feedback
+		setTempPosition(newPosition);
 		setIsDebouncing(true);
 
 		// Clear previous timeout
@@ -129,7 +133,7 @@ function PositionControl({
 
 		// Set new timeout for API call
 		debouncedUpdateRef.current = setTimeout(() => {
-			const mutationData = {
+			updatePositionMutation.mutate({
 				path: {
 					game_id: gameId,
 					entity_type: image.entity_type,
@@ -138,14 +142,12 @@ function PositionControl({
 				},
 				body: {
 					image: {
-						position_y: values[0],
+						position_y: newPosition,
 					},
 				},
-			};
-			
-			console.log('Sending position update:', mutationData);
-			updatePositionMutation.mutate(mutationData);
+			});
 			setIsDebouncing(false);
+			setTempPosition(null); // Clear temp position after save
 		}, 500);
 	};
 
@@ -158,11 +160,16 @@ function PositionControl({
 		};
 	}, []);
 
-
 	const id = React.useId();
+
 	return (
 		<Popover>
-			<PopoverTrigger render={<Button />}>Set Position</PopoverTrigger>
+			<PopoverTrigger
+				className="absolute top-4 right-4"
+				render={<Button size={"sm"} />}
+			>
+				Set Position
+			</PopoverTrigger>
 			<PopoverPositioner align="end">
 				<PopoverContent className="min-w-lg">
 					<div className="flex items-center gap-3">
@@ -171,7 +178,7 @@ function PositionControl({
 							<span className="text-xs text-gray-500">Top</span>
 							<Slider
 								id={id}
-								value={positionY}
+								value={[currentPosition]}
 								onValueChange={handleSliderChange}
 								min={0}
 								max={100}
@@ -180,7 +187,9 @@ function PositionControl({
 							<span className="text-xs text-gray-500">Bottom</span>
 						</div>
 						<div className="flex items-center gap-2 min-w-[5rem]">
-							<span className="text-xs text-gray-600">{positionY[0]}%</span>
+							<span className="text-xs text-gray-600">
+								{currentPosition}%
+							</span>
 							{(isDebouncing || updatePositionMutation.isPending) && (
 								<span className="text-xs text-blue-500">Saving...</span>
 							)}
