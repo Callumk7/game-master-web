@@ -1,11 +1,19 @@
 import { MoreHorizontal } from "lucide-react";
 import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuPositioner,
+	DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuAction,
 	SidebarMenuItem,
 	SidebarMenuLink,
+	useSidebar,
 } from "~/components/ui/sidebar";
 import { useListPinnedEntitiesSuspenseQuery } from "~/queries/quests";
 
@@ -27,9 +35,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						>
 							{item.name}
 						</SidebarMenuLink>
-						<SidebarMenuAction>
-							<MoreHorizontal />
-						</SidebarMenuAction>
+						<SidebarPinnedEntitiesDropdown />
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.characters?.map((item) => (
@@ -40,9 +46,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						>
 							{item.name}
 						</SidebarMenuLink>
-						<SidebarMenuAction>
-							<MoreHorizontal />
-						</SidebarMenuAction>
+						<SidebarPinnedEntitiesDropdown />
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.factions?.map((item) => (
@@ -53,9 +57,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						>
 							{item.name}
 						</SidebarMenuLink>
-						<SidebarMenuAction>
-							<MoreHorizontal />
-						</SidebarMenuAction>
+						<SidebarPinnedEntitiesDropdown />
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.locations?.map((item) => (
@@ -66,9 +68,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						>
 							{item.name}
 						</SidebarMenuLink>
-						<SidebarMenuAction>
-							<MoreHorizontal />
-						</SidebarMenuAction>
+						<SidebarPinnedEntitiesDropdown />
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.quests?.map((item) => (
@@ -79,12 +79,33 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						>
 							{item.name}
 						</SidebarMenuLink>
-						<SidebarMenuAction>
-							<MoreHorizontal />
-						</SidebarMenuAction>
+						<SidebarPinnedEntitiesDropdown />
 					</SidebarMenuItem>
 				))}
 			</SidebarMenu>
 		</SidebarGroup>
+	);
+}
+
+function SidebarPinnedEntitiesDropdown() {
+	const { isMobile } = useSidebar();
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger render={<SidebarMenuAction />}>
+				<MoreHorizontal className="w-4 h-4" />
+			</DropdownMenuTrigger>
+			<DropdownMenuPositioner
+				align="start"
+				side={isMobile ? "bottom" : "right"}
+				sideOffset={18}
+				className="z-20"
+			>
+				<DropdownMenuContent>
+					<DropdownMenuItem>Go</DropdownMenuItem>
+					<DropdownMenuItem>Unpin</DropdownMenuItem>
+					<DropdownMenuItem>Delete</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenuPositioner>
+		</DropdownMenu>
 	);
 }

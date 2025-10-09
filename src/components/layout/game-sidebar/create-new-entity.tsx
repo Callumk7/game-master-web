@@ -47,8 +47,8 @@ function SidebarCreateNewMenu() {
 			</DropdownMenuTrigger>
 			<DropdownMenuPositioner
 				side={isMobile ? "bottom" : "right"}
-				align="end"
-				sideOffset={24}
+				align="start"
+				sideOffset={18}
 				className="z-20"
 			>
 				<DropdownMenuContent className="w-56">
