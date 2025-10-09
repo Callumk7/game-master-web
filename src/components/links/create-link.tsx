@@ -1,5 +1,5 @@
-import * as React from "react";
 import { ChevronDown } from "lucide-react";
+import * as React from "react";
 import { toast } from "sonner";
 import {
 	Combobox,
@@ -27,8 +27,6 @@ export interface CreateLinkFormProps {
 	sourceEntityId: string;
 	onSuccess?: () => void;
 	onError?: (error: Error) => void;
-	excludeTypes?: EntityType[];
-	excludeIds?: string[];
 }
 
 export function CreateLinkForm({
@@ -37,8 +35,6 @@ export function CreateLinkForm({
 	sourceEntityId,
 	onSuccess,
 	onError,
-	excludeTypes = [],
-	excludeIds = [],
 }: CreateLinkFormProps) {
 	const id = React.useId();
 	const [selectedEntity, setSelectedEntity] = React.useState<{
@@ -48,25 +44,13 @@ export function CreateLinkForm({
 	const [relationshipValue, setRelationshipValue] = React.useState("");
 	const [description, setDescription] = React.useState("");
 
-	// Exclude self-referencing
-	const finalExcludeIds = [...excludeIds, `${sourceEntityType}:${sourceEntityId}`];
+	const { isLoading, error: fetchError, flatEntities } = useGameEntities(gameId);
 
-	const {
-		entities,
-		isLoading,
-		error: fetchError,
-	} = useGameEntities(gameId, excludeTypes, finalExcludeIds);
-
-	// Flatten entities into a single array for Combobox
-	const flatEntities = React.useMemo(() => {
-		const result: { value: string; label: string; type: string }[] = [];
-		for (const [type, items] of Object.entries(entities)) {
-			for (const item of items) {
-				result.push({ ...item, type });
-			}
-		}
-		return result;
-	}, [entities]);
+	// Filter out self-referencing entity
+	const filteredEntities = React.useMemo(() => {
+		const selfValue = `${sourceEntityType}:${sourceEntityId}`;
+		return flatEntities.filter((entity) => entity.value !== selfValue);
+	}, [flatEntities, sourceEntityType, sourceEntityId]);
 
 	const createLink = useCreateLink(
 		() => {
@@ -97,7 +81,7 @@ export function CreateLinkForm({
 		});
 	};
 
-	const hasEntities = flatEntities.length > 0;
+	const hasEntities = filteredEntities.length > 0;
 
 	if (fetchError) {
 		return (
@@ -113,7 +97,7 @@ export function CreateLinkForm({
 				<div className="space-y-1">
 					<Label>Target Link</Label>
 					<Combobox
-						items={flatEntities}
+						items={filteredEntities}
 						value={selectedEntity}
 						onValueChange={(entity) => setSelectedEntity(entity)}
 						itemToStringLabel={(entity) => entity?.label || ""}
@@ -168,7 +152,7 @@ export function CreateLinkForm({
 					label="Relationship"
 					id="relationship"
 					value={relationshipValue}
-					onInput={(e) => setRelationshipValue(e.currentTarget.value)}
+					onChange={(e) => setRelationshipValue(e.currentTarget.value)}
 				/>
 
 				<div className="space-y-1">
@@ -176,7 +160,7 @@ export function CreateLinkForm({
 					<Textarea
 						id="description"
 						value={description}
-						onInput={(e) => setDescription(e.currentTarget.value)}
+						onChange={(e) => setDescription(e.currentTarget.value)}
 					/>
 				</div>
 

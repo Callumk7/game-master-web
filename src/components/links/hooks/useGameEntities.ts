@@ -8,11 +8,7 @@ interface BaseEntity {
 	name: string;
 }
 
-export function useGameEntities(
-	gameId: string,
-	excludeTypes?: EntityType[],
-	excludeIds?: string[],
-) {
+export function useGameEntities(gameId: string) {
 	const { data, isLoading, error } = useGetGameLinksSuspenseQuery({ id: gameId });
 
 	const entities = useMemo(() => {
@@ -79,27 +75,14 @@ export function useGameEntities(
 
 		Object.entries(transformers).forEach(([type, transformer]) => {
 			const entityType = typeMapping[type];
-
-			if (excludeTypes?.includes(entityType)) return;
-
 			const items = rawEntities[type as keyof typeof rawEntities];
 			if (items) {
-				entityGroups[entityType] = transformer(items).filter(
-					(item) => !excludeIds?.includes(item.value),
-				);
+				entityGroups[entityType] = transformer(items);
 			}
 		});
 
-		const result: Record<EntityType, EntityOption[]> = {
-			character: entityGroups.character,
-			faction: entityGroups.faction,
-			location: entityGroups.location,
-			note: entityGroups.note,
-			quest: entityGroups.quest,
-		};
-
-		return result;
-	}, [data, excludeTypes, excludeIds]);
+		return entityGroups;
+	}, [data]);
 
 	return {
 		entities,

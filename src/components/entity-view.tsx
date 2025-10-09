@@ -100,24 +100,22 @@ export function EntityViewHeader({
 
 	const primaryImage = primaryImageData?.data;
 	return (
-		<div className="flex justify-between items-baseline w-full">
-			<div className="space-y-2 mb-4">
-				<div className="flex items-center gap-3">
-					<h1 className="text-3xl font-bold">{name}</h1>
-					<EntityControls
-						entityId={id}
-						entityName={name}
-						entityType={type}
-						content={content}
-						content_plain_text={content_plain_text}
-						onEdit={onEdit}
-						onDelete={onDelete}
-						pinned={pinned}
-						onTogglePin={onTogglePin}
-					/>
-				</div>
-				{badges && <div className="mt-1">{badges}</div>}
+		<div className="space-y-2 mb-4">
+			<div className="flex items-center gap-3">
+				<h1 className="text-3xl font-bold">{name}</h1>
+				<EntityControls
+					entityId={id}
+					entityName={name}
+					entityType={type}
+					content={content}
+					content_plain_text={content_plain_text}
+					onEdit={onEdit}
+					onDelete={onDelete}
+					pinned={pinned}
+					onTogglePin={onTogglePin}
+				/>
 			</div>
+			{badges && <div className="mt-1">{badges}</div>}
 			{primaryImage && <PrimaryImageBanner image={primaryImage} />}
 		</div>
 	);
