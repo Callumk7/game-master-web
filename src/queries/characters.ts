@@ -1,15 +1,16 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteCharacterMutation,
 	getCharacterOptions,
 	getCharacterQueryKey,
 	listCharactersOptions,
 	listCharactersQueryKey,
+	listGameEntitiesQueryKey,
 	removeCharacterPrimaryFactionMutation,
 	setCharacterPrimaryFactionMutation,
 	updateCharacterMutation,
 } from "~/api/@tanstack/react-query.gen";
+import { useEntityTabs } from "~/components/entity-tabs";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                SUSPENSE
@@ -27,9 +28,9 @@ export const useListCharactersSuspenseQuery = (gameId: string) => {
 //                                MUTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useDeleteCharacterMutation = (gameId: string) => {
-	const navigate = useNavigate();
+export const useDeleteCharacterMutation = (gameId: string, characterId: string) => {
 	const client = useQueryClient();
+	const { removeTab } = useEntityTabs();
 	return useMutation({
 		...deleteCharacterMutation(),
 		onSuccess: () => {
@@ -38,7 +39,17 @@ export const useDeleteCharacterMutation = (gameId: string) => {
 					path: { game_id: gameId },
 				}),
 			});
-			navigate({ to: ".." });
+			client.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			client.removeQueries({
+				queryKey: getCharacterQueryKey({
+					path: { game_id: gameId, id: characterId },
+				}),
+			});
+			removeTab(characterId);
 		},
 	});
 };

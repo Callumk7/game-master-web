@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Note } from "~/api/types.gen";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ActionsDropdown,
 	DateDisplay,
@@ -10,7 +11,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
+import { useDeleteNoteMutation } from "~/queries/notes";
 import { EditNoteDialog } from "./edit-note-dialog";
 
 interface NotesTableProps {
@@ -77,6 +78,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			enableHiding: false,
 			cell: ({ row }) => {
 				const note = row.original;
+				const deleteNote = useDeleteNoteMutation(gameId, note.id);
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
@@ -87,7 +89,11 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 							entity={note}
 							gameId={gameId}
 							onEdit={() => setEditModalOpen(true)}
-							showDelete={false}
+							onDelete={() => {
+								deleteNote.mutate({
+									path: { game_id: gameId, id: note.id },
+								});
+							}}
 						/>
 						<EditNoteDialog
 							isOpen={editModalOpen}

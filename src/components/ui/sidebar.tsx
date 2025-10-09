@@ -331,7 +331,6 @@ interface SidebarMenuButtonProps
 	extends useRender.ComponentProps<"button">,
 		VariantProps<typeof sidebarMenuButtonVariants> {
 	isActive?: boolean;
-	tooltip?: string | React.ComponentProps<any>;
 }
 
 const SidebarMenuButton = ({
@@ -339,7 +338,6 @@ const SidebarMenuButton = ({
 	isActive = false,
 	variant = "default",
 	size = "default",
-	tooltip,
 	className,
 	...props
 }: SidebarMenuButtonProps) => {

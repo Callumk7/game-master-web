@@ -1,14 +1,17 @@
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import {
 	Menu,
 	Pencil,
 	Pin,
+	SplitSquareHorizontal,
 	SquareArrowDownRight,
 	Trash2,
-	SplitSquareHorizontal,
 } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
+import { getEntityPrimaryImageOptions } from "~/api/@tanstack/react-query.gen";
 import { useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
+import { PrimaryImageBanner } from "./images/primary-image-banner";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
@@ -27,6 +30,7 @@ type EntityTab = {
 
 interface EntityViewProps {
 	id: string;
+	gameId: string;
 	type: EntityType;
 	name: string;
 	content?: string;
@@ -41,6 +45,7 @@ interface EntityViewProps {
 
 export function EntityView({
 	id,
+	gameId,
 	type,
 	content,
 	content_plain_text,
@@ -57,6 +62,7 @@ export function EntityView({
 			<EntityTabs tabs={tabs}>
 				<EntityViewHeader
 					id={id}
+					gameId={gameId}
 					type={type}
 					content={content}
 					content_plain_text={content_plain_text}
@@ -74,6 +80,7 @@ export function EntityView({
 
 export function EntityViewHeader({
 	id,
+	gameId,
 	type,
 	content,
 	content_plain_text,
@@ -84,6 +91,14 @@ export function EntityViewHeader({
 	pinned,
 	onTogglePin,
 }: Omit<EntityViewProps, "tabs">) {
+	const { data: primaryImageData } = useQuery({
+		...getEntityPrimaryImageOptions({
+			path: { game_id: gameId, entity_id: id, entity_type: type },
+		}),
+		retry: false,
+	});
+
+	const primaryImage = primaryImageData?.data;
 	return (
 		<div className="space-y-2 mb-4">
 			<div className="flex items-center gap-3">
@@ -101,6 +116,7 @@ export function EntityViewHeader({
 				/>
 			</div>
 			{badges && <div className="mt-1">{badges}</div>}
+			{primaryImage && <PrimaryImageBanner gameId={gameId} image={primaryImage} />}
 		</div>
 	);
 }

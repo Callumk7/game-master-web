@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Location } from "~/api/types.gen";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ActionsDropdown,
 	DateDisplay,
@@ -10,7 +11,7 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
+import { useDeleteLocationMutation } from "~/queries/locations";
 import { Badge } from "../ui/badge";
 import { EditLocationDialog } from "./edit-location-dialog";
 
@@ -87,6 +88,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			enableHiding: false,
 			cell: ({ row }) => {
 				const location = row.original;
+				const deleteLocation = useDeleteLocationMutation(gameId, location.id);
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
@@ -97,7 +99,11 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 							entity={location}
 							gameId={gameId}
 							onEdit={() => setEditModalOpen(true)}
-							showDelete={false}
+							onDelete={() => {
+								deleteLocation.mutate({
+									path: { game_id: gameId, id: location.id },
+								});
+							}}
 						/>
 						<EditLocationDialog
 							isOpen={editModalOpen}

@@ -2,17 +2,18 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Quest } from "~/api/types.gen";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
+	ActionsDropdown,
+	ContentDisplay,
+	DateDisplay,
+	EntityLink,
 	EntityTable,
 	SortableHeader,
-	EntityLink,
-	TagsDisplay,
-	DateDisplay,
-	ContentDisplay,
-	ActionsDropdown,
 	StatusDisplay,
+	TagsDisplay,
 } from "~/components/ui/entity-table";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
+import { useDeleteQuestMutation } from "~/queries/quests";
 import { EditQuestDialog } from "./edit-quest-dialog";
 
 interface QuestsTableProps {
@@ -97,6 +98,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			enableHiding: false,
 			cell: ({ row }) => {
 				const quest = row.original;
+				const deleteQuest = useDeleteQuestMutation(gameId, quest.id);
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
@@ -107,7 +109,11 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 							entity={quest}
 							gameId={gameId}
 							onEdit={() => setEditModalOpen(true)}
-							showDelete={false}
+							onDelete={() => {
+								deleteQuest.mutate({
+									path: { game_id: gameId, id: quest.id },
+								});
+							}}
 						/>
 						<EditQuestDialog
 							isOpen={editModalOpen}

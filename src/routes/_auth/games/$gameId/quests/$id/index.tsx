@@ -92,7 +92,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		);
 	};
 
-	const deleteQuest = useDeleteQuestMutation(gameId);
+	const deleteQuest = useDeleteQuestMutation(gameId, quest.id);
 	const handleDelete = () => {
 		deleteQuest.mutate({
 			path: { game_id: gameId, id: quest.id },
@@ -170,6 +170,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 	return (
 		<EntityView
 			id={quest.id}
+			gameId={gameId}
 			type="quest"
 			content={quest.content}
 			content_plain_text={quest.content_plain_text}

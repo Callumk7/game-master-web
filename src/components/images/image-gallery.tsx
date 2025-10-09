@@ -22,13 +22,12 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Spinner } from "~/components/ui/spinner";
 import { SERVER_URL } from "~/routes/__root";
-
-type ImageGalleryType = "character" | "faction" | "location" | "quest";
+import type { EntityType } from "~/types";
 
 interface ImageGalleryProps {
 	gameId: string;
 	entityId: string;
-	entityType: ImageGalleryType;
+	entityType: EntityType;
 }
 
 interface ImageModalProps {

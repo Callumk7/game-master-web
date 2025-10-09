@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import {
 	deleteNoteMutation,
 	getNoteOptions,
 	getNoteQueryKey,
+	listGameEntitiesQueryKey,
 	listNotesOptions,
 	listNotesQueryKey,
 	updateNoteMutation,
 } from "~/api/@tanstack/react-query.gen";
+import { useEntityTabs } from "~/components/entity-tabs";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                QUERIES
@@ -25,9 +26,9 @@ export const useNoteSuspenseQuery = (gameId: string, id: string) => {
 //                                MUTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-export const useDeleteNoteMutation = (gameId: string) => {
-	const navigate = useNavigate();
+export const useDeleteNoteMutation = (gameId: string, noteId: string) => {
 	const client = useQueryClient();
+	const { removeTab } = useEntityTabs();
 	return useMutation({
 		...deleteNoteMutation(),
 		onSuccess: () => {
@@ -36,7 +37,17 @@ export const useDeleteNoteMutation = (gameId: string) => {
 					path: { game_id: gameId },
 				}),
 			});
-			navigate({ to: ".." });
+			client.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			client.removeQueries({
+				queryKey: getNoteQueryKey({
+					path: { game_id: gameId, id: noteId },
+				}),
+			});
+			removeTab(noteId);
 		},
 	});
 };

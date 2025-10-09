@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Faction } from "~/api/types.gen";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ActionsDropdown,
 	DateDisplay,
@@ -10,7 +11,6 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import { useDeleteFactionMutation } from "~/queries/factions";
 import { EditFactionDialog } from "./edit-faction-dialog";
 
@@ -78,7 +78,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			maxSize: 80,
 			cell: ({ row }) => {
 				const faction = row.original;
-				const deleteFaction = useDeleteFactionMutation(gameId);
+				const deleteFaction = useDeleteFactionMutation(gameId, faction.id);
 				const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
 				return (

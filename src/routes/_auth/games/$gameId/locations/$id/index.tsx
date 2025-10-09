@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { Location } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
@@ -7,10 +8,15 @@ import {
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateLocationLink } from "~/components/locations/create-location-link";
+import { LocationImages } from "~/components/locations/location-images";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityLinksTable } from "~/components/ui/entity-links-table";
-import { useLocationSuspenseQuery, useUpdateLocationMutation } from "~/queries/locations";
+import {
+	useDeleteLocationMutation,
+	useLocationSuspenseQuery,
+	useUpdateLocationMutation,
+} from "~/queries/locations";
 import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/")({
@@ -84,6 +90,15 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		);
 	};
 
+	const deleteLocation = useDeleteLocationMutation(gameId, location.id);
+	const handleDelete = () => {
+		deleteLocation.mutate({
+			path: { game_id: gameId, id: location.id },
+		});
+		toast("Location deleted successfully!");
+		navigate({ to: "." });
+	};
+
 	const badges = (
 		<div className="flex flex-wrap gap-2">
 			<Badge>{formatType(location.type)}</Badge>
@@ -153,6 +168,11 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			label: "NPCs",
 			content: <div>NPCs tabs tbc</div>,
 		},
+		{
+			id: "images",
+			label: "Images",
+			content: <LocationImages gameId={gameId} locationId={location.id} />,
+		},
 	];
 
 	const navigate = Route.useNavigate();
@@ -160,6 +180,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 	return (
 		<EntityView
 			id={location.id}
+			gameId={gameId}
 			type="location"
 			content={location.content}
 			content_plain_text={location.content_plain_text}
@@ -167,6 +188,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			badges={badges}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
+			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
 		/>
 	);

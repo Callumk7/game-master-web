@@ -7,6 +7,7 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { NoteImages } from "~/components/notes/note-images";
 import { NoteLinksPopover } from "~/components/notes/note-links-popover";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
@@ -91,7 +92,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		);
 	};
 
-	const deleteNote = useDeleteNoteMutation(gameId);
+	const deleteNote = useDeleteNoteMutation(gameId, note.id);
 	const handleDelete = () => {
 		deleteNote.mutate({
 			path: { game_id: gameId, id: note.id },
@@ -159,11 +160,17 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			label: "Notes",
 			content: <div>Notes tabs tbc</div>,
 		},
+		{
+			id: "images",
+			label: "Images",
+			content: <NoteImages gameId={gameId} noteId={note.id} />,
+		},
 	];
 
 	return (
 		<EntityView
 			id={note.id}
+			gameId={gameId}
 			type="note"
 			content={note.content}
 			content_plain_text={note.content_plain_text}

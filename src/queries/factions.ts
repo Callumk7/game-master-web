@@ -6,8 +6,10 @@ import {
 	getFactionQueryKey,
 	listFactionsOptions,
 	listFactionsQueryKey,
+	listGameEntitiesQueryKey,
 	updateFactionMutation,
 } from "~/api/@tanstack/react-query.gen";
+import { useEntityTabs } from "~/components/entity-tabs";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                QUERIES
@@ -55,8 +57,9 @@ export const useUpdateFactionMutation = (gameId: string, factionId: string) => {
 	});
 };
 
-export const useDeleteFactionMutation = (gameId: string) => {
+export const useDeleteFactionMutation = (gameId: string, factionId: string) => {
 	const client = useQueryClient();
+	const { removeTab } = useEntityTabs();
 	return useMutation({
 		...deleteFactionMutation(),
 		onSuccess: () => {
@@ -65,6 +68,17 @@ export const useDeleteFactionMutation = (gameId: string) => {
 					path: { game_id: gameId },
 				}),
 			});
+			client.invalidateQueries({
+				queryKey: listGameEntitiesQueryKey({
+					path: { game_id: gameId },
+				}),
+			});
+			client.removeQueries({
+				queryKey: getFactionQueryKey({
+					path: { game_id: gameId, id: factionId },
+				}),
+			});
+			removeTab(factionId);
 		},
 	});
 };

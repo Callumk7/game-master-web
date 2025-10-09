@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import * as React from "react";
 import type { EntityTreeData } from "~/api/types.gen";
 import {

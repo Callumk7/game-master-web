@@ -3,6 +3,481 @@
 import { z } from 'zod';
 
 /**
+ * Game
+ * A game instance
+ */
+export const zGame = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    id: z.uuid(),
+    name: z.string(),
+    owner_id: z.uuid(),
+    setting: z.optional(z.string()),
+    updated_at: z.optional(z.string())
+});
+
+/**
+ * Games Response
+ * Response containing a list of games
+ */
+export const zGamesResponse = z.object({
+    data: z.optional(z.array(zGame))
+});
+
+/**
+ * Objective Create Parameters
+ * Parameters for creating a new objective
+ */
+export const zObjectiveCreateParams = z.object({
+    body: z.string(),
+    complete: z.optional(z.boolean()),
+    note_link_id: z.optional(z.uuid())
+});
+
+/**
+ * Objective Create Request
+ * Request body for creating an objective
+ */
+export const zObjectiveCreateRequest = z.object({
+    objective: zObjectiveCreateParams
+});
+
+/**
+ * Note Tree Node
+ * A node in the note hierarchy tree
+ */
+export const zNoteTreeNode = z.object({
+    get children(): z.ZodOptional {
+        return z.optional(z.array(z.lazy((): any => {
+            return zNoteTreeNode;
+        })));
+    },
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    entity_type: z.enum([
+        'note'
+    ]),
+    id: z.uuid(),
+    name: z.string(),
+    parent_id: z.optional(z.uuid()),
+    parent_type: z.optional(z.enum([
+        'character',
+        'quest',
+        'location',
+        'faction'
+    ])),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string())
+});
+
+/**
+ * Faction Notes Tree Data
+ * Hierarchical tree of notes associated with a faction
+ */
+export const zFactionNotesTreeData = z.object({
+    faction_id: z.uuid(),
+    faction_name: z.string(),
+    notes_tree: z.optional(z.array(zNoteTreeNode))
+});
+
+/**
+ * Entity Faction
+ * Faction entity in game entities list
+ */
+export const zEntityFaction = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    id: z.uuid(),
+    name: z.string(),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string())
+});
+
+/**
+ * Entity Character
+ * Character entity in game entities list
+ */
+export const zEntityCharacter = z.object({
+    class: z.string(),
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    faction_role: z.optional(z.string()),
+    id: z.uuid(),
+    level: z.int(),
+    member_of_faction_id: z.optional(z.uuid()),
+    name: z.string(),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string())
+});
+
+/**
+ * Entity Location
+ * Location entity in game entities list
+ */
+export const zEntityLocation = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    has_parent: z.boolean(),
+    id: z.uuid(),
+    name: z.string(),
+    tags: z.optional(z.array(z.string())),
+    type: z.enum([
+        'continent',
+        'nation',
+        'region',
+        'city',
+        'settlement',
+        'building',
+        'complex'
+    ]),
+    updated_at: z.optional(z.string())
+});
+
+/**
+ * Entity Note
+ * Note entity in game entities list
+ */
+export const zEntityNote = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    id: z.uuid(),
+    name: z.string(),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string())
+});
+
+/**
+ * Entity Quest
+ * Quest entity in game entities list
+ */
+export const zEntityQuest = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    id: z.uuid(),
+    name: z.string(),
+    parent_id: z.optional(z.uuid()),
+    status: z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ]),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string())
+});
+
+/**
+ * Entities
+ * Collection of game entities
+ */
+export const zEntities = z.object({
+    characters: z.optional(z.array(zEntityCharacter)),
+    factions: z.optional(z.array(zEntityFaction)),
+    locations: z.optional(z.array(zEntityLocation)),
+    notes: z.optional(z.array(zEntityNote)),
+    quests: z.optional(z.array(zEntityQuest))
+});
+
+/**
+ * Entities Data
+ * Game entities data structure
+ */
+export const zEntitiesData = z.object({
+    entities: z.optional(zEntities),
+    game_id: z.uuid(),
+    game_name: z.string()
+});
+
+/**
+ * Entities Response
+ * Response containing all game entities
+ */
+export const zEntitiesResponse = z.object({
+    data: z.optional(zEntitiesData)
+});
+
+/**
+ * Note
+ * A game note
+ */
+export const zNote = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    game_id: z.uuid(),
+    id: z.uuid(),
+    name: z.string(),
+    parent_id: z.optional(z.uuid()),
+    parent_type: z.optional(z.enum([
+        'character',
+        'quest',
+        'location',
+        'faction'
+    ])),
+    pinned: z.boolean(),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string()),
+    user_id: z.uuid()
+});
+
+/**
+ * Entity Tree Node
+ * A single node in the entity relationship tree
+ */
+export const zEntityTreeNode = z.object({
+    get children() {
+        return z.array(z.lazy((): any => {
+            return zEntityTreeNode;
+        }));
+    },
+    description: z.optional(z.string()),
+    id: z.uuid(),
+    is_active: z.optional(z.boolean()),
+    metadata: z.optional(z.record(z.string(), z.unknown())),
+    name: z.string(),
+    relationship_type: z.optional(z.string()),
+    strength: z.optional(z.int().gte(1).lte(5)),
+    type: z.enum([
+        'character',
+        'faction',
+        'location',
+        'quest',
+        'note'
+    ])
+});
+
+/**
+ * Entity Tree Data
+ * Entity relationship tree data grouped by entity types or single tree
+ */
+export const zEntityTreeData = z.object({
+    characters: z.optional(z.array(zEntityTreeNode)),
+    factions: z.optional(z.array(zEntityTreeNode)),
+    locations: z.optional(z.array(zEntityTreeNode)),
+    notes: z.optional(z.array(zEntityTreeNode)),
+    quests: z.optional(z.array(zEntityTreeNode))
+});
+
+/**
+ * Image
+ * An image associated with a game entity
+ */
+export const zImage = z.object({
+    alt_text: z.optional(z.string()),
+    content_type: z.enum([
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/webp',
+        'image/gif'
+    ]),
+    entity_id: z.uuid(),
+    entity_type: z.enum([
+        'character',
+        'faction',
+        'location',
+        'quest',
+        'note'
+    ]),
+    file_size: z.int().gte(1),
+    file_size_mb: z.number(),
+    file_url: z.string(),
+    filename: z.string(),
+    id: z.uuid(),
+    inserted_at: z.iso.datetime(),
+    is_primary: z.boolean(),
+    metadata: z.optional(z.record(z.string(), z.unknown())).default({}),
+    position_y: z.int().gte(0).lte(100).default(50),
+    updated_at: z.iso.datetime()
+});
+
+/**
+ * Quest
+ * A game quest
+ */
+export const zQuest = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    game_id: z.uuid(),
+    id: z.uuid(),
+    images: z.optional(z.array(zImage)),
+    name: z.string(),
+    parent_id: z.optional(z.uuid()),
+    pinned: z.boolean(),
+    status: z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ]),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string()),
+    user_id: z.uuid()
+});
+
+/**
+ * Quests Response
+ * Response containing a list of quests
+ */
+export const zQuestsResponse = z.object({
+    data: z.optional(z.array(zQuest))
+});
+
+/**
+ * Game Create Parameters
+ * Parameters for creating a new game
+ */
+export const zGameCreateParams = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    name: z.string(),
+    setting: z.optional(z.string())
+});
+
+/**
+ * Character
+ * A game character
+ */
+export const zCharacter = z.object({
+    alive: z.boolean(),
+    class: z.string(),
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    faction_role: z.optional(z.string()),
+    game_id: z.uuid(),
+    id: z.uuid(),
+    level: z.int(),
+    member_of_faction_id: z.optional(z.uuid()),
+    name: z.string(),
+    pinned: z.boolean(),
+    race: z.optional(z.string()),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string()),
+    user_id: z.uuid()
+});
+
+/**
+ * Faction
+ * A game faction
+ */
+export const zFaction = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    game_id: z.uuid(),
+    id: z.uuid(),
+    images: z.optional(z.array(zImage)),
+    name: z.string(),
+    pinned: z.boolean(),
+    tags: z.optional(z.array(z.string())),
+    updated_at: z.optional(z.string()),
+    user_id: z.uuid()
+});
+
+/**
+ * Location
+ * A game location
+ */
+export const zLocation = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    created_at: z.optional(z.string()),
+    game_id: z.uuid(),
+    id: z.uuid(),
+    images: z.optional(z.array(zImage)),
+    name: z.string(),
+    parent_id: z.optional(z.uuid()),
+    pinned: z.boolean(),
+    tags: z.optional(z.array(z.string())),
+    type: z.enum([
+        'continent',
+        'nation',
+        'region',
+        'city',
+        'settlement',
+        'building',
+        'complex'
+    ]),
+    updated_at: z.optional(z.string()),
+    user_id: z.uuid()
+});
+
+/**
+ * Pinned Entities
+ * Collection of pinned entities grouped by type
+ */
+export const zPinnedEntities = z.object({
+    characters: z.optional(z.array(zCharacter)),
+    factions: z.optional(z.array(zFaction)),
+    locations: z.optional(z.array(zLocation)),
+    notes: z.optional(z.array(zNote)),
+    quests: z.optional(z.array(zQuest))
+});
+
+/**
+ * Pinned Entities Data
+ * All pinned entities for a game
+ */
+export const zPinnedEntitiesData = z.object({
+    game_id: z.uuid(),
+    pinned_entities: zPinnedEntities,
+    total_count: z.int()
+});
+
+/**
+ * Location Response
+ * Response containing a single location
+ */
+export const zLocationResponse = z.object({
+    data: z.optional(zLocation)
+});
+
+/**
+ * Objective
+ * A quest objective
+ */
+export const zObjective = z.object({
+    body: z.string(),
+    complete: z.boolean(),
+    id: z.uuid(),
+    inserted_at: z.iso.datetime(),
+    note_link_id: z.optional(z.uuid()),
+    quest_id: z.uuid(),
+    updated_at: z.iso.datetime()
+});
+
+/**
+ * Game Response
+ * Response containing a single game
+ */
+export const zGameResponse = z.object({
+    data: z.optional(zGame)
+});
+
+/**
+ * Objective Update Parameters
+ * Parameters for updating an objective
+ */
+export const zObjectiveUpdateParams = z.object({
+    body: z.optional(z.string()),
+    complete: z.optional(z.boolean()),
+    note_link_id: z.optional(z.uuid())
+});
+
+/**
  * Linked Character
  * A character with relationship metadata
  */
@@ -90,128 +565,15 @@ export const zLinkedQuest = z.object({
 });
 
 /**
- * Character Links
- * Collections of entities linked to a character
+ * Quest Links
+ * Collections of entities linked to a quest
  */
-export const zCharacterLinks = z.object({
+export const zQuestLinks = z.object({
     characters: z.optional(z.array(zLinkedCharacter)),
     factions: z.optional(z.array(zLinkedFaction)),
     locations: z.optional(z.array(zLinkedLocation)),
     notes: z.optional(z.array(zLinkedNote)),
     quests: z.optional(z.array(zLinkedQuest))
-});
-
-/**
- * Game Update Parameters
- * Parameters for updating an existing game (partial updates supported)
- */
-export const zGameUpdateParams = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    name: z.optional(z.string()),
-    setting: z.optional(z.string())
-});
-
-/**
- * Game Update Request
- * Game update parameters
- */
-export const zGameUpdateRequest = z.object({
-    game: zGameUpdateParams
-});
-
-/**
- * Link Request
- * Request to create a link between entities
- */
-export const zLinkRequest = z.object({
-    description: z.optional(z.string()),
-    entity_id: z.uuid(),
-    entity_type: z.enum([
-        'character',
-        'faction',
-        'location',
-        'quest',
-        'note'
-    ]),
-    is_active: z.optional(z.boolean()).default(true),
-    metadata: z.optional(z.record(z.string(), z.unknown())),
-    relationship_type: z.optional(z.string()),
-    strength: z.optional(z.int().gte(1).lte(10))
-});
-
-/**
- * Entity Note
- * Note entity in game entities list
- */
-export const zEntityNote = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    id: z.uuid(),
-    name: z.string(),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string())
-});
-
-/**
- * Note Links
- * Collections of entities linked to a note
- */
-export const zNoteLinks = z.object({
-    characters: z.optional(z.array(zLinkedCharacter)),
-    factions: z.optional(z.array(zLinkedFaction)),
-    locations: z.optional(z.array(zLinkedLocation)),
-    notes: z.optional(z.array(zLinkedNote)),
-    quests: z.optional(z.array(zLinkedQuest))
-});
-
-/**
- * Note Update Parameters
- * Parameters for updating an existing note (partial updates supported)
- */
-export const zNoteUpdateParams = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    name: z.optional(z.string()),
-    parent_id: z.optional(z.union([
-        z.uuid(),
-        z.null()
-    ])),
-    parent_type: z.optional(z.enum([
-        'character',
-        'quest',
-        'location',
-        'faction'
-    ])),
-    pinned: z.optional(z.boolean()),
-    tags: z.optional(z.array(z.string()))
-});
-
-/**
- * Note Update Request
- * Note update parameters
- */
-export const zNoteUpdateRequest = z.object({
-    note: zNoteUpdateParams
-});
-
-/**
- * Image Statistics
- * Statistics about images for an entity
- */
-export const zImageStats = z.object({
-    entity_id: z.uuid(),
-    entity_type: z.enum([
-        'character',
-        'faction',
-        'location',
-        'quest'
-    ]),
-    has_primary: z.boolean(),
-    total_count: z.int().gte(0),
-    total_size: z.int().gte(0),
-    total_size_mb: z.number()
 });
 
 /**
@@ -220,616 +582,16 @@ export const zImageStats = z.object({
  */
 export const zImageUpdateParams = z.object({
     alt_text: z.optional(z.string()),
-    is_primary: z.optional(z.boolean())
+    is_primary: z.optional(z.boolean()),
+    position_y: z.optional(z.int().gte(0).lte(100))
 });
 
 /**
- * Objective Create Parameters
- * Parameters for creating a new objective
+ * Image Update Request
+ * Request body for updating image metadata
  */
-export const zObjectiveCreateParams = z.object({
-    body: z.string(),
-    complete: z.optional(z.boolean()),
-    note_link_id: z.optional(z.uuid())
-});
-
-/**
- * Objective Create Request
- * Request body for creating an objective
- */
-export const zObjectiveCreateRequest = z.object({
-    objective: zObjectiveCreateParams
-});
-
-/**
- * Set Primary Faction Request
- * Parameters for setting a character's primary faction
- */
-export const zSetPrimaryFactionRequest = z.object({
-    faction_id: z.uuid(),
-    role: z.string()
-});
-
-/**
- * Image Create Parameters
- * Parameters for uploading a new image - multipart/form-data fields
- */
-export const zImageCreateParams = z.object({
-    alt_text: z.optional(z.string()),
-    file: z.string(),
-    is_primary: z.optional(z.boolean())
-});
-
-/**
- * Image Create Request
- * Form data for uploading an image - corresponds to image[field] format
- */
-export const zImageCreateRequest = z.object({
-    image: zImageCreateParams
-});
-
-/**
- * Image
- * An image associated with a game entity
- */
-export const zImage = z.object({
-    alt_text: z.optional(z.string()),
-    content_type: z.enum([
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'image/webp',
-        'image/gif'
-    ]),
-    entity_id: z.uuid(),
-    entity_type: z.enum([
-        'character',
-        'faction',
-        'location',
-        'quest'
-    ]),
-    file_size: z.int().gte(1),
-    file_size_mb: z.number(),
-    file_url: z.string(),
-    filename: z.string(),
-    id: z.uuid(),
-    inserted_at: z.iso.datetime(),
-    is_primary: z.boolean(),
-    metadata: z.optional(z.record(z.string(), z.unknown())).default({}),
-    updated_at: z.iso.datetime()
-});
-
-/**
- * Quest
- * A game quest
- */
-export const zQuest = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    game_id: z.uuid(),
-    id: z.uuid(),
-    images: z.optional(z.array(zImage)),
-    name: z.string(),
-    parent_id: z.optional(z.uuid()),
-    pinned: z.boolean(),
-    status: z.enum([
-        'preparing',
-        'ready',
-        'active',
-        'paused',
-        'completed',
-        'cancelled'
-    ]),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string()),
-    user_id: z.uuid()
-});
-
-/**
- * Quest Response
- * Response containing a single quest
- */
-export const zQuestResponse = z.object({
-    data: z.optional(zQuest)
-});
-
-/**
- * Faction
- * A game faction
- */
-export const zFaction = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    game_id: z.uuid(),
-    id: z.uuid(),
-    images: z.optional(z.array(zImage)),
-    name: z.string(),
-    pinned: z.boolean(),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string()),
-    user_id: z.uuid()
-});
-
-/**
- * Faction Response
- * Response containing a single faction
- */
-export const zFactionResponse = z.object({
-    data: z.optional(zFaction)
-});
-
-export const zLinkedEntityBase = z.object({
-    description: z.optional(z.string()),
-    is_active: z.optional(z.boolean()),
-    metadata: z.optional(z.record(z.string(), z.unknown())),
-    relationship_type: z.optional(z.string()),
-    strength: z.optional(z.int())
-});
-
-/**
- * Quest Tree Node
- * A node in the quest hierarchy tree
- */
-export const zQuestTreeNode = z.object({
-    get children(): z.ZodOptional {
-        return z.optional(z.array(z.lazy((): any => {
-            return zQuestTreeNode;
-        })));
-    },
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    entity_type: z.enum([
-        'quest'
-    ]),
-    id: z.uuid(),
-    name: z.string(),
-    parent_id: z.optional(z.uuid()),
-    status: z.enum([
-        'preparing',
-        'ready',
-        'active',
-        'paused',
-        'completed',
-        'cancelled'
-    ]),
-    tags: z.optional(z.array(z.string()))
-});
-
-/**
- * User
- * User information
- */
-export const zUser = z.object({
-    confirmed_at: z.optional(z.string()),
-    email: z.string(),
-    id: z.uuid()
-});
-
-/**
- * Auth Status Response
- * Authentication status response
- */
-export const zAuthStatusResponse = z.object({
-    authenticated: z.boolean(),
-    user: z.optional(zUser)
-});
-
-/**
- * Character
- * A game character
- */
-export const zCharacter = z.object({
-    alive: z.boolean(),
-    class: z.string(),
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    faction_role: z.optional(z.string()),
-    game_id: z.uuid(),
-    id: z.uuid(),
-    level: z.int(),
-    member_of_faction_id: z.optional(z.uuid()),
-    name: z.string(),
-    pinned: z.boolean(),
-    race: z.optional(z.string()),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string()),
-    user_id: z.uuid()
-});
-
-/**
- * Entity Tree Node
- * A single node in the entity relationship tree
- */
-export const zEntityTreeNode = z.object({
-    get children() {
-        return z.array(z.lazy((): any => {
-            return zEntityTreeNode;
-        }));
-    },
-    description: z.optional(z.string()),
-    id: z.uuid(),
-    is_active: z.optional(z.boolean()),
-    metadata: z.optional(z.record(z.string(), z.unknown())),
-    name: z.string(),
-    relationship_type: z.optional(z.string()),
-    strength: z.optional(z.int().gte(1).lte(5)),
-    type: z.enum([
-        'character',
-        'faction',
-        'location',
-        'quest',
-        'note'
-    ])
-});
-
-/**
- * Entity Tree Data
- * Entity relationship tree data grouped by entity types or single tree
- */
-export const zEntityTreeData = z.object({
-    characters: z.optional(z.array(zEntityTreeNode)),
-    factions: z.optional(z.array(zEntityTreeNode)),
-    locations: z.optional(z.array(zEntityTreeNode)),
-    notes: z.optional(z.array(zEntityTreeNode)),
-    quests: z.optional(z.array(zEntityTreeNode))
-});
-
-/**
- * Entity Tree Response
- * Response containing hierarchical tree of entity relationships
- */
-export const zEntityTreeResponse = z.object({
-    data: z.optional(zEntityTreeData)
-});
-
-/**
- * Character Response
- * Response containing a single character
- */
-export const zCharacterResponse = z.object({
-    data: z.optional(zCharacter)
-});
-
-/**
- * Quest Create Parameters
- * Parameters for creating a new quest
- */
-export const zQuestCreateParams = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    name: z.string(),
-    parent_id: z.optional(z.uuid()),
-    status: z.optional(z.enum([
-        'preparing',
-        'ready',
-        'active',
-        'paused',
-        'completed',
-        'cancelled'
-    ])),
-    tags: z.optional(z.array(z.string()))
-});
-
-/**
- * Quest Create Request
- * Quest creation parameters
- */
-export const zQuestCreateRequest = z.object({
-    quest: zQuestCreateParams
-});
-
-/**
- * Entity Location
- * Location entity in game entities list
- */
-export const zEntityLocation = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    has_parent: z.boolean(),
-    id: z.uuid(),
-    name: z.string(),
-    tags: z.optional(z.array(z.string())),
-    type: z.enum([
-        'continent',
-        'nation',
-        'region',
-        'city',
-        'settlement',
-        'building',
-        'complex'
-    ]),
-    updated_at: z.optional(z.string())
-});
-
-/**
- * Location
- * A game location
- */
-export const zLocation = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    game_id: z.uuid(),
-    id: z.uuid(),
-    images: z.optional(z.array(zImage)),
-    name: z.string(),
-    parent_id: z.optional(z.uuid()),
-    pinned: z.boolean(),
-    tags: z.optional(z.array(z.string())),
-    type: z.enum([
-        'continent',
-        'nation',
-        'region',
-        'city',
-        'settlement',
-        'building',
-        'complex'
-    ]),
-    updated_at: z.optional(z.string()),
-    user_id: z.uuid()
-});
-
-/**
- * Note
- * A game note
- */
-export const zNote = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    game_id: z.uuid(),
-    id: z.uuid(),
-    name: z.string(),
-    parent_id: z.optional(z.uuid()),
-    parent_type: z.optional(z.enum([
-        'character',
-        'quest',
-        'location',
-        'faction'
-    ])),
-    pinned: z.boolean(),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string()),
-    user_id: z.uuid()
-});
-
-/**
- * Pinned Entities
- * Collection of pinned entities grouped by type
- */
-export const zPinnedEntities = z.object({
-    characters: z.optional(z.array(zCharacter)),
-    factions: z.optional(z.array(zFaction)),
-    locations: z.optional(z.array(zLocation)),
-    notes: z.optional(z.array(zNote)),
-    quests: z.optional(z.array(zQuest))
-});
-
-/**
- * Faction Members Data
- * Characters that are members of a faction
- */
-export const zFactionMembersData = z.object({
-    faction_id: z.uuid(),
-    faction_name: z.string(),
-    members: z.optional(z.array(zCharacter))
-});
-
-/**
- * Faction Members Response
- * Response containing faction members
- */
-export const zFactionMembersResponse = z.object({
-    data: z.optional(zFactionMembersData)
-});
-
-/**
- * Note Links Data
- * Links associated with a note
- */
-export const zNoteLinksData = z.object({
-    links: z.optional(zNoteLinks),
-    note_id: z.uuid(),
-    note_name: z.string()
-});
-
-/**
- * Note Tree Node
- * A node in the note hierarchy tree
- */
-export const zNoteTreeNode = z.object({
-    get children(): z.ZodOptional {
-        return z.optional(z.array(z.lazy((): any => {
-            return zNoteTreeNode;
-        })));
-    },
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    entity_type: z.enum([
-        'note'
-    ]),
-    id: z.uuid(),
-    name: z.string(),
-    parent_id: z.optional(z.uuid()),
-    parent_type: z.optional(z.enum([
-        'character',
-        'quest',
-        'location',
-        'faction'
-    ])),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string())
-});
-
-/**
- * Faction Notes Tree Data
- * Hierarchical tree of notes associated with a faction
- */
-export const zFactionNotesTreeData = z.object({
-    faction_id: z.uuid(),
-    faction_name: z.string(),
-    notes_tree: z.optional(z.array(zNoteTreeNode))
-});
-
-/**
- * Quest Tree Response
- * Response containing hierarchical quest tree
- */
-export const zQuestTreeResponse = z.object({
-    data: z.optional(z.array(zQuestTreeNode))
-});
-
-/**
- * Faction Links
- * Collections of entities linked to a faction
- */
-export const zFactionLinks = z.object({
-    characters: z.optional(z.array(zLinkedCharacter)),
-    factions: z.optional(z.array(zLinkedFaction)),
-    locations: z.optional(z.array(zLinkedLocation)),
-    notes: z.optional(z.array(zLinkedNote)),
-    quests: z.optional(z.array(zLinkedQuest))
-});
-
-/**
- * Character Primary Faction Data
- * Primary faction information for a character
- */
-export const zCharacterPrimaryFactionData = z.object({
-    character_id: z.uuid(),
-    faction: zFaction,
-    role: z.string()
-});
-
-/**
- * Character Links Data
- * Links associated with a character
- */
-export const zCharacterLinksData = z.object({
-    character_id: z.uuid(),
-    character_name: z.string(),
-    links: z.optional(zCharacterLinks)
-});
-
-/**
- * Character Links Response
- * Response containing character links
- */
-export const zCharacterLinksResponse = z.object({
-    data: z.optional(zCharacterLinksData)
-});
-
-/**
- * Entity Character
- * Character entity in game entities list
- */
-export const zEntityCharacter = z.object({
-    class: z.string(),
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    faction_role: z.optional(z.string()),
-    id: z.uuid(),
-    level: z.int(),
-    member_of_faction_id: z.optional(z.uuid()),
-    name: z.string(),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string())
-});
-
-/**
- * Entity Faction
- * Faction entity in game entities list
- */
-export const zEntityFaction = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    id: z.uuid(),
-    name: z.string(),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string())
-});
-
-/**
- * Entity Quest
- * Quest entity in game entities list
- */
-export const zEntityQuest = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    id: z.uuid(),
-    name: z.string(),
-    parent_id: z.optional(z.uuid()),
-    status: z.enum([
-        'preparing',
-        'ready',
-        'active',
-        'paused',
-        'completed',
-        'cancelled'
-    ]),
-    tags: z.optional(z.array(z.string())),
-    updated_at: z.optional(z.string())
-});
-
-/**
- * Entities
- * Collection of game entities
- */
-export const zEntities = z.object({
-    characters: z.optional(z.array(zEntityCharacter)),
-    factions: z.optional(z.array(zEntityFaction)),
-    locations: z.optional(z.array(zEntityLocation)),
-    notes: z.optional(z.array(zEntityNote)),
-    quests: z.optional(z.array(zEntityQuest))
-});
-
-/**
- * Quests Response
- * Response containing a list of quests
- */
-export const zQuestsResponse = z.object({
-    data: z.optional(z.array(zQuest))
-});
-
-/**
- * Faction Links Data
- * Links associated with a faction
- */
-export const zFactionLinksData = z.object({
-    faction_id: z.uuid(),
-    faction_name: z.string(),
-    links: z.optional(zFactionLinks)
-});
-
-/**
- * Faction Links Response
- * Response containing faction links
- */
-export const zFactionLinksResponse = z.object({
-    data: z.optional(zFactionLinksData)
-});
-
-/**
- * Game
- * A game instance
- */
-export const zGame = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    created_at: z.optional(z.string()),
-    id: z.uuid(),
-    name: z.string(),
-    owner_id: z.uuid(),
-    setting: z.optional(z.string()),
-    updated_at: z.optional(z.string())
+export const zImageUpdateRequest = z.object({
+    image: z.optional(zImageUpdateParams)
 });
 
 /**
@@ -862,39 +624,31 @@ export const zLocationCreateRequest = z.object({
 });
 
 /**
- * Objective
- * A quest objective
+ * Character Notes Tree Data
+ * Hierarchical tree of notes associated with a character
  */
-export const zObjective = z.object({
-    body: z.string(),
-    complete: z.boolean(),
-    id: z.uuid(),
-    inserted_at: z.iso.datetime(),
-    note_link_id: z.optional(z.uuid()),
-    quest_id: z.uuid(),
-    updated_at: z.iso.datetime()
+export const zCharacterNotesTreeData = z.object({
+    character_id: z.uuid(),
+    character_name: z.string(),
+    notes_tree: z.optional(z.array(zNoteTreeNode))
 });
 
 /**
- * Location Links
- * Collections of entities linked to a location
+ * Error Details
+ * Detailed error information
  */
-export const zLocationLinks = z.object({
+export const zErrorDetails = z.record(z.string(), z.unknown());
+
+/**
+ * Character Links
+ * Collections of entities linked to a character
+ */
+export const zCharacterLinks = z.object({
     characters: z.optional(z.array(zLinkedCharacter)),
     factions: z.optional(z.array(zLinkedFaction)),
     locations: z.optional(z.array(zLinkedLocation)),
     notes: z.optional(z.array(zLinkedNote)),
     quests: z.optional(z.array(zLinkedQuest))
-});
-
-/**
- * Location Links Data
- * Links associated with a location
- */
-export const zLocationLinksData = z.object({
-    links: z.optional(zLocationLinks),
-    location_id: z.uuid(),
-    location_name: z.string()
 });
 
 /**
@@ -935,20 +689,45 @@ export const zLocationTreeResponse = z.object({
 });
 
 /**
- * Pinned Entities Data
- * All pinned entities for a game
+ * Entity Tree Response
+ * Response containing hierarchical tree of entity relationships
  */
-export const zPinnedEntitiesData = z.object({
-    game_id: z.uuid(),
-    pinned_entities: zPinnedEntities,
-    total_count: z.int()
+export const zEntityTreeResponse = z.object({
+    data: z.optional(zEntityTreeData)
 });
 
 /**
- * Quest Links
- * Collections of entities linked to a quest
+ * Faction Create Parameters
+ * Parameters for creating a new faction
  */
-export const zQuestLinks = z.object({
+export const zFactionCreateParams = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    name: z.string(),
+    tags: z.optional(z.array(z.string()))
+});
+
+/**
+ * Faction Create Request
+ * Faction creation parameters
+ */
+export const zFactionCreateRequest = z.object({
+    faction: zFactionCreateParams
+});
+
+export const zLinkedEntityBase = z.object({
+    description: z.optional(z.string()),
+    is_active: z.optional(z.boolean()),
+    metadata: z.optional(z.record(z.string(), z.unknown())),
+    relationship_type: z.optional(z.string()),
+    strength: z.optional(z.int())
+});
+
+/**
+ * Note Links
+ * Collections of entities linked to a note
+ */
+export const zNoteLinks = z.object({
     characters: z.optional(z.array(zLinkedCharacter)),
     factions: z.optional(z.array(zLinkedFaction)),
     locations: z.optional(z.array(zLinkedLocation)),
@@ -957,66 +736,327 @@ export const zQuestLinks = z.object({
 });
 
 /**
- * Quest Links Data
- * Links associated with a quest
+ * Note Links Data
+ * Links associated with a note
  */
-export const zQuestLinksData = z.object({
-    links: z.optional(zQuestLinks),
-    quest_id: z.uuid(),
-    quest_name: z.string()
+export const zNoteLinksData = z.object({
+    links: z.optional(zNoteLinks),
+    note_id: z.uuid(),
+    note_name: z.string()
 });
 
 /**
- * Entities Data
- * Game entities data structure
+ * Locations Response
+ * Response containing a list of locations
  */
-export const zEntitiesData = z.object({
-    entities: z.optional(zEntities),
-    game_id: z.uuid(),
-    game_name: z.string()
+export const zLocationsResponse = z.object({
+    data: z.optional(z.array(zLocation))
 });
 
 /**
- * Entities Response
- * Response containing all game entities
+ * Set Primary Faction Request
+ * Parameters for setting a character's primary faction
  */
-export const zEntitiesResponse = z.object({
-    data: z.optional(zEntitiesData)
+export const zSetPrimaryFactionRequest = z.object({
+    faction_id: z.uuid(),
+    role: z.string()
 });
 
 /**
- * Character Primary Faction Response
- * Response containing character's primary faction data
+ * Character Create Parameters
+ * Parameters for creating a new character
  */
-export const zCharacterPrimaryFactionResponse = z.object({
-    data: z.optional(zCharacterPrimaryFactionData)
-});
-
-/**
- * Location Response
- * Response containing a single location
- */
-export const zLocationResponse = z.object({
-    data: z.optional(zLocation)
-});
-
-/**
- * Game Response
- * Response containing a single game
- */
-export const zGameResponse = z.object({
-    data: z.optional(zGame)
-});
-
-/**
- * Game Create Parameters
- * Parameters for creating a new game
- */
-export const zGameCreateParams = z.object({
+export const zCharacterCreateParams = z.object({
+    alive: z.optional(z.boolean()),
+    class: z.string(),
     content: z.optional(z.string()),
     content_plain_text: z.optional(z.string()),
+    faction_role: z.optional(z.string()),
+    level: z.int(),
+    member_of_faction_id: z.optional(z.uuid()),
     name: z.string(),
-    setting: z.optional(z.string())
+    race: z.optional(z.string()),
+    tags: z.optional(z.array(z.string()))
+});
+
+/**
+ * Faction Update Parameters
+ * Parameters for updating an existing faction (partial updates supported)
+ */
+export const zFactionUpdateParams = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    name: z.optional(z.string()),
+    pinned: z.optional(z.boolean()),
+    tags: z.optional(z.array(z.string()))
+});
+
+/**
+ * Faction Update Request
+ * Faction update parameters
+ */
+export const zFactionUpdateRequest = z.object({
+    faction: zFactionUpdateParams
+});
+
+/**
+ * Error
+ * Error response
+ */
+export const zError = z.object({
+    errors: z.optional(zErrorDetails)
+});
+
+/**
+ * Objective Update Request
+ * Request body for updating an objective
+ */
+export const zObjectiveUpdateRequest = z.object({
+    objective: zObjectiveUpdateParams
+});
+
+/**
+ * Faction Response
+ * Response containing a single faction
+ */
+export const zFactionResponse = z.object({
+    data: z.optional(zFaction)
+});
+
+/**
+ * Character Response
+ * Response containing a single character
+ */
+export const zCharacterResponse = z.object({
+    data: z.optional(zCharacter)
+});
+
+/**
+ * Faction Links
+ * Collections of entities linked to a faction
+ */
+export const zFactionLinks = z.object({
+    characters: z.optional(z.array(zLinkedCharacter)),
+    factions: z.optional(z.array(zLinkedFaction)),
+    locations: z.optional(z.array(zLinkedLocation)),
+    notes: z.optional(z.array(zLinkedNote)),
+    quests: z.optional(z.array(zLinkedQuest))
+});
+
+/**
+ * Faction Links Data
+ * Links associated with a faction
+ */
+export const zFactionLinksData = z.object({
+    faction_id: z.uuid(),
+    faction_name: z.string(),
+    links: z.optional(zFactionLinks)
+});
+
+/**
+ * Note Update Parameters
+ * Parameters for updating an existing note (partial updates supported)
+ */
+export const zNoteUpdateParams = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    name: z.optional(z.string()),
+    parent_id: z.optional(z.union([
+        z.uuid(),
+        z.null()
+    ])),
+    parent_type: z.optional(z.enum([
+        'character',
+        'quest',
+        'location',
+        'faction'
+    ])),
+    pinned: z.optional(z.boolean()),
+    tags: z.optional(z.array(z.string()))
+});
+
+/**
+ * Note Update Request
+ * Note update parameters
+ */
+export const zNoteUpdateRequest = z.object({
+    note: zNoteUpdateParams
+});
+
+/**
+ * Images List Response
+ * Response containing a list of images with metadata
+ */
+export const zImagesListResponse = z.object({
+    data: z.array(zImage),
+    meta: z.record(z.string(), z.unknown())
+});
+
+/**
+ * User
+ * User information
+ */
+export const zUser = z.object({
+    confirmed_at: z.optional(z.string()),
+    email: z.string(),
+    id: z.uuid()
+});
+
+/**
+ * Login Response
+ * Successful login response
+ */
+export const zLoginResponse = z.object({
+    token: z.string(),
+    user: zUser
+});
+
+/**
+ * Quest Tree Node
+ * A node in the quest hierarchy tree
+ */
+export const zQuestTreeNode = z.object({
+    get children(): z.ZodOptional {
+        return z.optional(z.array(z.lazy((): any => {
+            return zQuestTreeNode;
+        })));
+    },
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    entity_type: z.enum([
+        'quest'
+    ]),
+    id: z.uuid(),
+    name: z.string(),
+    parent_id: z.optional(z.uuid()),
+    status: z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ]),
+    tags: z.optional(z.array(z.string()))
+});
+
+/**
+ * Quest Tree Response
+ * Response containing hierarchical quest tree
+ */
+export const zQuestTreeResponse = z.object({
+    data: z.optional(z.array(zQuestTreeNode))
+});
+
+/**
+ * Image Statistics
+ * Statistics about images for an entity
+ */
+export const zImageStats = z.object({
+    entity_id: z.uuid(),
+    entity_type: z.enum([
+        'character',
+        'faction',
+        'location',
+        'quest'
+    ]),
+    has_primary: z.boolean(),
+    total_count: z.int().gte(0),
+    total_size: z.int().gte(0),
+    total_size_mb: z.number()
+});
+
+/**
+ * Faction Members Data
+ * Characters that are members of a faction
+ */
+export const zFactionMembersData = z.object({
+    faction_id: z.uuid(),
+    faction_name: z.string(),
+    members: z.optional(z.array(zCharacter))
+});
+
+/**
+ * Faction Members Response
+ * Response containing faction members
+ */
+export const zFactionMembersResponse = z.object({
+    data: z.optional(zFactionMembersData)
+});
+
+/**
+ * Characters Response
+ * Response containing a list of characters
+ */
+export const zCharactersResponse = z.object({
+    data: z.optional(z.array(zCharacter))
+});
+
+/**
+ * Factions Response
+ * Response containing a list of factions
+ */
+export const zFactionsResponse = z.object({
+    data: z.optional(z.array(zFaction))
+});
+
+/**
+ * Location Update Parameters
+ * Parameters for updating an existing location (partial updates supported)
+ */
+export const zLocationUpdateParams = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    name: z.optional(z.string()),
+    parent_id: z.optional(z.uuid()),
+    pinned: z.optional(z.boolean()),
+    tags: z.optional(z.array(z.string())),
+    type: z.optional(z.enum([
+        'continent',
+        'nation',
+        'region',
+        'city',
+        'settlement',
+        'building',
+        'complex'
+    ]))
+});
+
+/**
+ * Member
+ * A game member
+ */
+export const zMember = z.object({
+    email: z.string(),
+    joined_at: z.optional(z.string()),
+    role: z.string(),
+    user_id: z.uuid()
+});
+
+/**
+ * Character Update Parameters
+ * Parameters for updating an existing character (partial updates supported)
+ */
+export const zCharacterUpdateParams = z.object({
+    alive: z.optional(z.boolean()),
+    class: z.optional(z.string()),
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    faction_role: z.optional(z.string()),
+    level: z.optional(z.int()),
+    member_of_faction_id: z.optional(z.uuid()),
+    name: z.optional(z.string()),
+    pinned: z.optional(z.boolean()),
+    race: z.optional(z.string()),
+    tags: z.optional(z.array(z.string()))
+});
+
+/**
+ * Character Update Request
+ * Character update parameters
+ */
+export const zCharacterUpdateRequest = z.object({
+    character: zCharacterUpdateParams
 });
 
 /**
@@ -1028,12 +1068,73 @@ export const zGameCreateRequest = z.object({
 });
 
 /**
- * Images List Response
- * Response containing a list of images with metadata
+ * Quest Create Parameters
+ * Parameters for creating a new quest
  */
-export const zImagesListResponse = z.object({
-    data: z.array(zImage),
-    meta: z.record(z.string(), z.unknown())
+export const zQuestCreateParams = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    name: z.string(),
+    parent_id: z.optional(z.uuid()),
+    status: z.optional(z.enum([
+        'preparing',
+        'ready',
+        'active',
+        'paused',
+        'completed',
+        'cancelled'
+    ])),
+    tags: z.optional(z.array(z.string()))
+});
+
+/**
+ * Quest Create Request
+ * Quest creation parameters
+ */
+export const zQuestCreateRequest = z.object({
+    quest: zQuestCreateParams
+});
+
+/**
+ * Location Update Request
+ * Location update parameters
+ */
+export const zLocationUpdateRequest = z.object({
+    location: zLocationUpdateParams
+});
+
+/**
+ * Character Notes Tree Response
+ * Response containing character notes tree
+ */
+export const zCharacterNotesTreeResponse = z.object({
+    data: z.optional(zCharacterNotesTreeData)
+});
+
+/**
+ * Pinned Entities Response
+ * Response containing all pinned entities for a game
+ */
+export const zPinnedEntitiesResponse = z.object({
+    data: z.optional(zPinnedEntitiesData)
+});
+
+/**
+ * Character Links Data
+ * Links associated with a character
+ */
+export const zCharacterLinksData = z.object({
+    character_id: z.uuid(),
+    character_name: z.string(),
+    links: z.optional(zCharacterLinks)
+});
+
+/**
+ * Note Links Response
+ * Response containing note links
+ */
+export const zNoteLinksResponse = z.object({
+    data: z.optional(zNoteLinksData)
 });
 
 /**
@@ -1055,29 +1156,77 @@ export const zNoteCreateParams = z.object({
 });
 
 /**
- * Note Create Request
- * Note creation parameters
+ * Note Response
+ * Response containing a single note
  */
-export const zNoteCreateRequest = z.object({
-    note: zNoteCreateParams
+export const zNoteResponse = z.object({
+    data: z.optional(zNote)
 });
 
 /**
- * Character Update Parameters
- * Parameters for updating an existing character (partial updates supported)
+ * Objectives Response
+ * Response containing a list of objectives
  */
-export const zCharacterUpdateParams = z.object({
-    alive: z.optional(z.boolean()),
-    class: z.optional(z.string()),
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    faction_role: z.optional(z.string()),
-    level: z.optional(z.int()),
-    member_of_faction_id: z.optional(z.uuid()),
-    name: z.optional(z.string()),
-    pinned: z.optional(z.boolean()),
-    race: z.optional(z.string()),
-    tags: z.optional(z.array(z.string()))
+export const zObjectivesResponse = z.object({
+    data: z.optional(z.array(zObjective))
+});
+
+/**
+ * Faction Links Response
+ * Response containing faction links
+ */
+export const zFactionLinksResponse = z.object({
+    data: z.optional(zFactionLinksData)
+});
+
+/**
+ * Members Response
+ * Response containing a list of game members
+ */
+export const zMembersResponse = z.object({
+    data: z.optional(z.array(zMember))
+});
+
+/**
+ * Notes Response
+ * Response containing a list of notes
+ */
+export const zNotesResponse = z.object({
+    data: z.optional(z.array(zNote))
+});
+
+/**
+ * Signup Request
+ * User registration credentials
+ */
+export const zSignupRequest = z.object({
+    email: z.string(),
+    password: z.string()
+});
+
+/**
+ * Faction Notes Tree Response
+ * Response containing faction notes tree
+ */
+export const zFactionNotesTreeResponse = z.object({
+    data: z.optional(zFactionNotesTreeData)
+});
+
+/**
+ * Auth Status Response
+ * Authentication status response
+ */
+export const zAuthStatusResponse = z.object({
+    authenticated: z.boolean(),
+    user: z.optional(zUser)
+});
+
+/**
+ * Image Response
+ * Response containing a single image
+ */
+export const zImageResponse = z.object({
+    data: z.optional(zImage)
 });
 
 /**
@@ -1110,39 +1259,11 @@ export const zQuestUpdateRequest = z.object({
 });
 
 /**
- * Faction Create Parameters
- * Parameters for creating a new faction
+ * Image Statistics Response
+ * Response containing image statistics for an entity
  */
-export const zFactionCreateParams = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    name: z.string(),
-    tags: z.optional(z.array(z.string()))
-});
-
-/**
- * Faction Create Request
- * Faction creation parameters
- */
-export const zFactionCreateRequest = z.object({
-    faction: zFactionCreateParams
-});
-
-/**
- * Character Create Parameters
- * Parameters for creating a new character
- */
-export const zCharacterCreateParams = z.object({
-    alive: z.optional(z.boolean()),
-    class: z.string(),
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    faction_role: z.optional(z.string()),
-    level: z.int(),
-    member_of_faction_id: z.optional(z.uuid()),
-    name: z.string(),
-    race: z.optional(z.string()),
-    tags: z.optional(z.array(z.string()))
+export const zImageStatsResponse = z.object({
+    data: z.optional(zImageStats)
 });
 
 /**
@@ -1154,43 +1275,135 @@ export const zCharacterCreateRequest = z.object({
 });
 
 /**
- * Image Update Request
- * Request body for updating image metadata
+ * Objective Response
+ * Response containing a single objective
  */
-export const zImageUpdateRequest = z.object({
-    image: z.optional(zImageUpdateParams)
+export const zObjectiveResponse = z.object({
+    data: z.optional(zObjective)
 });
 
 /**
- * Pinned Entities Response
- * Response containing all pinned entities for a game
+ * Game Update Parameters
+ * Parameters for updating an existing game (partial updates supported)
  */
-export const zPinnedEntitiesResponse = z.object({
-    data: z.optional(zPinnedEntitiesData)
+export const zGameUpdateParams = z.object({
+    content: z.optional(z.string()),
+    content_plain_text: z.optional(z.string()),
+    name: z.optional(z.string()),
+    setting: z.optional(z.string())
 });
 
 /**
- * Note Response
- * Response containing a single note
+ * Game Update Request
+ * Game update parameters
  */
-export const zNoteResponse = z.object({
-    data: z.optional(zNote)
+export const zGameUpdateRequest = z.object({
+    game: zGameUpdateParams
 });
 
 /**
- * Image Response
- * Response containing a single image
+ * Login Request
+ * Login credentials - either email/password or magic link token
  */
-export const zImageResponse = z.object({
-    data: z.optional(zImage)
+export const zLoginRequest = z.object({
+    email: z.optional(z.string()),
+    password: z.optional(z.string()),
+    token: z.optional(z.string())
 });
 
 /**
- * Locations Response
- * Response containing a list of locations
+ * Quest Links Data
+ * Links associated with a quest
  */
-export const zLocationsResponse = z.object({
-    data: z.optional(z.array(zLocation))
+export const zQuestLinksData = z.object({
+    links: z.optional(zQuestLinks),
+    quest_id: z.uuid(),
+    quest_name: z.string()
+});
+
+/**
+ * Quest Response
+ * Response containing a single quest
+ */
+export const zQuestResponse = z.object({
+    data: z.optional(zQuest)
+});
+
+/**
+ * Quest Links Response
+ * Response containing quest links
+ */
+export const zQuestLinksResponse = z.object({
+    data: z.optional(zQuestLinksData)
+});
+
+/**
+ * Image Create Parameters
+ * Parameters for uploading a new image - multipart/form-data fields
+ */
+export const zImageCreateParams = z.object({
+    alt_text: z.optional(z.string()),
+    file: z.string(),
+    is_primary: z.optional(z.boolean()),
+    position_y: z.optional(z.int().gte(0).lte(100)).default(50)
+});
+
+/**
+ * Image Create Request
+ * Form data for uploading an image - corresponds to image[field] format
+ */
+export const zImageCreateRequest = z.object({
+    image: zImageCreateParams
+});
+
+/**
+ * Character Links Response
+ * Response containing character links
+ */
+export const zCharacterLinksResponse = z.object({
+    data: z.optional(zCharacterLinksData)
+});
+
+/**
+ * Location Links
+ * Collections of entities linked to a location
+ */
+export const zLocationLinks = z.object({
+    characters: z.optional(z.array(zLinkedCharacter)),
+    factions: z.optional(z.array(zLinkedFaction)),
+    locations: z.optional(z.array(zLinkedLocation)),
+    notes: z.optional(z.array(zLinkedNote)),
+    quests: z.optional(z.array(zLinkedQuest))
+});
+
+/**
+ * Link Request
+ * Request to create a link between entities
+ */
+export const zLinkRequest = z.object({
+    description: z.optional(z.string()),
+    entity_id: z.uuid(),
+    entity_type: z.enum([
+        'character',
+        'faction',
+        'location',
+        'quest',
+        'note'
+    ]),
+    is_active: z.optional(z.boolean()).default(true),
+    metadata: z.optional(z.record(z.string(), z.unknown())),
+    relationship_type: z.optional(z.string()),
+    strength: z.optional(z.int().gte(1).lte(10))
+});
+
+/**
+ * Location Links Data
+ * Links associated with a location
+ */
+export const zLocationLinksData = z.object({
+    links: z.optional(zLocationLinks),
+    location_id: z.uuid(),
+    location_name: z.string()
 });
 
 /**
@@ -1202,49 +1415,21 @@ export const zLocationLinksResponse = z.object({
 });
 
 /**
- * Notes Response
- * Response containing a list of notes
+ * Character Primary Faction Data
+ * Primary faction information for a character
  */
-export const zNotesResponse = z.object({
-    data: z.optional(z.array(zNote))
+export const zCharacterPrimaryFactionData = z.object({
+    character_id: z.uuid(),
+    faction: zFaction,
+    role: z.string()
 });
 
 /**
- * Location Update Parameters
- * Parameters for updating an existing location (partial updates supported)
+ * Note Create Request
+ * Note creation parameters
  */
-export const zLocationUpdateParams = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    name: z.optional(z.string()),
-    parent_id: z.optional(z.uuid()),
-    pinned: z.optional(z.boolean()),
-    tags: z.optional(z.array(z.string())),
-    type: z.optional(z.enum([
-        'continent',
-        'nation',
-        'region',
-        'city',
-        'settlement',
-        'building',
-        'complex'
-    ]))
-});
-
-/**
- * Location Update Request
- * Location update parameters
- */
-export const zLocationUpdateRequest = z.object({
-    location: zLocationUpdateParams
-});
-
-/**
- * Character Update Request
- * Character update parameters
- */
-export const zCharacterUpdateRequest = z.object({
-    character: zCharacterUpdateParams
+export const zNoteCreateRequest = z.object({
+    note: zNoteCreateParams
 });
 
 /**
@@ -1260,192 +1445,11 @@ export const zLinkUpdateRequest = z.object({
 });
 
 /**
- * Objective Update Parameters
- * Parameters for updating an objective
+ * Character Primary Faction Response
+ * Response containing character's primary faction data
  */
-export const zObjectiveUpdateParams = z.object({
-    body: z.optional(z.string()),
-    complete: z.optional(z.boolean()),
-    note_link_id: z.optional(z.uuid())
-});
-
-/**
- * Objective Update Request
- * Request body for updating an objective
- */
-export const zObjectiveUpdateRequest = z.object({
-    objective: zObjectiveUpdateParams
-});
-
-/**
- * Faction Update Parameters
- * Parameters for updating an existing faction (partial updates supported)
- */
-export const zFactionUpdateParams = z.object({
-    content: z.optional(z.string()),
-    content_plain_text: z.optional(z.string()),
-    name: z.optional(z.string()),
-    pinned: z.optional(z.boolean()),
-    tags: z.optional(z.array(z.string()))
-});
-
-/**
- * Member
- * A game member
- */
-export const zMember = z.object({
-    email: z.string(),
-    joined_at: z.optional(z.string()),
-    role: z.string(),
-    user_id: z.uuid()
-});
-
-/**
- * Login Response
- * Successful login response
- */
-export const zLoginResponse = z.object({
-    token: z.string(),
-    user: zUser
-});
-
-/**
- * Faction Notes Tree Response
- * Response containing faction notes tree
- */
-export const zFactionNotesTreeResponse = z.object({
-    data: z.optional(zFactionNotesTreeData)
-});
-
-/**
- * Image Statistics Response
- * Response containing image statistics for an entity
- */
-export const zImageStatsResponse = z.object({
-    data: z.optional(zImageStats)
-});
-
-/**
- * Characters Response
- * Response containing a list of characters
- */
-export const zCharactersResponse = z.object({
-    data: z.optional(z.array(zCharacter))
-});
-
-/**
- * Objective Response
- * Response containing a single objective
- */
-export const zObjectiveResponse = z.object({
-    data: z.optional(zObjective)
-});
-
-/**
- * Objectives Response
- * Response containing a list of objectives
- */
-export const zObjectivesResponse = z.object({
-    data: z.optional(z.array(zObjective))
-});
-
-/**
- * Members Response
- * Response containing a list of game members
- */
-export const zMembersResponse = z.object({
-    data: z.optional(z.array(zMember))
-});
-
-/**
- * Login Request
- * Login credentials - either email/password or magic link token
- */
-export const zLoginRequest = z.object({
-    email: z.optional(z.string()),
-    password: z.optional(z.string()),
-    token: z.optional(z.string())
-});
-
-/**
- * Games Response
- * Response containing a list of games
- */
-export const zGamesResponse = z.object({
-    data: z.optional(z.array(zGame))
-});
-
-/**
- * Quest Links Response
- * Response containing quest links
- */
-export const zQuestLinksResponse = z.object({
-    data: z.optional(zQuestLinksData)
-});
-
-/**
- * Error Details
- * Detailed error information
- */
-export const zErrorDetails = z.record(z.string(), z.unknown());
-
-/**
- * Signup Request
- * User registration credentials
- */
-export const zSignupRequest = z.object({
-    email: z.string(),
-    password: z.string()
-});
-
-/**
- * Character Notes Tree Data
- * Hierarchical tree of notes associated with a character
- */
-export const zCharacterNotesTreeData = z.object({
-    character_id: z.uuid(),
-    character_name: z.string(),
-    notes_tree: z.optional(z.array(zNoteTreeNode))
-});
-
-/**
- * Character Notes Tree Response
- * Response containing character notes tree
- */
-export const zCharacterNotesTreeResponse = z.object({
-    data: z.optional(zCharacterNotesTreeData)
-});
-
-/**
- * Faction Update Request
- * Faction update parameters
- */
-export const zFactionUpdateRequest = z.object({
-    faction: zFactionUpdateParams
-});
-
-/**
- * Note Links Response
- * Response containing note links
- */
-export const zNoteLinksResponse = z.object({
-    data: z.optional(zNoteLinksData)
-});
-
-/**
- * Error
- * Error response
- */
-export const zError = z.object({
-    errors: z.optional(zErrorDetails)
-});
-
-/**
- * Factions Response
- * Response containing a list of factions
- */
-export const zFactionsResponse = z.object({
-    data: z.optional(z.array(zFaction))
+export const zCharacterPrimaryFactionResponse = z.object({
+    data: z.optional(zCharacterPrimaryFactionData)
 });
 
 export const zGetFactionLinksData = z.object({
@@ -1605,7 +1609,8 @@ export const zGetEntityImageStatsData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid()
     }),
@@ -1819,7 +1824,8 @@ export const zServeEntityImageFileData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid(),
         id: z.uuid()
@@ -1835,7 +1841,8 @@ export const zSetEntityImageAsPrimaryData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid(),
         id: z.uuid()
@@ -1956,6 +1963,23 @@ export const zCreateQuestData = z.object({
  * Created
  */
 export const zCreateQuestResponse = zQuestResponse;
+
+export const zListGameImagesData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        game_id: z.uuid()
+    }),
+    query: z.optional(z.object({
+        primary_first: z.optional(z.boolean()),
+        limit: z.optional(z.int()),
+        offset: z.optional(z.int()).default(0)
+    }))
+});
+
+/**
+ * Success
+ */
+export const zListGameImagesResponse = zImagesListResponse;
 
 export const zDeleteNoteData = z.object({
     body: z.optional(z.never()),
@@ -2099,7 +2123,8 @@ export const zGetEntityPrimaryImageData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid()
     }),
@@ -2232,7 +2257,8 @@ export const zDeleteEntityImageData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid(),
         id: z.uuid()
@@ -2248,7 +2274,8 @@ export const zGetEntityImageData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid(),
         id: z.uuid()
@@ -2269,7 +2296,8 @@ export const zUpdateEntityImageData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid(),
         id: z.uuid()
@@ -2460,7 +2488,8 @@ export const zListEntityImagesData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid()
     }),
@@ -2478,7 +2507,8 @@ export const zUploadEntityImageData = z.object({
     body: z.object({
         'image[file]': z.string(),
         'image[alt_text]': z.optional(z.string()),
-        'image[is_primary]': z.optional(z.boolean())
+        'image[is_primary]': z.optional(z.boolean()),
+        'image[position_y]': z.optional(z.int())
     }),
     path: z.object({
         game_id: z.uuid(),
@@ -2486,7 +2516,8 @@ export const zUploadEntityImageData = z.object({
             'character',
             'faction',
             'location',
-            'quest'
+            'quest',
+            'note'
         ]),
         entity_id: z.uuid()
     }),
