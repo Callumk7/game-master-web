@@ -91,8 +91,10 @@ The app appears to be a game master tool with resources for:
     - this means NOT using asChild, we use the render prop instead
 - When designing components, ensure that we stick to a single responsibility design where possible
 - Always organise complex component logic into its own folder
-- **ALWAYS** avoid using `as any`
+- **ALWAYS** avoid using `as any`. Ensure correct types are used AT ALL TIMES
 - **ALWAYS** import react using `import * as React from "react"`, and call react functions using method syntax, such as `React.useState()`
+
+**AS A REMINDER, NEVER USE ANY IF AT ALL AVOIDABLE** 
 
 <!-- BACKLOG.MD GUIDELINES START -->
 # Instructions for the usage of Backlog.md CLI Tool

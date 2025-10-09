@@ -116,7 +116,7 @@ export function EntityViewHeader({
 				/>
 			</div>
 			{badges && <div className="mt-1">{badges}</div>}
-			{primaryImage && <PrimaryImageBanner image={primaryImage} />}
+			{primaryImage && <PrimaryImageBanner gameId={gameId} image={primaryImage} />}
 		</div>
 	);
 }
