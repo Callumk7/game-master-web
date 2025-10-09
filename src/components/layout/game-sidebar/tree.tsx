@@ -1,9 +1,17 @@
 import { ChevronRight } from "lucide-react";
 import * as React from "react";
+import { Button } from "~/components/ui/button";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "~/components/ui/collapsible";
+import {
+	SidebarMenuItem,
+	SidebarMenuLink,
+	SidebarMenuSub,
+} from "~/components/ui/sidebar";
 import type { EntityType } from "~/types";
-import { Button } from "../ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { SidebarMenuItem, SidebarMenuLink, SidebarMenuSub } from "../ui/sidebar";
 
 interface TreeNode {
 	children?: Array<TreeNode>;
