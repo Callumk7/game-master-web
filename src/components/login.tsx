@@ -1,9 +1,9 @@
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { loginUser } from "~/api";
 import { signupFn } from "~/routes/signup";
 import { getAppSession } from "~/utils/session";
-import { useMutationLite } from "../hooks/useMutationLite";
 import { Auth } from "./auth";
 import { Button } from "./ui/button";
 
@@ -33,10 +33,10 @@ export const loginFn = createServerFn({ method: "POST" })
 export function Login() {
 	const router = useRouter();
 
-	const loginMutation = useMutationLite({
-		fn: loginFn,
+	const loginMutation = useMutation({
+		mutationFn: loginFn,
 		onSuccess: async (ctx) => {
-			if (!ctx.data?.error) {
+			if (!ctx?.error) {
 				await router.invalidate();
 				router.navigate({ to: "/" });
 				return;
@@ -44,8 +44,8 @@ export function Login() {
 		},
 	});
 
-	const signupMutation = useMutationLite({
-		fn: useServerFn(signupFn),
+	const signupMutation = useMutation({
+		mutationFn: useServerFn(signupFn),
 	});
 
 	return (

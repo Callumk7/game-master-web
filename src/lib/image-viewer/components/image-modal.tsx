@@ -11,7 +11,7 @@ export function ImageModal({
 }: ImageModalProps) {
 	const viewer = useImageViewer({ image, config });
 
-	// Reset state when image changes
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We need to reset the view when the image changes, not when the view is reset
 	React.useEffect(() => {
 		if (isOpen) {
 			viewer.actions.resetView();

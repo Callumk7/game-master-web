@@ -1,8 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { signupUser } from "~/api";
 import { Auth } from "~/components/auth";
-import { useMutationLite } from "~/hooks/useMutationLite";
 import { parseApiError } from "~/utils/error-parser";
 import { getAppSession } from "~/utils/session";
 
@@ -50,8 +50,8 @@ export const Route = createFileRoute("/signup")({
 });
 
 function SignupComp() {
-	const signupMutation = useMutationLite({
-		fn: useServerFn(signupFn),
+	const signupMutation = useMutation({
+		mutationFn: useServerFn(signupFn),
 	});
 
 	return (
