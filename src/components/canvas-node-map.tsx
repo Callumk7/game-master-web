@@ -256,7 +256,7 @@ export function CanvasNodeMap({
 	}, []);
 
 	const handleWheel = React.useCallback(
-		(e: React.WheelEvent) => {
+		(e: WheelEvent) => {
 			e.preventDefault();
 			const rect = canvasRef.current?.getBoundingClientRect();
 			if (!rect) return;
@@ -279,6 +279,13 @@ export function CanvasNodeMap({
 		[transform, onTransformChange],
 	);
 
+	React.useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+		canvas.addEventListener("wheel", handleWheel);
+	}, [handleWheel]);
+
 	return (
 		<div
 			ref={containerRef}
@@ -294,9 +301,7 @@ export function CanvasNodeMap({
 				onMouseMove={handleMouseMove}
 				onMouseUp={handleMouseUp}
 				onMouseLeave={handleMouseUp}
-				onWheel={handleWheel}
 			/>
 		</div>
 	);
 }
-
