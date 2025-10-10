@@ -12,6 +12,8 @@ import {
 } from "~/components/ui/dialog";
 import { SERVER_URL } from "~/routes/__root";
 import type { EntityType } from "~/types";
+import { ImageViewer } from "./image-viewer";
+import { useImageDialogSize } from "./use-image-dialog-size";
 
 export interface ImageControlsProps {
 	gameId: string;
@@ -135,25 +137,55 @@ interface ImageModalProps {
 }
 
 function ImageModal({ isOpen, onOpenChange, image }: ImageModalProps) {
+	const [zoom, setZoom] = React.useState(1);
+	const [imageDimensions, setImageDimensions] = React.useState<{
+		width: number;
+		height: number;
+	} | null>(null);
+
+	const dialogSize = useImageDialogSize({
+		imageDimensions,
+		zoom,
+		padding: 120, // Header + padding + controls
+	});
+
+	const handleZoomChange = React.useCallback((newZoom: number) => {
+		setZoom(newZoom);
+	}, []);
+
+	const handleImageDimensionsChange = React.useCallback(
+		(dimensions: { width: number; height: number }) => {
+			setImageDimensions(dimensions);
+		},
+		[],
+	);
+
+	// Reset state when image changes
+	React.useEffect(() => {
+		setZoom(1);
+		setImageDimensions(null);
+	}, [image.id]);
+
 	return (
 		<Dialog open={isOpen} onOpenChange={onOpenChange} dismissible={true}>
-			<DialogContent className="sm:max-w-[95vw] sm:max-h-[95vh] min-w-fit min-h-fit">
-				<DialogHeader>
+			<DialogContent
+				className="min-w-fit min-h-fit p-0"
+				style={{
+					width: dialogSize.width,
+					height: dialogSize.height,
+					maxWidth: dialogSize.maxWidth,
+					maxHeight: dialogSize.maxHeight,
+				}}
+			>
+				<DialogHeader className="px-6 pt-6 pb-0">
 					<DialogTitle>Image: {image.alt_text || "Untitled"}</DialogTitle>
 				</DialogHeader>
-				<div className="relative">
-					<img
-						src={`${SERVER_URL}/${image.file_url}`}
-						alt={image.alt_text || "Image"}
-						className="max-h-[90vh] w-full object-contain rounded-lg"
+				<div className="flex-1 p-6 pt-4 overflow-hidden min-h-0">
+					<ImageViewer
+						image={image}
+						onZoomChange={handleZoomChange}
+						onImageDimensionsChange={handleImageDimensionsChange}
 					/>
-					{image.alt_text && (
-						<div className="p-4 border-t bg-muted/30">
-							<p className="text-sm text-muted-foreground">
-								{image.alt_text}
-							</p>
-						</div>
-					)}
 				</div>
 			</DialogContent>
 		</Dialog>
