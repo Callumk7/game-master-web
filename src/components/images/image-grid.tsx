@@ -146,7 +146,7 @@ function ImageModal({ isOpen, onOpenChange, image }: ImageModalProps) {
 	const dialogSize = useImageDialogSize({
 		imageDimensions,
 		zoom,
-		padding: 120, // Header + padding + controls
+		padding: zoom > 1 ? 80 : 140, // Less padding when zoomed to maximize canvas
 	});
 
 	const handleZoomChange = React.useCallback((newZoom: number) => {
@@ -169,7 +169,7 @@ function ImageModal({ isOpen, onOpenChange, image }: ImageModalProps) {
 	return (
 		<Dialog open={isOpen} onOpenChange={onOpenChange} dismissible={true}>
 			<DialogContent
-				className="min-w-fit min-h-fit p-0"
+				className="min-w-fit min-h-fit p-0 gap-4"
 				style={{
 					width: dialogSize.width,
 					height: dialogSize.height,
@@ -177,10 +177,21 @@ function ImageModal({ isOpen, onOpenChange, image }: ImageModalProps) {
 					maxHeight: dialogSize.maxHeight,
 				}}
 			>
-				<DialogHeader className="px-6 pt-6 pb-0">
+				<DialogHeader className="px-6 pt-6 pb-0 flex-shrink-0 max-h-10">
 					<DialogTitle>Image: {image.alt_text || "Untitled"}</DialogTitle>
 				</DialogHeader>
-				<div className="flex-1 p-6 pt-4 overflow-hidden min-h-0">
+				<div
+					className={
+						zoom > 1
+							? "absolute bottom-0 overflow-hidden"
+							: "flex-1 p-6 pt-4 overflow-hidden min-h-0"
+					}
+					style={
+						zoom > 1
+							? { top: "64px", left: "24px", right: "24px" }
+							: undefined
+					}
+				>
 					<ImageViewer
 						image={image}
 						onZoomChange={handleZoomChange}

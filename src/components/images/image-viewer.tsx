@@ -228,7 +228,11 @@ export function ImageViewer({
 					ref={imageRef}
 					src={`${SERVER_URL}/${image.file_url}`}
 					alt={image.alt_text || "Image"}
-					className="max-h-full max-w-full w-auto h-auto object-contain rounded-lg mx-auto block"
+					className={
+						zoom === 1
+							? "max-h-full max-w-full w-auto h-auto object-contain rounded-lg mx-auto block"
+							: "w-full h-full object-contain rounded-lg"
+					}
 					style={{
 						transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
 						transformOrigin: "center center",

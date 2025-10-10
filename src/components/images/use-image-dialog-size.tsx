@@ -45,7 +45,7 @@ function calculateDisplayDimensions(
 export function useImageDialogSize({
 	imageDimensions,
 	zoom,
-	padding = 120, // Account for dialog padding, header, and controls
+	padding = 140, // Account for dialog padding, header, controls, and gap
 	maxDisplayWidth = 1200, // Reasonable max display size for images
 	maxDisplayHeight = 800,
 }: UseImageDialogSizeOptions): DialogSize {
