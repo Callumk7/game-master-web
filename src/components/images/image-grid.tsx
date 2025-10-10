@@ -3,17 +3,9 @@ import * as React from "react";
 import type { Image } from "~/api";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "~/components/ui/dialog";
 import { SERVER_URL } from "~/routes/__root";
 import type { EntityType } from "~/types";
-import { ImageViewer } from "./image-viewer";
-import { useImageDialogSize } from "./use-image-dialog-size";
+import { ImageModal } from "~/lib/image-viewer";
 
 export interface ImageControlsProps {
 	gameId: string;
@@ -121,84 +113,11 @@ export function ImageGrid({ gameId, images, ImageControls }: ImageGridProps) {
 			</Card>
 			{selectedImage && (
 				<ImageModal
+					image={selectedImage}
 					isOpen={isOpen}
 					onOpenChange={(_isOpen: boolean) => setSelectedImage(null)}
-					image={selectedImage}
 				/>
 			)}
 		</>
-	);
-}
-
-interface ImageModalProps {
-	isOpen: boolean;
-	onOpenChange: (isOpen: boolean) => void;
-	image: Image;
-}
-
-function ImageModal({ isOpen, onOpenChange, image }: ImageModalProps) {
-	const [zoom, setZoom] = React.useState(1);
-	const [imageDimensions, setImageDimensions] = React.useState<{
-		width: number;
-		height: number;
-	} | null>(null);
-
-	const dialogSize = useImageDialogSize({
-		imageDimensions,
-		zoom,
-		padding: zoom > 1 ? 80 : 140, // Less padding when zoomed to maximize canvas
-	});
-
-	const handleZoomChange = React.useCallback((newZoom: number) => {
-		setZoom(newZoom);
-	}, []);
-
-	const handleImageDimensionsChange = React.useCallback(
-		(dimensions: { width: number; height: number }) => {
-			setImageDimensions(dimensions);
-		},
-		[],
-	);
-
-	// Reset state when image changes
-	React.useEffect(() => {
-		setZoom(1);
-		setImageDimensions(null);
-	}, [image.id]);
-
-	return (
-		<Dialog open={isOpen} onOpenChange={onOpenChange} dismissible={true}>
-			<DialogContent
-				className="min-w-fit min-h-fit p-0 gap-4"
-				style={{
-					width: dialogSize.width,
-					height: dialogSize.height,
-					maxWidth: dialogSize.maxWidth,
-					maxHeight: dialogSize.maxHeight,
-				}}
-			>
-				<DialogHeader className="px-6 pt-6 pb-0 flex-shrink-0 max-h-10">
-					<DialogTitle>Image: {image.alt_text || "Untitled"}</DialogTitle>
-				</DialogHeader>
-				<div
-					className={
-						zoom > 1
-							? "absolute bottom-0 overflow-hidden"
-							: "flex-1 p-6 pt-4 overflow-hidden min-h-0"
-					}
-					style={
-						zoom > 1
-							? { top: "64px", left: "24px", right: "24px" }
-							: undefined
-					}
-				>
-					<ImageViewer
-						image={image}
-						onZoomChange={handleZoomChange}
-						onImageDimensionsChange={handleImageDimensionsChange}
-					/>
-				</div>
-			</DialogContent>
-		</Dialog>
 	);
 }

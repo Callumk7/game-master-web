@@ -26,10 +26,6 @@ export function ImageViewer({
 		startPositionY: 0,
 	});
 
-	const resetView = React.useCallback(() => {
-		setZoom(1);
-		setPosition({ x: 0, y: 0 });
-	}, []);
 
 	const handleImageLoad = React.useCallback(() => {
 		if (imageRef.current) {
@@ -187,7 +183,7 @@ export function ImageViewer({
 				}
 			}
 		},
-		[zoom, position, resetView, getConstrainedPosition],
+		[zoom, position, getConstrainedPosition, onZoomChange],
 	);
 
 	// Reset view when image changes
@@ -195,7 +191,7 @@ export function ImageViewer({
 		setZoom(1);
 		setPosition({ x: 0, y: 0 });
 		onZoomChange?.(1);
-	}, [image.id, onZoomChange]);
+	}, [onZoomChange]);
 
 	// Cleanup on unmount
 	React.useEffect(() => {
@@ -240,7 +236,16 @@ export function ImageViewer({
 					loading="lazy"
 					onLoad={handleImageLoad}
 					onClick={handleImageClick}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							handleImageClick();
+						}
+					}}
 					onMouseDown={handleMouseDown}
+					tabIndex={0}
+					role="button"
+					aria-label={`Zoom image: ${image.alt_text || "Image"}. Current zoom: ${Math.round(zoom * 100)}%`}
 					draggable={false}
 				/>
 			</div>
