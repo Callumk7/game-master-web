@@ -1,5 +1,5 @@
 import { useParams } from "@tanstack/react-router";
-import { Gem, Globe, MapPin, Scroll, Shield, Users } from "lucide-react";
+import { Gem, Globe, Image, MapPin, Scroll, Shield, Users } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import {
 	SidebarGroup,
@@ -127,6 +127,19 @@ export function SidebarEntities({ gameId }: SidebarEntitiesProps) {
 						<Badge variant="secondary" className="ml-auto">
 							{notes?.length.toString() || "0"}
 						</Badge>
+					</SidebarMenuLink>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuLink
+						to="/games/$gameId/images"
+						params={params}
+						activeProps={{
+							className: "bg-secondary text-secondary-foreground",
+						}}
+					>
+						<Image className="w-4 h-4" />
+						Images
 					</SidebarMenuLink>
 				</SidebarMenuItem>
 			</SidebarMenu>

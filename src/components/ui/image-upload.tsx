@@ -49,8 +49,8 @@ export function ImageUpload({
 			}
 
 			// Validate file size (10MB limit)
-			if (file.size > 10 * 1024 * 1024) {
-				toast.error("File size must be less than 10MB");
+			if (file.size > 20 * 1024 * 1024) {
+				toast.error("File size must be less than 20MB");
 				return;
 			}
 
