@@ -129,7 +129,7 @@ export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) 
 			{mutation.isError && (
 				<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
 					<p className="text-sm">
-						{(mutation.error as any)?.message || "Something went wrong"}
+						{mutation.error instanceof Error ? mutation.error.message : "Something went wrong"}
 					</p>
 				</div>
 			)}

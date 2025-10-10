@@ -183,6 +183,7 @@ export function useZoomPan({ config = {}, onZoomChange }: UseZoomPanOptions) {
 				}
 			}
 		},
+		// biome-ignore lint/correctness/useExhaustiveDependencies: fullConfig is derived from stable DEFAULT_CONFIG and props
 		[zoom, position, getConstrainedPosition, handleZoomChange, fullConfig],
 	);
 

@@ -22,7 +22,7 @@ export const SimpleMention = Node.create({
 			suggestion: {
 				char: "@",
 				pluginKey: new PluginKey("mention"),
-				command: ({ editor, range, props }: any) => {
+				command: ({ editor, range, props }: { editor: any; range: any; props: any }) => {
 					editor
 						.chain()
 						.focus()
@@ -37,7 +37,7 @@ export const SimpleMention = Node.create({
 
 					window.getSelection()?.collapseToEnd();
 				},
-				allow: ({ state, range }: any) => {
+				allow: ({ state, range }: { state: any; range: any }) => {
 					const $from = state.doc.resolve(range.from);
 					const type = state.schema.nodes[this.name];
 					const allow = !!$from.parent.type.contentMatch.matchType(type);

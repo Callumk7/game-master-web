@@ -1,5 +1,15 @@
+import { MapPin, ScrollText, Search, Sword, Target, Users } from "lucide-react";
 import * as React from "react";
-import { Search, Users, MapPin, ScrollText, Sword, Target } from "lucide-react";
+import {
+	useListCharactersQuery,
+	useListFactionsQuery,
+	useListLocationsQuery,
+	useListNotesQuery,
+	useListQuestsQuery,
+} from "~/api/@tanstack/react-query.gen";
+import type { Character, Faction, Location, Note, Quest } from "~/api/types.gen";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -8,16 +18,7 @@ import {
 	DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import {
-	useListCharactersQuery,
-	useListFactionsQuery,
-	useListLocationsQuery,
-	useListNotesQuery,
-	useListQuestsQuery,
-} from "~/api/@tanstack/react-query.gen";
 
 interface EntitySelectorProps {
 	isOpen: boolean;
@@ -67,7 +68,7 @@ export function EntitySelector({
 	const filteredCharacters = React.useMemo(
 		() =>
 			characters.filter(
-				(c: any) =>
+				(c: Character) =>
 					c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					c.class?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					c.tags?.some((tag: string) =>
@@ -80,7 +81,7 @@ export function EntitySelector({
 	const filteredFactions = React.useMemo(
 		() =>
 			factions.filter(
-				(f: any) =>
+				(f: Faction) =>
 					f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					f.tags?.some((tag: string) =>
 						tag.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -92,7 +93,7 @@ export function EntitySelector({
 	const filteredLocations = React.useMemo(
 		() =>
 			locations.filter(
-				(l: any) =>
+				(l: Location) =>
 					l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					l.tags?.some((tag: string) =>
 						tag.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -104,7 +105,7 @@ export function EntitySelector({
 	const filteredNotes = React.useMemo(
 		() =>
 			notes.filter(
-				(n: any) =>
+				(n: Note) =>
 					n.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					n.tags?.some((tag: string) =>
 						tag.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -116,7 +117,7 @@ export function EntitySelector({
 	const filteredQuests = React.useMemo(
 		() =>
 			quests.filter(
-				(q: any) =>
+				(q: Quest) =>
 					q.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					q.tags?.some((tag: string) =>
 						tag.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -215,7 +216,7 @@ export function EntitySelector({
 
 					<div className="mt-4 overflow-auto max-h-[400px] border border-border rounded-md">
 						<TabsContent value="characters" className="space-y-0">
-							{filteredCharacters.map((character: any) => (
+							{filteredCharacters.map((character: Character) => (
 								<EntityItem
 									key={character.id}
 									entity={character}
@@ -232,7 +233,7 @@ export function EntitySelector({
 						</TabsContent>
 
 						<TabsContent value="factions" className="space-y-0">
-							{filteredFactions.map((faction: any) => (
+							{filteredFactions.map((faction: Faction) => (
 								<EntityItem
 									key={faction.id}
 									entity={faction}
@@ -249,7 +250,7 @@ export function EntitySelector({
 						</TabsContent>
 
 						<TabsContent value="locations" className="space-y-0">
-							{filteredLocations.map((location: any) => (
+							{filteredLocations.map((location: Location) => (
 								<EntityItem
 									key={location.id}
 									entity={location}
@@ -266,7 +267,7 @@ export function EntitySelector({
 						</TabsContent>
 
 						<TabsContent value="notes" className="space-y-0">
-							{filteredNotes.map((note: any) => (
+							{filteredNotes.map((note: Note) => (
 								<EntityItem
 									key={note.id}
 									entity={note}
@@ -280,7 +281,7 @@ export function EntitySelector({
 						</TabsContent>
 
 						<TabsContent value="quests" className="space-y-0">
-							{filteredQuests.map((quest: any) => (
+							{filteredQuests.map((quest: Quest) => (
 								<EntityItem
 									key={quest.id}
 									entity={quest}
@@ -303,13 +304,7 @@ export function EntitySelector({
 }
 
 interface EntityItemProps {
-	entity: {
-		id: string;
-		name: string;
-		tags?: string[];
-		class?: string;
-		level?: number;
-	};
+	entity: Character | Faction | Location | Note | Quest;
 	entityType: string;
 	onSelect: (entityPath: string) => void;
 }
@@ -333,12 +328,12 @@ function EntityItem({ entity, entityType, onSelect }: EntityItemProps) {
 							{entity.name}
 						</span>
 						<div className="flex items-center gap-2 flex-shrink-0">
-							{entity.class && (
+							{'class' in entity && entity.class && (
 								<Badge variant="outline" className="text-xs">
 									{entity.class}
 								</Badge>
 							)}
-							{entity.level && (
+							{'level' in entity && entity.level && (
 								<Badge variant="outline" className="text-xs">
 									Level {entity.level}
 								</Badge>

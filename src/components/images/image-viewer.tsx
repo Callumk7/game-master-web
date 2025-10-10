@@ -26,7 +26,6 @@ export function ImageViewer({
 		startPositionY: 0,
 	});
 
-
 	const handleImageLoad = React.useCallback(() => {
 		if (imageRef.current) {
 			const dimensions = {
@@ -243,8 +242,6 @@ export function ImageViewer({
 						}
 					}}
 					onMouseDown={handleMouseDown}
-					tabIndex={0}
-					role="button"
 					aria-label={`Zoom image: ${image.alt_text || "Image"}. Current zoom: ${Math.round(zoom * 100)}%`}
 					draggable={false}
 				/>
@@ -281,4 +278,3 @@ export function ImageViewer({
 		</div>
 	);
 }
-

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/noChildrenProp: Using React.createElement for performance during render function */
 import * as React from "react";
 import type { Image } from "~/api";
 import { SERVER_URL } from "~/routes/__root";
@@ -35,6 +36,7 @@ export function useImageViewer({
 		config,
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: imageRef properties are not stable dependencies
 	const handleImageLoad = React.useCallback(() => {
 		if (zoomPan.imageRef.current) {
 			const dimensions = {
@@ -47,7 +49,7 @@ export function useImageViewer({
 		}
 	}, [onImageLoad]);
 
-	// Reset state when image changes
+	// biome-ignore lint/correctness/useExhaustiveDependencies: image.id is needed to reset on image change
 	React.useEffect(() => {
 		setImageDimensions(null);
 		setIsLoaded(false);

@@ -20,7 +20,7 @@ export class NodeMapPerformanceMonitor {
     const renderTime = endTime - this.startTime;
     
     // Estimate memory usage (rough approximation)
-    const memoryUsage = (performance as any).memory?.usedJSHeapSize || 0;
+    const memoryUsage = 'memory' in performance && performance.memory ? (performance.memory as { usedJSHeapSize?: number }).usedJSHeapSize || 0 : 0;
     
     const benchmark: PerformanceBenchmark = {
       nodeCount,
