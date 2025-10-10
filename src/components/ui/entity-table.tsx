@@ -1,5 +1,6 @@
 import { Link as RouterLink } from "@tanstack/react-router";
 import {
+	type Column,
 	type ColumnDef,
 	type ColumnFiltersState,
 	flexRender,
@@ -53,12 +54,12 @@ import { tableFilterFns } from "~/utils/table-filters";
 // REUSABLE CELL COMPONENTS
 // ============================================================================
 
-interface SortableHeaderProps {
-	column: any;
+interface SortableHeaderProps<TData, TValue> {
+	column: Column<TData, TValue>;
 	children: React.ReactNode;
 }
 
-export function SortableHeader({ column, children }: SortableHeaderProps) {
+export function SortableHeader<TData, TValue>({ column, children }: SortableHeaderProps<TData, TValue>) {
 	return (
 		<Button
 			variant="ghost"

@@ -79,8 +79,11 @@ function transformApiEntityToSplitViewEntity(
 			};
 		}
 		case "factions":
+			return baseEntity;
 		case "locations":
+			return baseEntity;
 		case "notes":
+			return baseEntity;
 		default:
 			return baseEntity;
 	}

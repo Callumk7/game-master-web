@@ -11,9 +11,9 @@ interface UseEntityMutationsParams {
 	entityId: string;
 }
 
-interface EntityMutationResult {
+interface EntityMutationResult<TData = unknown> {
 	mutate: (payload: EntityMutationPayload) => void;
-	mutateAsync: (payload: EntityMutationPayload) => Promise<any>;
+	mutateAsync: (payload: EntityMutationPayload) => Promise<TData>;
 	isPending: boolean;
 	isError: boolean;
 	error: Error | null;
