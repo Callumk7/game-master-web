@@ -8,11 +8,11 @@ import {
 import { SplitViewProvider, useSplitView } from "~/state/split-view-context";
 import type { EntityPath } from "~/types/split-view";
 import { CharacterPaneView } from "./character-pane-view";
+import { EntitySelectorModal } from "./entity-selector-modal";
 import { FactionPaneView } from "./faction-pane-view";
 import { LocationPaneView } from "./location-pane-view";
 import { NotePaneView } from "./note-pane-view";
 import { QuestPaneView } from "./quest-pane-view";
-import { EntitySelectorModal } from "./entity-selector-modal";
 
 interface SplitViewLayoutProps {
 	gameId: string;
@@ -124,40 +124,15 @@ function SplitPane({ entityPath, gameId, onAddEntity, onClearEntity }: SplitPane
 
 		switch (entityPath.type) {
 			case "characters":
-				return (
-					<CharacterPaneView
-						{...commonProps}
-						characterId={entityPath.id}
-					/>
-				);
+				return <CharacterPaneView {...commonProps} characterId={entityPath.id} />;
 			case "factions":
-				return (
-					<FactionPaneView
-						{...commonProps}
-						factionId={entityPath.id}
-					/>
-				);
+				return <FactionPaneView {...commonProps} factionId={entityPath.id} />;
 			case "locations":
-				return (
-					<LocationPaneView
-						{...commonProps}
-						locationId={entityPath.id}
-					/>
-				);
+				return <LocationPaneView {...commonProps} locationId={entityPath.id} />;
 			case "notes":
-				return (
-					<NotePaneView
-						{...commonProps}
-						noteId={entityPath.id}
-					/>
-				);
+				return <NotePaneView {...commonProps} noteId={entityPath.id} />;
 			case "quests":
-				return (
-					<QuestPaneView
-						{...commonProps}
-						questId={entityPath.id}
-					/>
-				);
+				return <QuestPaneView {...commonProps} questId={entityPath.id} />;
 			default:
 				return <EmptyPaneContent onAddEntity={onAddEntity} />;
 		}
@@ -165,9 +140,7 @@ function SplitPane({ entityPath, gameId, onAddEntity, onClearEntity }: SplitPane
 
 	return (
 		<div className="h-full flex flex-col">
-			<div className="flex-1 overflow-hidden">
-				{renderEntityPane()}
-			</div>
+			<div className="flex-1 overflow-hidden">{renderEntityPane()}</div>
 		</div>
 	);
 }

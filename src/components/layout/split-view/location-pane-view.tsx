@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLocationOptions } from "~/api/@tanstack/react-query.gen";
 import { useUpdateLocationMutation } from "~/queries/locations";
-import { useEntityNavigation } from "~/hooks/use-entity-navigation";
 import { EntityContentRenderer } from "./entity-content-renderer";
 import type { EntityMutationPayload } from "~/types/split-view";
 import type { Location } from "~/api/types.gen";
+import { useEntityNavigation } from "./hooks";
 
 interface LocationPaneViewProps {
 	gameId: string;
@@ -66,3 +66,4 @@ export function LocationPaneView({
 		/>
 	);
 }
+

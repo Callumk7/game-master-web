@@ -1,13 +1,13 @@
-import type * as React from "react";
 import { ExternalLink, PlusCircle, RefreshCw, X } from "lucide-react";
+import type * as React from "react";
+import { EntityViewHeader } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { ScrollArea } from "~/components/ui/scroll-area";
-import { EntityViewHeader } from "~/components/entity-view";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { Spinner } from "~/components/ui/spinner";
 import type { EntityType as SingularEntityType } from "~/types";
-import type { EntityType, EntityMutationPayload } from "~/types/split-view";
+import type { EntityMutationPayload, EntityType } from "~/types/split-view";
 
 const singularTypeMap: Record<EntityType, SingularEntityType> = {
 	characters: "character",
@@ -154,7 +154,10 @@ export function EntityContentRenderer<T extends EntityUnion>({
 	);
 }
 
-function createEntityBadges(entity: EntityUnion, entityType: EntityType): React.ReactNode {
+function createEntityBadges(
+	entity: EntityUnion,
+	entityType: EntityType,
+): React.ReactNode {
 	const commonTags = entity.tags && entity.tags.length > 0 && (
 		<div className="flex flex-wrap gap-2">
 			{entity.tags.map((tag) => (
@@ -189,3 +192,4 @@ function createEntityBadges(entity: EntityUnion, entityType: EntityType): React.
 			return commonTags;
 	}
 }
+

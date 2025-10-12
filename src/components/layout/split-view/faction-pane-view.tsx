@@ -1,59 +1,59 @@
 import { useQuery } from "@tanstack/react-query";
-import { getNoteOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateNoteMutation } from "~/queries/notes";
-import { useEntityNavigation } from "~/hooks/use-entity-navigation";
+import { getFactionOptions } from "~/api/@tanstack/react-query.gen";
+import { useUpdateFactionMutation } from "~/queries/factions";
 import { EntityContentRenderer } from "./entity-content-renderer";
 import type { EntityMutationPayload } from "~/types/split-view";
-import type { Note } from "~/api/types.gen";
+import type { Faction } from "~/api/types.gen";
+import { useEntityNavigation } from "./hooks";
 
-interface NotePaneViewProps {
+interface FactionPaneViewProps {
 	gameId: string;
-	noteId: string;
+	factionId: string;
 	onClearEntity: () => void;
 	onAddEntity: () => void;
 }
 
-export function NotePaneView({
+export function FactionPaneView({
 	gameId,
-	noteId,
+	factionId,
 	onClearEntity,
 	onAddEntity,
-}: NotePaneViewProps) {
+}: FactionPaneViewProps) {
 	const {
-		data: noteResponse,
+		data: factionResponse,
 		isLoading,
 		isError,
 	} = useQuery(
-		getNoteOptions({
-			path: { game_id: gameId, id: noteId },
+		getFactionOptions({
+			path: { game_id: gameId, id: factionId },
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateNoteMutation(gameId, noteId);
+	const { mutateAsync, isPending } = useUpdateFactionMutation(gameId, factionId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
 		await mutateAsync({
-			body: { note: payload },
-			path: { game_id: gameId, id: noteId },
+			body: { faction: payload },
+			path: { game_id: gameId, id: factionId },
 		});
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("notes", noteId);
+		refreshEntity("factions", factionId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("notes", noteId);
+		openFullView("factions", factionId);
 	};
 
-	// Transform API note to match our component's expected format
-	const note: Note | undefined = noteResponse?.data;
+	// Transform API faction to match our component's expected format
+	const faction: Faction | undefined = factionResponse?.data;
 
 	return (
 		<EntityContentRenderer
-			entity={note}
-			entityType="notes"
+			entity={faction}
+			entityType="factions"
 			gameId={gameId}
 			onSave={handleSave}
 			isSaving={isPending}
@@ -66,3 +66,4 @@ export function NotePaneView({
 		/>
 	);
 }
+

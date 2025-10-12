@@ -10,8 +10,8 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useEntitySelector } from "~/hooks/use-entity-selector";
 import type { Character, Entity, EntityPath, EntityType } from "~/types/split-view";
+import { useEntitySelector } from "./hooks";
 
 // Type guards for entity types
 function isCharacter(entity: Entity): entity is Character {

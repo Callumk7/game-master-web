@@ -1,59 +1,59 @@
 import { useQuery } from "@tanstack/react-query";
-import { getFactionOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateFactionMutation } from "~/queries/factions";
-import { useEntityNavigation } from "~/hooks/use-entity-navigation";
+import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
+import { useUpdateQuestMutation } from "~/queries/quests";
 import { EntityContentRenderer } from "./entity-content-renderer";
 import type { EntityMutationPayload } from "~/types/split-view";
-import type { Faction } from "~/api/types.gen";
+import type { Quest } from "~/api/types.gen";
+import { useEntityNavigation } from "./hooks";
 
-interface FactionPaneViewProps {
+interface QuestPaneViewProps {
 	gameId: string;
-	factionId: string;
+	questId: string;
 	onClearEntity: () => void;
 	onAddEntity: () => void;
 }
 
-export function FactionPaneView({
+export function QuestPaneView({
 	gameId,
-	factionId,
+	questId,
 	onClearEntity,
 	onAddEntity,
-}: FactionPaneViewProps) {
+}: QuestPaneViewProps) {
 	const {
-		data: factionResponse,
+		data: questResponse,
 		isLoading,
 		isError,
 	} = useQuery(
-		getFactionOptions({
-			path: { game_id: gameId, id: factionId },
+		getQuestOptions({
+			path: { game_id: gameId, id: questId },
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateFactionMutation(gameId, factionId);
+	const { mutateAsync, isPending } = useUpdateQuestMutation(gameId, questId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
 		await mutateAsync({
-			body: { faction: payload },
-			path: { game_id: gameId, id: factionId },
+			body: { quest: payload },
+			path: { game_id: gameId, id: questId },
 		});
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("factions", factionId);
+		refreshEntity("quests", questId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("factions", factionId);
+		openFullView("quests", questId);
 	};
 
-	// Transform API faction to match our component's expected format
-	const faction: Faction | undefined = factionResponse?.data;
+	// Transform API quest to match our component's expected format
+	const quest: Quest | undefined = questResponse?.data;
 
 	return (
 		<EntityContentRenderer
-			entity={faction}
-			entityType="factions"
+			entity={quest}
+			entityType="quests"
 			gameId={gameId}
 			onSave={handleSave}
 			isSaving={isPending}
@@ -66,3 +66,4 @@ export function FactionPaneView({
 		/>
 	);
 }
+

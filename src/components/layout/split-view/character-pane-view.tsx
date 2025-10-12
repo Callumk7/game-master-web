@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCharacterOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateCharacterMutation } from "~/queries/characters";
-import { useEntityNavigation } from "~/hooks/use-entity-navigation";
-import { EntityContentRenderer } from "./entity-content-renderer";
-import type { EntityMutationPayload } from "~/types/split-view";
 import type { Character } from "~/api/types.gen";
+import { useUpdateCharacterMutation } from "~/queries/characters";
+import type { EntityMutationPayload } from "~/types/split-view";
+import { EntityContentRenderer } from "./entity-content-renderer";
+import { useEntityNavigation } from "./hooks";
 
 interface CharacterPaneViewProps {
 	gameId: string;
@@ -66,3 +66,4 @@ export function CharacterPaneView({
 		/>
 	);
 }
+

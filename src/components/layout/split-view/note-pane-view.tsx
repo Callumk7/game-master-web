@@ -1,59 +1,59 @@
 import { useQuery } from "@tanstack/react-query";
-import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateQuestMutation } from "~/queries/quests";
-import { useEntityNavigation } from "~/hooks/use-entity-navigation";
+import { getNoteOptions } from "~/api/@tanstack/react-query.gen";
+import { useUpdateNoteMutation } from "~/queries/notes";
 import { EntityContentRenderer } from "./entity-content-renderer";
 import type { EntityMutationPayload } from "~/types/split-view";
-import type { Quest } from "~/api/types.gen";
+import type { Note } from "~/api/types.gen";
+import { useEntityNavigation } from "./hooks";
 
-interface QuestPaneViewProps {
+interface NotePaneViewProps {
 	gameId: string;
-	questId: string;
+	noteId: string;
 	onClearEntity: () => void;
 	onAddEntity: () => void;
 }
 
-export function QuestPaneView({
+export function NotePaneView({
 	gameId,
-	questId,
+	noteId,
 	onClearEntity,
 	onAddEntity,
-}: QuestPaneViewProps) {
+}: NotePaneViewProps) {
 	const {
-		data: questResponse,
+		data: noteResponse,
 		isLoading,
 		isError,
 	} = useQuery(
-		getQuestOptions({
-			path: { game_id: gameId, id: questId },
+		getNoteOptions({
+			path: { game_id: gameId, id: noteId },
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateQuestMutation(gameId, questId);
+	const { mutateAsync, isPending } = useUpdateNoteMutation(gameId, noteId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
 		await mutateAsync({
-			body: { quest: payload },
-			path: { game_id: gameId, id: questId },
+			body: { note: payload },
+			path: { game_id: gameId, id: noteId },
 		});
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("quests", questId);
+		refreshEntity("notes", noteId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("quests", questId);
+		openFullView("notes", noteId);
 	};
 
-	// Transform API quest to match our component's expected format
-	const quest: Quest | undefined = questResponse?.data;
+	// Transform API note to match our component's expected format
+	const note: Note | undefined = noteResponse?.data;
 
 	return (
 		<EntityContentRenderer
-			entity={quest}
-			entityType="quests"
+			entity={note}
+			entityType="notes"
 			gameId={gameId}
 			onSave={handleSave}
 			isSaving={isPending}
@@ -66,3 +66,4 @@ export function QuestPaneView({
 		/>
 	);
 }
+
