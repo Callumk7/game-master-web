@@ -68,7 +68,7 @@ export interface SmartFormOptions<TData, TError, TMutationData extends TDataShap
 	/** Custom submit button text */
 	submitText?: string;
 	/** Initial values for form fields (for edit forms) */
-	initialValues?: Record<string, any>;
+	initialValues?: Record<string, unknown>;
 }
 
 export interface HookFormOptions<TData, TError, TMutationData extends TDataShape> {
@@ -83,7 +83,7 @@ export interface HookFormOptions<TData, TError, TMutationData extends TDataShape
 	/** Success callback */
 	onSuccess?: (data: TData) => void;
 	/** Initial values for form fields (for edit forms) */
-	initialValues?: Record<string, any>;
+	initialValues?: Record<string, unknown>;
 }
 
 // ===================================
@@ -94,7 +94,7 @@ export interface FormFactoryOptions<
 	TData,
 	TError,
 	TMutationData extends TDataShape,
-	TFormData = Record<string, any>,
+	TFormData = Record<string, unknown>,
 > {
 	mutationOptions: () => UseMutationOptions<TData, TError, Options<TMutationData>>;
 	schema: z.ZodSchema<TFormData>;
@@ -109,7 +109,7 @@ export interface UseFormWithMutationOptions<
 	TData,
 	TError,
 	TMutationData extends TDataShape,
-	TFormData = Record<string, any>,
+	TFormData = Record<string, unknown>,
 > {
 	mutationOptions: () => UseMutationOptions<TData, TError, Options<TMutationData>>;
 	schema: z.ZodSchema<TFormData>;
