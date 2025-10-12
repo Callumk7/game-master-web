@@ -1,4 +1,9 @@
 export { EntityContentDisplay } from "../entity-content-display";
-export { EntityPaneView } from "../entity-pane-view";
+export { EntityContentRenderer } from "../entity-content-renderer";
+export { CharacterPaneView } from "../character-pane-view";
+export { FactionPaneView } from "../faction-pane-view";
+export { LocationPaneView } from "../location-pane-view";
+export { NotePaneView } from "../note-pane-view";
+export { QuestPaneView } from "../quest-pane-view";
 export { EntitySelectorModal } from "../entity-selector-modal";
 export { SplitViewLayout } from "../split-view-layout";
