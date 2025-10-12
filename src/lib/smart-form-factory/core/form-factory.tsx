@@ -24,7 +24,7 @@ export function createFormComponent<
 	TData,
 	TError,
 	TMutationData extends TDataShape,
-	TFormData = Record<string, any>,
+	TFormData = Record<string, unknown>,
 >({
 	mutationOptions,
 	schema,
@@ -206,7 +206,7 @@ export function useFormWithMutation<
 	TData,
 	TError,
 	TMutationData extends TDataShape,
-	TFormData = Record<string, any>,
+	TFormData = Record<string, unknown>,
 >({
 	mutationOptions,
 	schema,
