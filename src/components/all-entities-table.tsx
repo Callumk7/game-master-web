@@ -12,6 +12,7 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ContentDisplay,
 	DateDisplay,
@@ -20,7 +21,6 @@ import {
 	SortableHeader,
 	TagsDisplay,
 } from "~/components/ui/entity-table";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import type { EntityType } from "~/types";
 
 export type AllEntity = {

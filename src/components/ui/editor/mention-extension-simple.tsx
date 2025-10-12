@@ -1,10 +1,18 @@
-import { mergeAttributes, Node } from "@tiptap/core";
-import { PluginKey } from "@tiptap/pm/state";
+import { type Editor, mergeAttributes, Node, type Range } from "@tiptap/core";
+import { type EditorState, PluginKey } from "@tiptap/pm/state";
 import { ReactNodeViewRenderer, ReactRenderer } from "@tiptap/react";
-import { Suggestion } from "@tiptap/suggestion";
+import {
+	Suggestion,
+	type SuggestionKeyDownProps,
+	type SuggestionProps,
+} from "@tiptap/suggestion";
 import tippy, { type Instance } from "tippy.js";
 import { MentionComponent } from "./mention-component";
 import { MentionList } from "./mention-list";
+
+interface MentionListRef {
+	onKeyDown: ({ event }: { event: KeyboardEvent }) => boolean;
+}
 
 export interface MentionItem {
 	id: string;
@@ -22,7 +30,15 @@ export const SimpleMention = Node.create({
 			suggestion: {
 				char: "@",
 				pluginKey: new PluginKey("mention"),
-				command: ({ editor, range, props }: any) => {
+				command: ({
+					editor,
+					range,
+					props,
+				}: {
+					editor: Editor;
+					range: Range;
+					props: MentionItem;
+				}) => {
 					editor
 						.chain()
 						.focus()
@@ -37,18 +53,18 @@ export const SimpleMention = Node.create({
 
 					window.getSelection()?.collapseToEnd();
 				},
-				allow: ({ state, range }: any) => {
+				allow: ({ state, range }: { state: EditorState; range: Range }) => {
 					const $from = state.doc.resolve(range.from);
 					const type = state.schema.nodes[this.name];
 					const allow = !!$from.parent.type.contentMatch.matchType(type);
 					return allow;
 				},
 				render: () => {
-					let component: ReactRenderer<any>;
+					let component: ReactRenderer<MentionListRef>;
 					let popup: Instance[];
 
 					return {
-						onStart: (props: any) => {
+						onStart: (props: SuggestionProps<MentionItem>) => {
 							component = new ReactRenderer(MentionList, {
 								props,
 								editor: props.editor,
@@ -58,8 +74,8 @@ export const SimpleMention = Node.create({
 								return;
 							}
 
-							popup = tippy("body", {
-								getReferenceClientRect: props.clientRect,
+							const instance = tippy(document.body, {
+								getReferenceClientRect: props.clientRect as () => DOMRect,
 								appendTo: () => document.body,
 								content: component.element,
 								showOnCreate: true,
@@ -67,9 +83,10 @@ export const SimpleMention = Node.create({
 								trigger: "manual",
 								placement: "bottom-start",
 							});
+							popup = [instance];
 						},
 
-						onUpdate(props: any) {
+						onUpdate(props: SuggestionProps<MentionItem>) {
 							component?.updateProps(props);
 
 							if (!props.clientRect || !popup?.length) {
@@ -77,11 +94,11 @@ export const SimpleMention = Node.create({
 							}
 
 							popup[0].setProps({
-								getReferenceClientRect: props.clientRect,
+								getReferenceClientRect: props.clientRect as () => DOMRect,
 							});
 						},
 
-						onKeyDown(props: any) {
+						onKeyDown(props: SuggestionKeyDownProps) {
 							if (props.event.key === "Escape") {
 								if (popup?.length) {
 									popup[0].hide();
@@ -170,9 +187,9 @@ export const SimpleMention = Node.create({
 
 	addNodeView() {
 		return ReactNodeViewRenderer(MentionComponent, {
-			stopEvent: (props: { event: Event }) => {
+			stopEvent: ({ event }: { event: Event }) => {
 				// Allow click events on the mention component
-				return props.event.type === "click" || props.event.type === "mousedown";
+				return event.type === "click" || event.type === "mousedown";
 			},
 			// Use React 18 concurrent rendering to avoid flushSync conflicts
 			as: "span",

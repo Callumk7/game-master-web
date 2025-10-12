@@ -3,15 +3,9 @@ import * as React from "react";
 import type { Image } from "~/api";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "~/components/ui/dialog";
 import { SERVER_URL } from "~/routes/__root";
 import type { EntityType } from "~/types";
+import { ImageModal } from "~/lib/image-viewer";
 
 export interface ImageControlsProps {
 	gameId: string;
@@ -119,43 +113,11 @@ export function ImageGrid({ gameId, images, ImageControls }: ImageGridProps) {
 			</Card>
 			{selectedImage && (
 				<ImageModal
+					image={selectedImage}
 					isOpen={isOpen}
 					onOpenChange={(_isOpen: boolean) => setSelectedImage(null)}
-					image={selectedImage}
 				/>
 			)}
 		</>
-	);
-}
-
-interface ImageModalProps {
-	isOpen: boolean;
-	onOpenChange: (isOpen: boolean) => void;
-	image: Image;
-}
-
-function ImageModal({ isOpen, onOpenChange, image }: ImageModalProps) {
-	return (
-		<Dialog open={isOpen} onOpenChange={onOpenChange} dismissible={true}>
-			<DialogContent className="sm:max-w-[95vw] sm:max-h-[95vh] min-w-fit min-h-fit">
-				<DialogHeader>
-					<DialogTitle>Image: {image.alt_text || "Untitled"}</DialogTitle>
-				</DialogHeader>
-				<div className="relative">
-					<img
-						src={`${SERVER_URL}/${image.file_url}`}
-						alt={image.alt_text || "Image"}
-						className="max-h-[90vh] w-full object-contain rounded-lg"
-					/>
-					{image.alt_text && (
-						<div className="p-4 border-t bg-muted/30">
-							<p className="text-sm text-muted-foreground">
-								{image.alt_text}
-							</p>
-						</div>
-					)}
-				</div>
-			</DialogContent>
-		</Dialog>
 	);
 }

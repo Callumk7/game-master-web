@@ -7,8 +7,12 @@ import {
 } from "~/components/ui/resizable";
 import { SplitViewProvider, useSplitView } from "~/state/split-view-context";
 import type { EntityPath } from "~/types/split-view";
-import { EntityPaneView } from "./entity-pane-view";
+import { CharacterPaneView } from "./character-pane-view";
 import { EntitySelectorModal } from "./entity-selector-modal";
+import { FactionPaneView } from "./faction-pane-view";
+import { LocationPaneView } from "./location-pane-view";
+import { NotePaneView } from "./note-pane-view";
+import { QuestPaneView } from "./quest-pane-view";
 
 interface SplitViewLayoutProps {
 	gameId: string;
@@ -107,20 +111,36 @@ interface SplitPaneProps {
 }
 
 function SplitPane({ entityPath, gameId, onAddEntity, onClearEntity }: SplitPaneProps) {
+	const renderEntityPane = () => {
+		if (!entityPath) {
+			return <EmptyPaneContent onAddEntity={onAddEntity} />;
+		}
+
+		const commonProps = {
+			gameId,
+			onClearEntity,
+			onAddEntity,
+		};
+
+		switch (entityPath.type) {
+			case "characters":
+				return <CharacterPaneView {...commonProps} characterId={entityPath.id} />;
+			case "factions":
+				return <FactionPaneView {...commonProps} factionId={entityPath.id} />;
+			case "locations":
+				return <LocationPaneView {...commonProps} locationId={entityPath.id} />;
+			case "notes":
+				return <NotePaneView {...commonProps} noteId={entityPath.id} />;
+			case "quests":
+				return <QuestPaneView {...commonProps} questId={entityPath.id} />;
+			default:
+				return <EmptyPaneContent onAddEntity={onAddEntity} />;
+		}
+	};
+
 	return (
 		<div className="h-full flex flex-col">
-			<div className="flex-1 overflow-hidden">
-				{entityPath ? (
-					<EntityPaneView
-						gameId={gameId}
-						entityPath={entityPath}
-						onClearEntity={onClearEntity}
-						onAddEntity={onAddEntity}
-					/>
-				) : (
-					<EmptyPaneContent onAddEntity={onAddEntity} />
-				)}
-			</div>
+			<div className="flex-1 overflow-hidden">{renderEntityPane()}</div>
 		</div>
 	);
 }

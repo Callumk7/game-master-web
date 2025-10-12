@@ -6,12 +6,18 @@ import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
 import type { ApiError, FieldConfig, HookFormOptions, SmartFormOptions } from "../types";
-import { FormFieldControl } from "./field-control";
-import { extractDefaultValues, generateFieldsFromSchema } from "../utils/schema-utils";
 import {
 	processFormValuesForSubmission,
 	processInitialValues,
 } from "../utils/form-utils";
+import {
+	extractDefaultValues,
+	generateFieldsFromSchema,
+	getSchemaField,
+	isFieldRequired,
+	validateSchemaField,
+} from "../utils/schema-utils";
+import { FormFieldControl } from "./field-control";
 
 const { useAppForm } = createFormHook();
 
@@ -125,23 +131,7 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 										}
 
 										// Use Zod for real-time validation, but be lenient during typing
-										const fieldSchema = (schema.shape as any)[
-											fieldConfig.name
-										];
-										if (
-											fieldSchema &&
-											value !== undefined &&
-											value !== ""
-										) {
-											const result = fieldSchema.safeParse(value);
-											if (!result.success) {
-												return (
-													result.error.issues[0]?.message ||
-													"Invalid value"
-												);
-											}
-										}
-										return undefined;
+										return validateSchemaField(schema, fieldConfig.name, value);
 									},
 								}}
 							>
@@ -332,13 +322,15 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 					.replace(/([A-Z])/g, " $1")
 					.replace(/^./, (str) => str.toUpperCase()),
 				type: "text",
-				required: !(schema.shape as any)[fieldName]?.isOptional?.(),
+				required: isFieldRequired(schema, fieldName),
 			};
 
 			// Apply smart field type detection
-			const zodField = (schema.shape as any)[fieldName];
+			const zodField = getSchemaField(schema, fieldName);
 			const actualType =
-				zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
+				zodField instanceof z.ZodOptional
+					? zodField._zod.def.innerType
+					: zodField;
 
 			if (actualType instanceof z.ZodString) {
 				// Check for rich text editor fields (complex content)
@@ -360,7 +352,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 				}));
 			} else if (actualType instanceof z.ZodArray) {
 				// Check if it's an array of strings, likely for tags
-				const elementType = actualType._def?.element;
+				const elementType = actualType._zod.def?.element;
 				if (elementType instanceof z.ZodString) {
 					fieldConfig.type = "tags";
 				}
@@ -380,16 +372,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 								return undefined;
 							}
 
-							const fieldSchema = (schema.shape as any)[fieldName];
-							if (fieldSchema && value !== undefined && value !== "") {
-								const result = fieldSchema.safeParse(value);
-								if (!result.success) {
-									return (
-										result.error.issues[0]?.message || "Invalid value"
-									);
-								}
-							}
-							return undefined;
+							return validateSchemaField(schema, fieldName, value);
 						},
 					}}
 				>

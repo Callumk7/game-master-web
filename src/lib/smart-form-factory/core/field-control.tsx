@@ -1,6 +1,8 @@
 import type * as React from "react";
+import type { AnyFieldApi } from "@tanstack/react-form";
 import { Checkbox } from "~/components/ui/checkbox";
 import { TagInput } from "~/components/ui/composite/tag-input";
+import { Tiptap } from "~/components/ui/editor";
 import { Input } from "~/components/ui/input";
 import {
 	Select,
@@ -11,14 +13,13 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { Tiptap } from "~/components/ui/editor";
 import type { FieldConfig } from "../types";
 
 /**
  * Renders form field controls based on field configuration
  * Extract field control outside component to prevent recreation on each render
  */
-export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: any }> = ({
+export const FormFieldControl: React.FC<{ field: FieldConfig; fieldApi: AnyFieldApi }> = ({
 	field,
 	fieldApi,
 }) => {

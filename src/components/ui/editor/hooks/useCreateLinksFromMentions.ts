@@ -40,11 +40,12 @@ export function useCreateLinksFromMentions() {
 					relationship_type: "", // Empty as requested
 					description: "", // Empty as requested
 				});
-			} catch (error: any) {
+			} catch (error: unknown) {
 				// Silently ignore duplicate link errors and other expected errors
 				if (
-					!error.message?.includes("already exists") &&
-					!error.message?.includes("duplicate")
+					!(error instanceof Error) ||
+					(!error.message?.includes("already exists") &&
+					!error.message?.includes("duplicate"))
 				) {
 					console.warn(
 						`Failed to create mention link to ${mention.type}:${mention.id}:`,

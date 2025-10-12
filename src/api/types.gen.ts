@@ -257,23 +257,23 @@ export type Entities = {
     /**
      * Characters list
      */
-    characters?: Array<EntityCharacter>;
+    characters?: Array<Character>;
     /**
      * Factions list
      */
-    factions?: Array<EntityFaction>;
+    factions?: Array<Faction>;
     /**
      * Locations list
      */
-    locations?: Array<EntityLocation>;
+    locations?: Array<Location>;
     /**
      * Notes list
      */
-    notes?: Array<EntityNote>;
+    notes?: Array<Note>;
     /**
      * Quests list
      */
-    quests?: Array<EntityQuest>;
+    quests?: Array<Quest>;
 };
 
 /**

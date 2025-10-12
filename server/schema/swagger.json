@@ -412,35 +412,35 @@
         "characters": {
           "description": "Characters list",
           "items": {
-            "$ref": "#/definitions/EntityCharacter"
+            "$ref": "#/definitions/Character"
           },
           "type": "array"
         },
         "factions": {
           "description": "Factions list",
           "items": {
-            "$ref": "#/definitions/EntityFaction"
+            "$ref": "#/definitions/Faction"
           },
           "type": "array"
         },
         "locations": {
           "description": "Locations list",
           "items": {
-            "$ref": "#/definitions/EntityLocation"
+            "$ref": "#/definitions/Location"
           },
           "type": "array"
         },
         "notes": {
           "description": "Notes list",
           "items": {
-            "$ref": "#/definitions/EntityNote"
+            "$ref": "#/definitions/Note"
           },
           "type": "array"
         },
         "quests": {
           "description": "Quests list",
           "items": {
-            "$ref": "#/definitions/EntityQuest"
+            "$ref": "#/definitions/Quest"
           },
           "type": "array"
         }

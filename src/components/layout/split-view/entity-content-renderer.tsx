@@ -1,0 +1,195 @@
+import { ExternalLink, PlusCircle, RefreshCw, X } from "lucide-react";
+import type * as React from "react";
+import { EntityViewHeader } from "~/components/entity-view";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { EntityEditor } from "~/components/ui/editor/entity-editor";
+import { ScrollArea } from "~/components/ui/scroll-area";
+import { Spinner } from "~/components/ui/spinner";
+import type { EntityType as SingularEntityType } from "~/types";
+import type { EntityMutationPayload, EntityType } from "~/types/split-view";
+
+const singularTypeMap: Record<EntityType, SingularEntityType> = {
+	characters: "character",
+	factions: "faction",
+	locations: "location",
+	notes: "note",
+	quests: "quest",
+};
+
+interface BaseEntity {
+	id: string;
+	name: string;
+	content?: string;
+	content_plain_text?: string;
+	tags?: string[];
+	pinned?: boolean;
+}
+
+interface CharacterEntity extends BaseEntity {
+	class?: string;
+	level?: number;
+}
+
+interface QuestEntity extends BaseEntity {
+	status?: string;
+}
+
+type EntityUnion = BaseEntity | CharacterEntity | QuestEntity;
+
+interface EntityContentRendererProps<T extends EntityUnion> {
+	entity: T | undefined;
+	entityType: EntityType;
+	gameId: string;
+	onSave: (payload: EntityMutationPayload) => Promise<void>;
+	isSaving: boolean;
+	isLoading: boolean;
+	isError: boolean;
+	onClearEntity: () => void;
+	onAddEntity: () => void;
+	onRefresh: () => void;
+	onOpenFullView: () => void;
+}
+
+export function EntityContentRenderer<T extends EntityUnion>({
+	entity,
+	entityType,
+	gameId,
+	onSave,
+	isSaving,
+	isLoading,
+	isError,
+	onClearEntity,
+	onAddEntity,
+	onRefresh,
+	onOpenFullView,
+}: EntityContentRendererProps<T>) {
+	const singularType = singularTypeMap[entityType];
+
+	return (
+		<div className="h-full flex flex-col">
+			{/* Pane Header */}
+			<div className="flex-shrink-0 flex items-center justify-between p-2 border-b bg-card">
+				<div className="flex items-center gap-2">
+					<Badge variant="outline" className="text-xs">
+						{entityType.slice(0, -1)} {/* Remove 's' suffix */}
+					</Badge>
+					<span className="text-sm font-medium truncate">{entity?.name}</span>
+				</div>
+				<div className="flex gap-3">
+					<Button
+						variant="ghost"
+						size="icon"
+						className="h-6 w-6"
+						onClick={onRefresh}
+						title="Refresh"
+					>
+						<RefreshCw className="h-3 w-3" />
+					</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						className="h-6 w-6"
+						onClick={onOpenFullView}
+						title="Open in full view"
+					>
+						<ExternalLink className="h-3 w-3" />
+					</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						className="h-6 w-6"
+						onClick={onClearEntity}
+					>
+						<X className="h-3 w-3" />
+					</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						className="h-6 w-6"
+						onClick={onAddEntity}
+					>
+						<PlusCircle className="h-3 w-3" />
+					</Button>
+				</div>
+			</div>
+
+			{/* Entity Content */}
+			<div className="flex-1 min-h-0">
+				<ScrollArea className="h-[85vh]">
+					{isLoading ? (
+						<div className="flex items-center justify-center h-32">
+							<Spinner className="h-6 w-6" />
+						</div>
+					) : isError || !entity ? (
+						<div className="p-4 text-center text-muted-foreground">
+							{singularType} not found
+						</div>
+					) : (
+						<div className="p-4 space-y-4">
+							<EntityViewHeader
+								id={entity.id}
+								gameId={gameId}
+								type={singularType}
+								content={entity.content || ""}
+								content_plain_text={entity.content_plain_text || ""}
+								name={entity.name}
+								badges={createEntityBadges(entity, entityType)}
+								pinned={entity.pinned}
+							/>
+							<EntityEditor
+								content={entity.content || ""}
+								gameId={gameId}
+								entityType={singularType}
+								entityId={entity.id}
+								onSave={onSave}
+								isSaving={isSaving}
+								className="min-h-[200px]"
+							/>
+						</div>
+					)}
+				</ScrollArea>
+			</div>
+		</div>
+	);
+}
+
+function createEntityBadges(
+	entity: EntityUnion,
+	entityType: EntityType,
+): React.ReactNode {
+	const commonTags = entity.tags && entity.tags.length > 0 && (
+		<div className="flex flex-wrap gap-2">
+			{entity.tags.map((tag) => (
+				<Badge key={tag} variant="secondary">
+					{tag}
+				</Badge>
+			))}
+		</div>
+	);
+
+	switch (entityType) {
+		case "characters": {
+			const character = entity as CharacterEntity;
+			return (
+				<div className="flex flex-wrap gap-2">
+					{character.class && <Badge>{character.class}</Badge>}
+					{character.level && <Badge>Level: {character.level}</Badge>}
+					{commonTags}
+				</div>
+			);
+		}
+		case "quests": {
+			const quest = entity as QuestEntity;
+			return (
+				<div className="flex flex-wrap gap-2">
+					{quest.status && <Badge>{quest.status}</Badge>}
+					{commonTags}
+				</div>
+			);
+		}
+		default:
+			return commonTags;
+	}
+}
+
