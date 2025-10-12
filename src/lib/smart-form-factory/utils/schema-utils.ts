@@ -184,3 +184,44 @@ function titleCase(str: string): string {
 		.replace(/\b\w/g, (char) => char.toUpperCase()) // capitalize words
 		.trim();
 }
+
+/**
+ * Type-safe helper to access schema fields by name
+ * Preserves Zod type information while handling undefined fields
+ */
+export function getSchemaField<T extends z.ZodRawShape>(
+	schema: z.ZodObject<T>,
+	fieldName: string,
+): z.ZodTypeAny | undefined {
+	return schema.shape[fieldName as keyof T] as unknown as z.ZodTypeAny | undefined;
+}
+
+/**
+ * Type-safe helper to check if a field is required
+ */
+export function isFieldRequired<T extends z.ZodRawShape>(
+	schema: z.ZodObject<T>,
+	fieldName: string,
+): boolean {
+	const field = getSchemaField(schema, fieldName);
+	return field ? !(field instanceof z.ZodOptional) : false;
+}
+
+/**
+ * Type-safe helper to validate a field value
+ */
+export function validateSchemaField<T extends z.ZodRawShape>(
+	schema: z.ZodObject<T>,
+	fieldName: string,
+	value: unknown,
+): string | undefined {
+	const fieldSchema = getSchemaField(schema, fieldName);
+	if (!fieldSchema || value === undefined || value === "") {
+		return undefined;
+	}
+
+	const result = fieldSchema.safeParse(value);
+	return result.success
+		? undefined
+		: result.error.issues[0]?.message || "Invalid value";
+}
