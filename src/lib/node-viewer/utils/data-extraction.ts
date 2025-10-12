@@ -1,8 +1,8 @@
 import type { Connection, GenericNode } from "../types";
 
-export function extractNodesAndConnections<T extends Record<string, any>>(
+export function extractNodesAndConnections<T extends Record<string, object>>(
 	data: T,
-	entityKeys: string[] = []
+	entityKeys: string[] = [],
 ): { nodes: Map<string, GenericNode>; connections: Connection[] } {
 	const uniqueNodes = new Map<string, GenericNode>();
 	const connections: Connection[] = [];
@@ -31,12 +31,12 @@ export function extractNodesAndConnections<T extends Record<string, any>>(
 	}
 
 	const keysToProcess = entityKeys.length > 0 ? entityKeys : Object.keys(data);
-	
+
 	for (const key of keysToProcess) {
 		const entities = data[key];
 		if (Array.isArray(entities)) {
 			for (const entity of entities) {
-				if (entity && typeof entity === 'object' && 'id' in entity) {
+				if (entity && typeof entity === "object" && "id" in entity) {
 					processNode(entity);
 				}
 			}
@@ -47,6 +47,7 @@ export function extractNodesAndConnections<T extends Record<string, any>>(
 }
 
 export function createDefaultNodeExtractor(entityKeys?: string[]) {
-	return <T extends Record<string, any>>(data: T) => 
+	return <T extends Record<string, object>>(data: T) =>
 		extractNodesAndConnections(data, entityKeys);
 }
+
