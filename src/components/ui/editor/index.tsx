@@ -1,3 +1,4 @@
+import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -9,6 +10,7 @@ import {
 	Heading2,
 	Heading3,
 	Italic,
+	Link,
 	List,
 	ListOrdered,
 	Minus,
@@ -19,6 +21,7 @@ import {
 	Table as TableIcon,
 	Trash2,
 	Undo,
+	Unlink,
 } from "lucide-react";
 import * as React from "react";
 import { cn } from "~/utils/cn";
@@ -37,6 +40,7 @@ import {
 } from "../dropdown-menu";
 import { Separator } from "../separator";
 import { Toggle } from "../toggle";
+import { EditorBubbleMenu } from "./bubble-menu";
 import { type MentionItem, SimpleMention } from "./mention-extension-simple";
 
 export interface TiptapProps {
@@ -140,6 +144,7 @@ export function Tiptap({
 					keepAttributes: false,
 				},
 			}),
+			BubbleMenuExtension,
 			Table.configure({
 				resizable: true,
 			}),
@@ -254,6 +259,30 @@ export function Tiptap({
 				>
 					<Code className="h-4 w-4" />
 				</Toggle>
+
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() => {
+						const url = window.prompt("Enter URL:");
+						if (url) {
+							editor.chain().focus().setLink({ href: url }).run();
+						}
+					}}
+					disabled={!editor.can().chain().focus().setLink({ href: "" }).run()}
+				>
+					<Link className="h-4 w-4" />
+				</Button>
+
+				{editor.isActive("link") && (
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={() => editor.chain().focus().unsetLink().run()}
+					>
+						<Unlink className="h-4 w-4" />
+					</Button>
+				)}
 
 				<Separator orientation="vertical" className="h-6" />
 
@@ -454,6 +483,7 @@ export function Tiptap({
 				</Button>
 			</div>
 
+			<EditorBubbleMenu editor={editor} />
 			<EditorContent editor={editor} placeholder={placeholder} />
 		</div>
 	);
