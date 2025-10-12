@@ -5,7 +5,6 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "~/components/ui/resizable";
-import { SplitViewProvider, useSplitView } from "~/state/split-view-context";
 import type { EntityPath } from "~/types/split-view";
 import { CharacterPaneView } from "./character-pane-view";
 import { EntitySelectorModal } from "./entity-selector-modal";
@@ -13,6 +12,7 @@ import { FactionPaneView } from "./faction-pane-view";
 import { LocationPaneView } from "./location-pane-view";
 import { NotePaneView } from "./note-pane-view";
 import { QuestPaneView } from "./quest-pane-view";
+import { SplitViewProvider, useSplitView } from "./split-view-context";
 
 interface SplitViewLayoutProps {
 	gameId: string;
