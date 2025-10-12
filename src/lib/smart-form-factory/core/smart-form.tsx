@@ -6,12 +6,12 @@ import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
 import type { ApiError, FieldConfig, HookFormOptions, SmartFormOptions } from "../types";
-import { FormFieldControl } from "./field-control";
-import { extractDefaultValues, generateFieldsFromSchema } from "../utils/schema-utils";
 import {
 	processFormValuesForSubmission,
 	processInitialValues,
 } from "../utils/form-utils";
+import { extractDefaultValues, generateFieldsFromSchema } from "../utils/schema-utils";
+import { FormFieldControl } from "./field-control";
 
 const { useAppForm } = createFormHook();
 
@@ -338,7 +338,9 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 			// Apply smart field type detection
 			const zodField = (schema.shape as any)[fieldName];
 			const actualType =
-				zodField instanceof z.ZodOptional ? zodField._def.innerType : zodField;
+				zodField instanceof z.ZodOptional
+					? zodField._zod.def.innerType
+					: zodField;
 
 			if (actualType instanceof z.ZodString) {
 				// Check for rich text editor fields (complex content)
@@ -360,7 +362,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 				}));
 			} else if (actualType instanceof z.ZodArray) {
 				// Check if it's an array of strings, likely for tags
-				const elementType = actualType._def?.element;
+				const elementType = actualType._zod.def?.element;
 				if (elementType instanceof z.ZodString) {
 					fieldConfig.type = "tags";
 				}

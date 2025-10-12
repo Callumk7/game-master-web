@@ -4,6 +4,7 @@ import type { FieldConfig } from "../types";
  * Process initial values for form fields, handling editor field conversions
  */
 export const processInitialValues = (
+	// biome-ignore lint/suspicious/noExplicitAny: Appropriate, we cannot know at compile time what felds will exist or their types. We make up for this with FieldConfig. See notes/use-of-any.md
 	initialValues: Record<string, any>,
 	fields: FieldConfig[],
 ) => {
@@ -57,6 +58,7 @@ export const processInitialValues = (
  * Process form values for submission, handling editor field conversions
  */
 export const processFormValuesForSubmission = (
+	// biome-ignore lint/suspicious/noExplicitAny: Appropriate, we cannot know at compile time what felds will exist or their types. We make up for this with FieldConfig. See notes/use-of-any.md
 	value: Record<string, any>,
 	fields: FieldConfig[],
 ) => {
