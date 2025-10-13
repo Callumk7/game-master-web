@@ -1,8 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { createNoteLink, type LinkRequest } from "~/api";
 import {
 	createNoteMutation,
+	getCharacterLinksQueryKey,
+	getFactionLinksQueryKey,
+	getLocationLinksQueryKey,
+	getNoteLinksQueryKey,
+	getQuestLinksQueryKey,
 	listGameEntitiesQueryKey,
 	listNotesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
@@ -11,33 +17,23 @@ import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import type { EntityType } from "~/types";
 
 interface CreateNoteFormProps {
-	/** Optional parent entity ID */
-	parentId?: string;
-	/** Optional parent entity type */
-	parentType?: EntityType;
-	/** Custom CSS class for form container */
+	link?: {
+		linkId: string;
+		linkType: EntityType;
+	};
 	className?: string;
-	/** Custom submit button text */
 	submitText?: string;
-	/** Custom success callback (overrides default navigation) */
 	onSuccess?: () => void;
 }
 
 export function CreateNoteForm({
-	parentId,
-	parentType,
+	link,
 	className = "space-y-6",
 	submitText = "Create Note",
 	onSuccess: customOnSuccess,
 }: CreateNoteFormProps = {}) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
-
-	// Prepare initial values with parent info if provided
-	const initialValues = {
-		...(parentId && { parent_id: parentId }),
-		...(parentType && { parent_type: parentType }),
-	};
 
 	const { form, mutation, renderSmartField } = useSmartForm({
 		mutation: () =>
@@ -46,8 +42,23 @@ export function CreateNoteForm({
 			}),
 		schema: schemas.note,
 		entityName: "note",
-		initialValues,
-		onSuccess: async () => {
+		onSuccess: async ({ data: note }) => {
+			if (note && link) {
+				const result = await createNoteLink({
+					path: { game_id: gameId, note_id: note.id },
+					body: createLinkRequest(link),
+				});
+
+				if (result.error) {
+					// TODO: handle secondary mutation here
+				}
+
+				if (result.response.ok) {
+					queryClient.invalidateQueries({
+						queryKey: getLinkQueryKey(link, gameId),
+					});
+				}
+			}
 			toast("Note created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listNotesQueryKey({
@@ -78,21 +89,6 @@ export function CreateNoteForm({
 					<div className="space-y-6">
 						{renderSmartField("name")}
 						{renderSmartField("tags")}
-
-						{/* Only show parent fields if not pre-filled via props */}
-						{!parentId &&
-							renderSmartField("parent_id", {
-								label: "Parent Entity ID",
-								description:
-									"Optional ID of the parent entity this note belongs to",
-							})}
-
-						{!parentType &&
-							renderSmartField("parent_type", {
-								label: "Parent Entity Type",
-								description: "Type of the parent entity",
-							})}
-
 						{renderSmartField("content")}
 
 						<div className="flex gap-2">
@@ -125,10 +121,46 @@ export function CreateNoteForm({
 			{mutation.isError && (
 				<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
 					<p className="text-sm">
-						{mutation.error instanceof Error ? mutation.error.message : "Something went wrong"}
+						{mutation.error instanceof Error
+							? mutation.error.message
+							: "Something went wrong"}
 					</p>
 				</div>
 			)}
 		</div>
 	);
+}
+
+function createLinkRequest(link: { linkId: string; linkType: EntityType }): LinkRequest {
+	return {
+		entity_id: link.linkId,
+		entity_type: link.linkType,
+	};
+}
+
+function getLinkQueryKey(link: { linkId: string; linkType: EntityType }, gameId: string) {
+	switch (link.linkType) {
+		case "character":
+			return getCharacterLinksQueryKey({
+				path: { game_id: gameId, character_id: link.linkId },
+			});
+		case "faction":
+			return getFactionLinksQueryKey({
+				path: { game_id: gameId, faction_id: link.linkId },
+			});
+		case "location":
+			return getLocationLinksQueryKey({
+				path: { game_id: gameId, location_id: link.linkId },
+			});
+		case "note":
+			return getNoteLinksQueryKey({
+				path: { game_id: gameId, note_id: link.linkId },
+			});
+		case "quest":
+			return getQuestLinksQueryKey({
+				path: { game_id: gameId, quest_id: link.linkId },
+			});
+		default:
+			throw new Error("Invalid link type");
+	}
 }

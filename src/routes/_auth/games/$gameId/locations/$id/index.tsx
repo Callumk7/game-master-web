@@ -14,6 +14,7 @@ import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
 import { CreateLocationLink } from "~/components/locations/create-location-link";
 import { LocationImages } from "~/components/locations/location-images";
+import { LocationNoteView } from "~/components/locations/location-note-view";
 import { NPCView } from "~/components/locations/npc-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
@@ -168,7 +169,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		{
 			id: "notes",
 			label: "Notes",
-			content: <div>Notes tabs tbc</div>,
+			content: <LocationNoteView gameId={gameId} locationId={location.id} />,
 		},
 		{
 			id: "npcs",

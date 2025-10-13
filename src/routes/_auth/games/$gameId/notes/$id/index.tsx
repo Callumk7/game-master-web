@@ -14,6 +14,7 @@ import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
 import { NoteImages } from "~/components/notes/note-images";
 import { NoteLinksPopover } from "~/components/notes/note-links-popover";
+import { NoteNoteView } from "~/components/notes/notes-note-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import {
@@ -164,7 +165,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		{
 			id: "notes",
 			label: "Notes",
-			content: <div>Notes tabs tbc</div>,
+			content: <NoteNoteView gameId={gameId} noteId={note.id} />,
 		},
 		{
 			id: "images",

@@ -1,13 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import {
-	getCharacterNotesTreeQueryKey,
-	updateNoteMutation,
-	useGetCharacterNotesTreeQuery,
+	deleteCharacterLinkMutation,
+	getCharacterLinksQueryKey,
 } from "~/api/@tanstack/react-query.gen";
-import { SelectNoteCombobox } from "~/components/characters/select-note-combobox";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
-import { Button } from "~/components/ui/button";
+import { useGetCharacterNotesQuery } from "~/queries/characters";
 import { EntityNotesView } from "../views/entity-notes-view";
 
 interface CharacterNotesViewProps {
@@ -21,29 +19,9 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 	const [isNewNoteSheetOpen, setIsNewNoteSheetOpen] = React.useState(false);
 	const [selectedNoteId, setSelectedNoteId] = React.useState<string | null>(null);
 
-	const { data: noteTree } = useGetCharacterNotesTreeQuery({
-		path: { game_id: gameId, id: characterId },
-	});
+	const { notes } = useGetCharacterNotesQuery(gameId, characterId);
 
-	const notes = noteTree?.data?.notes_tree || [];
-
-	// Auto-select first note if none selected
-	React.useEffect(() => {
-		if (notes.length > 0 && !selectedNoteId) {
-			setSelectedNoteId(notes[0].id);
-		}
-	}, [notes, selectedNoteId]);
-
-	const removeNote = useMutation({
-		...updateNoteMutation(),
-		onSuccess: () => {
-			client.invalidateQueries({
-				queryKey: getCharacterNotesTreeQueryKey({
-					path: { game_id: gameId, id: characterId },
-				}),
-			});
-		},
-	});
+	const removeLink = useMutation(deleteCharacterLinkMutation());
 
 	const handleDeleteNote = (noteId: string) => {
 		if (selectedNoteId === noteId && notes.length > 1) {
@@ -52,45 +30,41 @@ export function CharacterNotesView({ gameId, characterId }: CharacterNotesViewPr
 			setSelectedNoteId(nextNote?.id || null);
 		}
 
-		removeNote.mutateAsync({
-			path: { game_id: gameId, id: noteId },
-			body: {
-				// @ts-expect-error: Limitation on swagger codegen
-				note: { parent_id: null, parent_type: null },
+		removeLink.mutateAsync(
+			{
+				path: {
+					game_id: gameId,
+					character_id: characterId,
+					entity_id: noteId,
+					entity_type: "note",
+				},
 			},
-		});
-	};
-
-	const handleSuccess = () => {
-		client.invalidateQueries({
-			queryKey: getCharacterNotesTreeQueryKey({
-				path: { game_id: gameId, id: characterId },
-			}),
-		});
+			{
+				onSuccess: () => {
+					client.invalidateQueries({
+						queryKey: getCharacterLinksQueryKey({
+							path: { game_id: gameId, character_id: characterId },
+						}),
+					});
+				},
+			},
+		);
 	};
 
 	return (
 		<>
-			<div className="space-y-4">
-				<div className="flex gap-4">
-					<Button onClick={() => setIsNewNoteSheetOpen(true)}>
-						Create Note
-					</Button>
-					<SelectNoteCombobox gameId={gameId} characterId={characterId} />
-				</div>
-
-				<EntityNotesView
-					gameId={gameId}
-					notesTree={notes}
-					handleDeleteNote={handleDeleteNote}
-				/>
-			</div>
+			<EntityNotesView
+				gameId={gameId}
+				notes={notes}
+				setIsNewNoteSheetOpen={setIsNewNoteSheetOpen}
+				selectedNoteId={selectedNoteId}
+				setSelectedNoteId={setSelectedNoteId}
+				handleDeleteNote={handleDeleteNote}
+			/>
 			<CreateNoteSheet
 				isOpen={isNewNoteSheetOpen}
 				setIsOpen={setIsNewNoteSheetOpen}
-				parentType="character"
-				parentId={characterId}
-				onSuccess={handleSuccess}
+				link={{ linkId: characterId, linkType: "character" }}
 			/>
 		</>
 	);

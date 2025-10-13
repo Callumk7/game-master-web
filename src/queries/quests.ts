@@ -10,6 +10,7 @@ import {
 	listQuestsOptions,
 	listQuestsQueryKey,
 	updateQuestMutation,
+	useGetQuestLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useEntityTabs } from "~/components/entity-tabs";
 
@@ -31,6 +32,19 @@ export const useGetQuestTreeSuspenseQuery = (gameId: string) => {
 
 export const useListPinnedEntitiesSuspenseQuery = (gameId: string) => {
 	return useSuspenseQuery(listPinnedEntitiesOptions({ path: { game_id: gameId } }));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+//                                PROCESSED
+////////////////////////////////////////////////////////////////////////////////
+
+export const useGetQuestNotesQuery = (gameId: string, questId: string) => {
+	const { data, status, error, isLoading, isError, isSuccess } = useGetQuestLinksQuery({
+		path: { game_id: gameId, quest_id: questId },
+	});
+
+	const notes = data?.data?.links?.notes || [];
+	return { notes, status, error, isLoading, isError, isSuccess };
 };
 
 ////////////////////////////////////////////////////////////////////////////////

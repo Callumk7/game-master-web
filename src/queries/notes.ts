@@ -7,6 +7,7 @@ import {
 	listNotesOptions,
 	listNotesQueryKey,
 	updateNoteMutation,
+	useGetNoteLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useEntityTabs } from "~/components/entity-tabs";
 
@@ -20,6 +21,19 @@ export const useListNotesSuspenseQuery = (gameId: string) => {
 
 export const useNoteSuspenseQuery = (gameId: string, id: string) => {
 	return useSuspenseQuery(getNoteOptions({ path: { game_id: gameId, id } }));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+//                                PROCESSED
+////////////////////////////////////////////////////////////////////////////////
+
+export const useGetNoteNotesQuery = (gameId: string, noteId: string) => {
+	const { data, status, error, isLoading, isError, isSuccess } = useGetNoteLinksQuery({
+		path: { game_id: gameId, note_id: noteId },
+	});
+
+	const notes = data?.data?.links?.notes || [];
+	return { notes, status, error, isLoading, isError, isSuccess };
 };
 
 ////////////////////////////////////////////////////////////////////////////////

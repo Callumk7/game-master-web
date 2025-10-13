@@ -7,13 +7,14 @@ interface CreateNoteSheetProps {
 	isOpen?: boolean;
 	setIsOpen?: (isOpen: boolean) => void;
 	onSuccess?: () => void;
-	parentId?: string;
-	parentType?: EntityType;
+	link?: {
+		linkId: string;
+		linkType: EntityType;
+	};
 }
 
 export function CreateNoteSheet({
-	parentId,
-	parentType,
+	link,
 	isOpen,
 	setIsOpen,
 	onSuccess,
@@ -26,11 +27,7 @@ export function CreateNoteSheet({
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
 			<SheetContent className="p-4 pt-10 overflow-scroll" width="lg">
-				<CreateNoteForm
-					parentId={parentId}
-					parentType={parentType}
-					onSuccess={onSuccess}
-				/>
+				<CreateNoteForm onSuccess={onSuccess} link={link} />
 			</SheetContent>
 		</Sheet>
 	);

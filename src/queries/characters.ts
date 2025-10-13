@@ -9,6 +9,7 @@ import {
 	removeCharacterPrimaryFactionMutation,
 	setCharacterPrimaryFactionMutation,
 	updateCharacterMutation,
+	useGetCharacterLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useEntityTabs } from "~/components/entity-tabs";
 
@@ -22,6 +23,20 @@ export const useGetCharacterSuspenseQuery = (gameId: string, id: string) => {
 
 export const useListCharactersSuspenseQuery = (gameId: string) => {
 	return useSuspenseQuery(listCharactersOptions({ path: { game_id: gameId } }));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+//                                PROCESSED
+////////////////////////////////////////////////////////////////////////////////
+
+export const useGetCharacterNotesQuery = (gameId: string, characterId: string) => {
+	const { data, status, error, isLoading, isError, isSuccess } =
+		useGetCharacterLinksQuery({
+			path: { game_id: gameId, character_id: characterId },
+		});
+
+	const notes = data?.data?.links?.notes || [];
+	return { notes, status, error, isLoading, isError, isSuccess };
 };
 
 ////////////////////////////////////////////////////////////////////////////////

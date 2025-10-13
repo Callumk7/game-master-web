@@ -14,6 +14,7 @@ import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
 import { ObjectivesView } from "~/components/quests/objectives-view";
 import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
+import { QuestNoteView } from "~/components/quests/quest-note-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import {
@@ -163,7 +164,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		{
 			id: "notes",
 			label: "Notes",
-			content: <div>Notes tabs tbc</div>,
+			content: <QuestNoteView gameId={gameId} questId={quest.id} />,
 		},
 		{
 			id: "objectives",

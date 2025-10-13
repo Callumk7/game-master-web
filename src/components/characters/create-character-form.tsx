@@ -1,14 +1,19 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import * as React from "react";
 import { toast } from "sonner";
+import { createCharacterLink } from "~/api";
 import {
 	createCharacterMutation,
+	getFactionLinksQueryKey,
+	getFactionMembersQueryKey,
 	listCharactersQueryKey,
 	listFactionsOptions,
 	listGameEntitiesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import { Button } from "../ui/button";
+import { FormField } from "../ui/composite/form-field";
 import { FactionSelect } from "./faction-select";
 
 interface CreateCharacterFormProps {
@@ -26,9 +31,7 @@ export function CreateCharacterForm({
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
-	const initialValues = {
-		...(factionId && { member_of_faction_id: factionId }),
-	};
+	const [factionRole, setFactionRole] = React.useState<string>("");
 
 	const { data: factionsData, isLoading: factionsLoading } = useQuery({
 		...listFactionsOptions({ path: { game_id: gameId } }),
@@ -42,8 +45,35 @@ export function CreateCharacterForm({
 			}),
 		schema: schemas.character,
 		entityName: "character",
-		initialValues,
-		onSuccess: async ({ data }) => {
+		onSuccess: async ({ data: character }) => {
+			if (character && factionId) {
+				const result = await createCharacterLink({
+					path: { game_id: gameId, character_id: character.id },
+					body: {
+						entity_id: factionId,
+						entity_type: "faction",
+						faction_role: factionRole,
+						is_primary: true,
+					},
+				});
+
+				if (result.error) {
+					// TODO: handle secondary mutation here
+				}
+
+				if (result.response.ok) {
+					queryClient.invalidateQueries({
+						queryKey: getFactionLinksQueryKey({
+							path: { game_id: gameId, faction_id: factionId },
+						}),
+					});
+					queryClient.invalidateQueries({
+						queryKey: getFactionMembersQueryKey({
+							path: { game_id: gameId, faction_id: factionId },
+						}),
+					});
+				}
+			}
 			toast("Character created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listCharactersQueryKey({
@@ -60,10 +90,10 @@ export function CreateCharacterForm({
 				onSuccess();
 			}
 
-			if (data) {
+			if (character) {
 				navigate({
 					to: "/games/$gameId/characters/$id",
-					params: { gameId, id: data.id },
+					params: { gameId, id: character.id },
 				});
 			}
 		},
@@ -111,7 +141,16 @@ export function CreateCharacterForm({
 								)}
 							</form.AppField>
 						)}
-						{renderSmartField("faction_role")}
+
+						{/* NOT a form field, but for the secondary mutation */}
+						{factionId && (
+							<FormField
+								label="Faction Role"
+								value={factionRole}
+								onChange={(e) => setFactionRole(e.currentTarget.value)}
+							/>
+						)}
+
 						{renderSmartField("content")}
 
 						<div className="flex gap-2">

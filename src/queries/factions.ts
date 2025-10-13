@@ -8,6 +8,7 @@ import {
 	listFactionsQueryKey,
 	listGameEntitiesQueryKey,
 	updateFactionMutation,
+	useGetFactionLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useEntityTabs } from "~/components/entity-tabs";
 
@@ -37,6 +38,20 @@ export const useGetFactionLinksSuspenseQuery = (gameId: string, factionId: strin
 			path: { game_id: gameId, faction_id: factionId },
 		}),
 	);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+//                                PROCESSED
+////////////////////////////////////////////////////////////////////////////////
+
+export const useGetFactionNotesQuery = (gameId: string, factionId: string) => {
+	const { data, status, error, isLoading, isError, isSuccess } =
+		useGetFactionLinksQuery({
+			path: { game_id: gameId, faction_id: factionId },
+		});
+
+	const notes = data?.data?.links?.notes || [];
+	return { notes, status, error, isLoading, isError, isSuccess };
 };
 
 ////////////////////////////////////////////////////////////////////////////////

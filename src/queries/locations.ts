@@ -9,6 +9,7 @@ import {
 	listLocationsOptions,
 	listLocationsQueryKey,
 	updateLocationMutation,
+	useGetLocationLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useEntityTabs } from "~/components/entity-tabs";
 
@@ -26,6 +27,20 @@ export const useLocationSuspenseQuery = (gameId: string, id: string) => {
 
 export const useGetLocationTreeSuspenseQuery = (gameId: string) => {
 	return useSuspenseQuery(getLocationTreeOptions({ path: { game_id: gameId } }));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+//                                PROCESSED
+////////////////////////////////////////////////////////////////////////////////
+
+export const useGetLocationNotesQuery = (gameId: string, locationId: string) => {
+	const { data, status, error, isLoading, isError, isSuccess } =
+		useGetLocationLinksQuery({
+			path: { game_id: gameId, location_id: locationId },
+		});
+
+	const notes = data?.data?.links?.notes || [];
+	return { notes, status, error, isLoading, isError, isSuccess };
 };
 
 ////////////////////////////////////////////////////////////////////////////////

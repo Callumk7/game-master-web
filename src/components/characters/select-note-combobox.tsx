@@ -1,8 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 import type { Note } from "~/api";
-import { updateNoteMutation, useListNotesQuery } from "~/api/@tanstack/react-query.gen";
+import { useListNotesQuery } from "~/api/@tanstack/react-query.gen";
 import { Button } from "../ui/button";
 import {
 	Combobox,
@@ -29,28 +28,12 @@ interface SelectNoteComboboxProps {
 	characterId: string;
 }
 
-export function SelectNoteCombobox({ gameId, characterId }: SelectNoteComboboxProps) {
+export function SelectNoteCombobox({ gameId }: SelectNoteComboboxProps) {
 	const id = React.useId();
 	const [selectedNote, setSelectedNote] = React.useState<Note | null>(null);
 
 	const { data: notesData } = useListNotesQuery({ path: { game_id: gameId } });
 	const notes = notesData?.data ?? [];
-
-	const updateNote = useMutation(updateNoteMutation());
-
-	const handleLink = () => {
-		if (selectedNote) {
-			updateNote.mutateAsync({
-				path: { game_id: gameId, id: selectedNote.id },
-				body: {
-					note: {
-						parent_id: characterId,
-						parent_type: "character",
-					},
-				},
-			});
-		}
-	};
 
 	return (
 		<Popover>
@@ -96,8 +79,6 @@ export function SelectNoteCombobox({ gameId, characterId }: SelectNoteComboboxPr
 								</ComboboxPositioner>
 							</Combobox>
 						</div>
-
-						<Button onClick={handleLink}>Link</Button>
 					</div>
 				</PopoverContent>
 			</PopoverPositioner>

@@ -1,47 +1,32 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 import {
-	deleteFactionLinkMutation,
-	getFactionLinksQueryKey,
+	deleteLocationLinkMutation,
+	getLocationLinksQueryKey,
 } from "~/api/@tanstack/react-query.gen";
-import { useGetFactionNotesQuery } from "~/queries/factions";
+import { useGetLocationNotesQuery } from "~/queries/locations";
 import { CreateNoteSheet } from "../notes/create-note-sheet";
 import { EntityNotesView } from "../views/entity-notes-view";
 
-interface FactionNoteViewProps {
+interface LocationNoteViewProps {
 	gameId: string;
-	factionId: string;
+	locationId: string;
 }
 
-export function FactionNoteView({ gameId, factionId }: FactionNoteViewProps) {
+export function LocationNoteView({ gameId, locationId }: LocationNoteViewProps) {
 	const client = useQueryClient();
+	const { notes } = useGetLocationNotesQuery(gameId, locationId);
 
 	const [isNewNoteSheetOpen, setIsNewNoteSheetOpen] = React.useState(false);
 	const [selectedNoteId, setSelectedNoteId] = React.useState<string | null>(null);
 
-	const { notes } = useGetFactionNotesQuery(gameId, factionId);
-
-	// Auto-select first note if none selected
-	React.useEffect(() => {
-		if (notes.length > 0 && !selectedNoteId) {
-			setSelectedNoteId(notes[0].id);
-		}
-	}, [notes, selectedNoteId]);
-
-	const removeNote = useMutation(deleteFactionLinkMutation());
-
+	const removeNote = useMutation(deleteLocationLinkMutation());
 	const handleDeleteNote = (noteId: string) => {
-		if (selectedNoteId === noteId && notes.length > 1) {
-			const currentIndex = notes.findIndex((note) => note.id === noteId);
-			const nextNote = notes[currentIndex + 1] || notes[currentIndex - 1];
-			setSelectedNoteId(nextNote?.id || null);
-		}
-
 		removeNote.mutateAsync(
 			{
 				path: {
 					game_id: gameId,
-					faction_id: factionId,
+					location_id: locationId,
 					entity_id: noteId,
 					entity_type: "note",
 				},
@@ -49,15 +34,14 @@ export function FactionNoteView({ gameId, factionId }: FactionNoteViewProps) {
 			{
 				onSuccess: () => {
 					client.invalidateQueries({
-						queryKey: getFactionLinksQueryKey({
-							path: { game_id: gameId, faction_id: factionId },
+						queryKey: getLocationLinksQueryKey({
+							path: { game_id: gameId, location_id: locationId },
 						}),
 					});
 				},
 			},
 		);
 	};
-
 	return (
 		<>
 			<EntityNotesView
@@ -68,11 +52,10 @@ export function FactionNoteView({ gameId, factionId }: FactionNoteViewProps) {
 				setIsNewNoteSheetOpen={setIsNewNoteSheetOpen}
 				handleDeleteNote={handleDeleteNote}
 			/>
-
 			<CreateNoteSheet
 				isOpen={isNewNoteSheetOpen}
 				setIsOpen={setIsNewNoteSheetOpen}
-				link={{ linkId: factionId, linkType: "faction" }}
+				link={{ linkId: locationId, linkType: "location" }}
 			/>
 		</>
 	);

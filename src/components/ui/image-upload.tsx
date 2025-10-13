@@ -21,6 +21,7 @@ export function ImageUpload({
 	onUploadSuccess,
 }: ImageUploadProps) {
 	const queryClient = useQueryClient();
+
 	const uploadImage = useMutation({
 		...uploadEntityImageMutation(),
 		onSuccess: () => {

@@ -18,8 +18,6 @@ export function createSchemaFor() {
 			tags: z.array(z.string()).optional(),
 			content: z.string().optional(),
 			alive: z.boolean().optional(),
-			member_of_faction_id: z.string().optional(),
-			faction_role: z.string().optional(),
 		}),
 
 		faction: z.object({
@@ -38,10 +36,6 @@ export function createSchemaFor() {
 		note: z.object({
 			name: z.string().min(1, "Note name is required"),
 			tags: z.array(z.string()).optional(),
-			parent_id: z.string().optional(),
-			parent_type: z
-				.enum(["note", "quest", "location", "character", "faction"])
-				.optional(),
 			content: z.string().optional(),
 		}),
 
