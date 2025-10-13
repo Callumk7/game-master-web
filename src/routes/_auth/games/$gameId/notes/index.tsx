@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { NotesTable } from "~/components/notes/notes-table";
@@ -18,9 +17,6 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes/")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data, isLoading } = useListNotesSuspenseQuery(gameId);
-	const [searchQuery, setSearchQuery] = useState("");
-	const [tagFilter, setTagFilter] = useState("");
-	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	const notes = data?.data || [];
@@ -40,16 +36,7 @@ function RouteComponent() {
 				description="Browse all notes in your game."
 				handleCreate={handleCreate}
 			/>
-			<NotesTable
-				gameId={gameId}
-				data={notes}
-				searchQuery={searchQuery}
-				onSearchChange={setSearchQuery}
-				tagFilter={tagFilter}
-				onTagFilterChange={setTagFilter}
-				paginationSize={paginationSize}
-				onPaginationSizeChange={setPaginationSize}
-			/>
+			<NotesTable gameId={gameId} data={notes} />
 		</Container>
 	);
 }

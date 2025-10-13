@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import * as React from "react";
 import { toast } from "sonner";
 import type { Location } from "~/api";
 import {
@@ -7,17 +8,20 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { EntityLinksTable } from "~/components/links/entity-links-table";
+import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
+import type { GenericLinksResponse } from "~/components/links/types";
+import { flattenLinksForTable } from "~/components/links/utils";
 import { CreateLocationLink } from "~/components/locations/create-location-link";
 import { LocationImages } from "~/components/locations/location-images";
+import { NPCView } from "~/components/locations/npc-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import {
 	useDeleteLocationMutation,
 	useLocationSuspenseQuery,
 	useUpdateLocationMutation,
 } from "~/queries/locations";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/$id/")({
 	component: RouteComponent,
@@ -125,6 +129,11 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		/>
 	);
 
+	const columns = React.useMemo(
+		() => createBaseLinkTableColumns(gameId, location.id, "location"),
+		[gameId, location.id],
+	);
+
 	const linksTab = (
 		<div className="space-y-4">
 			<CreateLocationLink gameId={gameId} locationId={location.id} />
@@ -139,9 +148,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
-					gameId={gameId}
-					sourceId={location.id}
-					sourceType="location"
+					columns={columns}
 				/>
 			)}
 		</div>
@@ -166,7 +173,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		{
 			id: "npcs",
 			label: "NPCs",
-			content: <div>NPCs tabs tbc</div>,
+			content: <NPCView gameId={gameId} locationId={location.id} />,
 		},
 		{
 			id: "images",

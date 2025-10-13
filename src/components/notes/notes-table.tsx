@@ -2,7 +2,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Note } from "~/api/types.gen";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ActionsDropdown,
 	DateDisplay,
@@ -10,19 +9,14 @@ import {
 	EntityTable,
 	SortableHeader,
 	TagsDisplay,
-} from "~/components/ui/entity-table";
+} from "~/components/ui/composite/entity-table";
 import { useDeleteNoteMutation } from "~/queries/notes";
 import { EditNoteDialog } from "./edit-note-dialog";
+import { EntityLinkButton } from "../links/entity-link-button";
 
 interface NotesTableProps {
 	data: Note[];
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
 	gameId: string;
-	paginationSize?: number;
-	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createNoteColumns(gameId: string): ColumnDef<Note>[] {
@@ -107,31 +101,16 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 	];
 }
 
-export function NotesTable({
-	data,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
-	gameId,
-	paginationSize = 10,
-	onPaginationSizeChange,
-}: NotesTableProps) {
+export function NotesTable({ data, gameId }: NotesTableProps) {
 	const columns = createNoteColumns(gameId);
 
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
-			searchQuery={searchQuery}
-			onSearchChange={onSearchChange}
-			tagFilter={tagFilter}
-			onTagFilterChange={onTagFilterChange}
 			entityName="note"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
-			paginationSize={paginationSize}
-			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

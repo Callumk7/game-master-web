@@ -1,39 +1,5 @@
-import type {
-	LinkedCharacter,
-	LinkedFaction,
-	LinkedLocation,
-	LinkedNote,
-	LinkedQuest,
-} from "~/api/types.gen";
 import type { EntityType } from "~/types";
-
-export interface EntityLink {
-	id: string;
-	name: string;
-	type: EntityType;
-	content?: string;
-	content_plain_text?: string;
-	relationship_type?: string;
-	is_active?: boolean;
-	description_meta?: string;
-	metadata?: {
-		[key: string]: unknown;
-	};
-	strength?: number;
-	tags?: Array<unknown>;
-}
-
-export interface GenericLinksResponse {
-	data: {
-		links: {
-			characters: LinkedCharacter[];
-			factions: LinkedFaction[];
-			notes: LinkedNote[];
-			locations: LinkedLocation[];
-			quests: LinkedQuest[];
-		};
-	};
-}
+import type { EntityLink, GenericLinksResponse } from "./types";
 
 export function flattenLinksForTable(linksResponse: GenericLinksResponse): EntityLink[] {
 	const { links } = linksResponse.data;
@@ -60,6 +26,20 @@ export function flattenLinksForTable(linksResponse: GenericLinksResponse): Entit
 				strength: entity.strength,
 				tags: entity.tags,
 				description_meta: entity.description_meta,
+				// Special fields for specific link types
+				is_current_location:
+					"is_current_location" in entity &&
+					typeof entity.is_current_location === "boolean"
+						? entity.is_current_location
+						: undefined,
+				is_primary:
+					"is_primary" in entity && typeof entity.is_primary === "boolean"
+						? entity.is_primary
+						: undefined,
+				faction_role:
+					"faction_role" in entity && typeof entity.faction_role === "string"
+						? entity.faction_role
+						: undefined,
 			});
 		});
 	});

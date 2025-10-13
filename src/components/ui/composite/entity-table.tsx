@@ -59,7 +59,10 @@ interface SortableHeaderProps<TData, TValue> {
 	children: React.ReactNode;
 }
 
-export function SortableHeader<TData, TValue>({ column, children }: SortableHeaderProps<TData, TValue>) {
+export function SortableHeader<TData, TValue>({
+	column,
+	children,
+}: SortableHeaderProps<TData, TValue>) {
 	return (
 		<Button
 			variant="ghost"
@@ -256,15 +259,9 @@ export function ActionsDropdown({
 interface EntityTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
 	entityName?: string; // e.g., "character", "faction", "quest"
 	searchPlaceholder?: string;
 	tagPlaceholder?: string;
-	paginationSize?: number;
-	onPaginationSizeChange?: (size: number) => void;
 	enableColumnVisibility?: boolean;
 	enablePaginationSizeSelector?: boolean;
 	columnRelativeWidths?: Record<string, number>; // e.g., { "name": 2, "status": 1, "actions": 0.5 }
@@ -274,15 +271,9 @@ interface EntityTableProps<TData, TValue> {
 export function EntityTable<TData, TValue>({
 	columns,
 	data,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
 	entityName = "entity",
 	searchPlaceholder = "Filter names...",
 	tagPlaceholder = "Filter tags...",
-	paginationSize = 10,
-	onPaginationSizeChange,
 	enableColumnVisibility = true,
 	enablePaginationSizeSelector = true,
 	columnRelativeWidths,
@@ -296,6 +287,10 @@ export function EntityTable<TData, TValue>({
 			return acc;
 		}, {}),
 	});
+
+	const [searchQuery, setSearchQuery] = React.useState("");
+	const [tagFilter, setTagFilter] = React.useState("");
+	const [paginationSize, setPaginationSize] = React.useState(20);
 
 	// Calculate percentage widths from relative widths
 	const columnWidths = React.useMemo(() => {
@@ -353,25 +348,23 @@ export function EntityTable<TData, TValue>({
 				<Input
 					placeholder={searchPlaceholder}
 					value={searchQuery}
-					onChange={(event) => onSearchChange(event.target.value)}
+					onChange={(event) => setSearchQuery(event.target.value)}
 					className="max-w-sm"
 				/>
 				<Input
 					placeholder={tagPlaceholder}
 					value={tagFilter}
-					onChange={(event) => onTagFilterChange(event.target.value)}
+					onChange={(event) => setTagFilter(event.target.value)}
 					className="max-w-sm"
 				/>
-				{enablePaginationSizeSelector && onPaginationSizeChange && (
+				{enablePaginationSizeSelector && setPaginationSize && (
 					<div className="flex items-center gap-2">
 						<span className="text-sm text-muted-foreground whitespace-nowrap">
 							Rows per page:
 						</span>
 						<Select
 							value={paginationSize}
-							onValueChange={(value) =>
-								onPaginationSizeChange(value as number)
-							}
+							onValueChange={(value) => setPaginationSize(value as number)}
 						>
 							<SelectTrigger size="sm" className="w-fit">
 								<SelectValue />

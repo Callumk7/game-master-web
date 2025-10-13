@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { LocationsTable } from "~/components/locations/locations-table";
@@ -18,9 +17,6 @@ export const Route = createFileRoute("/_auth/games/$gameId/locations/")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useListLocationsSuspenseQuery(gameId);
-	const [searchQuery, setSearchQuery] = useState("");
-	const [tagFilter, setTagFilter] = useState("");
-	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	const locations = data?.data || [];
@@ -36,16 +32,7 @@ function RouteComponent() {
 				description="Browse all locations in your game."
 				handleCreate={handleCreate}
 			/>
-			<LocationsTable
-				gameId={gameId}
-				data={locations}
-				searchQuery={searchQuery}
-				onSearchChange={setSearchQuery}
-				tagFilter={tagFilter}
-				onTagFilterChange={setTagFilter}
-				paginationSize={paginationSize}
-				onPaginationSizeChange={setPaginationSize}
-			/>
+			<LocationsTable gameId={gameId} data={locations} />
 		</Container>
 	);
 }

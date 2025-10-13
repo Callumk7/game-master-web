@@ -2,7 +2,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Faction } from "~/api/types.gen";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ActionsDropdown,
 	DateDisplay,
@@ -10,19 +9,14 @@ import {
 	EntityTable,
 	SortableHeader,
 	TagsDisplay,
-} from "~/components/ui/entity-table";
+} from "~/components/ui/composite/entity-table";
 import { useDeleteFactionMutation } from "~/queries/factions";
+import { EntityLinkButton } from "../links/entity-link-button";
 import { EditFactionDialog } from "./edit-faction-dialog";
 
 interface FactionsTableProps {
 	data: Faction[];
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
 	gameId: string;
-	paginationSize?: number;
-	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
@@ -107,31 +101,16 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 	];
 }
 
-export function FactionsTable({
-	data,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
-	gameId,
-	paginationSize = 10,
-	onPaginationSizeChange,
-}: FactionsTableProps) {
+export function FactionsTable({ data, gameId }: FactionsTableProps) {
 	const columns = createFactionColumns(gameId);
 
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
-			searchQuery={searchQuery}
-			onSearchChange={onSearchChange}
-			tagFilter={tagFilter}
-			onTagFilterChange={onTagFilterChange}
 			entityName="faction"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
-			paginationSize={paginationSize}
-			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

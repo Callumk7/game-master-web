@@ -17,13 +17,13 @@ import { Commander } from "~/components/commander";
 import { EntityTabs, EntityTabsProvider } from "~/components/entity-tabs";
 import { BasicErrorComponent } from "~/components/error";
 import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
+import { EntityWindowManager } from "~/components/layout/entity-window-manager";
 import { GameSidebar } from "~/components/layout/game-sidebar";
 import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
 import { TodosDrawer } from "~/components/todos/todos-drawer";
 import { Badge } from "~/components/ui/badge";
-import { EntityWindowManager } from "~/components/ui/entity-window-manager";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { useUIActions } from "~/state/ui";
 

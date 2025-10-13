@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { listQuestsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { PageHeader } from "~/components/page-header";
@@ -18,9 +17,6 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data, isLoading } = useListQuestsSuspenseQuery(gameId);
-	const [searchQuery, setSearchQuery] = useState("");
-	const [tagFilter, setTagFilter] = useState("");
-	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	const quests = data?.data || [];
@@ -40,16 +36,7 @@ function RouteComponent() {
 				description="Browse all quests in your game."
 				handleCreate={handleCreate}
 			/>
-			<QuestsTable
-				gameId={gameId}
-				data={quests}
-				searchQuery={searchQuery}
-				onSearchChange={setSearchQuery}
-				tagFilter={tagFilter}
-				onTagFilterChange={setTagFilter}
-				paginationSize={paginationSize}
-				onPaginationSizeChange={setPaginationSize}
-			/>
+			<QuestsTable gameId={gameId} data={quests} />
 		</Container>
 	);
 }

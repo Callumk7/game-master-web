@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import * as React from "react";
 import { toast } from "sonner";
 import type { Quest } from "~/api";
 import {
@@ -7,17 +8,19 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { EntityLinksTable } from "~/components/links/entity-links-table";
+import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
+import type { GenericLinksResponse } from "~/components/links/types";
+import { flattenLinksForTable } from "~/components/links/utils";
 import { ObjectivesView } from "~/components/quests/objectives-view";
 import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import {
 	useDeleteQuestMutation,
 	useGetQuestSuspenseQuery,
 	useUpdateQuestMutation,
 } from "~/queries/quests";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/$id/")({
 	component: RouteComponent,
@@ -43,7 +46,6 @@ function RouteComponent() {
 }
 
 // MAIN VIEW COMPONENT
-
 interface QuestViewProps {
 	quest: Quest;
 	gameId: string;
@@ -122,6 +124,11 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		/>
 	);
 
+	const columns = React.useMemo(
+		() => createBaseLinkTableColumns(gameId, quest.id, "quest"),
+		[gameId, quest.id],
+	);
+
 	const linksTab = (
 		<div className="space-y-4">
 			<QuestLinksPopover gameId={gameId} questId={quest.id} />
@@ -136,9 +143,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
-					gameId={gameId}
-					sourceId={quest.id}
-					sourceType="quest"
+					columns={columns}
 				/>
 			)}
 		</div>

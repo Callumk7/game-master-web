@@ -2,7 +2,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Quest } from "~/api/types.gen";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ActionsDropdown,
 	ContentDisplay,
@@ -12,19 +11,14 @@ import {
 	SortableHeader,
 	StatusDisplay,
 	TagsDisplay,
-} from "~/components/ui/entity-table";
+} from "~/components/ui/composite/entity-table";
 import { useDeleteQuestMutation } from "~/queries/quests";
+import { EntityLinkButton } from "../links/entity-link-button";
 import { EditQuestDialog } from "./edit-quest-dialog";
 
 interface QuestsTableProps {
 	data: Quest[];
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
 	gameId: string;
-	paginationSize?: number;
-	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
@@ -127,31 +121,16 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 	];
 }
 
-export function QuestsTable({
-	data,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
-	gameId,
-	paginationSize = 10,
-	onPaginationSizeChange,
-}: QuestsTableProps) {
+export function QuestsTable({ data, gameId }: QuestsTableProps) {
 	const columns = createQuestColumns(gameId);
 
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
-			searchQuery={searchQuery}
-			onSearchChange={onSearchChange}
-			tagFilter={tagFilter}
-			onTagFilterChange={onTagFilterChange}
 			entityName="quest"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
-			paginationSize={paginationSize}
-			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

@@ -1,9 +1,9 @@
 import * as React from "react";
-import { CanvasNodeMap } from "~/components/canvas-node-map";
 import { Card } from "~/components/ui/card";
 import { cn } from "~/utils/cn";
 import { useForceSimulation } from "../hooks/use-force-simulation";
 import type { ForceSimulationConfig, NodeViewerProps, ViewTransform } from "../types";
+import { CanvasNodeMap } from "./canvas-node-map";
 import { Controls } from "./controls";
 import { SvgNodeRenderer } from "./svg-node-renderer";
 

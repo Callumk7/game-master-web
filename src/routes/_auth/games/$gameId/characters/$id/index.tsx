@@ -1,4 +1,5 @@
 import { ClientOnly, createFileRoute, Navigate } from "@tanstack/react-router";
+import * as React from "react";
 import { toast } from "sonner";
 import type { Character } from "~/api";
 import {
@@ -12,15 +13,17 @@ import { CharacterNotesView } from "~/components/characters/character-note-view"
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { EntityLinksTable } from "~/components/links/entity-links-table";
+import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
+import type { GenericLinksResponse } from "~/components/links/types";
+import { flattenLinksForTable } from "~/components/links/utils";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import {
 	useDeleteCharacterMutation,
 	useGetCharacterSuspenseQuery,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id/")({
 	component: RouteComponent,
@@ -131,6 +134,11 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		/>
 	);
 
+	const columns = React.useMemo(
+		() => createBaseLinkTableColumns(gameId, character.id, "character"),
+		[gameId, character.id],
+	);
+
 	const linksTab = (
 		<div className="space-y-4">
 			<CreateCharacterLink gameId={gameId} characterId={character.id} />
@@ -159,9 +167,7 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 						links={flattenLinksForTable(
 							linksResponse as GenericLinksResponse,
 						)}
-						gameId={gameId}
-						sourceType="character"
-						sourceId={character.id}
+						columns={columns}
 					/>
 				</>
 			)}
@@ -187,13 +193,7 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		{
 			id: "faction",
 			label: "Faction",
-			content: (
-				<CharacterFactionView
-					gameId={gameId}
-					characterId={character.id}
-					primaryFactionId={character.member_of_faction_id}
-				/>
-			),
+			content: <CharacterFactionView gameId={gameId} characterId={character.id} />,
 		},
 		{
 			id: "images",

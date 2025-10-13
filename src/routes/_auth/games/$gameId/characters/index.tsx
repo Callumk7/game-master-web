@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
 import { Container } from "~/components/container";
@@ -19,9 +18,6 @@ function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useListCharactersSuspenseQuery(gameId);
 	const characters = data?.data || [];
-	const [searchQuery, setSearchQuery] = useState("");
-	const [tagFilter, setTagFilter] = useState("");
-	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	const handleCreate = () => {
@@ -35,16 +31,7 @@ function RouteComponent() {
 				description="Browse all characters in your game."
 				handleCreate={handleCreate}
 			/>
-			<CharacterTable
-				gameId={gameId}
-				data={characters}
-				searchQuery={searchQuery}
-				onSearchChange={setSearchQuery}
-				tagFilter={tagFilter}
-				onTagFilterChange={setTagFilter}
-				paginationSize={paginationSize}
-				onPaginationSizeChange={setPaginationSize}
-			/>
+			<CharacterTable gameId={gameId} data={characters} />
 		</Container>
 	);
 }

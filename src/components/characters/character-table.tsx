@@ -10,21 +10,15 @@ import {
 	EntityTable,
 	SortableHeader,
 	TagsDisplay,
-} from "~/components/ui/entity-table";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
+} from "~/components/ui/composite/entity-table";
 import { useDeleteCharacterMutation } from "~/queries/characters";
+import { EntityLinkButton } from "../links/entity-link-button";
 import { Badge } from "../ui/badge";
 import { EditCharacterDialog } from "./edit-character-dialog";
 
 interface CharacterTableProps {
 	data: Character[];
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
 	gameId: string;
-	paginationSize?: number;
-	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
@@ -148,31 +142,16 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 	];
 }
 
-export function CharacterTable({
-	data,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
-	gameId,
-	paginationSize = 10,
-	onPaginationSizeChange,
-}: CharacterTableProps) {
+export function CharacterTable({ data, gameId }: CharacterTableProps) {
 	const columns = createCharacterColumns(gameId);
 
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
-			searchQuery={searchQuery}
-			onSearchChange={onSearchChange}
-			tagFilter={tagFilter}
-			onTagFilterChange={onTagFilterChange}
 			entityName="character"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
-			paginationSize={paginationSize}
-			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

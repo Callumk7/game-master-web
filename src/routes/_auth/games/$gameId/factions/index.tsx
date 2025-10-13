@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { FactionsTable } from "~/components/factions/factions-table";
@@ -18,9 +17,6 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data, isLoading } = useListFactionsSuspenseQuery(gameId);
-	const [searchQuery, setSearchQuery] = useState("");
-	const [tagFilter, setTagFilter] = useState("");
-	const [paginationSize, setPaginationSize] = useState(10);
 	const navigate = useNavigate();
 
 	const factions = data?.data || [];
@@ -40,16 +36,7 @@ function RouteComponent() {
 				description="Browse all factions in your game."
 				handleCreate={handleCreate}
 			/>
-			<FactionsTable
-				gameId={gameId}
-				data={factions}
-				searchQuery={searchQuery}
-				onSearchChange={setSearchQuery}
-				tagFilter={tagFilter}
-				onTagFilterChange={setTagFilter}
-				paginationSize={paginationSize}
-				onPaginationSizeChange={setPaginationSize}
-			/>
+			<FactionsTable gameId={gameId} data={factions} />
 		</Container>
 	);
 }

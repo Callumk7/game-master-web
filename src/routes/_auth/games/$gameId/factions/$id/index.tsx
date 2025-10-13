@@ -5,25 +5,24 @@ import type { Faction } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
 	useGetFactionLinksQuery,
-	useGetFactionMembersQuery,
 } from "~/api/@tanstack/react-query.gen";
-import { CharacterTable } from "~/components/characters/character-table";
-import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { CreateFactionLink } from "~/components/factions/create-faction-link";
 import { FactionImages } from "~/components/factions/faction-images";
 import { FactionNoteView } from "~/components/factions/faction-note-view";
+import { MembersView } from "~/components/factions/members-view";
+import { EntityLinksTable } from "~/components/links/entity-links-table";
+import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
+import type { GenericLinksResponse } from "~/components/links/types";
+import { flattenLinksForTable } from "~/components/links/utils";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import {
 	useDeleteFactionMutation,
 	useFactionSuspenseQuery,
 	useUpdateFactionMutation,
 } from "~/queries/factions";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/$id/")({
 	component: RouteComponent,
@@ -125,6 +124,11 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		/>
 	);
 
+	const columns = React.useMemo(
+		() => createBaseLinkTableColumns(gameId, faction.id, "faction"),
+		[gameId, faction.id],
+	);
+
 	const linksTab = (
 		<div className="space-y-4">
 			<CreateFactionLink gameId={gameId} factionId={faction.id} />
@@ -139,9 +143,7 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
-					gameId={gameId}
-					sourceId={faction.id}
-					sourceType={"faction"}
+					columns={columns}
 				/>
 			)}
 		</div>
@@ -191,38 +193,5 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
 		/>
-	);
-}
-
-interface FactionMembersViewProps {
-	factionId: string;
-	gameId: string;
-}
-function MembersView({ factionId, gameId }: FactionMembersViewProps) {
-	const { data: memberData } = useGetFactionMembersQuery({
-		path: { game_id: gameId, faction_id: factionId },
-	});
-	const members = memberData?.data?.members || [];
-	const [searchQuery, setSearchQuery] = React.useState("");
-	const [tagFilter, setTagFilter] = React.useState("");
-	const [isOpen, setIsOpen] = React.useState(false);
-
-	return (
-		<div className="space-y-4">
-			<Button onClick={() => setIsOpen(true)}>Create Character</Button>
-			<CharacterTable
-				gameId={gameId}
-				data={members}
-				searchQuery={searchQuery}
-				onSearchChange={setSearchQuery}
-				tagFilter={tagFilter}
-				onTagFilterChange={setTagFilter}
-			/>
-			<CreateCharacterSheet
-				isOpen={isOpen}
-				setIsOpen={setIsOpen}
-				factionId={factionId}
-			/>
-		</div>
 	);
 }

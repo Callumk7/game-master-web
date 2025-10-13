@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { EntityLink } from "~/utils/linkHelpers";
+import type { EntityLink } from "~/components/links/types";
 
 interface EntityWindow {
 	id: string;

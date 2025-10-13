@@ -2,7 +2,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 
 import type { Location } from "~/api/types.gen";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
 import {
 	ActionsDropdown,
 	DateDisplay,
@@ -10,20 +9,15 @@ import {
 	EntityTable,
 	SortableHeader,
 	TagsDisplay,
-} from "~/components/ui/entity-table";
+} from "~/components/ui/composite/entity-table";
 import { useDeleteLocationMutation } from "~/queries/locations";
+import { EntityLinkButton } from "../links/entity-link-button";
 import { Badge } from "../ui/badge";
 import { EditLocationDialog } from "./edit-location-dialog";
 
 interface LocationsTableProps {
 	data: Location[];
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
 	gameId: string;
-	paginationSize?: number;
-	onPaginationSizeChange?: (size: number) => void;
 }
 
 function createLocationColumns(gameId: string): ColumnDef<Location>[] {
@@ -117,31 +111,16 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 	];
 }
 
-export function LocationsTable({
-	data,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
-	gameId,
-	paginationSize = 10,
-	onPaginationSizeChange,
-}: LocationsTableProps) {
+export function LocationsTable({ data, gameId }: LocationsTableProps) {
 	const columns = createLocationColumns(gameId);
 
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
-			searchQuery={searchQuery}
-			onSearchChange={onSearchChange}
-			tagFilter={tagFilter}
-			onTagFilterChange={onTagFilterChange}
 			entityName="location"
 			searchPlaceholder="Filter names..."
 			tagPlaceholder="Filter tags..."
-			paginationSize={paginationSize}
-			onPaginationSizeChange={onPaginationSizeChange}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

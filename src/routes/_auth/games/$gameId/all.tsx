@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import { AllEntitiesTable, type AllEntity } from "~/components/all-entities-table";
 import { Container } from "~/components/container";
 import { PageHeader } from "~/components/page-header";
@@ -13,9 +12,6 @@ export const Route = createFileRoute("/_auth/games/$gameId/all")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useGetGameLinksSuspenseQuery({ id: gameId });
-	const [searchQuery, setSearchQuery] = useState("");
-	const [tagFilter, setTagFilter] = useState("");
-	const [paginationSize, setPaginationSize] = useState(15);
 
 	// Transform the API response into our AllEntity format
 	const allEntities: AllEntity[] = [];
@@ -80,16 +76,7 @@ function RouteComponent() {
 				title="All Entities"
 				description="Browse all characters, factions, locations, notes, and quests in your game."
 			/>
-			<AllEntitiesTable
-				entities={allEntities}
-				gameId={gameId}
-				searchQuery={searchQuery}
-				onSearchChange={setSearchQuery}
-				tagFilter={tagFilter}
-				onTagFilterChange={setTagFilter}
-				paginationSize={paginationSize}
-				onPaginationSizeChange={setPaginationSize}
-			/>
+			<AllEntitiesTable entities={allEntities} gameId={gameId} />
 		</Container>
 	);
 }

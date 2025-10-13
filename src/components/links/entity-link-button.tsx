@@ -1,7 +1,7 @@
 import { SquareArrowDownRight } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useUIActions } from "~/state/ui";
-import type { EntityLink } from "~/utils/linkHelpers";
+import type { EntityLink } from "./types";
 
 interface EntityLinkButtonProps {
 	entity: EntityLink;

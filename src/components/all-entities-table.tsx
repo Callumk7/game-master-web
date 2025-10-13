@@ -5,6 +5,14 @@ import * as React from "react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
+	ContentDisplay,
+	DateDisplay,
+	EntityLink,
+	EntityTable,
+	SortableHeader,
+	TagsDisplay,
+} from "~/components/ui/composite/entity-table";
+import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
@@ -12,16 +20,8 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { EntityLinkButton } from "~/components/ui/entity-link-button";
-import {
-	ContentDisplay,
-	DateDisplay,
-	EntityLink,
-	EntityTable,
-	SortableHeader,
-	TagsDisplay,
-} from "~/components/ui/entity-table";
 import type { EntityType } from "~/types";
+import { EntityLinkButton } from "./links/entity-link-button";
 
 export type AllEntity = {
 	id: string;
@@ -43,24 +43,9 @@ export type AllEntity = {
 interface AllEntitiesTableProps {
 	entities: AllEntity[];
 	gameId: string;
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	tagFilter: string;
-	onTagFilterChange: (tag: string) => void;
-	paginationSize?: number;
-	onPaginationSizeChange?: (size: number) => void;
 }
 
-export function AllEntitiesTable({
-	entities,
-	gameId,
-	searchQuery,
-	onSearchChange,
-	tagFilter,
-	onTagFilterChange,
-	paginationSize = 15,
-	onPaginationSizeChange,
-}: AllEntitiesTableProps) {
+export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 	const [typeFilter, setTypeFilter] = React.useState<string>("all");
 
 	// Filter entities by type before passing to EntityTable
@@ -186,15 +171,9 @@ export function AllEntitiesTable({
 			<EntityTable
 				columns={columns}
 				data={filteredEntities}
-				searchQuery={searchQuery}
-				onSearchChange={onSearchChange}
-				tagFilter={tagFilter}
-				onTagFilterChange={onTagFilterChange}
 				entityName="entity"
 				searchPlaceholder="Search entities..."
 				tagPlaceholder="Filter tags..."
-				paginationSize={paginationSize}
-				onPaginationSizeChange={onPaginationSizeChange}
 				enableColumnVisibility={true}
 				enablePaginationSizeSelector={true}
 				defaultHidden={["content_plain_text"]}

@@ -1,15 +1,19 @@
-export { NodeViewer } from "./components/node-viewer";
 export { Controls } from "./components/controls";
+export { NodeViewer } from "./components/node-viewer";
 export { SvgNodeRenderer } from "./components/svg-node-renderer";
 export { useForceSimulation } from "./hooks/use-force-simulation";
-export { extractNodesAndConnections, createDefaultNodeExtractor } from "./utils/data-extraction";
 export type {
-	NodePosition,
 	Connection,
-	ViewTransform,
-	NodeConfig,
-	NodeTypeConfig,
 	ForceSimulationConfig,
-	NodeViewerProps,
 	GenericNode,
+	NodeConfig,
+	NodePosition,
+	NodeTypeConfig,
+	NodeViewerProps,
+	ViewTransform,
 } from "./types";
+export {
+	createDefaultNodeExtractor,
+	extractNodesAndConnections,
+} from "./utils/data-extraction";
+

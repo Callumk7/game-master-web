@@ -75,7 +75,7 @@ export const listLocations = <ThrowOnError extends boolean = false>(options: Opt
 
 /**
  * Create location
- * Create a new location in the game
+ * Create a new location in the game with optional entity links
  */
 export const createLocation = <ThrowOnError extends boolean = false>(options: Options<CreateLocationData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).post<CreateLocationResponses, CreateLocationErrors, ThrowOnError>({
@@ -316,7 +316,7 @@ export const listFactions = <ThrowOnError extends boolean = false>(options: Opti
 
 /**
  * Create faction
- * Create a new faction in the game
+ * Create a new faction in the game with optional entity links
  */
 export const createFaction = <ThrowOnError extends boolean = false>(options: Options<CreateFactionData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).post<CreateFactionResponses, CreateFactionErrors, ThrowOnError>({
@@ -608,7 +608,7 @@ export const pinCharacter = <ThrowOnError extends boolean = false>(options: Opti
 
 /**
  * Get faction members
- * Get all characters that are members of a faction (using member_of_faction_id)
+ * Get all characters that have this faction as their primary faction
  */
 export const getFactionMembers = <ThrowOnError extends boolean = false>(options: Options<GetFactionMembersData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).get<GetFactionMembersResponses, GetFactionMembersErrors, ThrowOnError>({
@@ -642,7 +642,7 @@ export const listQuests = <ThrowOnError extends boolean = false>(options: Option
 
 /**
  * Create quest
- * Create a new quest in the game
+ * Create a new quest in the game with optional entity links
  */
 export const createQuest = <ThrowOnError extends boolean = false>(options: Options<CreateQuestData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).post<CreateQuestResponses, CreateQuestErrors, ThrowOnError>({
@@ -790,7 +790,7 @@ export const listCharacters = <ThrowOnError extends boolean = false>(options: Op
 
 /**
  * Create character
- * Create a new character in the game
+ * Create a new character in the game with optional entity links (factions, locations, etc.)
  */
 export const createCharacter = <ThrowOnError extends boolean = false>(options: Options<CreateCharacterData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).post<CreateCharacterResponses, CreateCharacterErrors, ThrowOnError>({
@@ -1489,7 +1489,7 @@ export const listNotes = <ThrowOnError extends boolean = false>(options: Options
 
 /**
  * Create a note
- * Create a new note for the specified game
+ * Create a new note for the specified game with optional entity links
  */
 export const createNote = <ThrowOnError extends boolean = false>(options: Options<CreateNoteData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).post<CreateNoteResponses, CreateNoteErrors, ThrowOnError>({

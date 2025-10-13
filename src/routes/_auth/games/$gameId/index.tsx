@@ -4,8 +4,8 @@ import {
 	useGetGameEntityTreeQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
-import { NodeMap } from "~/components/node-map";
-import { StatCard } from "~/components/stat-card";
+import { NodeMap } from "~/components/dashboard/node-map";
+import { StatCard } from "~/components/dashboard/stat-card";
 import { Link } from "~/components/ui/link";
 import { useGetGameLinksSuspenseQuery, useGetGameSuspenseQuery } from "~/queries/games";
 

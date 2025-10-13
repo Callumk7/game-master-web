@@ -60,7 +60,14 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 			onSubmit: async ({ value }) => {
 				try {
 					// Convert editor objects to strings before validation
-					const processedValue = processFormValuesForSubmission(value, fields);
+					const { processed: processedValue, mentions } =
+						processFormValuesForSubmission(value, fields);
+
+					// Convert mentions to links
+					const links = mentions.map((mention) => ({
+						entity_type: mention.type,
+						entity_id: mention.id,
+					}));
 
 					// Auto-extend schema to include _plain_text fields for editor fields
 					const extendedSchema = fields.reduce((acc, field) => {
@@ -74,7 +81,7 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 
 					const validatedData = extendedSchema.parse(processedValue);
 					const fullData = {
-						body: { [entityName]: validatedData },
+						body: { [entityName]: validatedData, links },
 					} as unknown as Options<TMutationData>;
 
 					await mutationInstance.mutateAsync(fullData);
@@ -131,7 +138,11 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 										}
 
 										// Use Zod for real-time validation, but be lenient during typing
-										return validateSchemaField(schema, fieldConfig.name, value);
+										return validateSchemaField(
+											schema,
+											fieldConfig.name,
+											value,
+										);
 									},
 								}}
 							>
@@ -261,7 +272,14 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		onSubmit: async ({ value }) => {
 			try {
 				// Convert editor objects to strings before validation
-				const processedValue = processFormValuesForSubmission(value, fields);
+				const { processed: processedValue, mentions } =
+					processFormValuesForSubmission(value, fields);
+
+				// Convert mentions to links
+				const links = mentions.map((mention) => ({
+					entity_type: mention.type,
+					entity_id: mention.id,
+				}));
 
 				// Auto-extend schema to include _plain_text fields for editor fields
 				const extendedSchema = fields.reduce((acc, field) => {
@@ -275,7 +293,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 
 				const validatedData = extendedSchema.parse(processedValue);
 				const fullData = {
-					body: { [entityName]: validatedData },
+					body: { [entityName]: validatedData, links },
 				} as unknown as Options<TMutationData>;
 
 				await mutationInstance.mutateAsync(fullData);

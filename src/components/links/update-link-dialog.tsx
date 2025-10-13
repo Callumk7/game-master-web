@@ -16,8 +16,8 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import type { EntityType } from "~/types";
-import type { EntityLink } from "~/utils/linkHelpers";
 import { useUpdateLink } from "../links/hooks/useUpdateLink";
+import type { EntityLink } from "./types";
 
 interface UpdateLinkDialogProps {
 	link: EntityLink;
@@ -38,7 +38,24 @@ export function UpdateLinkDialog({
 	);
 	const [description, setDescription] = useState(link.description_meta || "");
 	const [isActive, setIsActive] = useState(link.is_active ?? true);
-	const [strength, setStrength] = useState(link.strength || "");
+
+	// Special fields for specific link types
+	const [isCurrentLocation, setIsCurrentLocation] = useState(
+		link.is_current_location ?? false,
+	);
+	const [isPrimary, setIsPrimary] = useState(link.is_primary ?? false);
+	const [factionRole, setFactionRole] = useState(link.faction_role || "");
+
+	// Helper functions to determine which special fields to show (bidirectional)
+	const isCharacterLocationLink =
+		(sourceType === "character" && link.type === "location") ||
+		(sourceType === "location" && link.type === "character");
+	const isCharacterFactionLink =
+		(sourceType === "character" && link.type === "faction") ||
+		(sourceType === "faction" && link.type === "character");
+	const isFactionLocationLink =
+		(sourceType === "faction" && link.type === "location") ||
+		(sourceType === "location" && link.type === "faction");
 
 	const updateLink = useUpdateLink(
 		() => {
@@ -54,6 +71,26 @@ export function UpdateLinkDialog({
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
+		const baseData = {
+			relationship_type: relationshipType || undefined,
+			description: description || undefined,
+			is_active: isActive,
+		};
+
+		// Add special fields based on link type
+		const specialFields: Record<string, unknown> = {};
+
+		if (isCharacterLocationLink || isFactionLocationLink) {
+			specialFields.is_current_location = isCurrentLocation;
+		}
+
+		if (isCharacterFactionLink) {
+			specialFields.is_primary = isPrimary;
+			if (factionRole) {
+				specialFields.faction_role = factionRole;
+			}
+		}
+
 		updateLink.mutate({
 			gameId,
 			sourceType,
@@ -61,10 +98,8 @@ export function UpdateLinkDialog({
 			targetType: link.type,
 			targetId: link.id,
 			data: {
-				relationship_type: relationshipType || undefined,
-				description: description || undefined,
-				is_active: isActive,
-				strength: strength ? Number(strength) : undefined,
+				...baseData,
+				...specialFields,
 			},
 		});
 	};
@@ -108,19 +143,6 @@ export function UpdateLinkDialog({
 						/>
 					</div>
 
-					<div className="space-y-2">
-						<Label htmlFor="strength">Relationship Strength (1-10)</Label>
-						<Input
-							id="strength"
-							type="number"
-							min="1"
-							max="10"
-							value={strength}
-							onChange={(e) => setStrength(e.target.value)}
-							placeholder="Optional strength rating"
-						/>
-					</div>
-
 					<div className="flex items-center space-x-2">
 						<Checkbox
 							id="is-active"
@@ -129,6 +151,63 @@ export function UpdateLinkDialog({
 						/>
 						<Label htmlFor="is-active">Active relationship</Label>
 					</div>
+
+					{/* Character-Location specific fields */}
+					{isCharacterLocationLink && (
+						<div className="flex items-center space-x-2">
+							<Checkbox
+								id="is-current-location"
+								checked={isCurrentLocation}
+								onCheckedChange={(checked) =>
+									setIsCurrentLocation(checked === true)
+								}
+							/>
+							<Label htmlFor="is-current-location">Current location</Label>
+						</div>
+					)}
+
+					{/* Character-Faction specific fields */}
+					{isCharacterFactionLink && (
+						<>
+							<div className="flex items-center space-x-2">
+								<Checkbox
+									id="is-primary-faction"
+									checked={isPrimary}
+									onCheckedChange={(checked) =>
+										setIsPrimary(checked === true)
+									}
+								/>
+								<Label htmlFor="is-primary-faction">
+									Primary faction
+								</Label>
+							</div>
+							<div className="space-y-2">
+								<Label htmlFor="faction-role">Role in faction</Label>
+								<Input
+									id="faction-role"
+									value={factionRole}
+									onChange={(e) => setFactionRole(e.target.value)}
+									placeholder="e.g., member, leader, spy"
+								/>
+							</div>
+						</>
+					)}
+
+					{/* Faction-Location specific fields */}
+					{isFactionLocationLink && (
+						<div className="flex items-center space-x-2">
+							<Checkbox
+								id="is-current-location-faction"
+								checked={isCurrentLocation}
+								onCheckedChange={(checked) =>
+									setIsCurrentLocation(checked === true)
+								}
+							/>
+							<Label htmlFor="is-current-location-faction">
+								Current location
+							</Label>
+						</div>
+					)}
 
 					<DialogFooter>
 						<Button

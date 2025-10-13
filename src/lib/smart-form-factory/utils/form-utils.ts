@@ -1,10 +1,16 @@
+import {
+	type ExtractedMention,
+	extractMentionsFromJSON,
+	getUniqueMentions,
+} from "~/components/ui/editor/mention-utils";
 import type { FieldConfig } from "../types";
 
 /**
  * Process initial values for form fields, handling editor field conversions
  */
 export const processInitialValues = (
-	// biome-ignore lint/suspicious/noExplicitAny: Appropriate, we cannot know at compile time what felds will exist or their types. We make up for this with FieldConfig. See notes/use-of-any.md
+	// we cannot know at compile time what felds will exist or their types. We make up for this with FieldConfig. See notes/use-of-any.md
+	// biome-ignore lint/suspicious/noExplicitAny: Appropriate ^
 	initialValues: Record<string, any>,
 	fields: FieldConfig[],
 ) => {
@@ -58,11 +64,13 @@ export const processInitialValues = (
  * Process form values for submission, handling editor field conversions
  */
 export const processFormValuesForSubmission = (
-	// biome-ignore lint/suspicious/noExplicitAny: Appropriate, we cannot know at compile time what felds will exist or their types. We make up for this with FieldConfig. See notes/use-of-any.md
+	// we cannot know at compile time what felds will exist or their types. We make up for this with FieldConfig. See notes/use-of-any.md
+	// biome-ignore lint/suspicious/noExplicitAny: Appropriate ^
 	value: Record<string, any>,
 	fields: FieldConfig[],
 ) => {
 	const processed = { ...value };
+	let mentions: ExtractedMention[] = [];
 
 	fields.forEach((field) => {
 		const fieldValue = processed[field.name];
@@ -77,6 +85,9 @@ export const processFormValuesForSubmission = (
 		) {
 			// Set the main field to the JSON string
 			processed[field.name] = JSON.stringify(fieldValue.json);
+			// Can we handle extracting mentions here?
+			mentions = extractMentionsFromJSON(fieldValue.json);
+
 			// Set the plain text field
 			processed[`${field.name}_plain_text`] = fieldValue.text;
 		} else if (
@@ -91,5 +102,7 @@ export const processFormValuesForSubmission = (
 		// If it's null/undefined, leave it as is
 	});
 
-	return processed;
+	mentions = getUniqueMentions(mentions);
+
+	return { processed, mentions };
 };

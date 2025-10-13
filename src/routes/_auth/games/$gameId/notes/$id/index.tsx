@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import * as React from "react";
 import { toast } from "sonner";
 import type { Note } from "~/api";
 import {
@@ -7,17 +8,19 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
+import { EntityLinksTable } from "~/components/links/entity-links-table";
+import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
+import type { GenericLinksResponse } from "~/components/links/types";
+import { flattenLinksForTable } from "~/components/links/utils";
 import { NoteImages } from "~/components/notes/note-images";
 import { NoteLinksPopover } from "~/components/notes/note-links-popover";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { EntityLinksTable } from "~/components/ui/entity-links-table";
 import {
 	useDeleteNoteMutation,
 	useNoteSuspenseQuery,
 	useUpdateNoteMutation,
 } from "~/queries/notes";
-import { flattenLinksForTable, type GenericLinksResponse } from "~/utils/linkHelpers";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/$id/")({
 	component: RouteComponent,
@@ -122,6 +125,11 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		/>
 	);
 
+	const columns = React.useMemo(
+		() => createBaseLinkTableColumns(gameId, note.id, "note"),
+		[gameId, note.id],
+	);
+
 	const linksTab = (
 		<div className="space-y-4">
 			<NoteLinksPopover gameId={gameId} noteId={note.id} />
@@ -136,9 +144,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			{!linksLoading && !linksError && linksResponse && (
 				<EntityLinksTable
 					links={flattenLinksForTable(linksResponse as GenericLinksResponse)}
-					gameId={gameId}
-					sourceId={note.id}
-					sourceType="note"
+					columns={columns}
 				/>
 			)}
 		</div>

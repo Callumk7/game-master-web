@@ -118,7 +118,7 @@ export const useListLocationsQuery = (options: Options<ListLocationsData>) => {
 
 /**
  * Create location
- * Create a new location in the game
+ * Create a new location in the game with optional entity links
  */
 export const createLocationMutation = (options?: Partial<Options<CreateLocationData>>): UseMutationOptions<CreateLocationResponse, CreateLocationError, Options<CreateLocationData>> => {
     const mutationOptions: UseMutationOptions<CreateLocationResponse, CreateLocationError, Options<CreateLocationData>> = {
@@ -407,7 +407,7 @@ export const useListFactionsQuery = (options: Options<ListFactionsData>) => {
 
 /**
  * Create faction
- * Create a new faction in the game
+ * Create a new faction in the game with optional entity links
  */
 export const createFactionMutation = (options?: Partial<Options<CreateFactionData>>): UseMutationOptions<CreateFactionResponse, CreateFactionError, Options<CreateFactionData>> => {
     const mutationOptions: UseMutationOptions<CreateFactionResponse, CreateFactionError, Options<CreateFactionData>> = {
@@ -763,7 +763,7 @@ export const getFactionMembersQueryKey = (options: Options<GetFactionMembersData
 
 /**
  * Get faction members
- * Get all characters that are members of a faction (using member_of_faction_id)
+ * Get all characters that have this faction as their primary faction
  */
 export const getFactionMembersOptions = (options: Options<GetFactionMembersData>) => {
     return queryOptions({
@@ -782,7 +782,7 @@ export const getFactionMembersOptions = (options: Options<GetFactionMembersData>
 
 /**
  * Get faction members
- * Get all characters that are members of a faction (using member_of_faction_id)
+ * Get all characters that have this faction as their primary faction
  */
 export const useGetFactionMembersQuery = (options: Options<GetFactionMembersData>) => {
     return useQuery(getFactionMembersOptions(options));
@@ -819,7 +819,7 @@ export const useListQuestsQuery = (options: Options<ListQuestsData>) => {
 
 /**
  * Create quest
- * Create a new quest in the game
+ * Create a new quest in the game with optional entity links
  */
 export const createQuestMutation = (options?: Partial<Options<CreateQuestData>>): UseMutationOptions<CreateQuestResponse, CreateQuestError, Options<CreateQuestData>> => {
     const mutationOptions: UseMutationOptions<CreateQuestResponse, CreateQuestError, Options<CreateQuestData>> = {
@@ -1068,7 +1068,7 @@ export const useListCharactersQuery = (options: Options<ListCharactersData>) => 
 
 /**
  * Create character
- * Create a new character in the game
+ * Create a new character in the game with optional entity links (factions, locations, etc.)
  */
 export const createCharacterMutation = (options?: Partial<Options<CreateCharacterData>>): UseMutationOptions<CreateCharacterResponse, CreateCharacterError, Options<CreateCharacterData>> => {
     const mutationOptions: UseMutationOptions<CreateCharacterResponse, CreateCharacterError, Options<CreateCharacterData>> = {
@@ -1906,7 +1906,7 @@ export const useListNotesQuery = (options: Options<ListNotesData>) => {
 
 /**
  * Create a note
- * Create a new note for the specified game
+ * Create a new note for the specified game with optional entity links
  */
 export const createNoteMutation = (options?: Partial<Options<CreateNoteData>>): UseMutationOptions<CreateNoteResponse, CreateNoteError, Options<CreateNoteData>> => {
     const mutationOptions: UseMutationOptions<CreateNoteResponse, CreateNoteError, Options<CreateNoteData>> = {
