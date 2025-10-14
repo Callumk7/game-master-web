@@ -1,10 +1,10 @@
 import { ErrorComponent } from "@tanstack/react-router";
 import { isApiError } from "~/utils/api-errors";
-import { parseApiError } from "~/utils/error-parser";
+import { parseApiErrors } from "~/utils/parse-errors";
 
 export function BasicErrorComponent({ error }: { error: unknown }) {
 	if (isApiError(error)) {
-		const parsedError = parseApiError(error.errors);
+		const parsedError = parseApiErrors(error);
 		return <ErrorComponent error={parsedError} />;
 	}
 

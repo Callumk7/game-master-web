@@ -131,6 +131,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 							onEdit={() => setEditModalOpen(true)}
 						/>
 						<EditCharacterDialog
+							gameId={gameId}
 							isOpen={editModalOpen}
 							setIsOpen={setEditModalOpen}
 							character={character}

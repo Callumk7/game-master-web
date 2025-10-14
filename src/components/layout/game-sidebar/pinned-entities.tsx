@@ -1,6 +1,16 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { MoreHorizontal } from "lucide-react";
+import {
+	ArrowRight,
+	Gem,
+	MapPin,
+	MoreHorizontal,
+	Pin,
+	Scroll,
+	Shield,
+	Trash2,
+	User,
+} from "lucide-react";
 import {
 	listGameEntitiesQueryKey,
 	listPinnedEntitiesQueryKey,
@@ -41,6 +51,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 							to={"/games/$gameId/notes/$id"}
 							params={{ gameId, id: item.id }}
 						>
+							<Scroll />
 							{item.name}
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
@@ -57,6 +68,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 							to={"/games/$gameId/characters/$id"}
 							params={{ gameId, id: item.id }}
 						>
+							<User />
 							{item.name}
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
@@ -73,6 +85,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 							to={"/games/$gameId/factions/$id"}
 							params={{ gameId, id: item.id }}
 						>
+							<Shield />
 							{item.name}
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
@@ -89,6 +102,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 							to={"/games/$gameId/locations/$id"}
 							params={{ gameId, id: item.id }}
 						>
+							<MapPin />
 							{item.name}
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
@@ -105,6 +119,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 							to={"/games/$gameId/quests/$id"}
 							params={{ gameId, id: item.id }}
 						>
+							<Gem />
 							{item.name}
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
@@ -191,10 +206,17 @@ function SidebarPinnedEntitiesDropdown({
 							})
 						}
 					>
+						<ArrowRight className="mr-1" />
 						Go
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={handleTogglePin}>Unpin</DropdownMenuItem>
-					<DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleTogglePin}>
+						<Pin className="mr-1" />
+						Unpin
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleDelete}>
+						<Trash2 className="mr-1" />
+						Delete
+					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenuPositioner>
 		</DropdownMenu>

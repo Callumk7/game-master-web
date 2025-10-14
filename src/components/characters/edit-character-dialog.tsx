@@ -3,12 +3,14 @@ import { EditEntityDialog } from "../edit-entity-dialog";
 import { EditCharacterForm } from "./edit-character-form";
 
 interface EditCharacterDialogProps {
+	gameId: string;
 	isOpen: boolean;
 	setIsOpen: (isOpen: boolean) => void;
 	character: Character;
 }
 
 export function EditCharacterDialog({
+	gameId,
 	isOpen,
 	setIsOpen,
 	character,
@@ -17,7 +19,7 @@ export function EditCharacterDialog({
 		<EditEntityDialog entity={character} isOpen={isOpen} setIsOpen={setIsOpen}>
 			<EditCharacterForm
 				initialData={character}
-				params={{ gameId: character.game_id, id: character.id }}
+				params={{ gameId, id: character.id }}
 			/>
 		</EditEntityDialog>
 	);

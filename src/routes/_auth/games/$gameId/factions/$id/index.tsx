@@ -189,6 +189,7 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			name={faction.name}
 			badges={badges}
 			tabs={tabs}
+			pinned={faction.pinned}
 			onEdit={() => navigate({ to: "edit" })}
 			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}

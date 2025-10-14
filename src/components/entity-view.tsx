@@ -21,6 +21,7 @@ import {
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Badge } from "./ui/badge";
 
 type EntityTab = {
 	id: string;
@@ -68,9 +69,9 @@ export function EntityView({
 					content_plain_text={content_plain_text}
 					name={name}
 					badges={badges}
+					pinned={pinned}
 					onEdit={onEdit}
 					onDelete={onDelete}
-					pinned={pinned}
 					onTogglePin={onTogglePin}
 				/>
 			</EntityTabs>
@@ -116,6 +117,7 @@ export function EntityViewHeader({
 				/>
 			</div>
 			{badges && <div className="mt-1">{badges}</div>}
+			{pinned && <Badge>Pinned</Badge>}
 			{primaryImage && <PrimaryImageBanner gameId={gameId} image={primaryImage} />}
 		</div>
 	);

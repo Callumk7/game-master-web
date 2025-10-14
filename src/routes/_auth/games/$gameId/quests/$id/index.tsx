@@ -183,6 +183,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 			name={quest.name}
 			badges={badges}
 			tabs={tabs}
+			pinned={quest.pinned}
 			onEdit={() => navigate({ to: "edit" })}
 			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}

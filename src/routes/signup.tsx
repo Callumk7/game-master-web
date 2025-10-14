@@ -3,7 +3,6 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { signupUser } from "~/api";
 import { Auth } from "~/components/auth";
-import { parseApiError } from "~/utils/error-parser";
 import { getAppSession } from "~/utils/session";
 
 export const signupFn = createServerFn({ method: "POST" })
@@ -11,12 +10,11 @@ export const signupFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const { data: signupData, error } = await signupUser({ body: data });
 
-		if (error?.errors) {
-			const parsedError = parseApiError(error.errors);
-			console.log(parsedError);
+		if (error) {
+			console.log(error);
 			return {
 				error: true,
-				message: parsedError.message,
+				message: error.errors,
 				userExists:
 					parsedError.field === "email" &&
 					parsedError.message === "has already been taken",

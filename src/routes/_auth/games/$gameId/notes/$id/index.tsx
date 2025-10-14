@@ -183,6 +183,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			content_plain_text={note.content_plain_text}
 			name={note.name}
 			badges={badges}
+			pinned={note.pinned}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
 			onTogglePin={handleTogglePin}

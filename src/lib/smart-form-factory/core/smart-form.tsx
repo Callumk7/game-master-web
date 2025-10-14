@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { CheckCircle, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { z } from "zod";
 import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
+import { parseApiErrors } from "~/utils/parse-errors";
 import type { ApiError, FieldConfig, HookFormOptions, SmartFormOptions } from "../types";
 import {
 	processFormValuesForSubmission,
@@ -102,16 +103,33 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 
 					// Handle API field errors
 					const apiError = error as ApiError;
-					if (apiError.fields) {
-						for (const [fieldName, messages] of Object.entries(
-							apiError.fields,
+					// Check for the new 'errors' property instead of 'fields'
+					if (apiError.errors && typeof apiError.errors === "object") {
+						for (const [fieldName, errorValue] of Object.entries(
+							apiError.errors,
 						)) {
-							form.setFieldMeta(fieldName, (prev) => ({
-								...prev,
-								errors: messages,
-							}));
+							let messages: string[] = [];
+
+							// Normalize the error(s) into a string array, as form libraries usually expect this.
+							if (typeof errorValue === "string") {
+								messages = [errorValue]; // API returned a single string
+							} else if (Array.isArray(errorValue)) {
+								// Ensure all items in the array are strings before assigning
+								messages = errorValue.filter(
+									(item) => typeof item === "string",
+								);
+							}
+
+							// Only update the field if we have valid error messages
+							if (messages.length > 0) {
+								form.setFieldMeta(fieldName, (prev) => ({
+									...prev,
+									errors: messages,
+								}));
+							}
 						}
 					}
+
 					throw error;
 				}
 			},
@@ -204,22 +222,6 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 					</form>
 				</form.AppForm>
 
-				{mutationInstance.isSuccess && (
-					<div className="mt-4 bg-green-50 dark:bg-green-950/50 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-md">
-						<div className="flex items-center">
-							<div className="flex-shrink-0">
-								<CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-							</div>
-							<div className="ml-3">
-								<p className="text-sm font-medium">Success!</p>
-								<p className="text-sm">
-									{entityName} saved successfully!
-								</p>
-							</div>
-						</div>
-					</div>
-				)}
-
 				{mutationInstance.isError && (
 					<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
 						<div className="flex items-center">
@@ -229,8 +231,7 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 							<div className="ml-3">
 								<p className="text-sm font-medium">Error</p>
 								<p className="text-sm">
-									{(mutationInstance.error as ApiError)?.message ||
-										"Something went wrong"}
+									{parseApiErrors(mutationInstance.error as ApiError)}
 								</p>
 							</div>
 						</div>
@@ -312,14 +313,33 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 				}
 
 				const apiError = error as ApiError;
-				if (apiError.fields) {
-					for (const [fieldName, messages] of Object.entries(apiError.fields)) {
-						form.setFieldMeta(fieldName, (prev) => ({
-							...prev,
-							errors: messages,
-						}));
+				// Check for the new 'errors' property instead of 'fields'
+				if (apiError.errors && typeof apiError.errors === "object") {
+					for (const [fieldName, errorValue] of Object.entries(
+						apiError.errors,
+					)) {
+						let messages: string[] = [];
+
+						// Normalize the error(s) into a string array, as form libraries usually expect this.
+						if (typeof errorValue === "string") {
+							messages = [errorValue]; // API returned a single string
+						} else if (Array.isArray(errorValue)) {
+							// Ensure all items in the array are strings before assigning
+							messages = errorValue.filter(
+								(item) => typeof item === "string",
+							);
+						}
+
+						// Only update the field if we have valid error messages
+						if (messages.length > 0) {
+							form.setFieldMeta(fieldName, (prev) => ({
+								...prev,
+								errors: messages,
+							}));
+						}
 					}
 				}
+
 				throw error;
 			}
 		},

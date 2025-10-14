@@ -1,5 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { CharacterUpdateParams } from "~/api";
 import {
@@ -20,7 +19,6 @@ interface EditCharacterFormProps {
 export function EditCharacterForm({ initialData, params }: EditCharacterFormProps) {
 	const { gameId, id } = params;
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 
 	// Create form component with proper context handling
 	const FormComponent = createSmartForm({
@@ -46,7 +44,6 @@ export function EditCharacterForm({ initialData, params }: EditCharacterFormProp
 					},
 				}),
 			});
-			navigate({ to: ".." });
 		},
 		schema: schemas.character.omit({ content: true }),
 		entityName: "character",
