@@ -14,6 +14,8 @@ export type {
 } from "./types";
 export {
 	createDefaultNodeExtractor,
+	createTreeNodeExtractor,
 	extractNodesAndConnections,
+	extractNodesAndConnectionsFromTree,
 } from "./utils/data-extraction";
 

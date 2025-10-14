@@ -1,9 +1,10 @@
+import { X } from "lucide-react";
 import { useEntityWindows, useUIActions } from "~/state/ui";
 import { cn } from "~/utils/cn";
 
 export function WindowTray() {
 	const entityWindows = useEntityWindows();
-	const { restoreEntityWindow } = useUIActions();
+	const { restoreEntityWindow, closeAllEntityWindows } = useUIActions();
 
 	const minimizedWindows = entityWindows.filter(
 		(window) => window.isOpen && window.isMinimized,
@@ -14,10 +15,32 @@ export function WindowTray() {
 	}
 
 	return (
-		<div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+		<div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 max-w-[80vw]">
 			<div className="bg-background/95 backdrop-blur-sm border rounded-lg shadow-lg px-3 py-2">
 				<div className="flex items-center gap-2">
-					{minimizedWindows.map((window) => (
+					{/* Close All Button */}
+					<button
+						type="button"
+						onClick={closeAllEntityWindows}
+						className={cn(
+							"flex items-center justify-center p-2 rounded-md text-sm",
+							"bg-destructive/10 hover:bg-destructive/20 text-destructive hover:text-destructive",
+							"border border-destructive/20 hover:border-destructive/30",
+							"focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2",
+							"transition-colors flex-shrink-0",
+						)}
+						title="Close all windows"
+						aria-label="Close all windows"
+					>
+						<X className="w-4 h-4" />
+					</button>
+					
+					{/* Separator */}
+					<div className="w-px h-6 bg-border/50 flex-shrink-0" />
+					
+					{/* Scrollable window tabs */}
+					<div className="flex items-center gap-2 overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border/30 hover:scrollbar-thumb-border/50">
+						{minimizedWindows.map((window) => (
 						<button
 							key={window.id}
 							type="button"
@@ -27,7 +50,7 @@ export function WindowTray() {
 								"bg-muted/50 hover:bg-muted transition-colors",
 								"border border-border/50 hover:border-border",
 								"focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-								"min-w-[120px] max-w-[200px]",
+								"min-w-[120px] max-w-[200px] flex-shrink-0",
 							)}
 							title={`Restore ${window.entity.name}`}
 						>
@@ -41,7 +64,8 @@ export function WindowTray() {
 								</span>
 							</div>
 						</button>
-					))}
+						))}
+					</div>
 				</div>
 			</div>
 		</div>
