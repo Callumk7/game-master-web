@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import {
 	CheckSquare,
 	FileText,
