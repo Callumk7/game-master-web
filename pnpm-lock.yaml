@@ -74,6 +74,9 @@ importers:
       '@tiptap/extension-heading':
         specifier: ^3.6.0
         version: 3.6.0(@tiptap/core@3.6.7(@tiptap/pm@3.6.7))
+      '@tiptap/extension-highlight':
+        specifier: ^3.6.7
+        version: 3.6.7(@tiptap/core@3.6.7(@tiptap/pm@3.6.7))
       '@tiptap/extension-history':
         specifier: ^3.6.0
         version: 3.6.0(@tiptap/extensions@3.6.7(@tiptap/core@3.6.7(@tiptap/pm@3.6.7))(@tiptap/pm@3.6.7))
@@ -1781,6 +1784,11 @@ packages:
 
   '@tiptap/extension-heading@3.6.7':
     resolution: {integrity: sha512-uuAkZ+WXr6jZ7x75Vim20V9o5RbaZmFAj/HjKjw6xgSUcMDL7dWdKNGO2v20iv6o8+MyZtD4ZCW0qfq401nA/Q==}
+    peerDependencies:
+      '@tiptap/core': ^3.6.7
+
+  '@tiptap/extension-highlight@3.6.7':
+    resolution: {integrity: sha512-Tf0JvAPqUBkIeEuJCdjC0Ns/B1g8uit463gpfuCXpJMCp+r2FVnCyvFDDyOeMI34v96IpNKtwQHm//6+vPvWdw==}
     peerDependencies:
       '@tiptap/core': ^3.6.7
 
@@ -5010,6 +5018,10 @@ snapshots:
       '@tiptap/core': 3.6.7(@tiptap/pm@3.6.7)
 
   '@tiptap/extension-heading@3.6.7(@tiptap/core@3.6.7(@tiptap/pm@3.6.7))':
+    dependencies:
+      '@tiptap/core': 3.6.7(@tiptap/pm@3.6.7)
+
+  '@tiptap/extension-highlight@3.6.7(@tiptap/core@3.6.7(@tiptap/pm@3.6.7))':
     dependencies:
       '@tiptap/core': 3.6.7(@tiptap/pm@3.6.7)
 

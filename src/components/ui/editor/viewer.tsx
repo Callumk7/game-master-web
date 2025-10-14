@@ -1,3 +1,4 @@
+import Highlight from "@tiptap/extension-highlight";
 import Image from "@tiptap/extension-image";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -24,6 +25,9 @@ export function TiptapViewer({ content, className }: TiptapViewerProps) {
 					keepMarks: true,
 					keepAttributes: false,
 				},
+			}),
+			Highlight.configure({
+				multicolor: false,
 			}),
 			Image.configure({
 				inline: false,

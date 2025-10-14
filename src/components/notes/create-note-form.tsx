@@ -4,16 +4,12 @@ import { toast } from "sonner";
 import { createNoteLink, type LinkRequest } from "~/api";
 import {
 	createNoteMutation,
-	getCharacterLinksQueryKey,
-	getFactionLinksQueryKey,
-	getLocationLinksQueryKey,
-	getNoteLinksQueryKey,
-	getQuestLinksQueryKey,
 	listGameEntitiesQueryKey,
 	listNotesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
+import { getLinkQueryKey } from "~/queries/utils";
 import type { EntityType } from "~/types";
 
 interface CreateNoteFormProps {
@@ -136,31 +132,4 @@ function createLinkRequest(link: { linkId: string; linkType: EntityType }): Link
 		entity_id: link.linkId,
 		entity_type: link.linkType,
 	};
-}
-
-function getLinkQueryKey(link: { linkId: string; linkType: EntityType }, gameId: string) {
-	switch (link.linkType) {
-		case "character":
-			return getCharacterLinksQueryKey({
-				path: { game_id: gameId, character_id: link.linkId },
-			});
-		case "faction":
-			return getFactionLinksQueryKey({
-				path: { game_id: gameId, faction_id: link.linkId },
-			});
-		case "location":
-			return getLocationLinksQueryKey({
-				path: { game_id: gameId, location_id: link.linkId },
-			});
-		case "note":
-			return getNoteLinksQueryKey({
-				path: { game_id: gameId, note_id: link.linkId },
-			});
-		case "quest":
-			return getQuestLinksQueryKey({
-				path: { game_id: gameId, quest_id: link.linkId },
-			});
-		default:
-			throw new Error("Invalid link type");
-	}
 }

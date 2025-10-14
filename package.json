@@ -39,6 +39,7 @@
 		"@tiptap/extension-gapcursor": "^3.6.0",
 		"@tiptap/extension-hard-break": "^3.6.0",
 		"@tiptap/extension-heading": "^3.6.0",
+		"@tiptap/extension-highlight": "^3.6.7",
 		"@tiptap/extension-history": "^3.6.0",
 		"@tiptap/extension-horizontal-rule": "^3.6.0",
 		"@tiptap/extension-image": "^3.6.7",

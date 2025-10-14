@@ -1,5 +1,6 @@
 import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
 import FileHandler from "@tiptap/extension-file-handler";
+import Highlight from "@tiptap/extension-highlight";
 import Image from "@tiptap/extension-image";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -11,6 +12,7 @@ import {
 	Heading1,
 	Heading2,
 	Heading3,
+	Highlighter,
 	Image as ImageIcon,
 	Italic,
 	Link,
@@ -219,6 +221,9 @@ export function Tiptap({
 				},
 			}),
 			BubbleMenuExtension,
+			Highlight.configure({
+				multicolor: false,
+			}),
 			Image.configure({
 				inline: false,
 				allowBase64: false,
@@ -353,6 +358,15 @@ export function Tiptap({
 					disabled={!editor.can().chain().focus().toggleCode().run()}
 				>
 					<Code className="h-4 w-4" />
+				</Toggle>
+
+				<Toggle
+					size="sm"
+					pressed={editor.isActive("highlight")}
+					onPressedChange={() => editor.chain().focus().toggleHighlight().run()}
+					disabled={!editor.can().chain().focus().toggleHighlight().run()}
+				>
+					<Highlighter className="h-4 w-4" />
 				</Toggle>
 
 				<Button
