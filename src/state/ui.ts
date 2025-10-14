@@ -5,6 +5,7 @@ interface EntityWindow {
 	id: string;
 	entity: EntityLink;
 	isOpen: boolean;
+	isMinimized: boolean;
 	position?: { x: number; y: number };
 	size?: { width: number; height: number };
 	zIndex: number;
@@ -32,6 +33,8 @@ interface Actions {
 	setIsTodoDrawerOpen: (isOpen: boolean) => void;
 	openEntityWindow: (entity: EntityLink) => void;
 	closeEntityWindow: (windowId: string) => void;
+	minimizeEntityWindow: (windowId: string) => void;
+	restoreEntityWindow: (windowId: string) => void;
 	updateWindowPosition: (windowId: string, position: { x: number; y: number }) => void;
 	updateWindowSize: (windowId: string, size: { width: number; height: number }) => void;
 	bringWindowToFront: (windowId: string) => void;
@@ -89,6 +92,7 @@ const useUIStore = create<Store>()((set, get) => ({
 				id: `${entity.type}-${entity.id}-${Date.now()}`,
 				entity,
 				isOpen: true,
+				isMinimized: false,
 				position: { x: offset, y: offset },
 				size: { width: 600, height: 400 },
 				zIndex: BASE_Z_INDEX + globalLayerCounter,
@@ -103,6 +107,30 @@ const useUIStore = create<Store>()((set, get) => ({
 			set({
 				entityWindows: get().entityWindows.map((w) =>
 					w.id === windowId ? { ...w, isOpen: false } : w,
+				),
+			});
+		},
+		minimizeEntityWindow: (windowId: string) => {
+			set({
+				entityWindows: get().entityWindows.map((w) =>
+					w.id === windowId ? { ...w, isMinimized: true } : w,
+				),
+			});
+		},
+		restoreEntityWindow: (windowId: string) => {
+			globalLayerCounter += 1;
+			const newZIndex = BASE_Z_INDEX + globalLayerCounter;
+			
+			set({
+				entityWindows: get().entityWindows.map((w) =>
+					w.id === windowId 
+						? { 
+							...w, 
+							isMinimized: false, 
+							zIndex: newZIndex, 
+							layerOrder: globalLayerCounter 
+						} 
+						: w,
 				),
 			});
 		},

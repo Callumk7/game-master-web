@@ -25,6 +25,7 @@ import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
 import { TodosDrawer } from "~/components/todos/todos-drawer";
 import { Badge } from "~/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
+import { WindowTray } from "~/components/layout/window-tray";
 import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
@@ -101,7 +102,7 @@ function RouteComponent() {
 								</div>
 							</header>
 							<EntityTabs />
-							<div className="mb-16">
+							<div className="mb-20">
 								<Outlet />
 							</div>
 						</main>
@@ -111,6 +112,7 @@ function RouteComponent() {
 						<CreateLocationSheet />
 						<CreateQuestSheet />
 						<EntityWindowManager />
+						<WindowTray />
 						<ClientOnly>
 							<TodosDrawer />
 						</ClientOnly>
