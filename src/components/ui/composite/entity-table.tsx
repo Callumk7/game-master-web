@@ -297,7 +297,9 @@ export function EntityTable<TData, TValue>({
 	columnRelativeWidths,
 	defaultHidden,
 }: EntityTableProps<TData, TValue>) {
-	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [sorting, setSorting] = React.useState<SortingState>([
+		{ id: "updated_at", desc: true },
+	]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
 		...defaultHidden?.reduce<Record<string, boolean>>((acc, key) => {

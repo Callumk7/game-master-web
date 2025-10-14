@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { signupUser } from "~/api";
 import { Auth } from "~/components/auth";
+import { parseApiErrors } from "~/utils/parse-errors";
 import { getAppSession } from "~/utils/session";
 
 export const signupFn = createServerFn({ method: "POST" })
@@ -14,10 +15,7 @@ export const signupFn = createServerFn({ method: "POST" })
 			console.log(error);
 			return {
 				error: true,
-				message: error.errors,
-				userExists:
-					parsedError.field === "email" &&
-					parsedError.message === "has already been taken",
+				message: parseApiErrors(error),
 			};
 		}
 
