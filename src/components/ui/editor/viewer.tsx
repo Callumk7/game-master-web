@@ -1,3 +1,4 @@
+import Image from "@tiptap/extension-image";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -22,6 +23,13 @@ export function TiptapViewer({ content, className }: TiptapViewerProps) {
 				orderedList: {
 					keepMarks: true,
 					keepAttributes: false,
+				},
+			}),
+			Image.configure({
+				inline: false,
+				allowBase64: false,
+				HTMLAttributes: {
+					class: "editor-image",
 				},
 			}),
 			Table.configure({

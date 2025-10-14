@@ -92,6 +92,8 @@ export function EntityEditor({
 			</Button>
 			<Tiptap
 				key={entityId}
+				entityId={entityId}
+				entityType={entityType}
 				content={parsedContent}
 				onChange={onChange}
 			/>
