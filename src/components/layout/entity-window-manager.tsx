@@ -1,6 +1,5 @@
 import { useParams } from "@tanstack/react-router";
 import DraggableWindow from "~/components/draggable";
-import { Badge } from "~/components/ui/badge";
 import { TiptapViewer } from "~/components/ui/editor/viewer";
 import { useEntityWindows, useUIActions } from "~/state/ui";
 
@@ -39,9 +38,6 @@ export function EntityWindowManager() {
 					gameId={params.gameId}
 				>
 					<div className="prose prose-sm max-w-none">
-						<div className="mb-4">
-							<Badge>{window.entity.type}</Badge>
-						</div>
 						{window.entity.content && (
 							<TiptapViewer content={window.entity.content} />
 						)}

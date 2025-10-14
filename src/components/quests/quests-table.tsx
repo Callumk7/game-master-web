@@ -8,6 +8,7 @@ import {
 	DateDisplay,
 	EntityLink,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
 	StatusDisplay,
 	TagsDisplay,
@@ -124,13 +125,30 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 export function QuestsTable({ data, gameId }: QuestsTableProps) {
 	const columns = createQuestColumns(gameId);
 
+	const filters: FilterConfig[] = [
+		{ type: "text" as const, columnId: "name", placeholder: "Filter names..." },
+		{ type: "text" as const, columnId: "tags", placeholder: "Filter tags..." },
+		{
+			type: "select" as const,
+			columnId: "status",
+			placeholder: "All statuses",
+			options: [
+				{ value: "preparing", label: "Preparing" },
+				{ value: "ready", label: "Ready" },
+				{ value: "active", label: "Active" },
+				{ value: "paused", label: "Paused" },
+				{ value: "completed", label: "Completed" },
+				{ value: "cancelled", label: "Cancelled" },
+			],
+		},
+	];
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="quest"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

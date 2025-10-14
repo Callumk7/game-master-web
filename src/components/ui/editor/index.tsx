@@ -58,8 +58,6 @@ export function Tiptap({
 	editable = true,
 	className,
 }: TiptapProps) {
-	const initialContentRef = React.useRef(content);
-	const isInternalUpdate = React.useRef(false);
 	const params = useParams({ from: "/_auth/games/$gameId" });
 	const gameId = params?.gameId;
 
@@ -166,10 +164,10 @@ export function Tiptap({
 		content,
 		editable,
 		onUpdate: ({ editor }) => {
-			isInternalUpdate.current = true;
+			if (!onChange) return;
 			// Defer the onChange callback to avoid flushSync conflicts
 			React.startTransition(() => {
-				onChange?.({
+				onChange({
 					json: editor.getJSON(),
 					text: editor.getText(),
 				});
@@ -189,19 +187,6 @@ export function Tiptap({
 		},
 		immediatelyRender: false,
 	});
-
-	React.useEffect(() => {
-		if (editor && content !== null && !isInternalUpdate.current) {
-			if (initialContentRef.current !== content) {
-				// Use startTransition to defer content updates and avoid flushSync conflicts
-				React.startTransition(() => {
-					editor.commands.setContent(content);
-					initialContentRef.current = content;
-				});
-			}
-		}
-		isInternalUpdate.current = false;
-	}, [editor, content]);
 
 	// Cleanup effect to prevent memory leaks and flushSync issues on unmount
 	React.useEffect(() => {

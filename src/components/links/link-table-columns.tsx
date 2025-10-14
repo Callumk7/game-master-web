@@ -1,12 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "~/components/ui/badge";
 import type { EntityType } from "~/types";
-import { DeleteLink } from "../links/delete-link";
 import { TagsDisplay } from "../ui/composite/entity-table";
 import { Link } from "../ui/link";
-import { EntityLinkButton } from "./entity-link-button";
+import { EntityLinkControls } from "./entity-link-controls";
 import type { EntityLink } from "./types";
-import { UpdateLinkDialog } from "./update-link-dialog";
 
 // This is the base set of columns used for quests, locations, and notes
 export function createBaseLinkTableColumns<T extends EntityLink>(
@@ -47,13 +45,6 @@ export function createBaseLinkTableColumns<T extends EntityLink>(
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
-			accessorKey: "description_meta",
-			header: "Description",
-			cell: ({ row }) => {
-				return <div className="text-sm">{row.getValue("description_meta")}</div>;
-			},
-		},
-		{
 			accessorKey: "relationship_type",
 			header: "Relationship",
 			cell: ({ row }) => {
@@ -61,48 +52,15 @@ export function createBaseLinkTableColumns<T extends EntityLink>(
 			},
 		},
 		{
-			accessorKey: "is_active",
-			header: "Active",
-			cell: ({ row }) => {
-				return (
-					<div className="text-sm">
-						{row.getValue("is_active") ? "Yes" : "No"}
-					</div>
-				);
-			},
-		},
-		{
 			id: "actions",
 			enableHiding: false,
 			cell: ({ row }) => {
-				return <EntityLinkButton entity={row.original} />;
-			},
-		},
-		{
-			id: "edit",
-			enableHiding: false,
-			cell: ({ row }) => {
 				return (
-					<UpdateLinkDialog
+					<EntityLinkControls
+						gameId={gameId}
+						sourceId={sourceId}
+						sourceType={sourceType}
 						link={row.original}
-						gameId={gameId}
-						sourceId={sourceId}
-						sourceType={sourceType}
-					/>
-				);
-			},
-		},
-		{
-			id: "delete",
-			enableHiding: false,
-			cell: ({ row }) => {
-				return (
-					<DeleteLink
-						gameId={gameId}
-						sourceId={sourceId}
-						sourceType={sourceType}
-						targetId={row.original.id}
-						targetType={row.getValue("type")}
 					/>
 				);
 			},

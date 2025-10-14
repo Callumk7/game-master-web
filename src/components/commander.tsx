@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import {
 	CheckSquare,
 	FileText,
@@ -174,6 +174,9 @@ export function Commander({ gameId }: { gameId: string }) {
 					</CommandGroup>
 				) : (
 					<>
+						<CommandGroup heading="Controls">
+							<CommandItem>Popout</CommandItem>
+						</CommandGroup>
 						<CommandGroup heading="Characters">
 							<CommandItem
 								onSelect={() => {

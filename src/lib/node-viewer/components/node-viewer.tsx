@@ -8,7 +8,7 @@ import { Controls } from "./controls";
 import { SvgNodeRenderer } from "./svg-node-renderer";
 
 const DEFAULT_CONFIG: ForceSimulationConfig = {
-	repulsionStrength: 10000,
+	repulsionStrength: 15000,
 	attractionStrength: 15,
 	centerForceStrength: 5,
 	targetLinkLength: 150,

@@ -19,7 +19,6 @@ export function EntityLinksTable<T>({ links, columns }: EntityLinksTableProps<T>
 			columnRelativeWidths={{
 				name: 2,
 				type: 0.6,
-				actions: 0.5,
 				description_meta: 2,
 			}}
 			defaultHidden={["description_meta"]}

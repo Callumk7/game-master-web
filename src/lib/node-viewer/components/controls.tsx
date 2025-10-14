@@ -118,7 +118,7 @@ export function Controls({
 										})
 									}
 									min={5000}
-									max={50000}
+									max={500000}
 									step={1000}
 									className="w-full"
 								/>

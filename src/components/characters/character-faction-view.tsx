@@ -1,5 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, Users } from "lucide-react";
-import { useGetCharacterPrimaryFactionQuery } from "~/api/@tanstack/react-query.gen";
+import {
+	getFactionMembersOptions,
+	useGetCharacterPrimaryFactionQuery,
+} from "~/api/@tanstack/react-query.gen";
 import { Badge } from "~/components/ui/badge";
 import {
 	Card,
@@ -9,6 +13,7 @@ import {
 	CardTitle,
 } from "~/components/ui/card";
 import { Link } from "../ui/link";
+import { CharacterTable } from "./character-table";
 
 interface CharacterFactionViewProps {
 	gameId: string;
@@ -23,6 +28,15 @@ export function CharacterFactionView({ gameId, characterId }: CharacterFactionVi
 		});
 
 	const faction = primaryFactionData?.data?.faction;
+
+	const { data: memberData } = useQuery({
+		...getFactionMembersOptions({
+			path: { game_id: gameId, faction_id: faction?.id || "" },
+		}),
+		enabled: !!faction,
+	});
+
+	const members = memberData?.data?.members || [];
 
 	if (!faction) {
 		return (
@@ -113,6 +127,7 @@ export function CharacterFactionView({ gameId, characterId }: CharacterFactionVi
 					</CardContent>
 				</Card>
 			)}
+			<CharacterTable gameId={gameId} data={members} />
 		</div>
 	);
 }

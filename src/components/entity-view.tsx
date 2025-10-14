@@ -168,6 +168,7 @@ export function EntityControls({
 		const urlEntityType = urlEntityTypeMap[entityType];
 
 		// Extract gameId from current URL path
+		// TODO: Probably use tanstack router params for this instead
 		const gameId = window.location.pathname.split("/")[2];
 
 		navigate({

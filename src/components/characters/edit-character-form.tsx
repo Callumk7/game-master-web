@@ -48,13 +48,10 @@ export function EditCharacterForm({ initialData, params }: EditCharacterFormProp
 			});
 			navigate({ to: ".." });
 		},
-		schema: schemas.character,
+		schema: schemas.character.omit({ content: true }),
 		entityName: "character",
 		initialValues: {
 			...initialData,
-		},
-		fieldOverrides: {
-			content: null,
 		},
 	});
 

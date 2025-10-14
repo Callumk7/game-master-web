@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Button } from "~/components/ui/button";
 import type { EntityType } from "~/types";
 import { useEditorContentActions } from "./hooks";
@@ -50,6 +51,12 @@ export function EntityEditor({
 		useEditorContentActions();
 	const { createLinksFromMentions, isCreatingLinks } = useCreateLinksFromMentions();
 
+	// Memoize parsed content to avoid creating new objects on every render
+	const parsedContent = React.useMemo(
+		() => (typeof content === "object" ? content : parseContentForEditor(content)),
+		[content],
+	);
+
 	const handleSave = async () => {
 		// Get the payload for this entity type
 		const payload = getPayload(entityType)[entityType];
@@ -84,9 +91,8 @@ export function EntityEditor({
 				{isSaving || isCreatingLinks ? "Saving..." : saveButtonText}
 			</Button>
 			<Tiptap
-				content={
-					typeof content === "object" ? content : parseContentForEditor(content)
-				}
+				key={entityId}
+				content={parsedContent}
 				onChange={onChange}
 			/>
 			<Button

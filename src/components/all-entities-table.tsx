@@ -21,7 +21,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import type { EntityType } from "~/types";
-import { EntityLinkButton } from "./links/entity-link-button";
+import { EntityLinkControls } from "./links/entity-link-controls";
 
 export type AllEntity = {
 	id: string;
@@ -112,14 +112,11 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 			cell: ({ row }) => {
 				const entity = row.original;
 				return (
-					<EntityLinkButton
-						entity={{
-							id: entity.id,
-							name: entity.name,
-							type: entity.type,
-							content: entity.content,
-							content_plain_text: entity.content_plain_text,
-						}}
+					<EntityLinkControls
+						gameId={gameId}
+						sourceId={entity.id}
+						sourceType={entity.type}
+						link={entity}
 					/>
 				);
 			},

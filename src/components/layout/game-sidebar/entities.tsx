@@ -98,6 +98,16 @@ export function SidebarEntities({ gameId }: SidebarEntitiesProps) {
 						{locations?.length.toString() || "0"}
 					</Badge>
 				</SidebarMenuLink>
+				<SidebarMenuLink
+					to="/games/$gameId/locations/tree"
+					params={params}
+					activeProps={{
+						className: "bg-secondary text-secondary-foreground",
+					}}
+				>
+					<MapPin className="w-4 h-4" />
+					Location Tree
+				</SidebarMenuLink>
 				<SidebarMenuItem>
 					<SidebarMenuLink
 						to="/games/$gameId/quests"
@@ -111,6 +121,19 @@ export function SidebarEntities({ gameId }: SidebarEntitiesProps) {
 						<Badge variant="secondary" className="ml-auto">
 							{quests?.length.toString() || "0"}
 						</Badge>
+					</SidebarMenuLink>
+				</SidebarMenuItem>
+
+				<SidebarMenuItem>
+					<SidebarMenuLink
+						to="/games/$gameId/quests/tree"
+						params={params}
+						activeProps={{
+							className: "bg-secondary text-secondary-foreground",
+						}}
+					>
+						<Gem className="w-4 h-4" />
+						Quest Tree
 					</SidebarMenuLink>
 				</SidebarMenuItem>
 

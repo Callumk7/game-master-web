@@ -1,7 +1,7 @@
 import * as React from "react";
-import type { Connection, ForceSimulationConfig, NodePosition } from "../types";
 import { performanceMonitor } from "~/utils/performance-benchmark";
 import { QuadTree } from "~/utils/quadtree";
+import type { Connection, ForceSimulationConfig, NodePosition } from "../types";
 
 export function useForceSimulation<T>(
 	data: T,
@@ -14,9 +14,10 @@ export function useForceSimulation<T>(
 	const [isRunning, setIsRunning] = React.useState(false);
 	const animationRef = React.useRef<number | null>(null);
 
-	const { nodes: extractedNodes, connections: extractedConnections } = React.useMemo(() => {
-		return nodeExtractor(data);
-	}, [data, nodeExtractor]);
+	const { nodes: extractedNodes, connections: extractedConnections } =
+		React.useMemo(() => {
+			return nodeExtractor(data);
+		}, [data, nodeExtractor]);
 
 	const nodeIndexMap = React.useRef<Map<string, number>>(new Map());
 	const nodesArray = React.useRef<NodePosition[]>([]);
@@ -93,7 +94,8 @@ export function useForceSimulation<T>(
 					const distance = Math.sqrt(dx * dx + dy * dy);
 
 					if (distance > 0 && distance < 200) {
-						const repulsion = config.repulsionStrength / (distance * distance);
+						const repulsion =
+							config.repulsionStrength / (distance * distance);
 						const forceX = (dx / distance) * repulsion;
 						const forceY = (dy / distance) * repulsion;
 
@@ -117,7 +119,8 @@ export function useForceSimulation<T>(
 
 					if (distance > 0) {
 						const force =
-							(distance - targetDistance) * (config.attractionStrength * 0.01);
+							(distance - targetDistance) *
+							(config.attractionStrength * 0.01);
 						const forceX = (dx / distance) * force;
 						const forceY = (dy / distance) * force;
 
@@ -187,10 +190,11 @@ export function useForceSimulation<T>(
 		};
 	}, [isRunning, runSimulation]);
 
-	return { 
-		nodes: simNodes, 
-		connections, 
-		isRunning, 
-		restart: initializeSimulation 
+	return {
+		nodes: simNodes,
+		connections,
+		isRunning,
+		restart: initializeSimulation,
 	};
 }
+

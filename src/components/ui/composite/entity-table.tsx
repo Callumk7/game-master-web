@@ -51,6 +51,22 @@ import type { Status } from "~/types";
 import { tableFilterFns } from "~/utils/table-filters";
 
 // ============================================================================
+// FILTER CONFIGURATION TYPES
+// ============================================================================
+
+interface FilterOption {
+	value: string;
+	label: string;
+}
+
+export interface FilterConfig {
+	type: "text" | "select" | "multiselect";
+	columnId: string;
+	placeholder?: string;
+	options?: FilterOption[];
+}
+
+// ============================================================================
 // REUSABLE CELL COMPONENTS
 // ============================================================================
 
@@ -260,8 +276,9 @@ interface EntityTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	entityName?: string; // e.g., "character", "faction", "quest"
-	searchPlaceholder?: string;
-	tagPlaceholder?: string;
+	searchPlaceholder?: string; // @deprecated: use filters config instead
+	tagPlaceholder?: string; // @deprecated: use filters config instead
+	filters?: FilterConfig[]; // New dynamic filter configuration
 	enableColumnVisibility?: boolean;
 	enablePaginationSizeSelector?: boolean;
 	columnRelativeWidths?: Record<string, number>; // e.g., { "name": 2, "status": 1, "actions": 0.5 }
@@ -274,6 +291,7 @@ export function EntityTable<TData, TValue>({
 	entityName = "entity",
 	searchPlaceholder = "Filter names...",
 	tagPlaceholder = "Filter tags...",
+	filters,
 	enableColumnVisibility = true,
 	enablePaginationSizeSelector = true,
 	columnRelativeWidths,
@@ -288,9 +306,25 @@ export function EntityTable<TData, TValue>({
 		}, {}),
 	});
 
+	// Dynamic filter state management
+	const [filterValues, setFilterValues] = React.useState<Record<string, string>>({});
+
+	// Backward compatibility for legacy props
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [tagFilter, setTagFilter] = React.useState("");
 	const [paginationSize, setPaginationSize] = React.useState(20);
+
+	// Determine effective filters (new system or legacy)
+	const effectiveFilters = React.useMemo(() => {
+		if (filters && filters.length > 0) {
+			return filters;
+		}
+		// Fallback to legacy system
+		return [
+			{ type: "text" as const, columnId: "name", placeholder: searchPlaceholder },
+			{ type: "text" as const, columnId: "tags", placeholder: tagPlaceholder },
+		];
+	}, [filters, searchPlaceholder, tagPlaceholder]);
 
 	// Calculate percentage widths from relative widths
 	const columnWidths = React.useMemo(() => {
@@ -327,62 +361,117 @@ export function EntityTable<TData, TValue>({
 		},
 	});
 
+	// Apply dynamic filters
 	React.useEffect(() => {
-		table.getColumn("name")?.setFilterValue(searchQuery);
-	}, [searchQuery, table]);
-
-	React.useEffect(() => {
-		const column = table.getColumn("tags");
-		if (column) {
-			column.setFilterValue(tagFilter);
-		}
-	}, [tagFilter, table]);
+		effectiveFilters.forEach((filter) => {
+			const column = table.getColumn(filter.columnId);
+			if (column) {
+				const value = filters
+					? filterValues[filter.columnId]
+					: filter.columnId === "name"
+						? searchQuery
+						: filter.columnId === "tags"
+							? tagFilter
+							: "";
+				column.setFilterValue(value || undefined);
+			}
+		});
+	}, [effectiveFilters, filterValues, searchQuery, tagFilter, table, filters]);
 
 	React.useEffect(() => {
 		table.setPageSize(paginationSize);
 	}, [paginationSize, table]);
 
+	// Helper function to render different filter types
+	const renderFilter = (filter: FilterConfig) => {
+		const value = filters
+			? filterValues[filter.columnId] || ""
+			: filter.columnId === "name"
+				? searchQuery
+				: filter.columnId === "tags"
+					? tagFilter
+					: "";
+
+		const handleChange = (newValue: string) => {
+			if (filters) {
+				setFilterValues((prev) => ({ ...prev, [filter.columnId]: newValue }));
+			} else {
+				// Legacy mode
+				if (filter.columnId === "name") {
+					setSearchQuery(newValue);
+				} else if (filter.columnId === "tags") {
+					setTagFilter(newValue);
+				}
+			}
+		};
+
+		switch (filter.type) {
+			case "text":
+				return (
+					<Input
+						key={filter.columnId}
+						placeholder={filter.placeholder || `Filter ${filter.columnId}...`}
+						value={value}
+						onChange={(event) => handleChange(event.target.value)}
+						className="max-w-sm"
+					/>
+				);
+
+			case "select":
+				return (
+					<Select
+						key={filter.columnId}
+						value={value}
+						onValueChange={handleChange}
+					>
+						<SelectTrigger className="max-w-sm">
+							<SelectValue
+								placeholder={
+									filter.placeholder || `Select ${filter.columnId}...`
+								}
+							/>
+						</SelectTrigger>
+						<SelectPortal>
+							<SelectPositioner>
+								<SelectContent>
+									<SelectItem value="">
+										{filter.placeholder || `All ${filter.columnId}s`}
+									</SelectItem>
+									{filter.options?.map((option) => (
+										<SelectItem
+											key={option.value}
+											value={option.value}
+										>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</SelectPositioner>
+						</SelectPortal>
+					</Select>
+				);
+
+			case "multiselect":
+				// For now, treat as text - can be enhanced later
+				return (
+					<Input
+						key={filter.columnId}
+						placeholder={filter.placeholder || `Filter ${filter.columnId}...`}
+						value={value}
+						onChange={(event) => handleChange(event.target.value)}
+						className="max-w-sm"
+					/>
+				);
+
+			default:
+				return null;
+		}
+	};
+
 	return (
 		<div className="w-full max-w-full">
 			<div className="flex items-center gap-4 py-4">
-				<Input
-					placeholder={searchPlaceholder}
-					value={searchQuery}
-					onChange={(event) => setSearchQuery(event.target.value)}
-					className="max-w-sm"
-				/>
-				<Input
-					placeholder={tagPlaceholder}
-					value={tagFilter}
-					onChange={(event) => setTagFilter(event.target.value)}
-					className="max-w-sm"
-				/>
-				{enablePaginationSizeSelector && setPaginationSize && (
-					<div className="flex items-center gap-2">
-						<span className="text-sm text-muted-foreground whitespace-nowrap">
-							Rows per page:
-						</span>
-						<Select
-							value={paginationSize}
-							onValueChange={(value) => setPaginationSize(value as number)}
-						>
-							<SelectTrigger size="sm" className="w-fit">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectPortal>
-								<SelectPositioner>
-									<SelectContent>
-										<SelectItem value={5}>5</SelectItem>
-										<SelectItem value={10}>10</SelectItem>
-										<SelectItem value={20}>20</SelectItem>
-										<SelectItem value={50}>50</SelectItem>
-										<SelectItem value={100}>100</SelectItem>
-									</SelectContent>
-								</SelectPositioner>
-							</SelectPortal>
-						</Select>
-					</div>
-				)}
+				{effectiveFilters.map(renderFilter)}
 				{enableColumnVisibility && (
 					<DropdownMenu>
 						<DropdownMenuTrigger
@@ -482,6 +571,34 @@ export function EntityTable<TData, TValue>({
 					{table.getFilteredRowModel().rows.length} {entityName}(s) total.
 				</div>
 				<div className="flex items-center space-x-6 lg:space-x-8">
+					{enablePaginationSizeSelector && setPaginationSize && (
+						<div className="flex items-center gap-2">
+							<span className="text-sm text-muted-foreground whitespace-nowrap">
+								Rows per page:
+							</span>
+							<Select
+								value={paginationSize}
+								onValueChange={(value) =>
+									setPaginationSize(value as number)
+								}
+							>
+								<SelectTrigger size="sm" className="w-fit">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectPortal>
+									<SelectPositioner>
+										<SelectContent>
+											<SelectItem value={5}>5</SelectItem>
+											<SelectItem value={10}>10</SelectItem>
+											<SelectItem value={20}>20</SelectItem>
+											<SelectItem value={50}>50</SelectItem>
+											<SelectItem value={100}>100</SelectItem>
+										</SelectContent>
+									</SelectPositioner>
+								</SelectPortal>
+							</Select>
+						</div>
+					)}
 					<div className="flex items-center space-x-2">
 						<p className="text-sm font-medium">
 							Page {table.getState().pagination.pageIndex + 1} of{" "}

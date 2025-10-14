@@ -13,7 +13,9 @@ export const Route = createFileRoute("/_auth/games/$gameId/")({
 	component: RouteComponent,
 	loader: async ({ params, context }) => {
 		await context.queryClient.ensureQueryData(
-			getGameEntityTreeOptions({ path: { game_id: params.gameId } }),
+			getGameEntityTreeOptions({
+				path: { game_id: params.gameId },
+			}),
 		);
 	},
 });

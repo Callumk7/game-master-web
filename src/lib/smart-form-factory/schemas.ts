@@ -14,7 +14,6 @@ export function createSchemaFor() {
 				.number()
 				.min(1, "Level must be at least 1")
 				.max(100, "Level cannot exceed 100"),
-			image_url: z.union([z.url(), z.literal("")]).optional(),
 			tags: z.array(z.string()).optional(),
 			content: z.string().optional(),
 			alive: z.boolean().optional(),
