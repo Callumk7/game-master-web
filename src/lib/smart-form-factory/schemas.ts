@@ -10,6 +10,7 @@ export function createSchemaFor() {
 		character: z.object({
 			name: z.string().min(1, "Character name is required"),
 			class: z.string().min(1, "Character class is required"),
+			race: z.string().optional(),
 			level: z.coerce
 				.number()
 				.min(1, "Level must be at least 1")
