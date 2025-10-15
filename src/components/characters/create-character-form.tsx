@@ -118,26 +118,23 @@ export function CreateCharacterForm({
 						{renderSmartField("race")}
 						{renderSmartField("tags")}
 						{/* NOT a form field, but for the secondary mutation */}
-						{!factionId && (
-							<>
-								{factionsLoading ? (
-									<div className="text-muted-foreground text-sm p-2">
-										Loading factions...
-									</div>
-								) : (
-									<div className="space-y-1">
-										<Label>Faction</Label>
-										<FactionSelect
-											factions={factionsData?.data ?? []}
-											value={selectedFaction}
-											onChange={setSelectedFaction}
-											placeholder="Select faction"
-											container={container}
-										/>
-									</div>
-								)}
-							</>
-						)}
+						{!factionId &&
+							(factionsLoading ? (
+								<div className="text-muted-foreground text-sm p-2">
+									Loading factions...
+								</div>
+							) : (
+								<div className="space-y-1">
+									<Label>Faction</Label>
+									<FactionSelect
+										factions={factionsData?.data ?? []}
+										value={selectedFaction}
+										onChange={setSelectedFaction}
+										placeholder="Select faction"
+										container={container}
+									/>
+								</div>
+							))}
 
 						{/* NOT a form field, but for the secondary mutation */}
 						<FormField

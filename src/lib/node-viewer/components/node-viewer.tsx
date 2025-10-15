@@ -2,7 +2,14 @@ import * as React from "react";
 import { Card } from "~/components/ui/card";
 import { cn } from "~/utils/cn";
 import { useForceSimulation } from "../hooks/use-force-simulation";
-import type { ForceSimulationConfig, NodeViewerProps, ViewTransform } from "../types";
+import type {
+	Connection,
+	ForceSimulationConfig,
+	GenericNode,
+	NodePosition,
+	NodeTypeConfig,
+	ViewTransform,
+} from "../types";
 import { CanvasNodeMap } from "./canvas-node-map";
 import { Controls } from "./controls";
 import { SvgNodeRenderer } from "./svg-node-renderer";
@@ -13,6 +20,20 @@ const DEFAULT_CONFIG: ForceSimulationConfig = {
 	centerForceStrength: 5,
 	targetLinkLength: 150,
 };
+
+export interface NodeViewerProps<T> {
+	data: T;
+	nodeExtractor: (data: T) => {
+		nodes: Map<string, GenericNode>;
+		connections: Connection[];
+	};
+	nodeTypeConfig: NodeTypeConfig;
+	onNodeClick?: (nodeId: string, node: NodePosition) => void;
+	className?: string;
+	height?: number;
+	showControls?: boolean;
+	initialConfig?: Partial<ForceSimulationConfig>;
+}
 
 export function NodeViewer<T>({
 	data,
@@ -57,7 +78,9 @@ export function NodeViewer<T>({
 	const handleNodeClick = React.useCallback(
 		(nodeId: string) => {
 			const node = nodes.find((n) => n.id === nodeId);
-			onNodeClick?.(nodeId, node);
+			if (node) {
+				onNodeClick?.(nodeId, node);
+			}
 		},
 		[nodes, onNodeClick],
 	);

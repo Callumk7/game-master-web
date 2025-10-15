@@ -1,6 +1,6 @@
 import type { CharacterLinksResponse } from "~/api";
 import { NodeViewer } from "~/lib/node-viewer";
-import type { Connection, NodePosition, NodeTypeConfig } from "~/lib/node-viewer/types";
+import type { Connection, GenericNode, NodeTypeConfig } from "~/lib/node-viewer/types";
 
 interface CharacterNodeViewerProps {
 	characterId: string;
@@ -17,7 +17,7 @@ export function CharacterNodeViewer({
 }: CharacterNodeViewerProps) {
 	// Node extractor for character links visualization
 	const nodeExtractor = (response: CharacterLinksResponse) => {
-		const nodes = new Map<string, NodePosition>();
+		const nodes = new Map<string, GenericNode>();
 		const connections: Connection[] = [];
 
 		if (!response.data?.links) {
@@ -28,30 +28,20 @@ export function CharacterNodeViewer({
 
 		// Add the main character as the central node
 		nodes.set(characterId, {
-			x: 0,
-			y: 0,
-			vx: 0,
-			vy: 0,
 			id: characterId,
 			name: characterName,
 			type: "character",
 			children: [],
-			connectionCount: 0,
 		});
 
 		// Add linked entities as nodes
 		if (links.characters) {
 			for (const char of links.characters) {
 				nodes.set(char.id, {
-					x: 0,
-					y: 0,
-					vx: 0,
-					vy: 0,
 					id: char.id,
 					name: char.name,
 					type: "character",
 					children: [],
-					connectionCount: 0,
 				});
 				connections.push({
 					from: characterId,
@@ -63,15 +53,10 @@ export function CharacterNodeViewer({
 		if (links.factions) {
 			for (const faction of links.factions) {
 				nodes.set(faction.id, {
-					x: 0,
-					y: 0,
-					vx: 0,
-					vy: 0,
 					id: faction.id,
 					name: faction.name,
 					type: "faction",
 					children: [],
-					connectionCount: 0,
 				});
 				connections.push({
 					from: characterId,
@@ -83,15 +68,10 @@ export function CharacterNodeViewer({
 		if (links.locations) {
 			for (const location of links.locations) {
 				nodes.set(location.id, {
-					x: 0,
-					y: 0,
-					vx: 0,
-					vy: 0,
 					id: location.id,
 					name: location.name,
 					type: "location",
 					children: [],
-					connectionCount: 0,
 				});
 				connections.push({
 					from: characterId,
@@ -103,15 +83,10 @@ export function CharacterNodeViewer({
 		if (links.quests) {
 			for (const quest of links.quests) {
 				nodes.set(quest.id, {
-					x: 0,
-					y: 0,
-					vx: 0,
-					vy: 0,
 					id: quest.id,
 					name: quest.name,
 					type: "quest",
 					children: [],
-					connectionCount: 0,
 				});
 				connections.push({
 					from: characterId,
@@ -123,15 +98,10 @@ export function CharacterNodeViewer({
 		if (links.notes) {
 			for (const note of links.notes) {
 				nodes.set(note.id, {
-					x: 0,
-					y: 0,
-					vx: 0,
-					vy: 0,
 					id: note.id,
 					name: note.name,
 					type: "note",
 					children: [],
-					connectionCount: 0,
 				});
 				connections.push({
 					from: characterId,
@@ -177,3 +147,4 @@ export function CharacterNodeViewer({
 		/>
 	);
 }
+

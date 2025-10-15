@@ -9,7 +9,6 @@ export type {
 	NodeConfig,
 	NodePosition,
 	NodeTypeConfig,
-	NodeViewerProps,
 	ViewTransform,
 } from "./types";
 export {
@@ -18,4 +17,3 @@ export {
 	extractNodesAndConnections,
 	extractNodesAndConnectionsFromTree,
 } from "./utils/data-extraction";
-

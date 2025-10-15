@@ -1,11 +1,19 @@
 import * as React from "react";
 import { performanceMonitor } from "~/utils/performance-benchmark";
 import { QuadTree } from "~/utils/quadtree";
-import type { Connection, ForceSimulationConfig, NodePosition } from "../types";
+import type {
+	Connection,
+	ForceSimulationConfig,
+	GenericNode,
+	NodePosition,
+} from "../types";
 
 export function useForceSimulation<T>(
 	data: T,
-	nodeExtractor: (data: T) => { nodes: Map<string, any>; connections: Connection[] },
+	nodeExtractor: (data: T) => {
+		nodes: Map<string, GenericNode>;
+		connections: Connection[];
+	},
 	config: ForceSimulationConfig,
 	performanceMonitoring = false,
 ) {
@@ -37,7 +45,7 @@ export function useForceSimulation<T>(
 				id: node.id,
 				type: node.type,
 				name: node.name,
-				children: node.children?.map((child: any) => child.id) || [],
+				children: node.children?.map((child: GenericNode) => child.id) || [],
 				connectionCount,
 			};
 		});
@@ -197,4 +205,3 @@ export function useForceSimulation<T>(
 		restart: initializeSimulation,
 	};
 }
-

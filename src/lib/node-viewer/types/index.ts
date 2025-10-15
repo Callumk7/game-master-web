@@ -39,17 +39,6 @@ export interface ForceSimulationConfig {
 	targetLinkLength: number;
 }
 
-export interface NodeViewerProps<T = any> {
-	data: T;
-	nodeExtractor: (data: T) => { nodes: Map<string, any>; connections: Connection[] };
-	nodeTypeConfig: NodeTypeConfig;
-	onNodeClick?: (nodeId: string, node: any) => void;
-	className?: string;
-	height?: number;
-	showControls?: boolean;
-	initialConfig?: Partial<ForceSimulationConfig>;
-}
-
 export interface GenericNode {
 	id: string;
 	name: string;
@@ -57,3 +46,4 @@ export interface GenericNode {
 	children?: GenericNode[];
 	strength?: number;
 }
+
