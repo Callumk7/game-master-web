@@ -5,13 +5,6 @@ export interface EntityPath {
 	id: string;
 }
 
-export interface SplitViewState {
-	leftPane?: EntityPath;
-	rightPane?: EntityPath;
-	leftSelectorOpen: boolean;
-	rightSelectorOpen: boolean;
-}
-
 export interface EntityData {
 	id: string;
 	name: string;
@@ -41,15 +34,6 @@ export type Entity = Character | Faction | Location | Note | Quest;
 export interface EntityMutationPayload {
 	content: string;
 	content_plain_text: string;
-}
-
-export interface SplitViewContextValue {
-	state: SplitViewState;
-	updatePanes: (leftPane?: EntityPath, rightPane?: EntityPath) => void;
-	openLeftSelector: () => void;
-	openRightSelector: () => void;
-	closeSelectors: () => void;
-	closeSplitView: () => void;
 }
 
 export interface EntitySelectorState {

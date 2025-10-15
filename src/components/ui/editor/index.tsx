@@ -34,7 +34,10 @@ import "src/components/ui/editor/tiptap.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { listGameEntitiesOptions, uploadEntityImageMutation } from "~/api/@tanstack/react-query.gen";
+import {
+	listGameEntitiesOptions,
+	uploadEntityImageMutation,
+} from "~/api/@tanstack/react-query.gen";
 import { SERVER_URL } from "~/routes/__root";
 import type { EntityType } from "~/types";
 import { Button } from "../button";
@@ -205,9 +208,6 @@ export function Tiptap({
 		return items;
 	}, [entitiesData, gameId]);
 
-	// Force re-render when selection changes to update button states
-	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
-
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -287,10 +287,6 @@ export function Tiptap({
 					text: editor.getText(),
 				});
 			});
-		},
-		onSelectionUpdate: () => {
-			// Force re-render when selection changes to update button states
-			forceUpdate();
 		},
 		editorProps: {
 			attributes: {
@@ -395,7 +391,11 @@ export function Tiptap({
 							if (file) {
 								const url = await handleImageUpload(file);
 								if (url) {
-									editor.chain().focus().setImage({ src: url, alt: file.name }).run();
+									editor
+										.chain()
+										.focus()
+										.setImage({ src: url, alt: file.name })
+										.run();
 								}
 							}
 						};

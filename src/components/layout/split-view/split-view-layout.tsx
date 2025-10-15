@@ -1,10 +1,19 @@
+import { useNavigate } from "@tanstack/react-router";
 import { PlusCircle } from "lucide-react";
+import * as React from "react";
 import { Button } from "~/components/ui/button";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "~/components/ui/resizable";
+import {
+	useSplitViewLeftPane,
+	useSplitViewLeftSelectorOpen,
+	useSplitViewRightPane,
+	useSplitViewRightSelectorOpen,
+	useUIActions,
+} from "~/state/ui";
 import type { EntityPath } from "~/types/split-view";
 import { CharacterPaneView } from "./character-pane-view";
 import { EntitySelectorModal } from "./entity-selector-modal";
@@ -12,7 +21,6 @@ import { FactionPaneView } from "./faction-pane-view";
 import { LocationPaneView } from "./location-pane-view";
 import { NotePaneView } from "./note-pane-view";
 import { QuestPaneView } from "./quest-pane-view";
-import { SplitViewProvider, useSplitView } from "./split-view-context";
 
 interface SplitViewLayoutProps {
 	gameId: string;
@@ -20,38 +28,90 @@ interface SplitViewLayoutProps {
 	rightPane?: string;
 }
 
+function parseEntityPath(entityPath?: string): EntityPath | undefined {
+	if (!entityPath) return undefined;
+	const [type, id] = entityPath.split("/");
+	return {
+		type: type as EntityPath["type"],
+		id,
+	};
+}
+
+function serializeEntityPath(entityPath?: EntityPath): string | undefined {
+	if (!entityPath) return undefined;
+	return `${entityPath.type}/${entityPath.id}`;
+}
+
 export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayoutProps) {
 	return (
-		<SplitViewProvider
+		<SplitViewLayoutContent
 			gameId={gameId}
 			initialLeftPane={leftPane}
 			initialRightPane={rightPane}
-		>
-			<SplitViewLayoutContent gameId={gameId} />
-		</SplitViewProvider>
+		/>
 	);
 }
 
-function SplitViewLayoutContent({ gameId }: { gameId: string }) {
-	const { state, updatePanes, openLeftSelector, openRightSelector, closeSelectors } =
-		useSplitView();
+function SplitViewLayoutContent({
+	gameId,
+	initialLeftPane,
+	initialRightPane,
+}: {
+	gameId: string;
+	initialLeftPane?: string;
+	initialRightPane?: string;
+}) {
+	const navigate = useNavigate({ from: "/games/$gameId/split" });
+	const leftPane = useSplitViewLeftPane();
+	const rightPane = useSplitViewRightPane();
+	const leftSelectorOpen = useSplitViewLeftSelectorOpen();
+	const rightSelectorOpen = useSplitViewRightSelectorOpen();
+	const {
+		updateSplitViewPanes,
+		openSplitViewLeftSelector,
+		openSplitViewRightSelector,
+		closeSplitViewSelectors,
+		clearSplitView,
+	} = useUIActions();
+
+	// Initialize from URL on mount
+	React.useEffect(() => {
+		const parsedLeft = parseEntityPath(initialLeftPane);
+		const parsedRight = parseEntityPath(initialRightPane);
+		updateSplitViewPanes(parsedLeft, parsedRight);
+
+		// Cleanup on unmount
+		return () => {
+			clearSplitView();
+		};
+	}, [initialLeftPane, initialRightPane, updateSplitViewPanes, clearSplitView]);
+
+	// Sync zustand state to URL when panes change
+	React.useEffect(() => {
+		navigate({
+			search: {
+				left: serializeEntityPath(leftPane),
+				right: serializeEntityPath(rightPane),
+			},
+		});
+	}, [leftPane, rightPane, navigate]);
 
 	const handleLeftPaneSelect = (entityPath: EntityPath) => {
-		updatePanes(entityPath, state.rightPane);
-		closeSelectors();
+		updateSplitViewPanes(entityPath, rightPane);
+		closeSplitViewSelectors();
 	};
 
 	const handleRightPaneSelect = (entityPath: EntityPath) => {
-		updatePanes(state.leftPane, entityPath);
-		closeSelectors();
+		updateSplitViewPanes(leftPane, entityPath);
+		closeSplitViewSelectors();
 	};
 
 	const clearLeftPane = () => {
-		updatePanes(undefined, state.rightPane);
+		updateSplitViewPanes(undefined, rightPane);
 	};
 
 	const clearRightPane = () => {
-		updatePanes(state.leftPane, undefined);
+		updateSplitViewPanes(leftPane, undefined);
 	};
 
 	return (
@@ -62,9 +122,9 @@ function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 					{/* Left Pane */}
 					<ResizablePanel defaultSize={50} minSize={30}>
 						<SplitPane
-							entityPath={state.leftPane}
+							entityPath={leftPane}
 							gameId={gameId}
-							onAddEntity={openLeftSelector}
+							onAddEntity={openSplitViewLeftSelector}
 							onClearEntity={clearLeftPane}
 						/>
 					</ResizablePanel>
@@ -74,9 +134,9 @@ function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 					{/* Right Pane */}
 					<ResizablePanel defaultSize={50} minSize={30}>
 						<SplitPane
-							entityPath={state.rightPane}
+							entityPath={rightPane}
 							gameId={gameId}
-							onAddEntity={openRightSelector}
+							onAddEntity={openSplitViewRightSelector}
 							onClearEntity={clearRightPane}
 						/>
 					</ResizablePanel>
@@ -85,16 +145,16 @@ function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 
 			{/* Entity Selectors */}
 			<EntitySelectorModal
-				isOpen={state.leftSelectorOpen}
-				onOpenChange={(open) => !open && closeSelectors()}
+				isOpen={leftSelectorOpen}
+				onOpenChange={(open) => !open && closeSplitViewSelectors()}
 				gameId={gameId}
 				onSelect={handleLeftPaneSelect}
 				title="Select Entity for Left Pane"
 			/>
 
 			<EntitySelectorModal
-				isOpen={state.rightSelectorOpen}
-				onOpenChange={(open) => !open && closeSelectors()}
+				isOpen={rightSelectorOpen}
+				onOpenChange={(open) => !open && closeSplitViewSelectors()}
 				gameId={gameId}
 				onSelect={handleRightPaneSelect}
 				title="Select Entity for Right Pane"

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { EntityLink } from "~/components/links/types";
+import type { EntityPath } from "~/types/split-view";
 
 interface EntityWindow {
 	id: string;
@@ -21,6 +22,11 @@ interface State {
 	isCommanderOpen: boolean;
 	isTodoDrawerOpen: boolean;
 	entityWindows: EntityWindow[];
+	// Split view state
+	splitViewLeftPane?: EntityPath;
+	splitViewRightPane?: EntityPath;
+	splitViewLeftSelectorOpen: boolean;
+	splitViewRightSelectorOpen: boolean;
 }
 
 interface Actions {
@@ -39,6 +45,12 @@ interface Actions {
 	updateWindowSize: (windowId: string, size: { width: number; height: number }) => void;
 	bringWindowToFront: (windowId: string) => void;
 	closeAllEntityWindows: () => void;
+	// Split view actions
+	updateSplitViewPanes: (leftPane?: EntityPath, rightPane?: EntityPath) => void;
+	openSplitViewLeftSelector: () => void;
+	openSplitViewRightSelector: () => void;
+	closeSplitViewSelectors: () => void;
+	clearSplitView: () => void;
 }
 
 export type Store = State & {
@@ -58,6 +70,11 @@ const useUIStore = create<Store>()((set, get) => ({
 	isCommanderOpen: false,
 	isTodoDrawerOpen: false,
 	entityWindows: [],
+	// Split view initial state
+	splitViewLeftPane: undefined,
+	splitViewRightPane: undefined,
+	splitViewLeftSelectorOpen: false,
+	splitViewRightSelectorOpen: false,
 	actions: {
 		setIsCreateFactionOpen: (isOpen: boolean) => set({ isCreateFactionOpen: isOpen }),
 		setIsCreateCharacterOpen: (isOpen: boolean) =>
@@ -165,6 +182,33 @@ const useUIStore = create<Store>()((set, get) => ({
 				entityWindows: get().entityWindows.map((w) => ({ ...w, isOpen: false })),
 			});
 		},
+		// Split view actions
+		updateSplitViewPanes: (leftPane?: EntityPath, rightPane?: EntityPath) => {
+			set({
+				splitViewLeftPane: leftPane,
+				splitViewRightPane: rightPane,
+			});
+		},
+		openSplitViewLeftSelector: () => {
+			set({ splitViewLeftSelectorOpen: true });
+		},
+		openSplitViewRightSelector: () => {
+			set({ splitViewRightSelectorOpen: true });
+		},
+		closeSplitViewSelectors: () => {
+			set({
+				splitViewLeftSelectorOpen: false,
+				splitViewRightSelectorOpen: false,
+			});
+		},
+		clearSplitView: () => {
+			set({
+				splitViewLeftPane: undefined,
+				splitViewRightPane: undefined,
+				splitViewLeftSelectorOpen: false,
+				splitViewRightSelectorOpen: false,
+			});
+		},
 	},
 }));
 
@@ -182,6 +226,16 @@ export const useIsTodoDrawerOpen = () => useUIStore((state) => state.isTodoDrawe
 
 // Entity window selectors
 export const useEntityWindows = () => useUIStore((state) => state.entityWindows);
+
+// Split view selectors
+export const useSplitViewLeftPane = () =>
+	useUIStore((state) => state.splitViewLeftPane);
+export const useSplitViewRightPane = () =>
+	useUIStore((state) => state.splitViewRightPane);
+export const useSplitViewLeftSelectorOpen = () =>
+	useUIStore((state) => state.splitViewLeftSelectorOpen);
+export const useSplitViewRightSelectorOpen = () =>
+	useUIStore((state) => state.splitViewRightSelectorOpen);
 
 // Actions
 export const useUIActions = () => useUIStore((state) => state.actions);

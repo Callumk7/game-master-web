@@ -6,5 +6,4 @@ export * from "./hooks";
 export { LocationPaneView } from "./location-pane-view";
 export { NotePaneView } from "./note-pane-view";
 export { QuestPaneView } from "./quest-pane-view";
-export { SplitViewProvider, useSplitView } from "./split-view-context";
 export { SplitViewLayout } from "./split-view-layout";
