@@ -1,5 +1,5 @@
 import { useParams } from "@tanstack/react-router";
-import { BookOpen, Home, Moon, Settings, Sun } from "lucide-react";
+import { BookOpen, BowArrow, Home, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
 import { Button } from "~/components/ui/button";
@@ -79,6 +79,15 @@ export function GameSidebar() {
 							<SidebarMenuLink to="/games/$gameId" params={params}>
 								<Home className="w-4 h-4" />
 								Dashboard
+							</SidebarMenuLink>
+						</SidebarMenuItem>
+						<SidebarMenuItem>
+							<SidebarMenuLink
+								to="/games/$gameId/initiative"
+								params={params}
+							>
+								<BowArrow className="w-4 h-4" />
+								Initiative Tracker
 							</SidebarMenuLink>
 						</SidebarMenuItem>
 						<SidebarMenuItem>

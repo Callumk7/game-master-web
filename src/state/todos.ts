@@ -26,7 +26,6 @@ const useTodoStore = create<TodoStore>()(
 	persist(
 		(set, get) => ({
 			todos: [],
-			isDrawerOpen: false,
 			actions: {
 				addTodo: (text: string) => {
 					const newTodo: Todo = {
