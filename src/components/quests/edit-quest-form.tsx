@@ -29,7 +29,7 @@ export function EditQuestForm({ initialData, params }: EditQuestFormProps) {
 				},
 			}),
 		onSuccess: async () => {
-			toast("Quest updated successfully!");
+			toast.success("Quest updated successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listQuestsQueryKey({
 					path: { game_id: gameId },

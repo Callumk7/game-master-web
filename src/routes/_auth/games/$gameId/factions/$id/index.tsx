@@ -81,7 +81,7 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 		deleteFaction.mutate({
 			path: { game_id: gameId, id: faction.id },
 		});
-		toast("Faction deleted successfully!");
+		toast.success("Faction deleted successfully!");
 		navigate({ to: "." });
 	};
 

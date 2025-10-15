@@ -31,7 +31,7 @@ export function EditNoteForm({ initialData, params }: EditNoteFormProps) {
 				},
 			}),
 		onSuccess: async () => {
-			toast("Note updated successfully!");
+			toast.success("Note updated successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listNotesQueryKey({
 					path: { game_id: gameId },

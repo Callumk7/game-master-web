@@ -59,7 +59,7 @@ export function UpdateLinkDialog({
 
 	const updateLink = useUpdateLink(
 		() => {
-			toast("Link updated successfully!");
+			toast.success("Link updated successfully!");
 			setOpen(false);
 		},
 		(error) => {

@@ -77,7 +77,7 @@ export function CreateCharacterForm({
 					});
 				}
 			}
-			toast("Character created successfully!");
+			toast.success("Character created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listCharactersQueryKey({
 					path: { game_id: gameId },

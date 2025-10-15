@@ -35,7 +35,7 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 		schema: schemas.location,
 		entityName: "location",
 		onSuccess: async ({ data }) => {
-			toast("Location created successfully!");
+			toast.success("Location created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listLocationsQueryKey({
 					path: { game_id: gameId },

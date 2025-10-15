@@ -25,7 +25,7 @@ export function CreateFactionForm({ onSuccess }: CreateFactionFormProps) {
 		schema: schemas.faction,
 		entityName: "faction",
 		onSuccess: async ({ data }) => {
-			toast("Faction created successfully!");
+			toast.success("Faction created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listFactionsQueryKey({
 					path: { game_id: gameId },

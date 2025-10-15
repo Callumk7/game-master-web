@@ -31,7 +31,7 @@ export function EditLocationForm({ initialData, params }: EditLocationFormProps)
 				},
 			}),
 		onSuccess: async () => {
-			toast("Location updated successfully!");
+			toast.success("Location updated successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listLocationsQueryKey({
 					path: { game_id: gameId },

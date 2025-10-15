@@ -237,7 +237,7 @@ export function ActionsDropdown({
 						<DropdownMenuItem
 							onClick={() => {
 								navigator.clipboard.writeText(entity.id.toString());
-								toast(`${capitalizedType} ID copied to clipboard!`);
+								toast.info(`${capitalizedType} ID copied to clipboard!`);
 							}}
 						>
 							Copy {entityName} ID

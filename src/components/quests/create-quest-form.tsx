@@ -32,7 +32,7 @@ export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) 
 		schema: schemas.quest,
 		entityName: "quest",
 		onSuccess: async () => {
-			toast("Quest created successfully!");
+			toast.success("Quest created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listQuestsQueryKey({
 					path: { game_id: gameId },
@@ -129,7 +129,9 @@ export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) 
 			{mutation.isError && (
 				<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
 					<p className="text-sm">
-						{mutation.error instanceof Error ? mutation.error.message : "Something went wrong"}
+						{mutation.error instanceof Error
+							? mutation.error.message
+							: "Something went wrong"}
 					</p>
 				</div>
 			)}

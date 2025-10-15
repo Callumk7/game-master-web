@@ -13,7 +13,7 @@
 	--popover-foreground: oklch(0.25 0.02 45);
 	/* Rich gold/bronze primary */
 	--primary: oklch(0.58 0.15 75);
-	--primary-foreground: oklch(0.15 0.02 45);
+	--primary-foreground: oklch(0.98 0.01 80);
 	/* Warm secondary */
 	--secondary: oklch(0.88 0.03 70);
 	--secondary-foreground: oklch(0.3 0.02 45);
@@ -30,15 +30,15 @@
 	--ring: oklch(0.58 0.15 75);
 	/* Fantasy-themed charts */
 	--chart-1: oklch(0.65 0.18 280);
-	--chart-2: oklch(0.60 0.16 320);
+	--chart-2: oklch(0.6 0.16 320);
 	--chart-3: oklch(0.58 0.15 75);
 	--chart-4: oklch(0.55 0.12 150);
-	--chart-5: oklch(0.52 0.20 25);
+	--chart-5: oklch(0.52 0.2 25);
 	/* Sidebar with aged paper feel */
 	--sidebar: oklch(0.94 0.018 72);
 	--sidebar-foreground: oklch(0.25 0.02 45);
 	--sidebar-primary: oklch(0.58 0.15 75);
-	--sidebar-primary-foreground: oklch(0.15 0.02 45);
+	--sidebar-primary-foreground: oklch(0.98 0.01 80);
 	--sidebar-accent: oklch(0.88 0.03 70);
 	--sidebar-accent-foreground: oklch(0.3 0.02 45);
 	--sidebar-border: oklch(0.82 0.025 68);
@@ -90,18 +90,29 @@
 	--editor-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 	--editor-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 	--editor-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* Toast-specific variables - light theme */
+	--toast-success-bg: hsl(135 60% 95%);
+	--toast-success-text: hsl(135 65% 35%);
+	--toast-success-border: hsl(135 65% 45%);
+	--toast-warning-bg: hsl(45 90% 92%);
+	--toast-warning-text: hsl(45 85% 30%);
+	--toast-warning-border: hsl(45 90% 50%);
+	--toast-info-bg: hsl(215 85% 94%);
+	--toast-info-text: hsl(215 85% 35%);
+	--toast-info-border: hsl(215 85% 55%);
 }
 
 .dark {
 	/* Deep mystical dark theme */
 	--background: oklch(0.15 0.03 270);
 	--foreground: oklch(0.92 0.02 80);
-	--card: oklch(0.20 0.04 265);
+	--card: oklch(0.2 0.04 265);
 	--card-foreground: oklch(0.92 0.02 80);
 	--popover: oklch(0.22 0.04 268);
 	--popover-foreground: oklch(0.92 0.02 80);
 	/* Bright gold primary for dark mode */
-	--primary: oklch(0.70 0.18 80);
+	--primary: oklch(0.7 0.18 80);
 	--primary-foreground: oklch(0.15 0.02 45);
 	/* Deep purple secondary */
 	--secondary: oklch(0.28 0.06 285);
@@ -109,29 +120,29 @@
 	--muted: oklch(0.24 0.04 270);
 	--muted-foreground: oklch(0.65 0.02 75);
 	/* Royal purple accent */
-	--accent: oklch(0.35 0.10 290);
+	--accent: oklch(0.35 0.1 290);
 	--accent-foreground: oklch(0.92 0.02 80);
 	/* Fiery red destructive */
-	--destructive: oklch(0.60 0.25 25);
+	--destructive: oklch(0.6 0.25 25);
 	--destructive-foreground: oklch(0.95 0.01 80);
-	--border: oklch(0.30 0.05 270);
+	--border: oklch(0.3 0.05 270);
 	--input: oklch(0.32 0.05 268);
-	--ring: oklch(0.70 0.18 80);
+	--ring: oklch(0.7 0.18 80);
 	/* Mystical charts */
 	--chart-1: oklch(0.65 0.18 280);
-	--chart-2: oklch(0.60 0.16 320);
-	--chart-3: oklch(0.70 0.18 80);
+	--chart-2: oklch(0.6 0.16 320);
+	--chart-3: oklch(0.7 0.18 80);
 	--chart-4: oklch(0.55 0.12 150);
-	--chart-5: oklch(0.60 0.20 25);
+	--chart-5: oklch(0.6 0.2 25);
 	/* Dark sidebar with magical feel */
 	--sidebar: oklch(0.18 0.035 268);
 	--sidebar-foreground: oklch(0.92 0.02 80);
-	--sidebar-primary: oklch(0.70 0.18 80);
+	--sidebar-primary: oklch(0.7 0.18 80);
 	--sidebar-primary-foreground: oklch(0.15 0.02 45);
 	--sidebar-accent: oklch(0.28 0.06 285);
 	--sidebar-accent-foreground: oklch(0.92 0.02 80);
 	--sidebar-border: oklch(0.28 0.05 270);
-	--sidebar-ring: oklch(0.70 0.18 80);
+	--sidebar-ring: oklch(0.7 0.18 80);
 	--font-sans:
 		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -157,6 +168,17 @@
 	--editor-highlight-purple: hsl(275 75% 13%);
 	--editor-highlight-pink: hsl(340 65% 12%);
 	--editor-highlight-red: hsl(5 70% 12%);
+
+	/* Toast-specific variables - dark theme */
+	--toast-success-bg: hsl(135 50% 15%);
+	--toast-success-text: hsl(135 70% 75%);
+	--toast-success-border: hsl(135 65% 45%);
+	--toast-warning-bg: hsl(45 70% 18%);
+	--toast-warning-text: hsl(45 90% 75%);
+	--toast-warning-border: hsl(45 85% 55%);
+	--toast-info-bg: hsl(215 60% 18%);
+	--toast-info-text: hsl(215 85% 75%);
+	--toast-info-border: hsl(215 80% 55%);
 }
 
 @theme inline {
@@ -218,5 +240,61 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+
+	/* Sonner toast overrides - default/normal state */
+	[data-sonner-toast] {
+		background: var(--popover) !important;
+		color: var(--popover-foreground) !important;
+		border: 1px solid var(--border) !important;
+		border-radius: var(--radius) !important;
+	}
+
+	[data-sonner-toast][data-styled="true"] {
+		background: var(--popover) !important;
+		color: var(--popover-foreground) !important;
+		border: 1px solid var(--border) !important;
+	}
+
+	[data-sonner-toast] [data-description] {
+		color: var(--muted-foreground) !important;
+	}
+
+	[data-sonner-toast] [data-button] {
+		background: var(--primary) !important;
+		color: var(--primary-foreground) !important;
+	}
+
+	[data-sonner-toast] [data-cancel] {
+		background: var(--muted) !important;
+		color: var(--muted-foreground) !important;
+	}
+
+	/* Success toast - forest green theme */
+	[data-sonner-toast][data-type="success"] {
+		background: var(--toast-success-bg) !important;
+		color: var(--toast-success-text) !important;
+		border: 1px solid var(--toast-success-border) !important;
+	}
+
+	/* Error toast - dragon red theme */
+	[data-sonner-toast][data-type="error"] {
+		background: var(--destructive) !important;
+		color: var(--destructive-foreground) !important;
+		border: 1px solid var(--destructive) !important;
+	}
+
+	/* Warning toast - gold theme */
+	[data-sonner-toast][data-type="warning"] {
+		background: var(--toast-warning-bg) !important;
+		color: var(--toast-warning-text) !important;
+		border: 1px solid var(--toast-warning-border) !important;
+	}
+
+	/* Info toast - mystical blue theme */
+	[data-sonner-toast][data-type="info"] {
+		background: var(--toast-info-bg) !important;
+		color: var(--toast-info-text) !important;
+		border: 1px solid var(--toast-info-border) !important;
 	}
 }

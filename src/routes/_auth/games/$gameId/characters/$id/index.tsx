@@ -84,7 +84,7 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 		deleteCharacter.mutate({
 			path: { game_id: gameId, id: character.id },
 		});
-		toast("Character deleted successfully!");
+		toast.success("Character deleted successfully!");
 		navigate({ to: "." });
 	};
 

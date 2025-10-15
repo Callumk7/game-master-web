@@ -30,7 +30,7 @@ export function EditCharacterForm({ initialData, params }: EditCharacterFormProp
 				},
 			}),
 		onSuccess: async () => {
-			toast("Character updated successfully!");
+			toast.success("Character updated successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listCharactersQueryKey({
 					path: { game_id: gameId },

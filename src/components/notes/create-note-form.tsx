@@ -55,7 +55,7 @@ export function CreateNoteForm({
 					});
 				}
 			}
-			toast("Note created successfully!");
+			toast.success("Note created successfully!");
 			queryClient.invalidateQueries({
 				queryKey: listNotesQueryKey({
 					path: { game_id: gameId },

@@ -100,7 +100,7 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 		deleteQuest.mutate({
 			path: { game_id: gameId, id: quest.id },
 		});
-		toast("Quest deleted successfully!");
+		toast.warning("Quest deleted successfully!");
 		navigate({ to: "." });
 	};
 

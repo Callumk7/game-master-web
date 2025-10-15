@@ -101,7 +101,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 		deleteNote.mutate({
 			path: { game_id: gameId, id: note.id },
 		});
-		toast("Note deleted successfully!");
+		toast.success("Note deleted successfully!");
 		navigate({ to: "." });
 	};
 

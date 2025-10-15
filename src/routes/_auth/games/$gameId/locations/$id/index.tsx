@@ -100,7 +100,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 		deleteLocation.mutate({
 			path: { game_id: gameId, id: location.id },
 		});
-		toast("Location deleted successfully!");
+		toast.success("Location deleted successfully!");
 		navigate({ to: "." });
 	};
 
