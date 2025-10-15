@@ -126,7 +126,6 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			entityType="location"
 			entityId={location.id}
 			onSave={handleSave}
-			isSaving={updateLocation.isPending}
 		/>
 	);
 

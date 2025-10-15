@@ -131,7 +131,6 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 			entityType="character"
 			entityId={character.id}
 			onSave={handleSave}
-			isSaving={updateCharacter.isPending}
 		/>
 	);
 

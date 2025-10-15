@@ -122,7 +122,6 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			entityType="note"
 			entityId={note.id}
 			onSave={handleSave}
-			isSaving={updateNote.isPending}
 		/>
 	);
 

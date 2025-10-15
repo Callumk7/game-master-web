@@ -29,7 +29,7 @@ export function NotePaneView({
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateNoteMutation(gameId, noteId);
+	const { mutateAsync } = useUpdateNoteMutation(gameId, noteId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
@@ -56,7 +56,6 @@ export function NotePaneView({
 			entityType="notes"
 			gameId={gameId}
 			onSave={handleSave}
-			isSaving={isPending}
 			isLoading={isLoading}
 			isError={isError}
 			onClearEntity={onClearEntity}

@@ -120,7 +120,6 @@ function FactionView({ faction, gameId }: FactionViewProps) {
 			entityType="faction"
 			entityId={faction.id}
 			onSave={handleSave}
-			isSaving={updateFaction.isPending}
 		/>
 	);
 

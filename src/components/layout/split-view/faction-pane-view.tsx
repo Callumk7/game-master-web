@@ -29,7 +29,7 @@ export function FactionPaneView({
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateFactionMutation(gameId, factionId);
+	const { mutateAsync } = useUpdateFactionMutation(gameId, factionId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
@@ -56,7 +56,6 @@ export function FactionPaneView({
 			entityType="factions"
 			gameId={gameId}
 			onSave={handleSave}
-			isSaving={isPending}
 			isLoading={isLoading}
 			isError={isError}
 			onClearEntity={onClearEntity}

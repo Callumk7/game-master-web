@@ -42,7 +42,6 @@ interface EntityContentRendererProps<T extends EntityUnion> {
 	entityType: EntityType;
 	gameId: string;
 	onSave: (payload: EntityMutationPayload) => Promise<void>;
-	isSaving: boolean;
 	isLoading: boolean;
 	isError: boolean;
 	onClearEntity: () => void;
@@ -56,7 +55,6 @@ export function EntityContentRenderer<T extends EntityUnion>({
 	entityType,
 	gameId,
 	onSave,
-	isSaving,
 	isLoading,
 	isError,
 	onClearEntity,
@@ -143,7 +141,6 @@ export function EntityContentRenderer<T extends EntityUnion>({
 								entityType={singularType}
 								entityId={entity.id}
 								onSave={onSave}
-								isSaving={isSaving}
 								className="min-h-[200px]"
 							/>
 						</div>

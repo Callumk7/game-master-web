@@ -121,7 +121,6 @@ function QuestView({ quest, gameId }: QuestViewProps) {
 			entityType="quest"
 			entityId={quest.id}
 			onSave={handleSave}
-			isSaving={updateQuest.isPending}
 		/>
 	);
 

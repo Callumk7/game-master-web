@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Button } from "~/components/ui/button";
 import type { EntityType } from "~/types";
 import { useEditorContentActions } from "./hooks";
 import { useCreateLinksFromMentions } from "./hooks/useCreateLinksFromMentions";
@@ -15,15 +14,6 @@ interface EntityEditorProps {
 		content: string;
 		content_plain_text: string;
 	}) => void | Promise<void>;
-	isSaving?: boolean;
-	saveButtonText?: string;
-	saveButtonVariant?:
-		| "default"
-		| "destructive"
-		| "outline"
-		| "secondary"
-		| "ghost"
-		| "link";
 	className?: string;
 }
 
@@ -33,14 +23,12 @@ export function EntityEditor({
 	entityType,
 	entityId,
 	onSave,
-	isSaving = false,
-	saveButtonText = "Save",
-	saveButtonVariant = "secondary",
 	className,
 }: EntityEditorProps) {
 	const { isUpdated, setIsUpdated, onChange, getPayload, updatedContent } =
 		useEditorContentActions();
-	const { createLinksFromMentions, isCreatingLinks } = useCreateLinksFromMentions();
+	const { createLinksFromMentions } = useCreateLinksFromMentions();
+	const [autoSaveStatus, setAutoSaveStatus] = React.useState<'idle' | 'saving' | 'saved'>('idle');
 
 	// Memoize parsed content to avoid creating new objects on every render
 	const parsedContent = React.useMemo(
@@ -48,39 +36,63 @@ export function EntityEditor({
 		[content],
 	);
 
-	const handleSave = async () => {
-		// Get the payload for this entity type
-		const payload = getPayload(entityType)[entityType];
-
-		// Call the provided save function
-		await onSave(payload);
-
-		// Create links from mentions (runs in background)
-		if (updatedContent.json) {
-			try {
-				await createLinksFromMentions(updatedContent.json, {
-					gameId,
-					type: entityType,
-					id: entityId,
-				});
-			} catch (error) {
-				// Silently handle errors - user doesn't need to know about mention link failures
-				console.warn("Some mention links failed to create:", error);
-			}
+	// Debounced auto-save effect
+	React.useEffect(() => {
+		if (!isUpdated) {
+			return;
 		}
 
-		setIsUpdated(false);
-	};
+		setAutoSaveStatus('idle');
+
+		// Debounce the save operation by 750ms
+		const timeoutId = setTimeout(async () => {
+			setAutoSaveStatus('saving');
+
+			try {
+				// Get the payload for this entity type
+				const payload = getPayload(entityType)[entityType];
+
+				// Call the provided save function
+				await onSave(payload);
+
+				// Create links from mentions (runs in background)
+				if (updatedContent.json) {
+					try {
+						await createLinksFromMentions(updatedContent.json, {
+							gameId,
+							type: entityType,
+							id: entityId,
+						});
+					} catch (error) {
+						// Silently handle errors - user doesn't need to know about mention link failures
+						console.warn("Some mention links failed to create:", error);
+					}
+				}
+
+				setIsUpdated(false);
+				setAutoSaveStatus('saved');
+
+				// Reset to idle after 2 seconds
+				setTimeout(() => setAutoSaveStatus('idle'), 2000);
+			} catch (error) {
+				console.error("Auto-save failed:", error);
+				setAutoSaveStatus('idle');
+			}
+		}, 750);
+
+		return () => clearTimeout(timeoutId);
+	}, [isUpdated, entityType, getPayload, onSave, updatedContent, createLinksFromMentions, gameId, entityId, setIsUpdated]);
 
 	return (
 		<div className={`space-y-4 ${className || ""}`}>
-			<Button
-				variant={saveButtonVariant}
-				onClick={handleSave}
-				disabled={!isUpdated || isSaving || isCreatingLinks}
-			>
-				{isSaving || isCreatingLinks ? "Saving..." : saveButtonText}
-			</Button>
+			{/* Auto-save status indicator */}
+			<div className="flex items-center justify-end h-6 text-sm text-muted-foreground">
+				{autoSaveStatus === 'saved' ? (
+					<span className="text-green-600 dark:text-green-400">Saved</span>
+				) : isUpdated ? (
+					<span>Updated</span>
+				) : null}
+			</div>
 			<Tiptap
 				key={entityId}
 				entityId={entityId}
@@ -88,13 +100,6 @@ export function EntityEditor({
 				content={parsedContent}
 				onChange={onChange}
 			/>
-			<Button
-				variant={saveButtonVariant}
-				onClick={handleSave}
-				disabled={!isUpdated || isSaving || isCreatingLinks}
-			>
-				{isSaving || isCreatingLinks ? "Saving..." : saveButtonText}
-			</Button>
 		</div>
 	);
 }
