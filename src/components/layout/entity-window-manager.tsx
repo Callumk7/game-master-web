@@ -6,9 +6,12 @@ import { useEntityWindows, useUIActions } from "~/state/ui";
 export function EntityWindowManager() {
 	const params = useParams({ from: "/_auth/games/$gameId" });
 	const entityWindows = useEntityWindows();
-	const { closeEntityWindow, bringWindowToFront } = useUIActions();
+	const { closeEntityWindow, bringWindowToFront, minimizeEntityWindow } =
+		useUIActions();
 
-	const openWindows = entityWindows.filter((window) => window.isOpen);
+	const openWindows = entityWindows.filter(
+		(window) => window.isOpen && !window.isMinimized,
+	);
 
 	if (openWindows.length === 0) {
 		return null;
@@ -25,6 +28,7 @@ export function EntityWindowManager() {
 							closeEntityWindow(window.id);
 						}
 					}}
+					onMinimize={() => minimizeEntityWindow(window.id)}
 					title={window.entity.name}
 					defaultWidth={window.size?.width ?? 600}
 					defaultHeight={window.size?.height ?? 400}

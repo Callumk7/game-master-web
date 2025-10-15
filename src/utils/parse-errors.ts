@@ -1,65 +1,24 @@
-import type { ErrorDetails } from "~/api/types.gen";
+import type { _Error } from "~/api";
 
-interface ParsedError {
-	message: string;
-	code?: string;
-	statusCode?: number;
-	field?: string;
-	details?: Record<string, unknown>;
-}
+/**
+ * Parses an ApiError object into a formatted string.
+ * @param apiError The error object from the API.
+ * @returns A string representing the formatted errors, or a default message.
+ */
+export const parseApiErrors = (apiError: _Error): string => {
+	// Check if the errors object exists and is not empty
+	if (!apiError.errors || Object.keys(apiError.errors).length === 0) {
+		return "An unknown error occurred.";
+	}
 
-export function parseApiError(errorDetails: ErrorDetails): ParsedError {
-	// Common field names to check for error information
-	const messageFields = ["message", "error", "description", "detail", "msg"];
-	const codeFields = ["code", "errorCode", "error_code", "type"];
-	const statusFields = ["status", "statusCode", "status_code", "httpStatus"];
-	const fieldFields = ["field", "fieldName", "property", "param"];
+	// Map each error to a "Field: Message" string and join them with a newline
+	const errorMessages = Object.entries(apiError.errors)
+		.map(([field, message]) => {
+			// Capitalize the first letter of the field for better readability
+			const formattedField = field.charAt(0).toUpperCase() + field.slice(1);
+			return `${formattedField}: ${String(message)}`;
+		})
+		.join("\n"); // Use newline to separate multiple errors
 
-	const getMessage = (): string => {
-		for (const field of messageFields) {
-			const value = errorDetails[field];
-			if (typeof value === "string" && value.length > 0) {
-				return value;
-			}
-		}
-		return "An unknown error occurred";
-	};
-
-	const getCode = (): string | undefined => {
-		for (const field of codeFields) {
-			const value = errorDetails[field];
-			if (typeof value === "string" || typeof value === "number") {
-				return String(value);
-			}
-		}
-		return undefined;
-	};
-
-	const getStatusCode = (): number | undefined => {
-		for (const field of statusFields) {
-			const value = errorDetails[field];
-			if (typeof value === "number") {
-				return value;
-			}
-		}
-		return undefined;
-	};
-
-	const getField = (): string | undefined => {
-		for (const field of fieldFields) {
-			const value = errorDetails[field];
-			if (typeof value === "string") {
-				return value;
-			}
-		}
-		return undefined;
-	};
-
-	return {
-		message: getMessage(),
-		code: getCode(),
-		statusCode: getStatusCode(),
-		field: getField(),
-		details: errorDetails,
-	};
-}
+	return errorMessages;
+};

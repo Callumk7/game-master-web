@@ -46,8 +46,45 @@ export function extractNodesAndConnections<T extends Record<string, object>>(
 	return { nodes: uniqueNodes, connections };
 }
 
+export function extractNodesAndConnectionsFromTree(
+	treeData: GenericNode,
+): { nodes: Map<string, GenericNode>; connections: Connection[] } {
+	const uniqueNodes = new Map<string, GenericNode>();
+	const connections: Connection[] = [];
+	const processedConnections = new Set<string>();
+
+	function processNode(node: GenericNode, parentId?: string) {
+		uniqueNodes.set(node.id, node);
+
+		if (parentId) {
+			const connectionKey = `${parentId}->${node.id}`;
+			if (!processedConnections.has(connectionKey)) {
+				connections.push({
+					from: parentId,
+					to: node.id,
+					strength: node.strength,
+				});
+				processedConnections.add(connectionKey);
+			}
+		}
+
+		if (node.children?.length) {
+			for (const child of node.children) {
+				processNode(child, node.id);
+			}
+		}
+	}
+
+	processNode(treeData);
+	return { nodes: uniqueNodes, connections };
+}
+
 export function createDefaultNodeExtractor(entityKeys?: string[]) {
 	return <T extends Record<string, object>>(data: T) =>
 		extractNodesAndConnections(data, entityKeys);
+}
+
+export function createTreeNodeExtractor() {
+	return (treeData: GenericNode) => extractNodesAndConnectionsFromTree(treeData);
 }
 

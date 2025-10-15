@@ -30,6 +30,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			cell: ({ row }) => (
 				<EntityLink
 					entityType="quest"
+					quest-table
 					gameId={gameId}
 					entityId={row.original.id}
 					name={row.getValue("name")}
@@ -54,11 +55,11 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
-			accessorKey: "created_at",
+			accessorKey: "updated_at",
 			header: ({ column }) => (
-				<SortableHeader column={column}>Created</SortableHeader>
+				<SortableHeader column={column}>Updated</SortableHeader>
 			),
-			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 		},
 		{
 			accessorKey: "status",
@@ -111,6 +112,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 							}}
 						/>
 						<EditQuestDialog
+							gameId={gameId}
 							isOpen={editModalOpen}
 							setIsOpen={setEditModalOpen}
 							quest={quest}

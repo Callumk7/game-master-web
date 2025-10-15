@@ -29,7 +29,7 @@ export function CharacterPaneView({
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateCharacterMutation(gameId, characterId);
+	const { mutateAsync } = useUpdateCharacterMutation(gameId, characterId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
@@ -56,7 +56,6 @@ export function CharacterPaneView({
 			entityType="characters"
 			gameId={gameId}
 			onSave={handleSave}
-			isSaving={isPending}
 			isLoading={isLoading}
 			isError={isError}
 			onClearEntity={onClearEntity}

@@ -126,7 +126,6 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			entityType="location"
 			entityId={location.id}
 			onSave={handleSave}
-			isSaving={updateLocation.isPending}
 		/>
 	);
 
@@ -195,6 +194,7 @@ function LocationView({ location, gameId }: LocationViewProps) {
 			name={location.name}
 			badges={badges}
 			tabs={tabs}
+			pinned={location.pinned}
 			onEdit={() => navigate({ to: "edit" })}
 			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}

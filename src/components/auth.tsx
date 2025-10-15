@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { FormField } from "./ui/composite/form-field";
+import { Link } from "./ui/link";
 
 export function Auth({
 	actionText,
@@ -14,7 +15,7 @@ export function Auth({
 	afterSubmit?: React.ReactNode;
 }) {
 	return (
-		<Card>
+		<Card className="max-w-xl mx-auto">
 			<CardHeader>
 				<CardTitle>{actionText}</CardTitle>
 			</CardHeader>
@@ -24,7 +25,7 @@ export function Auth({
 						e.preventDefault();
 						onSubmit(e);
 					}}
-					className="space-y-4"
+					className="space-y-4 w-full flex flex-col"
 				>
 					<FormField id="email" label="Email" name="email" type="email" />
 					<FormField
@@ -36,6 +37,11 @@ export function Auth({
 					<Button type="submit" disabled={status === "pending"}>
 						{status === "pending" ? "..." : actionText}
 					</Button>
+					{actionText === "Login" ? (
+						<Link to="/signup">Need an account?</Link>
+					) : (
+						<Link to="/login">Already have an account?</Link>
+					)}
 					{afterSubmit ? afterSubmit : null}
 				</form>
 			</CardContent>

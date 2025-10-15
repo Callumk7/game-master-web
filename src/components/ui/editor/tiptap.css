@@ -263,15 +263,23 @@
 	height: auto;
 	border-radius: calc(var(--radius) + 4px);
 	border: 1px solid var(--editor-border-default);
-	box-shadow: var(--editor-shadow-sm);
-	transition: all var(--editor-transition-normal);
 	display: block;
-	margin: var(--editor-spacing-1) auto;
+	margin: var(--editor-spacing-4) auto;
 }
 
-.ProseMirror img:hover {
-	box-shadow: var(--editor-shadow-lg);
-	transform: translateY(-2px);
+.ProseMirror img.ProseMirror-selectednode {
+	outline: 2px solid var(--editor-highlight-default);
+	outline-offset: 2px;
+}
+
+/* Custom editor image class */
+.editor-image {
+	max-width: 100%;
+	height: auto;
+	border-radius: calc(var(--radius) + 4px);
+	border: 1px solid var(--editor-border-default);
+	display: block;
+	margin: var(--editor-spacing-4) auto;
 }
 
 /* Horizontal Rule */

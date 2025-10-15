@@ -1,4 +1,7 @@
 import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
+import FileHandler from "@tiptap/extension-file-handler";
+import Highlight from "@tiptap/extension-highlight";
+import Image from "@tiptap/extension-image";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -9,6 +12,8 @@ import {
 	Heading1,
 	Heading2,
 	Heading3,
+	Highlighter,
+	Image as ImageIcon,
 	Italic,
 	Link,
 	List,
@@ -26,9 +31,15 @@ import {
 import * as React from "react";
 import { cn } from "~/utils/cn";
 import "src/components/ui/editor/tiptap.css";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { listGameEntitiesOptions } from "~/api/@tanstack/react-query.gen";
+import { toast } from "sonner";
+import {
+	listGameEntitiesOptions,
+	uploadEntityImageMutation,
+} from "~/api/@tanstack/react-query.gen";
+import { SERVER_URL } from "~/routes/__root";
+import type { EntityType } from "~/types";
 import { Button } from "../button";
 import {
 	DropdownMenu,
@@ -49,6 +60,8 @@ export interface TiptapProps {
 	placeholder?: string;
 	editable?: boolean;
 	className?: string;
+	entityId?: string;
+	entityType?: EntityType;
 }
 
 export function Tiptap({
@@ -57,15 +70,83 @@ export function Tiptap({
 	placeholder = "Start typing...",
 	editable = true,
 	className,
+	entityId,
+	entityType,
 }: TiptapProps) {
 	const params = useParams({ from: "/_auth/games/$gameId" });
 	const gameId = params?.gameId;
+	const queryClient = useQueryClient();
+
+	// Image upload mutation
+	const uploadImage = useMutation({
+		...uploadEntityImageMutation(),
+		onSuccess: () => {
+			if (gameId && entityType && entityId) {
+				queryClient.invalidateQueries({
+					queryKey: ["listEntityImages", { gameId, entityType, entityId }],
+				});
+			}
+		},
+		onError: (error) => {
+			console.error("Upload error:", error);
+			toast.error("Failed to upload image");
+		},
+	});
 
 	const { data: entitiesData } = useQuery({
 		...listGameEntitiesOptions({ path: { game_id: gameId } }),
 		enabled: !!gameId,
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
+
+	// Handle image upload
+	const handleImageUpload = React.useCallback(
+		async (file: File): Promise<string | null> => {
+			if (!gameId || !entityType || !entityId) {
+				toast.error("Cannot upload image: missing entity information");
+				return null;
+			}
+
+			// Validate file type
+			if (!file.type.startsWith("image/")) {
+				toast.error("Please select an image file");
+				return null;
+			}
+
+			// Validate file size (20MB limit)
+			if (file.size > 20 * 1024 * 1024) {
+				toast.error("File size must be less than 20MB");
+				return null;
+			}
+
+			try {
+				const result = await uploadImage.mutateAsync({
+					path: {
+						game_id: gameId,
+						entity_type: entityType,
+						entity_id: entityId,
+					},
+					body: {
+						"image[file]": file,
+						"image[alt_text]": file.name,
+					},
+				});
+
+				if (result.data?.file_url) {
+					toast.success("Image uploaded successfully");
+					return `${SERVER_URL}/${result.data.file_url}`;
+				}
+
+				toast.error("Failed to upload image");
+				return null;
+			} catch (error) {
+				console.error("Upload error:", error);
+				toast.error("Failed to upload image");
+				return null;
+			}
+		},
+		[gameId, entityType, entityId, uploadImage],
+	);
 
 	// Transform entities into mention items
 	const mentionItems = React.useMemo((): MentionItem[] => {
@@ -127,9 +208,6 @@ export function Tiptap({
 		return items;
 	}, [entitiesData, gameId]);
 
-	// Force re-render when selection changes to update button states
-	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
-
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -143,6 +221,43 @@ export function Tiptap({
 				},
 			}),
 			BubbleMenuExtension,
+			Highlight.configure({
+				multicolor: false,
+			}),
+			Image.configure({
+				inline: false,
+				allowBase64: false,
+				HTMLAttributes: {
+					class: "editor-image",
+				},
+			}),
+			FileHandler.configure({
+				allowedMimeTypes: ["image/png", "image/jpeg", "image/gif", "image/webp"],
+				onDrop: (currentEditor, files, _pos) => {
+					files.forEach(async (file) => {
+						const url = await handleImageUpload(file);
+						if (url) {
+							currentEditor
+								.chain()
+								.focus()
+								.setImage({ src: url, alt: file.name })
+								.run();
+						}
+					});
+				},
+				onPaste: (currentEditor, files) => {
+					files.forEach(async (file) => {
+						const url = await handleImageUpload(file);
+						if (url) {
+							currentEditor
+								.chain()
+								.focus()
+								.setImage({ src: url, alt: file.name })
+								.run();
+						}
+					});
+				},
+			}),
 			Table.configure({
 				resizable: true,
 			}),
@@ -172,10 +287,6 @@ export function Tiptap({
 					text: editor.getText(),
 				});
 			});
-		},
-		onSelectionUpdate: () => {
-			// Force re-render when selection changes to update button states
-			forceUpdate();
 		},
 		editorProps: {
 			attributes: {
@@ -245,6 +356,15 @@ export function Tiptap({
 					<Code className="h-4 w-4" />
 				</Toggle>
 
+				<Toggle
+					size="sm"
+					pressed={editor.isActive("highlight")}
+					onPressedChange={() => editor.chain().focus().toggleHighlight().run()}
+					disabled={!editor.can().chain().focus().toggleHighlight().run()}
+				>
+					<Highlighter className="h-4 w-4" />
+				</Toggle>
+
 				<Button
 					variant="ghost"
 					size="sm"
@@ -257,6 +377,34 @@ export function Tiptap({
 					disabled={!editor.can().chain().focus().setLink({ href: "" }).run()}
 				>
 					<Link className="h-4 w-4" />
+				</Button>
+
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() => {
+						const input = document.createElement("input");
+						input.type = "file";
+						input.accept = "image/*";
+						input.onchange = async (e) => {
+							const file = (e.target as HTMLInputElement).files?.[0];
+							if (file) {
+								const url = await handleImageUpload(file);
+								if (url) {
+									editor
+										.chain()
+										.focus()
+										.setImage({ src: url, alt: file.name })
+										.run();
+								}
+							}
+						};
+						input.click();
+					}}
+					disabled={!gameId || !entityType || !entityId}
+					title="Insert image"
+				>
+					<ImageIcon className="h-4 w-4" />
 				</Button>
 
 				{editor.isActive("link") && (

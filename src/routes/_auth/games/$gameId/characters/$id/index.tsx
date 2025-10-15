@@ -11,6 +11,7 @@ import { CharacterImages } from "~/components/characters/character-images";
 import { CharacterNodeViewer } from "~/components/characters/character-node-viewer";
 import { CharacterNotesView } from "~/components/characters/character-note-view";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
+import { EditCharacterDialog } from "~/components/characters/edit-character-dialog";
 import { useAddTab } from "~/components/entity-tabs";
 import { EntityView } from "~/components/entity-view";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
@@ -130,7 +131,6 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 			entityType="character"
 			entityId={character.id}
 			onSave={handleSave}
-			isSaving={updateCharacter.isPending}
 		/>
 	);
 
@@ -203,21 +203,30 @@ function CharacterView({ character, gameId }: CharacterViewProps) {
 	];
 
 	const navigate = Route.useNavigate();
+	const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 	return (
-		<EntityView
-			id={character.id}
-			gameId={gameId}
-			type="character"
-			content={character.content}
-			content_plain_text={character.content_plain_text}
-			name={character.name}
-			badges={badges}
-			tabs={tabs}
-			pinned={character.pinned}
-			onEdit={() => navigate({ to: "edit" })}
-			onDelete={handleDelete}
-			onTogglePin={handleTogglePin}
-		/>
+		<>
+			<EntityView
+				id={character.id}
+				gameId={gameId}
+				type="character"
+				content={character.content}
+				content_plain_text={character.content_plain_text}
+				name={character.name}
+				badges={badges}
+				tabs={tabs}
+				pinned={character.pinned}
+				onEdit={() => setEditModalOpen(true)}
+				onDelete={handleDelete}
+				onTogglePin={handleTogglePin}
+			/>
+			<EditCharacterDialog
+				gameId={gameId}
+				isOpen={editModalOpen}
+				setIsOpen={setEditModalOpen}
+				character={character}
+			/>
+		</>
 	);
 }

@@ -81,11 +81,11 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			maxSize: 50,
 		},
 		{
-			accessorKey: "created_at",
+			accessorKey: "updated_at",
 			header: ({ column }) => (
-				<SortableHeader column={column}>Created</SortableHeader>
+				<SortableHeader column={column}>Updated</SortableHeader>
 			),
-			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 		},
 		{
 			id: "view",
@@ -131,6 +131,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 							onEdit={() => setEditModalOpen(true)}
 						/>
 						<EditCharacterDialog
+							gameId={gameId}
 							isOpen={editModalOpen}
 							setIsOpen={setEditModalOpen}
 							character={character}

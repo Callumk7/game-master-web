@@ -3,7 +3,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { signupUser } from "~/api";
 import { Auth } from "~/components/auth";
-import { parseApiError } from "~/utils/error-parser";
+import { Container } from "~/components/container";
+import { parseApiErrors } from "~/utils/parse-errors";
 import { getAppSession } from "~/utils/session";
 
 export const signupFn = createServerFn({ method: "POST" })
@@ -11,15 +12,11 @@ export const signupFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const { data: signupData, error } = await signupUser({ body: data });
 
-		if (error?.errors) {
-			const parsedError = parseApiError(error.errors);
-			console.log(parsedError);
+		if (error) {
+			console.log(error);
 			return {
 				error: true,
-				message: parsedError.message,
-				userExists:
-					parsedError.field === "email" &&
-					parsedError.message === "has already been taken",
+				message: parseApiErrors(error),
 			};
 		}
 
@@ -55,24 +52,26 @@ function SignupComp() {
 	});
 
 	return (
-		<Auth
-			actionText="Sign Up"
-			status={signupMutation.status}
-			onSubmit={(e) => {
-				const formData = new FormData(e.target as HTMLFormElement);
+		<Container>
+			<Auth
+				actionText="Sign Up"
+				status={signupMutation.status}
+				onSubmit={(e) => {
+					const formData = new FormData(e.target as HTMLFormElement);
 
-				signupMutation.mutate({
-					data: {
-						email: formData.get("email") as string,
-						password: formData.get("password") as string,
-					},
-				});
-			}}
-			afterSubmit={
-				signupMutation.data?.error ? (
-					<div className="text-red-400">{signupMutation.data.message}</div>
-				) : null
-			}
-		/>
+					signupMutation.mutate({
+						data: {
+							email: formData.get("email") as string,
+							password: formData.get("password") as string,
+						},
+					});
+				}}
+				afterSubmit={
+					signupMutation.data?.error ? (
+						<div className="text-red-400">{signupMutation.data.message}</div>
+					) : null
+				}
+			/>
+		</Container>
 	);
 }

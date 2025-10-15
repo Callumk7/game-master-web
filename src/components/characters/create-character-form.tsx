@@ -15,6 +15,7 @@ import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import { Button } from "../ui/button";
 import { FormField } from "../ui/composite/form-field";
 import { FactionSelect } from "./faction-select";
+import { Label } from "../ui/label";
 
 interface CreateCharacterFormProps {
 	onSuccess?: () => void;
@@ -31,6 +32,7 @@ export function CreateCharacterForm({
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
+	const [selectedFaction, setSelectedFaction] = React.useState<string>();
 	const [factionRole, setFactionRole] = React.useState<string>("");
 
 	const { data: factionsData, isLoading: factionsLoading } = useQuery({
@@ -46,11 +48,12 @@ export function CreateCharacterForm({
 		schema: schemas.character,
 		entityName: "character",
 		onSuccess: async ({ data: character }) => {
-			if (character && factionId) {
+			const factionToLinkTo = shouldCreateFactionLink(factionId, selectedFaction);
+			if (character && factionToLinkTo) {
 				const result = await createCharacterLink({
 					path: { game_id: gameId, character_id: character.id },
 					body: {
-						entity_id: factionId,
+						entity_id: factionToLinkTo,
 						entity_type: "faction",
 						faction_role: factionRole,
 						is_primary: true,
@@ -64,12 +67,12 @@ export function CreateCharacterForm({
 				if (result.response.ok) {
 					queryClient.invalidateQueries({
 						queryKey: getFactionLinksQueryKey({
-							path: { game_id: gameId, faction_id: factionId },
+							path: { game_id: gameId, faction_id: factionToLinkTo },
 						}),
 					});
 					queryClient.invalidateQueries({
 						queryKey: getFactionMembersQueryKey({
-							path: { game_id: gameId, faction_id: factionId },
+							path: { game_id: gameId, faction_id: factionToLinkTo },
 						}),
 					});
 				}
@@ -112,44 +115,36 @@ export function CreateCharacterForm({
 						{renderSmartField("name")}
 						{renderSmartField("class")}
 						{renderSmartField("level")}
+						{renderSmartField("race")}
 						{renderSmartField("tags")}
+						{/* NOT a form field, but for the secondary mutation */}
 						{!factionId && (
-							<form.AppField name="member_of_faction_id">
-								{(field) => (
-									<form.Item>
-										<field.Label>Faction</field.Label>
-										<field.Control>
-											{factionsLoading ? (
-												<div className="text-muted-foreground text-sm p-2">
-													Loading factions...
-												</div>
-											) : (
-												<FactionSelect
-													factions={factionsData?.data ?? []}
-													value={field.state.value}
-													onChange={field.handleChange}
-													placeholder="Select faction"
-													container={container}
-												/>
-											)}
-										</field.Control>
-										<field.Description>
-											Choose a faction to create a character within.
-										</field.Description>
-										<field.Message />
-									</form.Item>
+							<>
+								{factionsLoading ? (
+									<div className="text-muted-foreground text-sm p-2">
+										Loading factions...
+									</div>
+								) : (
+									<div className="space-y-1">
+										<Label>Faction</Label>
+										<FactionSelect
+											factions={factionsData?.data ?? []}
+											value={selectedFaction}
+											onChange={setSelectedFaction}
+											placeholder="Select faction"
+											container={container}
+										/>
+									</div>
 								)}
-							</form.AppField>
+							</>
 						)}
 
 						{/* NOT a form field, but for the secondary mutation */}
-						{factionId && (
-							<FormField
-								label="Faction Role"
-								value={factionRole}
-								onChange={(e) => setFactionRole(e.currentTarget.value)}
-							/>
-						)}
+						<FormField
+							label="Faction Role"
+							value={factionRole}
+							onChange={(e) => setFactionRole(e.currentTarget.value)}
+						/>
 
 						{renderSmartField("content")}
 
@@ -182,3 +177,18 @@ export function CreateCharacterForm({
 		</div>
 	);
 }
+
+const shouldCreateFactionLink = (
+	factionId: string | undefined,
+	selectedFaction: string | undefined,
+) => {
+	if (factionId) {
+		return factionId;
+	}
+
+	if (selectedFaction) {
+		return selectedFaction;
+	}
+
+	return undefined;
+};

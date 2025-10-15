@@ -122,7 +122,6 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			entityType="note"
 			entityId={note.id}
 			onSave={handleSave}
-			isSaving={updateNote.isPending}
 		/>
 	);
 
@@ -183,6 +182,7 @@ function NoteView({ note, gameId }: NoteViewProps) {
 			content_plain_text={note.content_plain_text}
 			name={note.name}
 			badges={badges}
+			pinned={note.pinned}
 			tabs={tabs}
 			onEdit={() => navigate({ to: "edit" })}
 			onTogglePin={handleTogglePin}

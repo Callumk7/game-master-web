@@ -3,12 +3,14 @@ import { EditEntityDialog } from "../edit-entity-dialog";
 import { EditLocationForm } from "./edit-location-form";
 
 interface EditLocationDialogProps {
+	gameId: string;
 	isOpen: boolean;
 	setIsOpen: (isOpen: boolean) => void;
 	location: Location;
 }
 
 export function EditLocationDialog({
+	gameId,
 	isOpen,
 	setIsOpen,
 	location,
@@ -17,7 +19,7 @@ export function EditLocationDialog({
 		<EditEntityDialog entity={location} isOpen={isOpen} setIsOpen={setIsOpen}>
 			<EditLocationForm
 				initialData={location}
-				params={{ gameId: location.game_id, id: location.id }}
+				params={{ gameId, id: location.id }}
 			/>
 		</EditEntityDialog>
 	);

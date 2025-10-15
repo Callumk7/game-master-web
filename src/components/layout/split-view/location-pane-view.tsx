@@ -29,7 +29,7 @@ export function LocationPaneView({
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateLocationMutation(gameId, locationId);
+	const { mutateAsync } = useUpdateLocationMutation(gameId, locationId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
@@ -56,7 +56,6 @@ export function LocationPaneView({
 			entityType="locations"
 			gameId={gameId}
 			onSave={handleSave}
-			isSaving={isPending}
 			isLoading={isLoading}
 			isError={isError}
 			onClearEntity={onClearEntity}

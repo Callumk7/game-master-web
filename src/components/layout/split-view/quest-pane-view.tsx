@@ -29,7 +29,7 @@ export function QuestPaneView({
 		}),
 	);
 
-	const { mutateAsync, isPending } = useUpdateQuestMutation(gameId, questId);
+	const { mutateAsync } = useUpdateQuestMutation(gameId, questId);
 	const { openFullView, refreshEntity } = useEntityNavigation({ gameId });
 
 	const handleSave = async (payload: EntityMutationPayload) => {
@@ -56,7 +56,6 @@ export function QuestPaneView({
 			entityType="quests"
 			gameId={gameId}
 			onSave={handleSave}
-			isSaving={isPending}
 			isLoading={isLoading}
 			isError={isError}
 			onClearEntity={onClearEntity}

@@ -11,8 +11,8 @@ import {
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteNoteMutation } from "~/queries/notes";
-import { EditNoteDialog } from "./edit-note-dialog";
 import { EntityLinkButton } from "../links/entity-link-button";
+import { EditNoteDialog } from "./edit-note-dialog";
 
 interface NotesTableProps {
 	data: Note[];
@@ -40,11 +40,11 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
-			accessorKey: "created_at",
+			accessorKey: "updated_at",
 			header: ({ column }) => (
-				<SortableHeader column={column}>Created</SortableHeader>
+				<SortableHeader column={column}>Updated</SortableHeader>
 			),
-			cell: ({ row }) => <DateDisplay date={row.getValue("created_at")} />,
+			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 		},
 		{
 			id: "view",
@@ -90,6 +90,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 							}}
 						/>
 						<EditNoteDialog
+							gameId={gameId}
 							isOpen={editModalOpen}
 							setIsOpen={setEditModalOpen}
 							note={note}
@@ -116,7 +117,7 @@ export function NotesTable({ data, gameId }: NotesTableProps) {
 			columnRelativeWidths={{
 				name: 2,
 				actions: 0.5,
-				created_at: 0.5,
+				updated_at: 0.5,
 			}}
 		/>
 	);

@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: draggable element is not a semantic element */
 import { Dialog } from "@base-ui-components/react/dialog";
-import { XIcon } from "lucide-react";
+import { Minus, XIcon } from "lucide-react";
 import * as React from "react";
 import { Link } from "~/components/ui/link";
 import type { EntityType } from "~/types";
@@ -10,6 +10,7 @@ interface DraggableWindowProps {
 	children: React.ReactNode;
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
+	onMinimize?: () => void;
 	title?: string;
 	defaultWidth?: number;
 	defaultHeight?: number;
@@ -30,6 +31,7 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 	children,
 	isOpen,
 	onOpenChange,
+	onMinimize,
 	title = "Window",
 	defaultWidth = 400,
 	defaultHeight = 300,
@@ -298,14 +300,32 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
 								title
 							)}
 						</Dialog.Title>
-						<Dialog.Close
-							className={cn(
-								"ring-offset-background focus:ring-ring data-[open]:bg-accent data-[open]:text-muted-foreground absolute top-2 right-2 p-2 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+						<div className="flex items-center gap-1">
+							{onMinimize && (
+								<button
+									type="button"
+									onClick={(e) => {
+										e.stopPropagation();
+										onMinimize();
+									}}
+									className={cn(
+										"ring-offset-background focus:ring-ring data-[open]:bg-accent data-[open]:text-muted-foreground p-2 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+									)}
+									aria-label="Minimize window"
+								>
+									<Minus />
+									<span className="sr-only">Minimize</span>
+								</button>
 							)}
-						>
-							<XIcon />
-							<span className="sr-only">Close</span>
-						</Dialog.Close>
+							<Dialog.Close
+								className={cn(
+									"ring-offset-background focus:ring-ring data-[open]:bg-accent data-[open]:text-muted-foreground p-2 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+								)}
+							>
+								<XIcon />
+								<span className="sr-only">Close</span>
+							</Dialog.Close>
+						</div>
 					</div>
 
 					{/* Content */}

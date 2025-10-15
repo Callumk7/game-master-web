@@ -5,6 +5,7 @@ import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
+import { parseApiErrors } from "~/utils/parse-errors";
 import type {
 	ApiError,
 	FieldConfig,
@@ -72,16 +73,32 @@ export function createFormComponent<
 
 					// Handle API field errors
 					const apiError = error as ApiError;
-					if (apiError.fields) {
-						Object.entries(apiError.fields).forEach(
-							([fieldName, messages]) => {
+					if (apiError.errors && typeof apiError.errors === "object") {
+						for (const [fieldName, errorValue] of Object.entries(
+							apiError.errors,
+						)) {
+							let messages: string[] = [];
+
+							// Normalize the error(s) into a string array, as form libraries usually expect this.
+							if (typeof errorValue === "string") {
+								messages = [errorValue]; // API returned a single string
+							} else if (Array.isArray(errorValue)) {
+								// Ensure all items in the array are strings before assigning
+								messages = errorValue.filter(
+									(item) => typeof item === "string",
+								);
+							}
+
+							// Only update the field if we have valid error messages
+							if (messages.length > 0) {
 								form.setFieldMeta(fieldName, (prev) => ({
 									...prev,
 									errors: messages,
 								}));
-							},
-						);
+							}
+						}
 					}
+
 					throw error;
 				}
 			},
@@ -190,8 +207,7 @@ export function createFormComponent<
 							<div className="ml-3">
 								<p className="text-sm font-medium">Error</p>
 								<p className="text-sm">
-									{(mutationInstance.error as ApiError)?.message ||
-										"Something went wrong"}
+									{parseApiErrors(mutationInstance.error as ApiError)}
 								</p>
 							</div>
 						</div>
@@ -251,14 +267,32 @@ export function useFormWithMutation<
 
 				// Handle API field errors
 				const apiError = error as ApiError;
-				if (apiError.fields) {
-					Object.entries(apiError.fields).forEach(([fieldName, messages]) => {
-						form.setFieldMeta(fieldName, (prev) => ({
-							...prev,
-							errors: messages,
-						}));
-					});
+				if (apiError.errors && typeof apiError.errors === "object") {
+					for (const [fieldName, errorValue] of Object.entries(
+						apiError.errors,
+					)) {
+						let messages: string[] = [];
+
+						// Normalize the error(s) into a string array, as form libraries usually expect this.
+						if (typeof errorValue === "string") {
+							messages = [errorValue]; // API returned a single string
+						} else if (Array.isArray(errorValue)) {
+							// Ensure all items in the array are strings before assigning
+							messages = errorValue.filter(
+								(item) => typeof item === "string",
+							);
+						}
+
+						// Only update the field if we have valid error messages
+						if (messages.length > 0) {
+							form.setFieldMeta(fieldName, (prev) => ({
+								...prev,
+								errors: messages,
+							}));
+						}
+					}
 				}
+
 				throw error;
 			}
 		},

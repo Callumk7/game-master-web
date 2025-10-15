@@ -1,7 +1,7 @@
 import { Trash } from "lucide-react";
+import { useDeleteLink } from "~/queries/utils";
 import type { EntityType } from "~/types";
 import { Button } from "../ui/button";
-import { useDeleteLink } from "./hooks/useDeleteLink";
 
 interface DeleteLinkProps {
 	gameId: string;
