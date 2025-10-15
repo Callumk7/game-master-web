@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { Bold, Code, Italic, Link, Strikethrough, Unlink } from "lucide-react";
+import { Bold, Code, Highlighter, Italic, Link, Strikethrough, Unlink } from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button } from "../button";
 import { Toggle } from "../toggle";
@@ -51,6 +51,15 @@ export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
 				disabled={!editor.can().chain().focus().toggleCode().run()}
 			>
 				<Code className="h-4 w-4" />
+			</Toggle>
+
+			<Toggle
+				size="sm"
+				pressed={editor.isActive("highlight")}
+				onPressedChange={() => editor.chain().focus().toggleHighlight().run()}
+				disabled={!editor.can().chain().focus().toggleHighlight().run()}
+			>
+				<Highlighter className="h-4 w-4" />
 			</Toggle>
 
 			<Button
