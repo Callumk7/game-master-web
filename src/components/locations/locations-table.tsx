@@ -100,6 +100,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 							}}
 						/>
 						<EditLocationDialog
+							gameId={gameId}
 							isOpen={editModalOpen}
 							setIsOpen={setEditModalOpen}
 							location={location}

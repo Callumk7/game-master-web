@@ -90,6 +90,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 							}}
 						/>
 						<EditNoteDialog
+							gameId={gameId}
 							isOpen={editModalOpen}
 							setIsOpen={setEditModalOpen}
 							note={note}

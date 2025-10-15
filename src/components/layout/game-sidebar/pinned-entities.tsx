@@ -63,13 +63,13 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.characters?.map((item) => (
-					<SidebarMenuItem key={item.id}>
+					<SidebarMenuItem key={item.id} className="min-w-0 pr-6">
 						<SidebarMenuLink
 							to={"/games/$gameId/characters/$id"}
 							params={{ gameId, id: item.id }}
 						>
 							<User />
-							{item.name}
+							<span className="truncate">{item.name}</span>
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
@@ -80,13 +80,13 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.factions?.map((item) => (
-					<SidebarMenuItem key={item.id}>
+					<SidebarMenuItem key={item.id} className="min-w-0 pr-6">
 						<SidebarMenuLink
 							to={"/games/$gameId/factions/$id"}
 							params={{ gameId, id: item.id }}
 						>
 							<Shield />
-							{item.name}
+							<span className="truncate">{item.name}</span>
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
@@ -97,13 +97,13 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.locations?.map((item) => (
-					<SidebarMenuItem key={item.id}>
+					<SidebarMenuItem key={item.id} className="min-w-0 pr-6">
 						<SidebarMenuLink
 							to={"/games/$gameId/locations/$id"}
 							params={{ gameId, id: item.id }}
 						>
 							<MapPin />
-							{item.name}
+							<span className="truncate">{item.name}</span>
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
@@ -114,13 +114,13 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 					</SidebarMenuItem>
 				))}
 				{pinnedEntities.data?.pinned_entities.quests?.map((item) => (
-					<SidebarMenuItem key={item.id}>
+					<SidebarMenuItem key={item.id} className="min-w-0 pr-6">
 						<SidebarMenuLink
 							to={"/games/$gameId/quests/$id"}
 							params={{ gameId, id: item.id }}
 						>
 							<Gem />
-							{item.name}
+							<span className="truncate">{item.name}</span>
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}

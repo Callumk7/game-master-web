@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { signupUser } from "~/api";
 import { Auth } from "~/components/auth";
+import { Container } from "~/components/container";
 import { parseApiErrors } from "~/utils/parse-errors";
 import { getAppSession } from "~/utils/session";
 
@@ -51,24 +52,26 @@ function SignupComp() {
 	});
 
 	return (
-		<Auth
-			actionText="Sign Up"
-			status={signupMutation.status}
-			onSubmit={(e) => {
-				const formData = new FormData(e.target as HTMLFormElement);
+		<Container>
+			<Auth
+				actionText="Sign Up"
+				status={signupMutation.status}
+				onSubmit={(e) => {
+					const formData = new FormData(e.target as HTMLFormElement);
 
-				signupMutation.mutate({
-					data: {
-						email: formData.get("email") as string,
-						password: formData.get("password") as string,
-					},
-				});
-			}}
-			afterSubmit={
-				signupMutation.data?.error ? (
-					<div className="text-red-400">{signupMutation.data.message}</div>
-				) : null
-			}
-		/>
+					signupMutation.mutate({
+						data: {
+							email: formData.get("email") as string,
+							password: formData.get("password") as string,
+						},
+					});
+				}}
+				afterSubmit={
+					signupMutation.data?.error ? (
+						<div className="text-red-400">{signupMutation.data.message}</div>
+					) : null
+				}
+			/>
+		</Container>
 	);
 }

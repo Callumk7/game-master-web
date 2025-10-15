@@ -112,6 +112,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 							}}
 						/>
 						<EditQuestDialog
+							gameId={gameId}
 							isOpen={editModalOpen}
 							setIsOpen={setEditModalOpen}
 							quest={quest}

@@ -90,6 +90,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 							}}
 						/>
 						<EditFactionDialog
+							gameId={gameId}
 							isOpen={editDialogOpen}
 							setIsOpen={setEditDialogOpen}
 							faction={faction}

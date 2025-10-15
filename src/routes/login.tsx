@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Container } from "~/components/container";
 import { Login } from "~/components/login";
 
 export const Route = createFileRoute("/login")({
@@ -6,5 +7,9 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginComp() {
-	return <Login />;
+	return (
+		<Container>
+			<Login />
+		</Container>
+	);
 }
