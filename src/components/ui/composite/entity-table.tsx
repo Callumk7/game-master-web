@@ -283,6 +283,7 @@ interface EntityTableProps<TData, TValue> {
 	enablePaginationSizeSelector?: boolean;
 	columnRelativeWidths?: Record<string, number>; // e.g., { "name": 2, "status": 1, "actions": 0.5 }
 	defaultHidden?: string[];
+	initialSort?: SortingState;
 }
 
 export function EntityTable<TData, TValue>({
@@ -296,10 +297,9 @@ export function EntityTable<TData, TValue>({
 	enablePaginationSizeSelector = true,
 	columnRelativeWidths,
 	defaultHidden,
+	initialSort,
 }: EntityTableProps<TData, TValue>) {
-	const [sorting, setSorting] = React.useState<SortingState>([
-		{ id: "updated_at", desc: true },
-	]);
+	const [sorting, setSorting] = React.useState<SortingState>(initialSort || []);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
 		...defaultHidden?.reduce<Record<string, boolean>>((acc, key) => {

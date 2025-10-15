@@ -119,6 +119,7 @@ export function NotesTable({ data, gameId }: NotesTableProps) {
 				actions: 0.5,
 				updated_at: 0.5,
 			}}
+			initialSort={[{ id: "updated_at", desc: true }]}
 		/>
 	);
 }

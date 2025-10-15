@@ -130,6 +130,7 @@ export function LocationsTable({ data, gameId }: LocationsTableProps) {
 				type: 0.6,
 				updated_at: 0.6,
 			}}
+			initialSort={[{ id: "updated_at", desc: true }]}
 		/>
 	);
 }

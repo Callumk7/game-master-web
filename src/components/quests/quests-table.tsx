@@ -158,6 +158,7 @@ export function QuestsTable({ data, gameId }: QuestsTableProps) {
 				actions: 0.5,
 				content_plain_text: 2,
 			}}
+			initialSort={[{ id: "updated_at", desc: true }]}
 		/>
 	);
 }

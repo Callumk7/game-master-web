@@ -177,6 +177,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 				columnRelativeWidths={{
 					name: 2,
 				}}
+				initialSort={[{ id: "updated_at", desc: true }]}
 			/>
 		</div>
 	);

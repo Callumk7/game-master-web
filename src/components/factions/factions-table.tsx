@@ -118,6 +118,7 @@ export function FactionsTable({ data, gameId }: FactionsTableProps) {
 				name: 2,
 				actions: 0.5,
 			}}
+			initialSort={[{ id: "updated_at", desc: true }]}
 		/>
 	);
 }

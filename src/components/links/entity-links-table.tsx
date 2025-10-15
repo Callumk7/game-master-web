@@ -22,6 +22,7 @@ export function EntityLinksTable<T>({ links, columns }: EntityLinksTableProps<T>
 				description_meta: 2,
 			}}
 			defaultHidden={["description_meta"]}
+			initialSort={[{ id: "name", desc: false }]}
 		/>
 	);
 }

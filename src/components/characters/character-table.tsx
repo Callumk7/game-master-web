@@ -162,6 +162,7 @@ export function CharacterTable({ data, gameId }: CharacterTableProps) {
 				content_plain_text: 2,
 			}}
 			defaultHidden={["content_plain_text"]}
+			initialSort={[{ id: "updated_at", desc: true }]}
 		/>
 	);
 }
