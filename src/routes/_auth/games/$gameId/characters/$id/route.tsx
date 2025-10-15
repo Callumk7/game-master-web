@@ -1,11 +1,13 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { toast } from "sonner";
 import {
 	getCharacterLinksOptions,
 	getCharacterOptions,
 	getEntityPrimaryImageOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
-import { BasicErrorComponent } from "~/components/error";
+import { isApiError } from "~/utils/api-errors";
+import { parseApiErrors } from "~/utils/parse-errors";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 	component: RouteComponent,
@@ -31,10 +33,21 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 			}),
 		);
 	},
-	onError: ({ error }) => {
-		console.error(error);
+	onCatch: (error) => {
+		if (isApiError(error)) {
+			const parsedError = parseApiErrors(error);
+			console.error(parsedError);
+		}
 	},
-	errorComponent: BasicErrorComponent,
+	onError: (error) => {
+		if (isApiError(error)) {
+			const parsedError = parseApiErrors(error);
+			toast.error(parsedError);
+		} else {
+			toast.error("Something went wrong!");
+		}
+		throw redirect({ to: ".." });
+	},
 });
 
 function RouteComponent() {

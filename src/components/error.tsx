@@ -5,7 +5,8 @@ import { parseApiErrors } from "~/utils/parse-errors";
 export function BasicErrorComponent({ error }: { error: unknown }) {
 	if (isApiError(error)) {
 		const parsedError = parseApiErrors(error);
-		return <ErrorComponent error={parsedError} />;
+		console.log("parsedError", parsedError);
+		return <ErrorComponent error={new Error(parsedError)} />;
 	}
 
 	return (

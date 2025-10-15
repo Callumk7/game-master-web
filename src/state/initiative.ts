@@ -21,6 +21,7 @@ interface State {
 interface Actions {
 	addUnit: (unit: Unit) => void;
 	removeUnit: (id: string) => void;
+	clear: () => void;
 	setUnitHealth: (id: string, health: number) => void;
 	setUnitInitiative: (id: string, initiative: number) => void;
 	setUnitAC: (id: string, ac: number) => void;
@@ -47,6 +48,10 @@ const useInitiativeStore = create<InitiativeStore>()(
 
 				removeUnit: (id: string) => {
 					set({ units: get().units.filter((unit) => unit.id !== id) });
+				},
+
+				clear: () => {
+					set({ units: [] });
 				},
 
 				setUnitHealth: (id: string, health: number) => {

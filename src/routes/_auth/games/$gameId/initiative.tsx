@@ -30,6 +30,9 @@ function RouteComponent() {
 				<SelectCharacterDialog gameId={gameId} />
 				<AddUnitDialog />
 				<Button onClick={actions.sortUnits}>Sort</Button>
+				<Button variant={"destructive"} onClick={actions.clear}>
+					Clear
+				</Button>
 			</div>
 			<ClientOnly fallback={<Spinner />}>
 				<UnitsTable />
