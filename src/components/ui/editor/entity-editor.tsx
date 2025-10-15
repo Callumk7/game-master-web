@@ -7,24 +7,16 @@ import { Tiptap } from "./index";
 import { parseContentForEditor } from "./utils";
 
 interface EntityEditorProps {
-	/** The entity's current content (JSON string or object) */
 	content?: string | object | null;
-	/** The game ID for creating mention links */
 	gameId: string;
-	/** The entity type (character, faction, location, note, quest) */
 	entityType: EntityType;
-	/** The entity ID for creating mention links */
 	entityId: string;
-	/** Callback when save is clicked - receives the payload to send to the server */
 	onSave: (payload: {
 		content: string;
 		content_plain_text: string;
 	}) => void | Promise<void>;
-	/** Whether the save operation is currently pending */
 	isSaving?: boolean;
-	/** Custom save button text */
 	saveButtonText?: string;
-	/** Custom save button variant */
 	saveButtonVariant?:
 		| "default"
 		| "destructive"
@@ -32,7 +24,6 @@ interface EntityEditorProps {
 		| "secondary"
 		| "ghost"
 		| "link";
-	/** Additional className for the container */
 	className?: string;
 }
 
