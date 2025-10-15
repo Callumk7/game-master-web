@@ -4,38 +4,45 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.5198 0.1956 24.7048);
-	--primary-foreground: oklch(1 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
-	--destructive: oklch(0.577 0.245 27.325);
-	--destructive-foreground: oklch(1 0 0);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.708 0 0);
-	--chart-1: oklch(0.81 0.1 252);
-	--chart-2: oklch(0.62 0.19 260);
-	--chart-3: oklch(0.55 0.22 263);
-	--chart-4: oklch(0.49 0.22 264);
-	--chart-5: oklch(0.42 0.18 266);
-	--sidebar: oklch(0.985 0 0);
-	--sidebar-foreground: oklch(0.145 0 0);
-	--sidebar-primary: oklch(0.205 0 0);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.97 0 0);
-	--sidebar-accent-foreground: oklch(0.205 0 0);
-	--sidebar-border: oklch(0.922 0 0);
-	--sidebar-ring: oklch(0.708 0 0);
+	/* Parchment-inspired light theme */
+	--background: oklch(0.96 0.015 75);
+	--foreground: oklch(0.25 0.02 45);
+	--card: oklch(0.98 0.012 80);
+	--card-foreground: oklch(0.25 0.02 45);
+	--popover: oklch(0.98 0.012 80);
+	--popover-foreground: oklch(0.25 0.02 45);
+	/* Rich gold/bronze primary */
+	--primary: oklch(0.58 0.15 75);
+	--primary-foreground: oklch(0.15 0.02 45);
+	/* Warm secondary */
+	--secondary: oklch(0.88 0.03 70);
+	--secondary-foreground: oklch(0.3 0.02 45);
+	--muted: oklch(0.92 0.02 70);
+	--muted-foreground: oklch(0.48 0.02 50);
+	/* Deep burgundy accent */
+	--accent: oklch(0.87 0.04 65);
+	--accent-foreground: oklch(0.3 0.03 40);
+	/* Dragon red destructive */
+	--destructive: oklch(0.55 0.22 25);
+	--destructive-foreground: oklch(0.98 0.01 80);
+	--border: oklch(0.85 0.02 70);
+	--input: oklch(0.88 0.02 70);
+	--ring: oklch(0.58 0.15 75);
+	/* Fantasy-themed charts */
+	--chart-1: oklch(0.65 0.18 280);
+	--chart-2: oklch(0.60 0.16 320);
+	--chart-3: oklch(0.58 0.15 75);
+	--chart-4: oklch(0.55 0.12 150);
+	--chart-5: oklch(0.52 0.20 25);
+	/* Sidebar with aged paper feel */
+	--sidebar: oklch(0.94 0.018 72);
+	--sidebar-foreground: oklch(0.25 0.02 45);
+	--sidebar-primary: oklch(0.58 0.15 75);
+	--sidebar-primary-foreground: oklch(0.15 0.02 45);
+	--sidebar-accent: oklch(0.88 0.03 70);
+	--sidebar-accent-foreground: oklch(0.3 0.02 45);
+	--sidebar-border: oklch(0.82 0.025 68);
+	--sidebar-ring: oklch(0.58 0.15 75);
 	--font-sans:
 		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -54,22 +61,22 @@
 	--tracking-normal: 0em;
 	--spacing: 0.25rem;
 
-	/* Editor-specific variables */
-	--editor-text-brown: hsl(25 95% 53%);
-	--editor-text-orange: hsl(24 95% 53%);
-	--editor-text-yellow: hsl(48 96% 53%);
-	--editor-text-green: hsl(142 71% 45%);
-	--editor-text-purple: hsl(269 97% 85%);
-	--editor-text-pink: hsl(336 80% 58%);
+	/* Editor-specific variables - D&D themed */
+	--editor-text-brown: hsl(30 80% 45%);
+	--editor-text-orange: hsl(35 85% 50%);
+	--editor-text-yellow: hsl(45 90% 55%);
+	--editor-text-green: hsl(135 65% 40%);
+	--editor-text-purple: hsl(275 75% 60%);
+	--editor-text-pink: hsl(340 70% 55%);
 
-	--editor-highlight-brown: hsl(43 96% 96%);
-	--editor-highlight-orange: hsl(33 100% 96%);
-	--editor-highlight-yellow: hsl(54 100% 96%);
-	--editor-highlight-green: hsl(142 71% 96%);
-	--editor-highlight-blue: hsl(217 91% 96%);
-	--editor-highlight-purple: hsl(269 97% 96%);
-	--editor-highlight-pink: hsl(336 80% 96%);
-	--editor-highlight-red: hsl(0 84% 96%);
+	--editor-highlight-brown: hsl(40 85% 94%);
+	--editor-highlight-orange: hsl(35 90% 93%);
+	--editor-highlight-yellow: hsl(50 95% 92%);
+	--editor-highlight-green: hsl(135 70% 94%);
+	--editor-highlight-blue: hsl(215 85% 94%);
+	--editor-highlight-purple: hsl(275 80% 95%);
+	--editor-highlight-pink: hsl(340 75% 94%);
+	--editor-highlight-red: hsl(5 80% 94%);
 
 	--editor-spacing-1: 0.25rem;
 	--editor-spacing-2: 0.5rem;
@@ -86,38 +93,45 @@
 }
 
 .dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.22 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.5198 0.1956 24.7048);
-	--primary-foreground: oklch(1 0 0);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.18 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.371 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--destructive-foreground: oklch(0.985 0 0);
-	--border: oklch(0.275 0 0);
-	--input: oklch(0.325 0 0);
-	--ring: oklch(0.556 0 0);
-	--chart-1: oklch(0.81 0.1 252);
-	--chart-2: oklch(0.62 0.19 260);
-	--chart-3: oklch(0.55 0.22 263);
-	--chart-4: oklch(0.49 0.22 264);
-	--chart-5: oklch(0.42 0.18 266);
-	--sidebar: oklch(0.205 0 0);
-	--sidebar-foreground: oklch(0.985 0 0);
-	--sidebar-primary: oklch(0.488 0.243 264.376);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.269 0 0);
-	--sidebar-accent-foreground: oklch(0.985 0 0);
-	--sidebar-border: oklch(0.275 0 0);
-	--sidebar-ring: oklch(0.439 0 0);
+	/* Deep mystical dark theme */
+	--background: oklch(0.15 0.03 270);
+	--foreground: oklch(0.92 0.02 80);
+	--card: oklch(0.20 0.04 265);
+	--card-foreground: oklch(0.92 0.02 80);
+	--popover: oklch(0.22 0.04 268);
+	--popover-foreground: oklch(0.92 0.02 80);
+	/* Bright gold primary for dark mode */
+	--primary: oklch(0.70 0.18 80);
+	--primary-foreground: oklch(0.15 0.02 45);
+	/* Deep purple secondary */
+	--secondary: oklch(0.28 0.06 285);
+	--secondary-foreground: oklch(0.92 0.02 80);
+	--muted: oklch(0.24 0.04 270);
+	--muted-foreground: oklch(0.65 0.02 75);
+	/* Royal purple accent */
+	--accent: oklch(0.35 0.10 290);
+	--accent-foreground: oklch(0.92 0.02 80);
+	/* Fiery red destructive */
+	--destructive: oklch(0.60 0.25 25);
+	--destructive-foreground: oklch(0.95 0.01 80);
+	--border: oklch(0.30 0.05 270);
+	--input: oklch(0.32 0.05 268);
+	--ring: oklch(0.70 0.18 80);
+	/* Mystical charts */
+	--chart-1: oklch(0.65 0.18 280);
+	--chart-2: oklch(0.60 0.16 320);
+	--chart-3: oklch(0.70 0.18 80);
+	--chart-4: oklch(0.55 0.12 150);
+	--chart-5: oklch(0.60 0.20 25);
+	/* Dark sidebar with magical feel */
+	--sidebar: oklch(0.18 0.035 268);
+	--sidebar-foreground: oklch(0.92 0.02 80);
+	--sidebar-primary: oklch(0.70 0.18 80);
+	--sidebar-primary-foreground: oklch(0.15 0.02 45);
+	--sidebar-accent: oklch(0.28 0.06 285);
+	--sidebar-accent-foreground: oklch(0.92 0.02 80);
+	--sidebar-border: oklch(0.28 0.05 270);
+	--sidebar-ring: oklch(0.70 0.18 80);
 	--font-sans:
 		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -134,15 +148,15 @@
 	--shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
 	--shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
-	/* Editor-specific dark mode variables */
-	--editor-highlight-brown: hsl(43 96% 10%);
-	--editor-highlight-orange: hsl(33 100% 10%);
-	--editor-highlight-yellow: hsl(54 100% 10%);
-	--editor-highlight-green: hsl(142 71% 10%);
-	--editor-highlight-blue: hsl(217 91% 10%);
-	--editor-highlight-purple: hsl(269 97% 10%);
-	--editor-highlight-pink: hsl(336 80% 10%);
-	--editor-highlight-red: hsl(0 84% 10%);
+	/* Editor-specific dark mode variables - mystical D&D */
+	--editor-highlight-brown: hsl(40 70% 12%);
+	--editor-highlight-orange: hsl(35 75% 12%);
+	--editor-highlight-yellow: hsl(50 80% 13%);
+	--editor-highlight-green: hsl(135 60% 12%);
+	--editor-highlight-blue: hsl(220 70% 12%);
+	--editor-highlight-purple: hsl(275 75% 13%);
+	--editor-highlight-pink: hsl(340 65% 12%);
+	--editor-highlight-red: hsl(5 70% 12%);
 }
 
 @theme inline {
