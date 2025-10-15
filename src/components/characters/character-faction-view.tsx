@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, Users } from "lucide-react";
 import {
+	getEntityPrimaryImageOptions,
 	getFactionMembersOptions,
 	useGetCharacterPrimaryFactionQuery,
 } from "~/api/@tanstack/react-query.gen";
@@ -12,6 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
+import { ImagePreview } from "../images/image-preview";
 import { Link } from "../ui/link";
 import { CharacterTable } from "./character-table";
 
@@ -35,13 +37,24 @@ export function CharacterFactionView({ gameId, characterId }: CharacterFactionVi
 		}),
 		enabled: !!faction,
 	});
-
 	const members = memberData?.data?.members || [];
+
+	const { data: factionImageData } = useQuery({
+		...getEntityPrimaryImageOptions({
+			path: {
+				game_id: gameId,
+				entity_id: faction?.id || "",
+				entity_type: "faction",
+			},
+		}),
+		enabled: !!faction,
+	});
+	const image = factionImageData?.data;
 
 	if (!faction) {
 		return (
-			<div className="space-y-4">
-				<div className="max-w-md">
+			<div className="space-y-4 mt-5">
+				<div className="max-w-md mx-auto">
 					<Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
 					<h3 className="text-lg font-medium mb-2">No Faction Assigned</h3>
 					<p className="text-muted-foreground mb-4">
@@ -93,37 +106,48 @@ export function CharacterFactionView({ gameId, characterId }: CharacterFactionVi
 						</div>
 					</CardHeader>
 
-					<CardContent className="space-y-4">
-						{faction.tags && faction.tags.length > 0 && (
-							<div>
-								<h4 className="text-sm font-medium mb-2">Tags</h4>
-								<div className="flex flex-wrap gap-2">
-									{faction.tags.map((tag) => (
-										<Badge key={tag} variant="outline">
-											{tag}
-										</Badge>
-									))}
+					<CardContent>
+						<div className="flex items-center justify-between">
+							<div className="space-y-4">
+								{faction.tags && faction.tags.length > 0 && (
+									<div>
+										<h4 className="text-sm font-medium mb-2">Tags</h4>
+										<div className="flex flex-wrap gap-2">
+											{faction.tags.map((tag) => (
+												<Badge key={tag} variant="outline">
+													{tag}
+												</Badge>
+											))}
+										</div>
+									</div>
+								)}
+
+								{role && (
+									<div>
+										<h4 className="text-sm font-medium mb-2">Role</h4>
+										<p className="text-sm text-muted-foreground line-clamp-3">
+											{role}
+										</p>
+									</div>
+								)}
+
+								{faction.content_plain_text && (
+									<div>
+										<h4 className="text-sm font-medium mb-2">
+											Description
+										</h4>
+										<p className="text-sm text-muted-foreground line-clamp-3">
+											{faction.content_plain_text}
+										</p>
+									</div>
+								)}
+							</div>
+							{image && (
+								<div className="w-48">
+									<ImagePreview gameId={gameId} image={image} />
 								</div>
-							</div>
-						)}
-
-						{role && (
-							<div>
-								<h4 className="text-sm font-medium mb-2">Role</h4>
-								<p className="text-sm text-muted-foreground line-clamp-3">
-									{role}
-								</p>
-							</div>
-						)}
-
-						{faction.content_plain_text && (
-							<div>
-								<h4 className="text-sm font-medium mb-2">Description</h4>
-								<p className="text-sm text-muted-foreground line-clamp-3">
-									{faction.content_plain_text}
-								</p>
-							</div>
-						)}
+							)}
+						</div>
 					</CardContent>
 				</Card>
 			)}
