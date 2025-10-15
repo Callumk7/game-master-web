@@ -3,11 +3,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 import { ThemeProvider } from "~/components/theme-provider";
 import { getAppSession } from "~/utils/session";
 import appCss from "../styles.css?url";
-import { Button } from "~/components/ui/button";
 
 export const SERVER_URL = "https://gamemastercore-production.up.railway.app";
 

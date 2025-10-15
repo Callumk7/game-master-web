@@ -37,6 +37,10 @@ export interface ForceSimulationConfig {
 	attractionStrength: number;
 	centerForceStrength: number;
 	targetLinkLength: number;
+	linkFlexibility: number;
+	unconnectedNodeRepulsion: number;
+	simulationWidth: number;
+	simulationHeight: number;
 }
 
 export interface GenericNode {

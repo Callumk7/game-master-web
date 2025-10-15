@@ -193,6 +193,56 @@ export function Controls({
 									className="w-full"
 								/>
 							</div>
+							<div className="space-y-2">
+								<label
+									htmlFor="link-flexibility-slider"
+									className="text-xs font-medium"
+								>
+									Link Flexibility: {config.linkFlexibility.toFixed(2)}
+								</label>
+								<p className="text-xs text-gray-500">
+									Higher values = links can stretch/compress more
+								</p>
+								<Slider
+									id="link-flexibility-slider"
+									value={[config.linkFlexibility]}
+									onValueChange={(value) =>
+										onConfigChange({
+											linkFlexibility: Array.isArray(value) ? value[0] : value,
+										})
+									}
+									min={0.0}
+									max={0.8}
+									step={0.05}
+									className="w-full"
+								/>
+							</div>
+							<div className="space-y-2">
+								<label
+									htmlFor="unconnected-repulsion-slider"
+									className="text-xs font-medium"
+								>
+									Unconnected Node Separation: {config.unconnectedNodeRepulsion.toFixed(1)}x
+								</label>
+								<p className="text-xs text-gray-500">
+									Higher values = unconnected nodes push apart more
+								</p>
+								<Slider
+									id="unconnected-repulsion-slider"
+									value={[config.unconnectedNodeRepulsion]}
+									onValueChange={(value) =>
+										onConfigChange({
+											unconnectedNodeRepulsion: Array.isArray(value)
+												? value[0]
+												: value,
+										})
+									}
+									min={1.0}
+									max={5.0}
+									step={0.2}
+									className="w-full"
+								/>
+							</div>
 						</div>
 					</div>
 				</PopoverContent>

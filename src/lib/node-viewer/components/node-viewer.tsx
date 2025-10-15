@@ -19,6 +19,10 @@ const DEFAULT_CONFIG: ForceSimulationConfig = {
 	attractionStrength: 15,
 	centerForceStrength: 5,
 	targetLinkLength: 150,
+	linkFlexibility: 0.5,
+	unconnectedNodeRepulsion: 2.0,
+	simulationWidth: 3200,
+	simulationHeight: 2400,
 };
 
 export interface NodeViewerProps<T> {

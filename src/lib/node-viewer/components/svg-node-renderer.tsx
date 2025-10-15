@@ -2,6 +2,18 @@ import * as React from "react";
 import { cn } from "~/utils/cn";
 import type { Connection, NodePosition, NodeTypeConfig, ViewTransform } from "../types";
 
+// Helper to get default chart color for node types
+function getDefaultNodeColor(nodeType: string): string {
+	const colorMap: Record<string, string> = {
+		character: "fill-chart-1",
+		faction: "fill-chart-2", 
+		location: "fill-chart-4",
+		quest: "fill-chart-3",
+		note: "fill-chart-5",
+	};
+	return colorMap[nodeType] || "fill-chart-5";
+}
+
 interface SvgNodeRendererProps {
 	nodes: NodePosition[];
 	connections: Connection[];
@@ -113,7 +125,7 @@ export const SvgNodeRenderer = React.forwardRef<SVGSVGElement, SvgNodeRendererPr
 										data-node-id={node.id}
 										className={cn(
 											nodeConfig?.color ||
-												"fill-gray-600 dark:fill-gray-400",
+												getDefaultNodeColor(node.type),
 											"stroke-background stroke-2 cursor-pointer hover:stroke-4 transition-all",
 										)}
 										tabIndex={0}

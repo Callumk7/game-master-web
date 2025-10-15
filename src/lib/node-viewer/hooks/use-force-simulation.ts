@@ -33,13 +33,35 @@ export function useForceSimulation<T>(
 	const initializeSimulation = React.useCallback(() => {
 		const nodeArray = Array.from(extractedNodes.values());
 
+		// Find the max connection count to normalize positioning
+		const connectionCounts = nodeArray.map(
+			(node) =>
+				extractedConnections.filter((c) => c.from === node.id || c.to === node.id)
+					.length,
+		);
+		const maxConnections = Math.max(...connectionCounts, 1);
+
 		const initialNodes: NodePosition[] = nodeArray.map((node) => {
 			const connectionCount = extractedConnections.filter(
 				(c) => c.from === node.id || c.to === node.id,
 			).length;
+
+			// Normalize connection count (0 = periphery, 1 = center)
+			const normalizedConnections = connectionCount / maxConnections;
+
+			// Calculate radial position based on connection count
+			// More connections = closer to center (smaller radius)
+			// Less connections = further from center (larger radius)
+			const baseRadius = 100 + (1 - normalizedConnections) * 400; // Range: 100-500px from center
+			const randomRadius = baseRadius + (Math.random() * 100 - 50); // Add some variance
+			const randomAngle = Math.random() * Math.PI * 2;
+
+			const centerX = config.simulationWidth / 2;
+			const centerY = config.simulationHeight / 2;
+
 			return {
-				x: Math.random() * 50 + 775, // Start very close to center (775-825)
-				y: Math.random() * 50 + 575, // Start very close to center (575-625)
+				x: centerX + Math.cos(randomAngle) * randomRadius,
+				y: centerY + Math.sin(randomAngle) * randomRadius,
 				vx: 0,
 				vy: 0,
 				id: node.id,
@@ -59,7 +81,7 @@ export function useForceSimulation<T>(
 		setSimNodes(initialNodes);
 		setConnections(extractedConnections);
 		setIsRunning(true);
-	}, [extractedNodes, extractedConnections]);
+	}, [extractedNodes, extractedConnections, config.simulationWidth, config.simulationHeight]);
 
 	const runSimulation = React.useCallback(() => {
 		if (performanceMonitoring) {
@@ -70,15 +92,27 @@ export function useForceSimulation<T>(
 			nodesArray.current = nodes;
 
 			const alpha = 0.1;
-			const centerX = 800;
-			const centerY = 600;
+			const centerX = config.simulationWidth / 2;
+			const centerY = config.simulationHeight / 2;
 
 			nodes.forEach((node) => {
 				node.vx *= 0.85;
 				node.vy *= 0.85;
 			});
 
-			const quadTree = new QuadTree({ x: 0, y: 0, width: 1600, height: 1200 });
+			// Create a Set of connected node pairs for fast lookup
+			const connectedPairs = new Set<string>();
+			for (const conn of connections) {
+				connectedPairs.add(`${conn.from}-${conn.to}`);
+				connectedPairs.add(`${conn.to}-${conn.from}`);
+			}
+
+			const quadTree = new QuadTree({
+				x: 0,
+				y: 0,
+				width: config.simulationWidth,
+				height: config.simulationHeight,
+			});
 
 			for (const node of nodes) {
 				quadTree.insert({ x: node.x, y: node.y, id: node.id });
@@ -102,8 +136,19 @@ export function useForceSimulation<T>(
 					const distance = Math.sqrt(dx * dx + dy * dy);
 
 					if (distance > 0 && distance < 200) {
+						// Check if nodes are connected
+						const areConnected = connectedPairs.has(
+							`${nodeA.id}-${nodeB.id}`,
+						);
+
+						// Amplify repulsion for unconnected nodes (they spread apart)
+						const repulsionMultiplier = areConnected
+							? 1
+							: config.unconnectedNodeRepulsion;
+
 						const repulsion =
-							config.repulsionStrength / (distance * distance);
+							(config.repulsionStrength * repulsionMultiplier) /
+							(distance * distance);
 						const forceX = (dx / distance) * repulsion;
 						const forceY = (dy / distance) * repulsion;
 
@@ -126,9 +171,18 @@ export function useForceSimulation<T>(
 					const targetDistance = config.targetLinkLength;
 
 					if (distance > 0) {
+						// More flexible spring force - allows links to vary in length
+						const displacement = distance - targetDistance;
+						const flexibility = config.linkFlexibility;
+
+						// Use a softer spring equation that allows more give
+						// Higher flexibility = more variation allowed before strong force kicks in
+						const dampedDisplacement =
+							Math.sign(displacement) *
+							Math.abs(displacement) ** (1 - flexibility);
+
 						const force =
-							(distance - targetDistance) *
-							(config.attractionStrength * 0.01);
+							dampedDisplacement * (config.attractionStrength * 0.01);
 						const forceX = (dx / distance) * force;
 						const forceY = (dy / distance) * force;
 
@@ -158,8 +212,14 @@ export function useForceSimulation<T>(
 					node.x += node.vx * alpha;
 					node.y += node.vy * alpha;
 
-					node.x = Math.max(100, Math.min(1500, node.x));
-					node.y = Math.max(100, Math.min(1100, node.y));
+					node.x = Math.max(
+						100,
+						Math.min(config.simulationWidth - 100, node.x),
+					);
+					node.y = Math.max(
+						100,
+						Math.min(config.simulationHeight - 100, node.y),
+					);
 				}
 			});
 
