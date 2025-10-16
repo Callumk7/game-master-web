@@ -18,6 +18,7 @@ export function AuthenticatedLayout({ user, children }: AuthenticatedLayoutProps
 							<h1 className="text-xl font-semibold">Game Master</h1>
 							<Link to="/games/new">Create Game</Link>
 							<Link to="/games">Games</Link>
+							<Link to="/beastiary">Beastiary</Link>
 							<Link to="/account">Account</Link>
 						</div>
 						<div className="flex items-center gap-4">

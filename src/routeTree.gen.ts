@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as BeastiaryRouteImport } from './routes/beastiary'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -68,6 +69,11 @@ const LogoutRoute = LogoutRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BeastiaryRoute = BeastiaryRouteImport.update({
+  id: '/beastiary',
+  path: '/beastiary',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountRoute = AccountRouteImport.update({
@@ -311,6 +317,7 @@ const AuthGamesGameIdCharactersIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/beastiary': typeof BeastiaryRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
@@ -357,6 +364,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/beastiary': typeof BeastiaryRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
@@ -399,6 +407,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/account': typeof AccountRoute
+  '/beastiary': typeof BeastiaryRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
@@ -447,6 +456,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account'
+    | '/beastiary'
     | '/login'
     | '/logout'
     | '/signup'
@@ -493,6 +503,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
+    | '/beastiary'
     | '/login'
     | '/logout'
     | '/signup'
@@ -534,6 +545,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/account'
+    | '/beastiary'
     | '/login'
     | '/logout'
     | '/signup'
@@ -582,6 +594,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
   AccountRoute: typeof AccountRoute
+  BeastiaryRoute: typeof BeastiaryRoute
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   SignupRoute: typeof SignupRoute
@@ -608,6 +621,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/beastiary': {
+      id: '/beastiary'
+      path: '/beastiary'
+      fullPath: '/beastiary'
+      preLoaderRoute: typeof BeastiaryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account': {
@@ -1072,6 +1092,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   AccountRoute: AccountRoute,
+  BeastiaryRoute: BeastiaryRoute,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   SignupRoute: SignupRoute,
