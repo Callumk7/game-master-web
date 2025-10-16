@@ -19,13 +19,13 @@ import { BasicErrorComponent } from "~/components/error";
 import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
 import { EntityWindowManager } from "~/components/layout/entity-window-manager";
 import { GameSidebar } from "~/components/layout/game-sidebar";
+import { WindowTray } from "~/components/layout/window-tray";
 import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
 import { TodosDrawer } from "~/components/todos/todos-drawer";
 import { Badge } from "~/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { WindowTray } from "~/components/layout/window-tray";
 import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
@@ -77,8 +77,8 @@ function RouteComponent() {
 				<div className="flex h-screen w-full">
 					<GameSidebar />
 					{/* Main Content */}
-					<div className="flex-1 flex flex-col">
-						<main className="flex-1 overflow-y-scoll">
+					<div className="flex-1 flex flex-col min-w-0">
+						<main className="relative max-w-full flex-1 overflow-y-scoll">
 							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20 h-[73px]">
 								<SidebarTrigger />
 								<Commander gameId={gameId} />

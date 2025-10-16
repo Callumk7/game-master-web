@@ -1,17 +1,18 @@
 import {
+	CheckCircle2,
 	ChevronDown,
 	ChevronRight,
-	CheckCircle2,
 	Circle,
+	Crown,
 	Pause,
-	XCircle,
 	Scroll,
 	Target,
 	Users,
-	Crown,
+	XCircle,
 	Zap,
 } from "lucide-react";
 import * as React from "react";
+import type { QuestTreeNode, QuestTreeResponse } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -20,13 +21,12 @@ import {
 	CollapsibleTrigger,
 } from "~/components/ui/collapsible";
 import { Link } from "~/components/ui/link";
-import { useGetQuestTreeSuspenseQuery } from "~/queries/quests";
 import { cn } from "~/utils/cn";
-import type { QuestTreeNode } from "~/api/types.gen";
 
 interface QuestTreeViewProps {
 	gameId: string;
 	className?: string;
+	questTreeResponse: QuestTreeResponse | undefined;
 }
 
 interface QuestNodeProps {
@@ -290,10 +290,12 @@ function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 	);
 }
 
-export function QuestTreeView({ gameId, className }: QuestTreeViewProps) {
-	const { data: questTreeData } = useGetQuestTreeSuspenseQuery(gameId);
-
-	if (!questTreeData?.data || questTreeData.data.length === 0) {
+export function QuestTreeView({
+	gameId,
+	className,
+	questTreeResponse,
+}: QuestTreeViewProps) {
+	if (!questTreeResponse?.data || questTreeResponse.data.length === 0) {
 		return (
 			<div
 				className={cn(
@@ -330,7 +332,7 @@ export function QuestTreeView({ gameId, className }: QuestTreeViewProps) {
 
 			{/* Quest Tree */}
 			<div className="space-y-4">
-				{questTreeData.data.map((quest) => (
+				{questTreeResponse.data.map((quest) => (
 					<QuestNode key={quest.id} node={quest} gameId={gameId} />
 				))}
 			</div>

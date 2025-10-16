@@ -21,7 +21,7 @@ export function ObjectivesView({ gameId, questId }: ObjectivesViewProps) {
 		path: { game_id: gameId, quest_id: questId },
 	});
 
-	const { createObjective, toggleComplete } = useObjectiveMutations({
+	const { createObjective } = useObjectiveMutations({
 		gameId,
 		questId,
 	});
@@ -72,8 +72,8 @@ export function ObjectivesView({ gameId, questId }: ObjectivesViewProps) {
 						{objectives.map((objective) => (
 							<ObjectiveItem
 								key={objective.id}
+								gameId={gameId}
 								objective={objective}
-								onToggleComplete={toggleComplete}
 							/>
 						))}
 					</div>

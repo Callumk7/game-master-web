@@ -9,19 +9,19 @@ import {
 	Trash2,
 } from "lucide-react";
 import { getEntityPrimaryImageOptions } from "~/api/@tanstack/react-query.gen";
-import { useUIActions } from "~/state/ui";
-import type { EntityType } from "~/types";
-import { PrimaryImageBanner } from "./images/primary-image-banner";
-import { Button } from "./ui/button";
+import { Badge } from "~/components/ui/badge";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Badge } from "./ui/badge";
+} from "~/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { useUIActions } from "~/state/ui";
+import type { EntityType } from "~/types";
+import { PrimaryImageBanner } from "../images/primary-image-banner";
+import { Button } from "../ui/button";
 
 type EntityTab = {
 	id: string;

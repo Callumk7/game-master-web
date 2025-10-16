@@ -1,5 +1,5 @@
 import { useParams } from "@tanstack/react-router";
-import { BookOpen, BowArrow, Home, Moon, Settings, Sun } from "lucide-react";
+import { BookOpen, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
 import { Button } from "~/components/ui/button";
@@ -7,12 +7,11 @@ import { Separator } from "~/components/ui/separator";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarGroup,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuItem,
-	SidebarMenuLink,
 } from "~/components/ui/sidebar";
+import { SidebarCoreNav } from "./core-nav";
 import { SidebarCreateNew } from "./create-new-entity";
 import { SidebarEntities } from "./entities";
 import { SidebarLocationTree } from "./location-tree";
@@ -73,31 +72,7 @@ export function GameSidebar() {
 
 				<SidebarCreateNew />
 
-				<SidebarGroup>
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<SidebarMenuLink to="/games/$gameId" params={params}>
-								<Home className="w-4 h-4" />
-								Dashboard
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<SidebarMenuLink
-								to="/games/$gameId/initiative"
-								params={params}
-							>
-								<BowArrow className="w-4 h-4" />
-								Initiative Tracker
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<SidebarMenuLink to="/games/$gameId/settings" params={params}>
-								<Settings className="w-4 h-4" />
-								Game Settings
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-					</SidebarMenu>
-				</SidebarGroup>
+				<SidebarCoreNav gameId={gameId} />
 
 				<SidebarPinnedEntities gameId={gameId} />
 

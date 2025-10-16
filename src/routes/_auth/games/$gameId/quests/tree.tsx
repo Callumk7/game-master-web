@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getQuestTreeOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { QuestTreeView } from "~/components/quests/quest-tree-view";
+import { useGetQuestTreeSuspenseQuery } from "~/queries/quests";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/tree")({
 	component: RouteComponent,
@@ -16,9 +17,10 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/tree")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
+	const { data: questTreeResponse } = useGetQuestTreeSuspenseQuery(gameId);
 	return (
 		<Container>
-			<QuestTreeView gameId={gameId} />
+			<QuestTreeView gameId={gameId} questTreeResponse={questTreeResponse} />
 		</Container>
 	);
 }
