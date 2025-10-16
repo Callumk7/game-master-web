@@ -19,6 +19,7 @@ import { SidebarLocationTree } from "./location-tree";
 import { SidebarPinnedEntities } from "./pinned-entities";
 import { SidebarQuestTree } from "./quest-tree";
 import { SidebarUserControls } from "./user-controls";
+import { SidebarCoreNav } from "./core-nav";
 
 export function GameSidebar() {
 	const { theme, setTheme } = useTheme();
@@ -73,31 +74,7 @@ export function GameSidebar() {
 
 				<SidebarCreateNew />
 
-				<SidebarGroup>
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<SidebarMenuLink to="/games/$gameId" params={params}>
-								<Home className="w-4 h-4" />
-								Dashboard
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<SidebarMenuLink
-								to="/games/$gameId/initiative"
-								params={params}
-							>
-								<BowArrow className="w-4 h-4" />
-								Initiative Tracker
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<SidebarMenuLink to="/games/$gameId/settings" params={params}>
-								<Settings className="w-4 h-4" />
-								Game Settings
-							</SidebarMenuLink>
-						</SidebarMenuItem>
-					</SidebarMenu>
-				</SidebarGroup>
+				<SidebarCoreNav gameId={gameId} />
 
 				<SidebarPinnedEntities gameId={gameId} />
 

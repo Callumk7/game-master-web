@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	completeObjectiveMutation,
 	createObjectiveMutation,
+	listGameObjectivesQueryKey,
 	listObjectivesQueryKey,
 	uncompleteObjectiveMutation,
 } from "~/api/@tanstack/react-query.gen";
@@ -10,14 +11,21 @@ import type { Objective } from "~/api/types.gen";
 interface UseObjectiveMutationsProps {
 	gameId: string;
 	questId: string;
+	isGameList?: boolean;
 }
 
-export function useObjectiveMutations({ gameId, questId }: UseObjectiveMutationsProps) {
+export function useObjectiveMutations({
+	gameId,
+	questId,
+	isGameList,
+}: UseObjectiveMutationsProps) {
 	const queryClient = useQueryClient();
 
-	const queryKey = listObjectivesQueryKey({
-		path: { game_id: gameId, quest_id: questId },
-	});
+	const queryKey = isGameList
+		? listGameObjectivesQueryKey({ path: { game_id: gameId } })
+		: listObjectivesQueryKey({
+				path: { game_id: gameId, quest_id: questId },
+			});
 
 	const createObjective = useMutation({
 		...createObjectiveMutation(),
