@@ -15,7 +15,7 @@ export function GamesList() {
 				{games.data?.map((game) => (
 					<Card
 						key={game.id}
-						className="group cursor-pointer hover:bg-primary transition-colors ease-in-out duration-200 "
+						className="group cursor-pointer hover:bg-secondary transition-colors ease-in-out duration-200 "
 						onClick={() =>
 							navigate({
 								to: "/games/$gameId",
@@ -26,7 +26,7 @@ export function GamesList() {
 					>
 						<CardHeader>
 							<CardTitle>{game.name}</CardTitle>
-							<CardDescription className="group-hover:text-primary-foreground transition-colors ease-in-out duration-200">
+							<CardDescription className="group-hover:text-secondary-foreground transition-colors ease-in-out duration-200">
 								{game.content}
 							</CardDescription>
 						</CardHeader>

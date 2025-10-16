@@ -3,7 +3,7 @@ import {
 	BadgeCheck,
 	Bell,
 	ChevronsUpDown,
-	CreditCard,
+	Gamepad,
 	LogOut,
 	Sparkles,
 } from "lucide-react";
@@ -89,10 +89,10 @@ export function SidebarUserControls({
 							<BadgeCheck />
 							Account
 						</DropdownMenuLink>
-						<DropdownMenuItem>
-							<CreditCard />
-							Billing
-						</DropdownMenuItem>
+						<DropdownMenuLink to="/games">
+							<Gamepad />
+							Games
+						</DropdownMenuLink>
 						<DropdownMenuItem>
 							<Bell />
 							Notifications

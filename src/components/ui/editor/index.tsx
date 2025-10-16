@@ -33,6 +33,8 @@ import { cn } from "~/utils/cn";
 import "src/components/ui/editor/tiptap.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
+import type { Range } from "@tiptap/core";
+import type { Editor } from "@tiptap/react";
 import { toast } from "sonner";
 import {
 	listGameEntitiesOptions,
@@ -52,6 +54,7 @@ import {
 import { Separator } from "../separator";
 import { Toggle } from "../toggle";
 import { EditorBubbleMenu } from "./bubble-menu";
+import { MentionCreateDialog } from "./mention-create-dialog";
 import { type MentionItem, SimpleMention } from "./mention-extension-simple";
 
 export interface TiptapProps {
@@ -76,6 +79,15 @@ export function Tiptap({
 	const params = useParams({ from: "/_auth/games/$gameId" });
 	const gameId = params?.gameId;
 	const queryClient = useQueryClient();
+
+	// Dialog state for creating new entities from mentions
+	const [createDialogState, setCreateDialogState] = React.useState<{
+		open: boolean;
+		type: MentionItem["type"];
+		query: string;
+		position: number; // Changed from Range
+		editor: Editor;
+	} | null>(null);
 
 	// Image upload mutation
 	const uploadImage = useMutation({
@@ -265,13 +277,72 @@ export function Tiptap({
 			TableHeader,
 			TableCell,
 			SimpleMention.configure({
+				onCreateRequest: ({
+					type,
+					query,
+					range,
+					editor: requestEditor,
+				}: {
+					type: MentionItem["type"];
+					query: string;
+					range: Range;
+					editor: Editor;
+				}) => {
+					const insertionPos = range.from;
+
+					requestEditor.chain().focus().deleteRange(range).run();
+					setCreateDialogState({
+						open: true,
+						type,
+						query,
+						position: insertionPos,
+						editor: requestEditor,
+					});
+				},
 				suggestion: {
 					items: ({ query }: { query: string }) => {
-						return mentionItems
+						// Filter existing entities
+						const filtered = mentionItems
 							.filter((item) =>
 								item.label.toLowerCase().includes(query.toLowerCase()),
 							)
 							.slice(0, 10);
+
+						// Always add "Create new" options at the bottom
+						const createOptions: MentionItem[] = [
+							{
+								id: "__create_character__",
+								label: "Create new character...",
+								type: "character",
+								gameId: gameId || "",
+							},
+							{
+								id: "__create_quest__",
+								label: "Create new quest...",
+								type: "quest",
+								gameId: gameId || "",
+							},
+							{
+								id: "__create_location__",
+								label: "Create new location...",
+								type: "location",
+								gameId: gameId || "",
+							},
+							{
+								id: "__create_faction__",
+								label: "Create new faction...",
+								type: "faction",
+								gameId: gameId || "",
+							},
+							{
+								id: "__create_note__",
+								label: "Create new note...",
+								type: "note",
+								gameId: gameId || "",
+							},
+						];
+
+						return [...filtered, ...createOptions];
 					},
 				},
 			}),
@@ -298,6 +369,37 @@ export function Tiptap({
 		},
 		immediatelyRender: false,
 	});
+
+	// Handle entity creation success
+	const handleEntityCreated = React.useCallback(
+		(entity: { id: string; name: string; type: MentionItem["type"] }) => {
+			if (!createDialogState || !gameId) return;
+
+			const { position, editor: dialogEditor } = createDialogState;
+
+			// Insert the mention at the stored range
+			dialogEditor
+				.chain()
+				.focus()
+				.insertContentAt(position, [
+					{
+						type: "mention",
+						attrs: {
+							id: entity.id,
+							label: entity.name,
+							type: entity.type,
+							gameId,
+						},
+					},
+					{ type: "text", text: " " },
+				])
+				.run();
+
+			// Close the dialog
+			setCreateDialogState(null);
+		},
+		[createDialogState, gameId],
+	);
 
 	// Cleanup effect to prevent memory leaks and flushSync issues on unmount
 	React.useEffect(() => {
@@ -618,6 +720,22 @@ export function Tiptap({
 
 			<EditorBubbleMenu editor={editor} />
 			<EditorContent editor={editor} placeholder={placeholder} />
+
+			{/* Create entity dialog */}
+			{createDialogState && gameId && (
+				<MentionCreateDialog
+					open={createDialogState.open}
+					onOpenChange={(open) => {
+						if (!open) {
+							setCreateDialogState(null);
+						}
+					}}
+					entityType={createDialogState.type}
+					defaultName={createDialogState.query}
+					gameId={gameId}
+					onSuccess={handleEntityCreated}
+				/>
+			)}
 		</div>
 	);
 }

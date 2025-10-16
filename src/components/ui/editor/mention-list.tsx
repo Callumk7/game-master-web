@@ -97,33 +97,76 @@ export const MentionList = React.forwardRef<MentionListRef, MentionListProps>(
 			}
 		};
 
+		const isCreateOption = (item: MentionItem) => item.id.startsWith("__create_");
+
+		// Separate regular items from create options
+		const regularItems = props.items.filter((item) => !isCreateOption(item));
+		const createItems = props.items.filter((item) => isCreateOption(item));
+
 		return (
 			<div
 				ref={divRef}
 				className="bg-popover border border-border rounded-lg shadow-md max-h-60 overflow-auto p-1"
 			>
 				{props.items.length ? (
-					props.items.map((item, index) => (
-						<button
-							key={item.id}
-							type="button"
-							className={cn(
-								"flex items-center gap-2 w-full px-2 py-1.5 text-left text-sm rounded hover:bg-accent",
-								index === selectedIndex ? "bg-accent" : "transparent",
-							)}
-							onClick={() => selectItem(index)}
-						>
-							<span className="text-base">{getEntityIcon(item.type)}</span>
-							<div className="flex-1 min-w-0">
-								<div className="font-medium text-foreground truncate">
-									{item.label}
+					<>
+						{/* Regular entity items */}
+						{regularItems.map((item, index) => (
+							<button
+								key={item.id}
+								type="button"
+								className={cn(
+									"flex items-center gap-2 w-full px-2 py-1.5 text-left text-sm rounded hover:bg-accent",
+									index === selectedIndex ? "bg-accent" : "transparent",
+								)}
+								onClick={() => selectItem(index)}
+							>
+								<span className="text-base">
+									{getEntityIcon(item.type)}
+								</span>
+								<div className="flex-1 min-w-0">
+									<div className="font-medium text-foreground truncate">
+										{item.label}
+									</div>
+									<div className="text-xs text-muted-foreground">
+										{getEntityTypeLabel(item.type)}
+									</div>
 								</div>
-								<div className="text-xs text-muted-foreground">
-									{getEntityTypeLabel(item.type)}
-								</div>
-							</div>
-						</button>
-					))
+							</button>
+						))}
+
+						{/* Separator if we have both regular and create items */}
+						{regularItems.length > 0 && createItems.length > 0 && (
+							<div className="border-t border-border my-1" />
+						)}
+
+						{/* Create new options */}
+						{createItems.map((item, createIndex) => {
+							const absoluteIndex = regularItems.length + createIndex;
+							return (
+								<button
+									key={item.id}
+									type="button"
+									className={cn(
+										"flex items-center gap-2 w-full px-2 py-1.5 text-left text-sm rounded hover:bg-accent",
+										absoluteIndex === selectedIndex
+											? "bg-accent"
+											: "transparent",
+									)}
+									onClick={() => selectItem(absoluteIndex)}
+								>
+									<span className="text-base">
+										{getEntityIcon(item.type)}
+									</span>
+									<div className="flex-1 min-w-0">
+										<div className="font-medium text-muted-foreground truncate italic">
+											{item.label}
+										</div>
+									</div>
+								</button>
+							);
+						})}
+					</>
 				) : (
 					<div className="px-2 py-1.5 text-sm text-muted-foreground">
 						No results found

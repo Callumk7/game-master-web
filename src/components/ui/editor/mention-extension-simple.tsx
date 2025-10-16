@@ -27,25 +27,63 @@ export const SimpleMention = Node.create({
 	addOptions() {
 		return {
 			HTMLAttributes: {},
+			onCreateRequest: undefined as
+				| ((data: {
+						type: MentionItem["type"];
+						query: string;
+						range: Range;
+						editor: Editor;
+				  }) => void)
+				| undefined,
 			suggestion: {
 				char: "@",
 				pluginKey: new PluginKey("mention"),
-				command: ({
-					editor,
-					range,
-					props,
-				}: {
+				command: (commandProps: {
 					editor: Editor;
 					range: Range;
 					props: MentionItem;
 				}) => {
+					const { editor, range, props: item } = commandProps;
+					// Check if this is a "create new" option
+					if (item.id.startsWith("__create_")) {
+						// Extract entity type from id (e.g., "__create_character__")
+						const typeMatch = item.id.match(/__create_(\w+)__/);
+						// Access onCreateRequest from the extension instance
+						const extension = editor.extensionManager.extensions.find(
+							(ext) => ext.name === "mention",
+						);
+						const onCreateRequest = extension?.options?.onCreateRequest;
+
+						if (typeMatch && onCreateRequest) {
+							const entityType = typeMatch[1] as MentionItem["type"];
+							// Get the current query text
+							const { from } = range;
+							const textBefore = editor.state.doc.textBetween(
+								Math.max(0, from - 100),
+								from,
+								"\n",
+							);
+							const queryMatch = textBefore.match(/@(\w*)$/);
+							const query = queryMatch ? queryMatch[1] : "";
+
+							onCreateRequest({
+								type: entityType,
+								query,
+								range,
+								editor,
+							});
+							return;
+						}
+					}
+
+					// Normal mention insertion
 					editor
 						.chain()
 						.focus()
 						.insertContentAt(range, [
 							{
-								type: this.name,
-								attrs: props,
+								type: "mention",
+								attrs: item,
 							},
 							{ type: "text", text: " " },
 						])
