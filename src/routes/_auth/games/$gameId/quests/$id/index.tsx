@@ -25,5 +25,3 @@ function RouteComponent() {
 
 	return <QuestView quest={quest} gameId={gameId} />;
 }
-
-// MAIN VIEW COMPONENT

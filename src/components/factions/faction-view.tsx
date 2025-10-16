@@ -2,39 +2,39 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import * as React from "react";
 import { toast } from "sonner";
-import type { Quest } from "~/api";
+import type { Faction } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
-	useGetQuestLinksQuery,
+	useGetFactionLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
+import { CreateFactionLink } from "~/components/factions/create-faction-link";
+import { FactionImages } from "~/components/factions/faction-images";
+import { FactionNoteView } from "~/components/factions/faction-note-view";
+import { MembersView } from "~/components/factions/members-view";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
 import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
 import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
-import { ObjectivesView } from "~/components/quests/objectives-view";
-import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
-import { QuestNoteView } from "~/components/quests/quest-note-view";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { useDeleteQuestMutation, useUpdateQuestMutation } from "~/queries/quests";
+import { EntityView } from "~/components/views/entity-view";
+import { useDeleteFactionMutation, useUpdateFactionMutation } from "~/queries/factions";
 import { createBadges } from "../utils";
-import { EntityView } from "../views/entity-view";
-import { SubQuestView } from "./sub-quest-view";
 
-interface QuestViewProps {
-	quest: Quest;
+interface FactionViewProps {
+	faction: Faction;
 	gameId: string;
 }
 
-export function QuestView({ quest, gameId }: QuestViewProps) {
-	const navigate = useNavigate({ from: "/games/$gameId/quests/$id" });
+export function FactionView({ faction, gameId }: FactionViewProps) {
 	const queryClient = useQueryClient();
+	const navigate = useNavigate({ from: "/games/$gameId/factions/$id" });
 
-	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
+	const updateFaction = useUpdateFactionMutation(gameId, faction.id);
 	const handleTogglePin = async () => {
-		updateQuest.mutateAsync(
+		updateFaction.mutateAsync(
 			{
-				body: { quest: { pinned: !quest.pinned } },
-				path: { game_id: gameId, id: quest.id },
+				body: { faction: { pinned: !faction.pinned } },
+				path: { game_id: gameId, id: faction.id },
 			},
 			{
 				onSuccess: () => {
@@ -48,12 +48,12 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 		);
 	};
 
-	const deleteQuest = useDeleteQuestMutation(gameId, quest.id);
+	const deleteFaction = useDeleteFactionMutation(gameId, faction.id);
 	const handleDelete = () => {
-		deleteQuest.mutate({
-			path: { game_id: gameId, id: quest.id },
+		deleteFaction.mutate({
+			path: { game_id: gameId, id: faction.id },
 		});
-		toast.warning("Quest deleted successfully!");
+		toast.success("Faction deleted successfully!");
 		navigate({ to: "." });
 	};
 
@@ -61,41 +61,43 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 		{
 			id: "content",
 			label: "Content",
-			content: <ContentTab quest={quest} gameId={gameId} />,
+			content: <ContentTab faction={faction} gameId={gameId} />,
 		},
 		{
 			id: "links",
 			label: "Links",
-			content: <LinksTab quest={quest} gameId={gameId} />,
-		},
-		{
-			id: "quests",
-			label: "Sub Quests",
-			content: <SubQuestView gameId={gameId} questId={quest.id} />,
+			content: <LinksTab faction={faction} gameId={gameId} />,
 		},
 		{
 			id: "notes",
 			label: "Notes",
-			content: <QuestNoteView gameId={gameId} questId={quest.id} />,
+			content: <FactionNoteView gameId={gameId} factionId={faction.id} />,
 		},
 		{
-			id: "objectives",
-			label: "Objectives",
-			content: <ObjectivesView gameId={gameId} questId={quest.id} />,
+			id: "members",
+			label: "Members",
+			content: <MembersView factionId={faction.id} gameId={gameId} />,
+		},
+		{
+			id: "images",
+			label: "Images",
+			content: <FactionImages gameId={gameId} factionId={faction.id} />,
 		},
 	];
 
+	const badges = createBadges(faction.tags);
+
 	return (
 		<EntityView
-			id={quest.id}
+			id={faction.id}
 			gameId={gameId}
-			type="quest"
-			content={quest.content}
-			content_plain_text={quest.content_plain_text}
-			name={quest.name}
-			badges={createBadges(quest.tags)}
+			type="faction"
+			content={faction.content}
+			content_plain_text={faction.content_plain_text}
+			name={faction.name}
+			badges={badges}
 			tabs={tabs}
-			pinned={quest.pinned}
+			pinned={faction.pinned}
 			onEdit={() => navigate({ to: "edit" })}
 			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
@@ -107,26 +109,28 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 // CONTENT TAB COMPONENT
 // =============================================================================
 interface ContentTabProps {
-	quest: Quest;
+	faction: Faction;
 	gameId: string;
 }
-function ContentTab({ quest, gameId }: ContentTabProps) {
-	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
+function ContentTab({ faction, gameId }: ContentTabProps) {
+	const updateFaction = useUpdateFactionMutation(gameId, faction.id);
+
 	const handleSave = async (payload: {
 		content: string;
 		content_plain_text: string;
 	}) => {
-		updateQuest.mutate({
-			body: { quest: payload },
-			path: { game_id: gameId, id: quest.id },
+		updateFaction.mutate({
+			body: { faction: payload },
+			path: { game_id: gameId, id: faction.id },
 		});
 	};
+
 	return (
 		<EntityEditor
-			content={quest.content}
+			content={faction.content}
 			gameId={gameId}
-			entityType="quest"
-			entityId={quest.id}
+			entityType="faction"
+			entityId={faction.id}
 			onSave={handleSave}
 		/>
 	);
@@ -136,25 +140,25 @@ function ContentTab({ quest, gameId }: ContentTabProps) {
 // LINKS TAB COMPONENT
 // =============================================================================
 interface LinksTabProps {
-	quest: Quest;
+	faction: Faction;
 	gameId: string;
 }
-function LinksTab({ quest, gameId }: LinksTabProps) {
+function LinksTab({ faction, gameId }: LinksTabProps) {
 	const {
 		data: linksResponse,
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetQuestLinksQuery({
-		path: { game_id: gameId, quest_id: quest.id },
-	});
+	} = useGetFactionLinksQuery({ path: { game_id: gameId, faction_id: faction.id } });
+
 	const columns = React.useMemo(
-		() => createBaseLinkTableColumns(gameId, quest.id, "quest"),
-		[gameId, quest.id],
+		() => createBaseLinkTableColumns(gameId, faction.id, "faction"),
+		[gameId, faction.id],
 	);
+
 	return (
 		<div className="space-y-4">
-			<QuestLinksPopover gameId={gameId} questId={quest.id} />
+			<CreateFactionLink gameId={gameId} factionId={faction.id} />
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
 			)}

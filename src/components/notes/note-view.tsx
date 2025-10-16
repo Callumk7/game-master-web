@@ -2,39 +2,41 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import * as React from "react";
 import { toast } from "sonner";
-import type { Quest } from "~/api";
+import type { Note } from "~/api";
 import {
 	listPinnedEntitiesQueryKey,
-	useGetQuestLinksQuery,
+	useGetNoteLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
 import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
 import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
-import { ObjectivesView } from "~/components/quests/objectives-view";
-import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
-import { QuestNoteView } from "~/components/quests/quest-note-view";
+import { NoteImages } from "~/components/notes/note-images";
+import { NoteLinksPopover } from "~/components/notes/note-links-popover";
+import { NoteNoteView } from "~/components/notes/notes-note-view";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
-import { useDeleteQuestMutation, useUpdateQuestMutation } from "~/queries/quests";
+import { EntityView } from "~/components/views/entity-view";
+import {
+	useDeleteNoteMutation,
+	useUpdateNoteMutation,
+} from "~/queries/notes";
 import { createBadges } from "../utils";
-import { EntityView } from "../views/entity-view";
-import { SubQuestView } from "./sub-quest-view";
 
-interface QuestViewProps {
-	quest: Quest;
+interface NoteViewProps {
+	note: Note;
 	gameId: string;
 }
 
-export function QuestView({ quest, gameId }: QuestViewProps) {
-	const navigate = useNavigate({ from: "/games/$gameId/quests/$id" });
+export function NoteView({ note, gameId }: NoteViewProps) {
 	const queryClient = useQueryClient();
+	const navigate = useNavigate({ from: "/games/$gameId/notes/$id" });
 
-	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
+	const updateNote = useUpdateNoteMutation(gameId, note.id);
 	const handleTogglePin = async () => {
-		updateQuest.mutateAsync(
+		updateNote.mutateAsync(
 			{
-				body: { quest: { pinned: !quest.pinned } },
-				path: { game_id: gameId, id: quest.id },
+				body: { note: { pinned: !note.pinned } },
+				path: { game_id: gameId, id: note.id },
 			},
 			{
 				onSuccess: () => {
@@ -48,12 +50,12 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 		);
 	};
 
-	const deleteQuest = useDeleteQuestMutation(gameId, quest.id);
+	const deleteNote = useDeleteNoteMutation(gameId, note.id);
 	const handleDelete = () => {
-		deleteQuest.mutate({
-			path: { game_id: gameId, id: quest.id },
+		deleteNote.mutate({
+			path: { game_id: gameId, id: note.id },
 		});
-		toast.warning("Quest deleted successfully!");
+		toast.success("Note deleted successfully!");
 		navigate({ to: "." });
 	};
 
@@ -61,44 +63,41 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 		{
 			id: "content",
 			label: "Content",
-			content: <ContentTab quest={quest} gameId={gameId} />,
+			content: <ContentTab note={note} gameId={gameId} />,
 		},
 		{
 			id: "links",
 			label: "Links",
-			content: <LinksTab quest={quest} gameId={gameId} />,
-		},
-		{
-			id: "quests",
-			label: "Sub Quests",
-			content: <SubQuestView gameId={gameId} questId={quest.id} />,
+			content: <LinksTab note={note} gameId={gameId} />,
 		},
 		{
 			id: "notes",
 			label: "Notes",
-			content: <QuestNoteView gameId={gameId} questId={quest.id} />,
+			content: <NoteNoteView gameId={gameId} noteId={note.id} />,
 		},
 		{
-			id: "objectives",
-			label: "Objectives",
-			content: <ObjectivesView gameId={gameId} questId={quest.id} />,
+			id: "images",
+			label: "Images",
+			content: <NoteImages gameId={gameId} noteId={note.id} />,
 		},
 	];
 
+	const badges = createBadges(note.tags);
+
 	return (
 		<EntityView
-			id={quest.id}
+			id={note.id}
 			gameId={gameId}
-			type="quest"
-			content={quest.content}
-			content_plain_text={quest.content_plain_text}
-			name={quest.name}
-			badges={createBadges(quest.tags)}
+			type="note"
+			content={note.content}
+			content_plain_text={note.content_plain_text}
+			name={note.name}
+			badges={badges}
+			pinned={note.pinned}
 			tabs={tabs}
-			pinned={quest.pinned}
 			onEdit={() => navigate({ to: "edit" })}
-			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
+			onDelete={handleDelete}
 		/>
 	);
 }
@@ -107,26 +106,28 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 // CONTENT TAB COMPONENT
 // =============================================================================
 interface ContentTabProps {
-	quest: Quest;
+	note: Note;
 	gameId: string;
 }
-function ContentTab({ quest, gameId }: ContentTabProps) {
-	const updateQuest = useUpdateQuestMutation(gameId, quest.id);
+function ContentTab({ note, gameId }: ContentTabProps) {
+	const updateNote = useUpdateNoteMutation(gameId, note.id);
+
 	const handleSave = async (payload: {
 		content: string;
 		content_plain_text: string;
 	}) => {
-		updateQuest.mutate({
-			body: { quest: payload },
-			path: { game_id: gameId, id: quest.id },
+		updateNote.mutate({
+			body: { note: payload },
+			path: { game_id: gameId, id: note.id },
 		});
 	};
+
 	return (
 		<EntityEditor
-			content={quest.content}
+			content={note.content}
 			gameId={gameId}
-			entityType="quest"
-			entityId={quest.id}
+			entityType="note"
+			entityId={note.id}
 			onSave={handleSave}
 		/>
 	);
@@ -136,25 +137,27 @@ function ContentTab({ quest, gameId }: ContentTabProps) {
 // LINKS TAB COMPONENT
 // =============================================================================
 interface LinksTabProps {
-	quest: Quest;
+	note: Note;
 	gameId: string;
 }
-function LinksTab({ quest, gameId }: LinksTabProps) {
+function LinksTab({ note, gameId }: LinksTabProps) {
 	const {
 		data: linksResponse,
 		isLoading: linksLoading,
 		isError: linksError,
 		error: linksQueryError,
-	} = useGetQuestLinksQuery({
-		path: { game_id: gameId, quest_id: quest.id },
+	} = useGetNoteLinksQuery({
+		path: { game_id: gameId, note_id: note.id },
 	});
+
 	const columns = React.useMemo(
-		() => createBaseLinkTableColumns(gameId, quest.id, "quest"),
-		[gameId, quest.id],
+		() => createBaseLinkTableColumns(gameId, note.id, "note"),
+		[gameId, note.id],
 	);
+
 	return (
 		<div className="space-y-4">
-			<QuestLinksPopover gameId={gameId} questId={quest.id} />
+			<NoteLinksPopover gameId={gameId} noteId={note.id} />
 			{linksLoading && (
 				<div className="text-muted-foreground">Loading links...</div>
 			)}

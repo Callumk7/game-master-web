@@ -12,8 +12,7 @@ import {
 	Trees,
 } from "lucide-react";
 import * as React from "react";
-import { useGetLocationTreeQuery } from "~/api/@tanstack/react-query.gen";
-import type { LocationTreeNode } from "~/api/types.gen";
+import type { LocationTreeNode, LocationTreeResponse } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -27,6 +26,7 @@ import { cn } from "~/utils/cn";
 interface LocationTreeViewProps {
 	gameId: string;
 	className?: string;
+	locationTreeResponse: LocationTreeResponse | undefined;
 }
 
 interface LocationNodeProps {
@@ -296,12 +296,12 @@ function LocationNode({ node, gameId, level = 0 }: LocationNodeProps) {
 	);
 }
 
-export function LocationTreeView({ gameId, className }: LocationTreeViewProps) {
-	const { data: locationTreeData } = useGetLocationTreeQuery({
-		path: { game_id: gameId },
-	});
-
-	if (!locationTreeData?.data || locationTreeData.data.length === 0) {
+export function LocationTreeView({
+	gameId,
+	className,
+	locationTreeResponse,
+}: LocationTreeViewProps) {
+	if (!locationTreeResponse?.data || locationTreeResponse.data.length === 0) {
 		return (
 			<div
 				className={cn(
@@ -329,7 +329,7 @@ export function LocationTreeView({ gameId, className }: LocationTreeViewProps) {
 		}, 0);
 	};
 
-	const totalLocations = getTotalLocations(locationTreeData.data);
+	const totalLocations = getTotalLocations(locationTreeResponse.data);
 
 	return (
 		<div className={cn("w-full", className)}>
@@ -351,14 +351,14 @@ export function LocationTreeView({ gameId, className }: LocationTreeViewProps) {
 					</Badge>
 					<Badge variant="outline" size="sm">
 						<Mountain className="h-3 w-3 mr-1" />
-						{locationTreeData.data.length} top-level
+						{locationTreeResponse.data.length} top-level
 					</Badge>
 				</div>
 			</div>
 
 			{/* Location Tree */}
 			<div className="space-y-4">
-				{locationTreeData.data
+				{locationTreeResponse.data
 					.sort((a, b) => {
 						// Sort top level by type then name
 						const typeOrder = [
