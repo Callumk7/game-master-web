@@ -7,7 +7,6 @@ import {
 	useGetFactionLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
-import { EntityView } from "~/components/entity-view";
 import { CreateFactionLink } from "~/components/factions/create-faction-link";
 import { FactionImages } from "~/components/factions/faction-images";
 import { FactionNoteView } from "~/components/factions/faction-note-view";
@@ -18,6 +17,7 @@ import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
+import { EntityView } from "~/components/views/entity-view";
 import {
 	useDeleteFactionMutation,
 	useFactionSuspenseQuery,

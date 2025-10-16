@@ -13,13 +13,13 @@ import { CharacterNotesView } from "~/components/characters/character-note-view"
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
 import { EditCharacterDialog } from "~/components/characters/edit-character-dialog";
 import { useAddTab } from "~/components/entity-tabs";
-import { EntityView } from "~/components/entity-view";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
 import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
 import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
+import { EntityView } from "~/components/views/entity-view";
 import {
 	useDeleteCharacterMutation,
 	useGetCharacterSuspenseQuery,

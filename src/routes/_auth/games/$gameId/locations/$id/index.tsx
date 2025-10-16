@@ -7,7 +7,6 @@ import {
 	useGetLocationLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
-import { EntityView } from "~/components/entity-view";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
 import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
 import type { GenericLinksResponse } from "~/components/links/types";
@@ -18,6 +17,7 @@ import { LocationNoteView } from "~/components/locations/location-note-view";
 import { NPCView } from "~/components/locations/npc-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
+import { EntityView } from "~/components/views/entity-view";
 import {
 	useDeleteLocationMutation,
 	useLocationSuspenseQuery,

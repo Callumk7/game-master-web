@@ -7,7 +7,6 @@ import {
 	useGetNoteLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { useAddTab } from "~/components/entity-tabs";
-import { EntityView } from "~/components/entity-view";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
 import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
 import type { GenericLinksResponse } from "~/components/links/types";
@@ -17,6 +16,7 @@ import { NoteLinksPopover } from "~/components/notes/note-links-popover";
 import { NoteNoteView } from "~/components/notes/notes-note-view";
 import { Badge } from "~/components/ui/badge";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
+import { EntityView } from "~/components/views/entity-view";
 import {
 	useDeleteNoteMutation,
 	useNoteSuspenseQuery,
