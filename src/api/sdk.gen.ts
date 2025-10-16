@@ -502,7 +502,11 @@ export const setEntityImageAsPrimary = <ThrowOnError extends boolean = false>(op
 
 /**
  * Get location tree
- * Get hierarchical tree structure of all locations in a game
+ * Get hierarchical tree structure of locations in a game.
+ *
+ * - Without `start_id`: Returns the full tree with all root locations and their descendants
+ * - With `start_id`: Returns a subtree starting from the specified location, including all its descendants
+ *
  */
 export const getLocationTree = <ThrowOnError extends boolean = false>(options: Options<GetLocationTreeData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).get<GetLocationTreeResponses, GetLocationTreeErrors, ThrowOnError>({
@@ -1569,7 +1573,11 @@ export const updateQuestLink = <ThrowOnError extends boolean = false>(options: O
 
 /**
  * Get quest tree
- * Get hierarchical tree structure of all quests in a game
+ * Get hierarchical tree structure of quests in a game.
+ *
+ * - Without `start_id`: Returns the full tree with all root quests and their descendants
+ * - With `start_id`: Returns a subtree starting from the specified quest, including all its descendants
+ *
  */
 export const getQuestTree = <ThrowOnError extends boolean = false>(options: Options<GetQuestTreeData, ThrowOnError>) => {
     return (options.client ?? _heyApiClient).get<GetQuestTreeResponses, GetQuestTreeErrors, ThrowOnError>({

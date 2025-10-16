@@ -622,7 +622,11 @@ export const getLocationTreeQueryKey = (options: Options<GetLocationTreeData>) =
 
 /**
  * Get location tree
- * Get hierarchical tree structure of all locations in a game
+ * Get hierarchical tree structure of locations in a game.
+ *
+ * - Without `start_id`: Returns the full tree with all root locations and their descendants
+ * - With `start_id`: Returns a subtree starting from the specified location, including all its descendants
+ *
  */
 export const getLocationTreeOptions = (options: Options<GetLocationTreeData>) => {
     return queryOptions({
@@ -641,7 +645,11 @@ export const getLocationTreeOptions = (options: Options<GetLocationTreeData>) =>
 
 /**
  * Get location tree
- * Get hierarchical tree structure of all locations in a game
+ * Get hierarchical tree structure of locations in a game.
+ *
+ * - Without `start_id`: Returns the full tree with all root locations and their descendants
+ * - With `start_id`: Returns a subtree starting from the specified location, including all its descendants
+ *
  */
 export const useGetLocationTreeQuery = (options: Options<GetLocationTreeData>) => {
     return useQuery(getLocationTreeOptions(options));
@@ -1980,7 +1988,11 @@ export const getQuestTreeQueryKey = (options: Options<GetQuestTreeData>) => crea
 
 /**
  * Get quest tree
- * Get hierarchical tree structure of all quests in a game
+ * Get hierarchical tree structure of quests in a game.
+ *
+ * - Without `start_id`: Returns the full tree with all root quests and their descendants
+ * - With `start_id`: Returns a subtree starting from the specified quest, including all its descendants
+ *
  */
 export const getQuestTreeOptions = (options: Options<GetQuestTreeData>) => {
     return queryOptions({
@@ -1999,7 +2011,11 @@ export const getQuestTreeOptions = (options: Options<GetQuestTreeData>) => {
 
 /**
  * Get quest tree
- * Get hierarchical tree structure of all quests in a game
+ * Get hierarchical tree structure of quests in a game.
+ *
+ * - Without `start_id`: Returns the full tree with all root quests and their descendants
+ * - With `start_id`: Returns a subtree starting from the specified quest, including all its descendants
+ *
  */
 export const useGetQuestTreeQuery = (options: Options<GetQuestTreeData>) => {
     return useQuery(getQuestTreeOptions(options));
