@@ -1,5 +1,5 @@
 import { useParams } from "@tanstack/react-router";
-import { BookOpen, BowArrow, Home, Moon, Settings, Sun } from "lucide-react";
+import { BookOpen, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
 import { Button } from "~/components/ui/button";
@@ -7,19 +7,17 @@ import { Separator } from "~/components/ui/separator";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarGroup,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuItem,
-	SidebarMenuLink,
 } from "~/components/ui/sidebar";
+import { SidebarCoreNav } from "./core-nav";
 import { SidebarCreateNew } from "./create-new-entity";
 import { SidebarEntities } from "./entities";
 import { SidebarLocationTree } from "./location-tree";
 import { SidebarPinnedEntities } from "./pinned-entities";
 import { SidebarQuestTree } from "./quest-tree";
 import { SidebarUserControls } from "./user-controls";
-import { SidebarCoreNav } from "./core-nav";
 
 export function GameSidebar() {
 	const { theme, setTheme } = useTheme();

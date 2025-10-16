@@ -4,7 +4,7 @@ import * as React from "react";
 import type { Optional } from "~/types";
 import { Button } from "./ui/button";
 import { Link } from "./ui/link";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
+import { ScrollArea } from "./ui/scroll-area";
 
 export interface Tab {
 	data: {
