@@ -34,36 +34,36 @@ export function WindowTray() {
 					>
 						<X className="w-4 h-4" />
 					</button>
-					
+
 					{/* Separator */}
 					<div className="w-px h-6 bg-border/50 flex-shrink-0" />
-					
+
 					{/* Scrollable window tabs */}
-					<div className="flex items-center gap-2 overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border/30 hover:scrollbar-thumb-border/50">
+					<div className="flex items-center gap-2 overflow-x-auto overflow-y-hidden">
 						{minimizedWindows.map((window) => (
-						<button
-							key={window.id}
-							type="button"
-							onClick={() => restoreEntityWindow(window.id)}
-							className={cn(
-								"flex items-center gap-2 px-3 py-2 rounded-md text-sm",
-								"bg-muted/50 hover:bg-muted transition-colors",
-								"border border-border/50 hover:border-border",
-								"focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-								"min-w-[120px] max-w-[200px] flex-shrink-0",
-							)}
-							title={`Restore ${window.entity.name}`}
-						>
-							<div className="flex items-center gap-2 min-w-0">
-								<div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-								<span className="truncate font-medium">
-									{window.entity.name}
-								</span>
-								<span className="text-xs text-muted-foreground capitalize flex-shrink-0">
-									{window.entity.type}
-								</span>
-							</div>
-						</button>
+							<button
+								key={window.id}
+								type="button"
+								onClick={() => restoreEntityWindow(window.id)}
+								className={cn(
+									"flex items-center gap-2 px-3 py-2 rounded-md text-sm",
+									"bg-muted/50 hover:bg-muted transition-colors",
+									"border border-border/50 hover:border-border",
+									"focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+									"min-w-[120px] max-w-[200px] flex-shrink-0",
+								)}
+								title={`Restore ${window.entity.name}`}
+							>
+								<div className="flex items-center gap-2 min-w-0">
+									<div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+									<span className="truncate font-medium">
+										{window.entity.name}
+									</span>
+									<span className="text-xs text-muted-foreground capitalize flex-shrink-0">
+										{window.entity.type}
+									</span>
+								</div>
+							</button>
 						))}
 					</div>
 				</div>
@@ -71,3 +71,4 @@ export function WindowTray() {
 		</div>
 	);
 }
+

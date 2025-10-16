@@ -1,11 +1,11 @@
 import { ExternalLink, PlusCircle, RefreshCw, X } from "lucide-react";
 import type * as React from "react";
-import { EntityViewHeader } from "~/components/entity-view";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Spinner } from "~/components/ui/spinner";
+import { EntityViewHeader } from "~/components/views/entity-view";
 import type { EntityType as SingularEntityType } from "~/types";
 import type { EntityMutationPayload, EntityType } from "~/types/split-view";
 
@@ -189,4 +189,3 @@ function createEntityBadges(
 			return commonTags;
 	}
 }
-
