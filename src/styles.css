@@ -220,6 +220,15 @@
 	--color-accent-foreground: var(--accent-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--color-success-bg);
+	--color-success-foreground: var(--color-success-text);
+	--color-success-border: var(--color-success-border);
+	--color-warning: var(--color-warning-bg);
+	--color-warning-foreground: var(--color-warning-text);
+	--color-warning-border: var(--color-warning-border);
+	--color-info: var(--color-info-bg);
+	--color-info-foreground: var(--color-info-text);
+	--color-info-border: var(--color-info-border);
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);

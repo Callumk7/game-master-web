@@ -16,7 +16,7 @@ import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
-import { Badge } from "~/components/ui/badge";
+import { Badge, BadgeVariant } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
@@ -151,22 +151,22 @@ interface StatusDisplayProps {
 }
 
 export function StatusDisplay({ status }: StatusDisplayProps) {
-	const variant =
-		status === "cancelled"
-			? "destructive"
-			: status === "completed"
-				? "success"
-				: status === "ready"
-					? "ready"
-					: status === "active"
-						? "warning"
-						: "outline";
-
 	return (
-		<Badge variant={variant} className="text-xs">
+		<Badge variant={getVariantFromStatus(status)} className="text-xs">
 			{status}
 		</Badge>
 	);
+}
+function getVariantFromStatus(status: string): BadgeVariant {
+	const variantMap: Record<string, BadgeVariant> = {
+		cancelled: "destructive",
+		completed: "success",
+		ready: "info",
+		paused: "info",
+		active: "warning",
+	};
+
+	return variantMap[status] || "outline";
 }
 
 interface DateDisplayProps {
