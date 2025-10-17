@@ -11,6 +11,13 @@ export const Route = createFileRoute("/beastiary")({
 			throw new Error("Failed to load monster data");
 		}
 		const data: MonsterData = await response.json();
+		const erlwRes = await fetch("/erlw.json");
+		if (!erlwRes.ok) {
+			throw new Error("Failed to load monster data");
+		}
+		const erlwData: MonsterData = await erlwRes.json();
+		console.log(erlwData);
+		data.monster.push(...erlwData.monster);
 		return data.monster;
 	},
 });
