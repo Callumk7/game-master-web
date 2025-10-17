@@ -47,26 +47,6 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 		},
 		{
-			id: "view",
-			header: "View",
-			maxSize: 60,
-			enableHiding: false,
-			cell: ({ row }) => {
-				const note = row.original;
-				return (
-					<EntityLinkButton
-						entity={{
-							id: note.id,
-							name: note.name,
-							type: "note",
-							content: note.content,
-							content_plain_text: note.content_plain_text,
-						}}
-					/>
-				);
-			},
-		},
-		{
 			id: "actions",
 			maxSize: 60,
 			enableHiding: false,
@@ -76,7 +56,16 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<>
+					<div className="flex flex-row gap-2">
+						<EntityLinkButton
+							entity={{
+								id: note.id,
+								name: note.name,
+								type: "note",
+								content: note.content,
+								content_plain_text: note.content_plain_text,
+							}}
+						/>
 						<ActionsDropdown
 							entityType="note"
 							entityName="note"
@@ -95,7 +84,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 							setIsOpen={setEditModalOpen}
 							note={note}
 						/>
-					</>
+					</div>
 				);
 			},
 		},
@@ -115,9 +104,9 @@ export function NotesTable({ data, gameId }: NotesTableProps) {
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
-				name: 2,
-				actions: 0.5,
-				updated_at: 0.5,
+				name: 1.5,
+				actions: 0.6,
+				updated_at: 0.6,
 			}}
 			initialSort={[{ id: "updated_at", desc: true }]}
 		/>

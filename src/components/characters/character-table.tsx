@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import { Check, Cross } from "lucide-react";
 import * as React from "react";
-
 import type { Character } from "~/api/types.gen";
 import {
 	ActionsDropdown,
@@ -28,23 +28,17 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			minSize: 200,
 			cell: ({ row }) => (
-				<EntityLink
-					entityType="character"
-					gameId={gameId}
-					entityId={row.original.id}
-					name={row.getValue("name")}
-					className="whitespace-pre-wrap"
-				/>
-			),
-		},
-		{
-			accessorKey: "class",
-			header: "Class",
-			maxSize: 50,
-			cell: ({ row }) => (
-				<Badge variant="secondary" className="capitalize">
-					{row.getValue("class")}
-				</Badge>
+				<div className="flex flex-col w-full">
+					<EntityLink
+						entityType="character"
+						gameId={gameId}
+						entityId={row.original.id}
+						name={row.getValue("name")}
+					/>
+					<Badge variant="secondary" className="capitalize mb-1">
+						{row.original.class}
+					</Badge>
+				</div>
 			),
 		},
 		{
@@ -53,7 +47,6 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 				<SortableHeader column={column}>Level</SortableHeader>
 			),
 			cell: ({ row }) => <div className="text-center">{row.getValue("level")}</div>,
-			maxSize: 50,
 		},
 		{
 			accessorKey: "content_plain_text",
@@ -76,9 +69,14 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			accessorKey: "alive",
 			header: "Alive",
 			cell: ({ row }) => (
-				<div className="text-center">{row.getValue("alive") ? "Yes" : "No"}</div>
+				<div>
+					{row.getValue("alive") ? (
+						<Check className="size-3 ml-2 text-green-300" />
+					) : (
+						<Cross className="size-3 ml-2 text-red-300" />
+					)}
+				</div>
 			),
-			maxSize: 50,
 		},
 		{
 			accessorKey: "updated_at",
@@ -88,28 +86,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 		},
 		{
-			id: "view",
-			header: "View",
-			maxSize: 60,
-			enableHiding: false,
-			cell: ({ row }) => {
-				const character = row.original;
-				return (
-					<EntityLinkButton
-						entity={{
-							id: character.id,
-							name: character.name,
-							type: "character",
-							content: character.content,
-							content_plain_text: character.content_plain_text,
-						}}
-					/>
-				);
-			},
-		},
-		{
 			id: "actions",
-			maxSize: 60,
 			enableHiding: false,
 			cell: ({ row }) => {
 				const character = row.original;
@@ -117,7 +94,16 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<>
+					<div className="flex">
+						<EntityLinkButton
+							entity={{
+								id: character.id,
+								name: character.name,
+								type: "character",
+								content: character.content,
+								content_plain_text: character.content_plain_text,
+							}}
+						/>
 						<ActionsDropdown
 							entityType="character"
 							entityName="character"
@@ -136,7 +122,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 							setIsOpen={setEditModalOpen}
 							character={character}
 						/>
-					</>
+					</div>
 				);
 			},
 		},
@@ -156,10 +142,11 @@ export function CharacterTable({ data, gameId }: CharacterTableProps) {
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
-				name: 2,
-				class: 0.6,
-				actions: 0.5,
-				content_plain_text: 2,
+				actions: 0.6,
+				alive: 0.6,
+				level: 0.6,
+				tags: 1,
+				name: 1.4,
 			}}
 			defaultHidden={["content_plain_text"]}
 			initialSort={[{ id: "updated_at", desc: true }]}

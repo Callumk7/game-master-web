@@ -81,14 +81,14 @@ export function SortableHeader<TData, TValue>({
 	children,
 }: SortableHeaderProps<TData, TValue>) {
 	return (
-		<Button
-			variant="ghost"
+		<button
+			type="button"
 			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-			className="-mx-3 -my-2 h-auto w-[calc(100%+1.5rem)] justify-start px-3 py-2"
+			className="flex items-center gap-2 cursor-pointer hover:bg-accent hover:text-accent-foreground py-2 px-1"
 		>
 			{children}
-			<ArrowUpDown className="ml-2 h-4 w-4" />
-		</Button>
+			<ArrowUpDown className="h-4 w-4" />
+		</button>
 	);
 }
 

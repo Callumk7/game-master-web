@@ -69,7 +69,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 						name={row.getValue("name")}
 					/>
 					<Badge variant="secondary" className="capitalize mb-1">
-						{row.getValue("type")}
+						{row.original.type}
 					</Badge>
 				</div>
 			),
