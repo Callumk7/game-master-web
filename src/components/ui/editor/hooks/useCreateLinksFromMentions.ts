@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/react";
 import { useCreateLink } from "~/components/links/hooks/useCreateLink";
 import type { EntityType } from "~/types";
-import { extractMentionsFromJSON, getUniqueMentions } from "~/utils/editor/mention-utils";
+import { extractMentionsFromJSON, getUniqueMentions } from "../utils";
 
 interface SourceEntity {
 	gameId: string;
@@ -45,7 +45,7 @@ export function useCreateLinksFromMentions() {
 				if (
 					!(error instanceof Error) ||
 					(!error.message?.includes("already exists") &&
-					!error.message?.includes("duplicate"))
+						!error.message?.includes("duplicate"))
 				) {
 					console.warn(
 						`Failed to create mention link to ${mention.type}:${mention.id}:`,
