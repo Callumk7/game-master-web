@@ -48,6 +48,7 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 import type { Status } from "~/types";
+import { cn } from "~/utils/cn";
 import { tableFilterFns } from "~/utils/table-filters";
 
 // ============================================================================
@@ -83,6 +84,7 @@ export function SortableHeader<TData, TValue>({
 		<Button
 			variant="ghost"
 			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+			className="-mx-3 -my-2 h-auto w-[calc(100%+1.5rem)] justify-start px-3 py-2"
 		>
 			{children}
 			<ArrowUpDown className="ml-2 h-4 w-4" />
@@ -108,7 +110,7 @@ export function EntityLink({
 	return (
 		<Link
 			to={`/games/${gameId}/${entityType}s/${entityId}` as string}
-			className={className}
+			className={cn(className, "pl-0")}
 		>
 			{name}
 		</Link>
