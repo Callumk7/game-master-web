@@ -109,7 +109,6 @@ export function LocationsTable({ data, gameId }: LocationsTableProps) {
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
-				name: 1.2,
 				actions: 0.6,
 				updated_at: 0.6,
 			}}

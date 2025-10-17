@@ -64,13 +64,41 @@ export function NodeViewer<T>({
 
 	const svgRef = React.useRef<SVGSVGElement>(null);
 	const [transform, setTransform] = React.useState<ViewTransform>({
-		x: -400, // Center the 800px simulation width in viewport
-		y: -200, // Center the 600px simulation height in viewport
+		x: 0,
+		y: 0,
 		scale: 1,
 	});
 	const [isDragging, setIsDragging] = React.useState(false);
 	const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
 	const [useCanvas, setUseCanvas] = React.useState(true);
+	const hasInitializedView = React.useRef(false);
+
+	// Auto-center view on nodes when they first load
+	React.useEffect(() => {
+		if (nodes.length > 0 && !hasInitializedView.current) {
+			// Calculate bounding box of all nodes
+			const xs = nodes.map((n) => n.x);
+			const ys = nodes.map((n) => n.y);
+			const minX = Math.min(...xs);
+			const maxX = Math.max(...xs);
+			const minY = Math.min(...ys);
+			const maxY = Math.max(...ys);
+
+			// Calculate center of nodes
+			const centerX = (minX + maxX) / 2;
+			const centerY = (minY + maxY) / 2;
+
+			// Center the view on the nodes
+			// Offset by half the viewport to center in view
+			setTransform({
+				x: -centerX + (height * 0.67), // Approximate viewport width ratio
+				y: -centerY + height / 2,
+				scale: 1,
+			});
+
+			hasInitializedView.current = true;
+		}
+	}, [nodes, height]);
 
 	const handleConfigChange = React.useCallback(
 		(newConfig: Partial<ForceSimulationConfig>) => {
@@ -135,8 +163,27 @@ export function NodeViewer<T>({
 	}, []);
 
 	const resetView = React.useCallback(() => {
-		setTransform({ x: -400, y: -200, scale: 1 });
-	}, []);
+		if (nodes.length > 0) {
+			// Calculate bounding box of all nodes
+			const xs = nodes.map((n) => n.x);
+			const ys = nodes.map((n) => n.y);
+			const minX = Math.min(...xs);
+			const maxX = Math.max(...xs);
+			const minY = Math.min(...ys);
+			const maxY = Math.max(...ys);
+
+			// Calculate center of nodes
+			const centerX = (minX + maxX) / 2;
+			const centerY = (minY + maxY) / 2;
+
+			// Center the view on the nodes
+			setTransform({
+				x: -centerX + (height * 0.67),
+				y: -centerY + height / 2,
+				scale: 1,
+			});
+		}
+	}, [nodes, height]);
 
 	const toggleRenderer = React.useCallback(() => {
 		setUseCanvas(!useCanvas);
