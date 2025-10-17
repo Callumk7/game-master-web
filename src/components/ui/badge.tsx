@@ -52,4 +52,6 @@ function Badge({
 	});
 }
 
-export { Badge, badgeVariants };
+type BadgeVariant = VariantProps<typeof badgeVariants>["variant"];
+
+export { Badge, badgeVariants, type BadgeVariant };
