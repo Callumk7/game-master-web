@@ -2,7 +2,7 @@ import {
 	type ExtractedMention,
 	extractMentionsFromJSON,
 	getUniqueMentions,
-} from "~/components/ui/editor/mention-utils";
+} from "~/utils/editor/mention-utils";
 import type { FieldConfig } from "../types";
 
 /**

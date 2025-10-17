@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/react";
 import { useCreateLink } from "~/components/links/hooks/useCreateLink";
 import type { EntityType } from "~/types";
-import { extractMentionsFromJSON, getUniqueMentions } from "../mention-utils";
+import { extractMentionsFromJSON, getUniqueMentions } from "~/utils/editor/mention-utils";
 
 interface SourceEntity {
 	gameId: string;
