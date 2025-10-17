@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { MapIcon } from "lucide-react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
+import { LocationTabs } from "~/components/locations/location-tabs";
 import { LocationsTable } from "~/components/locations/locations-table";
 import { PageHeader } from "~/components/page-header";
 import { useListLocationsSuspenseQuery } from "~/queries/locations";
@@ -27,10 +29,12 @@ function RouteComponent() {
 
 	return (
 		<Container>
+			<LocationTabs gameId={gameId} className="mb-4" />
 			<PageHeader
 				title="All Locations"
 				description="Browse all locations in your game."
 				handleCreate={handleCreate}
+				Icon={MapIcon}
 			/>
 			<LocationsTable gameId={gameId} data={locations} />
 		</Container>

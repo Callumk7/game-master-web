@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Scroll } from "lucide-react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { NotesTable } from "~/components/notes/notes-table";
@@ -34,6 +35,7 @@ function RouteComponent() {
 			<PageHeader
 				title="All Notes"
 				description="Browse all notes in your game."
+				Icon={Scroll}
 				handleCreate={handleCreate}
 			/>
 			<NotesTable gameId={gameId} data={notes} />

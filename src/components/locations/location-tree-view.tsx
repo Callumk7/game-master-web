@@ -22,6 +22,7 @@ import {
 } from "~/components/ui/collapsible";
 import { Link } from "~/components/ui/link";
 import { cn } from "~/utils/cn";
+import { PageHeader } from "../page-header";
 
 interface LocationTreeViewProps {
 	gameId: string;
@@ -333,16 +334,11 @@ export function LocationTreeView({
 
 	return (
 		<div className={cn("w-full", className)}>
-			{/* Header */}
-			<div className="mb-6">
-				<h2 className="text-2xl font-bold flex items-center gap-2 mb-2">
-					<MapIcon className="h-6 w-6 text-primary" />
-					Locations
-				</h2>
-				<p className="text-muted-foreground mb-4">
-					Explore the geography and settlements of your world
-				</p>
-
+			<PageHeader
+				title="Locations"
+				description="Explore the geography and settlements of your world"
+				Icon={MapIcon}
+			>
 				{/* Stats */}
 				<div className="flex gap-3 flex-wrap">
 					<Badge variant="secondary" size="sm">
@@ -354,7 +350,7 @@ export function LocationTreeView({
 						{locationTreeResponse.data.length} top-level
 					</Badge>
 				</div>
-			</div>
+			</PageHeader>
 
 			{/* Location Tree */}
 			<div className="space-y-4">

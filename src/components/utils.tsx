@@ -1,5 +1,5 @@
 import type * as React from "react";
-import { Badge } from "./ui/badge";
+import { Badge, type BadgeVariant } from "./ui/badge";
 
 export function createBadges(tags: string[] | undefined): React.JSX.Element | null;
 export function createBadges(
@@ -22,9 +22,7 @@ export function createBadges(
 	// Case 1: The first argument is an array. This can handle the first and fourth overloads.
 	if (Array.isArray(arg1)) {
 		tags = arg1;
-		// Case 4: The second argument is also an array. This handles the overload:
-		// `createBadges(mainTags: string[], otherTags: string[] | undefined)`.
-		// We combine both arrays into a single list of tags.
+		// Case 4: The second argument is also an array.
 		if (Array.isArray(arg2)) {
 			tags = [...tags, ...arg2];
 		}
@@ -54,4 +52,16 @@ export function createBadges(
 			))}
 		</div>
 	);
+}
+
+export function getVariantFromStatus(status: string): BadgeVariant {
+	const variantMap: Record<string, BadgeVariant> = {
+		cancelled: "destructive",
+		completed: "success",
+		ready: "info",
+		paused: "info",
+		active: "warning",
+	};
+
+	return variantMap[status] || "outline";
 }

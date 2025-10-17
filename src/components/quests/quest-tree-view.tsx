@@ -22,6 +22,8 @@ import {
 } from "~/components/ui/collapsible";
 import { Link } from "~/components/ui/link";
 import { cn } from "~/utils/cn";
+import { PageHeader } from "../page-header";
+import { getVariantFromStatus } from "../utils";
 
 interface QuestTreeViewProps {
 	gameId: string;
@@ -191,13 +193,7 @@ function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 								{/* Status Badge */}
 								<div className="flex items-center gap-2 mt-1">
 									<Badge
-										variant={
-											statusConfig.label === "Complete"
-												? "success"
-												: statusConfig.label === "Active"
-													? "ready"
-													: "outline"
-										}
+										variant={getVariantFromStatus(node.status)}
 										size="sm"
 										className="text-xs"
 									>
@@ -320,15 +316,11 @@ export function QuestTreeView({
 	return (
 		<div className={cn("w-full", className)}>
 			{/* Header */}
-			<div className="mb-6">
-				<h2 className="text-2xl font-bold flex items-center gap-2 mb-2">
-					<Scroll className="h-6 w-6 text-primary" />
-					Quest Journal
-				</h2>
-				<p className="text-muted-foreground">
-					Track your campaign's adventures and storylines
-				</p>
-			</div>
+			<PageHeader
+				title="Quest Journal"
+				description="Track your campaign's adventures and storylines"
+				Icon={Scroll}
+			/>
 
 			{/* Quest Tree */}
 			<div className="space-y-4">

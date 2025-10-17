@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { User } from "lucide-react";
 import { listCharactersOptions } from "~/api/@tanstack/react-query.gen";
 import { CharacterTable } from "~/components/characters/character-table";
 import { Container } from "~/components/container";
@@ -29,6 +30,7 @@ function RouteComponent() {
 			<PageHeader
 				title="All Characters"
 				description="Browse all characters in your game."
+				Icon={User}
 				handleCreate={handleCreate}
 			/>
 			<CharacterTable gameId={gameId} data={characters} />

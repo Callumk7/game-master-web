@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Globe } from "lucide-react";
 import { AllEntitiesTable, type AllEntity } from "~/components/all-entities-table";
 import { Container } from "~/components/container";
 import { PageHeader } from "~/components/page-header";
@@ -75,6 +76,7 @@ function RouteComponent() {
 			<PageHeader
 				title="All Entities"
 				description="Browse all characters, factions, locations, notes, and quests in your game."
+				Icon={Globe}
 			/>
 			<AllEntitiesTable entities={allEntities} gameId={gameId} />
 		</Container>

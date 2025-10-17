@@ -47,6 +47,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import { getVariantFromStatus } from "~/components/utils";
 import type { Status } from "~/types";
 import { cn } from "~/utils/cn";
 import { tableFilterFns } from "~/utils/table-filters";
@@ -156,17 +157,6 @@ export function StatusDisplay({ status }: StatusDisplayProps) {
 			{status}
 		</Badge>
 	);
-}
-function getVariantFromStatus(status: string): BadgeVariant {
-	const variantMap: Record<string, BadgeVariant> = {
-		cancelled: "destructive",
-		completed: "success",
-		ready: "info",
-		paused: "info",
-		active: "warning",
-	};
-
-	return variantMap[status] || "outline";
 }
 
 interface DateDisplayProps {

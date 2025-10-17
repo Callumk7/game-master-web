@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Gem } from "lucide-react";
 import { listQuestsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { PageHeader } from "~/components/page-header";
+import { QuestTabs } from "~/components/quests/quest-tabs";
 import { QuestsTable } from "~/components/quests/quests-table";
 import { useListQuestsSuspenseQuery } from "~/queries/quests";
 
@@ -31,9 +33,11 @@ function RouteComponent() {
 
 	return (
 		<Container>
+			<QuestTabs gameId={gameId} className="mb-4" />
 			<PageHeader
 				title="All Quests"
 				description="Browse all quests in your game."
+				Icon={Gem}
 				handleCreate={handleCreate}
 			/>
 			<QuestsTable gameId={gameId} data={quests} />

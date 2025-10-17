@@ -4,6 +4,7 @@ import {
 	useGetLocationTreeQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
+import { LocationTabs } from "~/components/locations/location-tabs";
 import { LocationTreeView } from "~/components/locations/location-tree-view";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/tree")({
@@ -22,6 +23,7 @@ function RouteComponent() {
 	});
 	return (
 		<Container>
+			<LocationTabs gameId={gameId} className="mb-4" />
 			<LocationTreeView
 				gameId={gameId}
 				locationTreeResponse={locationTreeResponse}
