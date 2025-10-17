@@ -11,6 +11,9 @@ export const Route = createFileRoute("/beastiary")({
 function Beastiary() {
 	const { user, token } = Route.useRouteContext();
 
+	const monsterData = mmData as MonsterData;
+	const monsters = monsterData.monster;
+
 	if (!token || !user) {
 		return (
 			<div className="min-h-screen flex flex-col items-center justify-center">
