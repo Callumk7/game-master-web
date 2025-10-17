@@ -2,29 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AuthenticatedLayout } from "~/components/authenticated-layout";
 import { MonsterTable } from "~/components/monster-table";
 import type { MonsterData } from "~/types/monsters";
+import mmData from "../../data/beastiary/mm.json";
 
 export const Route = createFileRoute("/beastiary")({
 	component: Beastiary,
-	loader: async () => {
-		const response = await fetch("/mm.json");
-		if (!response.ok) {
-			throw new Error("Failed to load monster data");
-		}
-		const data: MonsterData = await response.json();
-		const erlwRes = await fetch("/erlw.json");
-		if (!erlwRes.ok) {
-			throw new Error("Failed to load monster data");
-		}
-		const erlwData: MonsterData = await erlwRes.json();
-		console.log(erlwData);
-		data.monster.push(...erlwData.monster);
-		return data.monster;
-	},
 });
 
 function Beastiary() {
 	const { user, token } = Route.useRouteContext();
-	const monsters = Route.useLoaderData();
 
 	if (!token || !user) {
 		return (
