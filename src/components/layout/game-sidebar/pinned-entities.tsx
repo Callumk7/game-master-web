@@ -209,6 +209,16 @@ function SidebarPinnedEntitiesDropdown({
 						<ArrowRight className="mr-1" />
 						Go
 					</DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={() =>
+							navigate({
+								to: `/games/${gameId}/${pinnedEntityType}s/${pinnedEntityId}`,
+							})
+						}
+					>
+						<ArrowRight className="mr-1" />
+						Popout
+					</DropdownMenuItem>
 					<DropdownMenuItem onClick={handleTogglePin}>
 						<Pin className="mr-1" />
 						Unpin
