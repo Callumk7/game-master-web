@@ -2,6 +2,15 @@ import { create } from "zustand";
 import type { EntityLink } from "~/components/links/types";
 import type { EntityPath } from "~/types/split-view";
 
+export interface Tab {
+	data: {
+		id: string;
+		name: string;
+	};
+	entityType: string; // e.g., 'characters', 'factions', 'notes'
+	gameId: string;
+}
+
 interface EntityWindow {
 	id: string;
 	entity: EntityLink;
@@ -27,6 +36,8 @@ interface State {
 	splitViewRightPane?: EntityPath;
 	splitViewLeftSelectorOpen: boolean;
 	splitViewRightSelectorOpen: boolean;
+	// Tab state
+	tabList: Tab[];
 }
 
 interface Actions {
@@ -51,6 +62,10 @@ interface Actions {
 	openSplitViewRightSelector: () => void;
 	closeSplitViewSelectors: () => void;
 	clearSplitView: () => void;
+	// Tab actions
+	addTab: (tab: Tab) => void;
+	removeTab: (tabId: string) => void;
+	clearAllTabs: () => void;
 }
 
 export type Store = State & {
@@ -75,6 +90,9 @@ const useUIStore = create<Store>()((set, get) => ({
 	splitViewRightPane: undefined,
 	splitViewLeftSelectorOpen: false,
 	splitViewRightSelectorOpen: false,
+	// Tab inital state
+	tabList: [],
+	// Actions
 	actions: {
 		setIsCreateFactionOpen: (isOpen: boolean) => set({ isCreateFactionOpen: isOpen }),
 		setIsCreateCharacterOpen: (isOpen: boolean) =>
@@ -137,16 +155,16 @@ const useUIStore = create<Store>()((set, get) => ({
 		restoreEntityWindow: (windowId: string) => {
 			globalLayerCounter += 1;
 			const newZIndex = BASE_Z_INDEX + globalLayerCounter;
-			
+
 			set({
 				entityWindows: get().entityWindows.map((w) =>
-					w.id === windowId 
-						? { 
-							...w, 
-							isMinimized: false, 
-							zIndex: newZIndex, 
-							layerOrder: globalLayerCounter 
-						} 
+					w.id === windowId
+						? {
+								...w,
+								isMinimized: false,
+								zIndex: newZIndex,
+								layerOrder: globalLayerCounter,
+							}
 						: w,
 				),
 			});
@@ -209,6 +227,24 @@ const useUIStore = create<Store>()((set, get) => ({
 				splitViewRightSelectorOpen: false,
 			});
 		},
+		// Tab actions
+		addTab: (tab: Tab) => {
+			if (get().tabList.some((t) => t.data.id === tab.data.id)) {
+				return;
+			}
+			set({
+				tabList: [...get().tabList, tab],
+			});
+		},
+		// WARN: Is this immutable state?
+		removeTab: (tabId: string) => {
+			set({
+				tabList: get().tabList.filter((t) => t.data.id !== tabId),
+			});
+		},
+		clearAllTabs: () => {
+			set({ tabList: [] });
+		},
 	},
 }));
 
@@ -228,14 +264,16 @@ export const useIsTodoDrawerOpen = () => useUIStore((state) => state.isTodoDrawe
 export const useEntityWindows = () => useUIStore((state) => state.entityWindows);
 
 // Split view selectors
-export const useSplitViewLeftPane = () =>
-	useUIStore((state) => state.splitViewLeftPane);
+export const useSplitViewLeftPane = () => useUIStore((state) => state.splitViewLeftPane);
 export const useSplitViewRightPane = () =>
 	useUIStore((state) => state.splitViewRightPane);
 export const useSplitViewLeftSelectorOpen = () =>
 	useUIStore((state) => state.splitViewLeftSelectorOpen);
 export const useSplitViewRightSelectorOpen = () =>
 	useUIStore((state) => state.splitViewRightSelectorOpen);
+
+// Tab selectors
+export const useTabList = () => useUIStore((state) => state.tabList);
 
 // Actions
 export const useUIActions = () => useUIStore((state) => state.actions);
