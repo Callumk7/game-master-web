@@ -72,22 +72,15 @@ export const useAddTab = (tab: Optional<Tab, "data">) => {
 	}, [tab, addTab]);
 };
 
-export function EntityTabs() {
+export function EntityTabs({ gameId }: { gameId: string }) {
 	const { tabList, removeTab, clearAllTabs } = useEntityTabs();
 	const navigate = useNavigate();
 
 	const openTabsInSplitView = () => {
 		if (tabList.length >= 2) {
-			const firstTab = tabList[0];
-			const secondTab = tabList[1];
-
 			navigate({
 				to: "/games/$gameId/split",
-				params: { gameId: firstTab.gameId },
-				search: {
-					left: `${firstTab.entityType}/${firstTab.data.id}`,
-					right: `${secondTab.entityType}/${secondTab.data.id}`,
-				},
+				params: { gameId },
 			});
 		}
 	};

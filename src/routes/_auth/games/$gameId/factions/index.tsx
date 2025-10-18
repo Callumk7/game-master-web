@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Shield } from "lucide-react";
 import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { FactionsTable } from "~/components/factions/factions-table";
 import { PageHeader } from "~/components/page-header";
 import { useListFactionsSuspenseQuery } from "~/queries/factions";
+import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 	component: RouteComponent,
@@ -17,17 +18,14 @@ export const Route = createFileRoute("/_auth/games/$gameId/factions/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListFactionsSuspenseQuery(gameId);
-	const navigate = useNavigate();
+	const { data } = useListFactionsSuspenseQuery(gameId);
 
 	const factions = data?.data || [];
 
-	if (isLoading) {
-		return <div className="text-muted-foreground">Loading factions...</div>;
-	}
+	const { setIsCreateFactionOpen } = useUIActions();
 
 	const handleCreate = () => {
-		navigate({ to: "/games/$gameId/factions/new", params: { gameId } });
+		setIsCreateFactionOpen(true);
 	};
 
 	return (

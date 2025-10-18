@@ -78,7 +78,7 @@ function RouteComponent() {
 					<GameSidebar />
 					{/* Main Content */}
 					<div className="flex-1 flex flex-col min-w-0">
-						<main className="relative max-w-full flex-1 overflow-y-scroll">
+						<main className="relative max-w-full flex-1 overflow-y-hidden">
 							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20 h-[73px]">
 								<SidebarTrigger />
 								<Commander gameId={gameId} />
@@ -101,8 +101,8 @@ function RouteComponent() {
 									</button>
 								</div>
 							</header>
-							<EntityTabs />
-							<div className="mb-20">
+							<EntityTabs gameId={gameId} />
+							<div className="w-full overflow-y-scroll h-[calc(100vh-120px)] top-[80px]">
 								<Outlet />
 							</div>
 						</main>

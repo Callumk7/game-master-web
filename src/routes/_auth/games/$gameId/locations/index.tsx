@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { MapIcon } from "lucide-react";
 import { listLocationsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
@@ -6,6 +6,7 @@ import { LocationTabs } from "~/components/locations/location-tabs";
 import { LocationsTable } from "~/components/locations/locations-table";
 import { PageHeader } from "~/components/page-header";
 import { useListLocationsSuspenseQuery } from "~/queries/locations";
+import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId/locations/")({
 	component: RouteComponent,
@@ -19,12 +20,13 @@ export const Route = createFileRoute("/_auth/games/$gameId/locations/")({
 function RouteComponent() {
 	const { gameId } = Route.useParams();
 	const { data } = useListLocationsSuspenseQuery(gameId);
-	const navigate = useNavigate();
 
 	const locations = data?.data || [];
 
+	const { setIsCreateLocationOpen } = useUIActions();
+
 	const handleCreate = () => {
-		navigate({ to: "/games/$gameId/locations/new", params: { gameId } });
+		setIsCreateLocationOpen(true);
 	};
 
 	return (

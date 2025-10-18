@@ -65,7 +65,7 @@ export function EntityContentRenderer<T extends EntityUnion>({
 	const singularType = singularTypeMap[entityType];
 
 	return (
-		<div className="h-full flex flex-col">
+		<div className="h-[calc(100vh-170px)] flex flex-col">
 			{/* Pane Header */}
 			<div className="flex-shrink-0 flex items-center justify-between p-2 border-b bg-card">
 				<div className="flex items-center gap-2">

@@ -18,7 +18,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useUIActions } from "~/state/ui";
+import { useSplitViewLeftPane, useSplitViewRightPane, useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { PrimaryImageBanner } from "../images/primary-image-banner";
 import { Button } from "../ui/button";
@@ -148,6 +148,9 @@ export function EntityControls({
 }: EntityControlsProps) {
 	const { openEntityWindow } = useUIActions();
 	const navigate = useNavigate();
+	const { updateSplitViewPanes } = useUIActions();
+	const leftPane = useSplitViewLeftPane();
+	const rightPane = useSplitViewRightPane();
 
 	const entity = {
 		id: entityId,
@@ -173,10 +176,24 @@ export function EntityControls({
 		// TODO: Probably use tanstack router params for this instead
 		const gameId = window.location.pathname.split("/")[2];
 
+		const newPane = {
+			type: urlEntityType,
+			id: entityId,
+		};
+
+		const arrangePanes = () => {
+			if (!leftPane) {
+				updateSplitViewPanes(newPane, rightPane);
+			} else {
+				updateSplitViewPanes(leftPane, newPane);
+			}
+		};
+
+		arrangePanes();
+
 		navigate({
 			to: "/games/$gameId/split",
 			params: { gameId },
-			search: { left: `${urlEntityType}/${entityId}` },
 		});
 	};
 

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Gem } from "lucide-react";
 import { listQuestsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
@@ -6,6 +6,7 @@ import { PageHeader } from "~/components/page-header";
 import { QuestTabs } from "~/components/quests/quest-tabs";
 import { QuestsTable } from "~/components/quests/quests-table";
 import { useListQuestsSuspenseQuery } from "~/queries/quests";
+import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId/quests/")({
 	component: RouteComponent,
@@ -18,17 +19,14 @@ export const Route = createFileRoute("/_auth/games/$gameId/quests/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListQuestsSuspenseQuery(gameId);
-	const navigate = useNavigate();
+	const { data } = useListQuestsSuspenseQuery(gameId);
 
 	const quests = data?.data || [];
 
-	if (isLoading) {
-		return <div className="text-muted-foreground">Loading quests...</div>;
-	}
+	const { setIsCreateQuestOpen } = useUIActions();
 
 	const handleCreate = () => {
-		navigate({ to: "/games/$gameId/quests/new", params: { gameId } });
+		setIsCreateQuestOpen(true);
 	};
 
 	return (

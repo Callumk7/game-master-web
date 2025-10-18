@@ -52,7 +52,7 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 							params={{ gameId, id: item.id }}
 						>
 							<Scroll />
-							{item.name}
+							<span className="truncate pr-6">{item.name}</span>
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
