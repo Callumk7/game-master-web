@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getNoteOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateNoteMutation } from "~/queries/notes";
-import { EntityContentRenderer } from "./entity-content-renderer";
-import type { EntityMutationPayload } from "~/types/split-view";
 import type { Note } from "~/api/types.gen";
+import { useUpdateNoteMutation } from "~/queries/notes";
+import type { EntityMutationPayload } from "~/types/split-view";
+import { EntityContentRenderer } from "./entity-content-renderer";
 import { useEntityNavigation } from "./hooks";
 
 interface NotePaneViewProps {
@@ -40,11 +40,11 @@ export function NotePaneView({
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("notes", noteId);
+		refreshEntity("note", noteId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("notes", noteId);
+		openFullView("note", noteId);
 	};
 
 	// Transform API note to match our component's expected format
@@ -53,7 +53,7 @@ export function NotePaneView({
 	return (
 		<EntityContentRenderer
 			entity={note}
-			entityType="notes"
+			entityType="note"
 			gameId={gameId}
 			onSave={handleSave}
 			isLoading={isLoading}
@@ -65,4 +65,3 @@ export function NotePaneView({
 		/>
 	);
 }
-

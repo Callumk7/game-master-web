@@ -1,4 +1,5 @@
 import { MapPin, ScrollText, Search, Sword, Target, Users } from "lucide-react";
+import type { Character } from "~/api/types.gen";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -10,7 +11,8 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import type { Character, Entity, EntityPath, EntityType } from "~/types/split-view";
+import type { Entity, EntityType } from "~/types";
+import type { EntityPath } from "~/types/split-view";
 import { useEntitySelector } from "./hooks";
 
 // Type guards for entity types
@@ -107,35 +109,35 @@ export function EntitySelectorModal({
 						<EntityTabContent
 							value="characters"
 							entities={filteredEntities.characters}
-							entityType="characters"
+							entityType="character"
 							onSelect={handleEntitySelect}
 							hasSearchQuery={!!searchQuery}
 						/>
 						<EntityTabContent
 							value="factions"
 							entities={filteredEntities.factions}
-							entityType="factions"
+							entityType="faction"
 							onSelect={handleEntitySelect}
 							hasSearchQuery={!!searchQuery}
 						/>
 						<EntityTabContent
 							value="locations"
 							entities={filteredEntities.locations}
-							entityType="locations"
+							entityType="location"
 							onSelect={handleEntitySelect}
 							hasSearchQuery={!!searchQuery}
 						/>
 						<EntityTabContent
 							value="notes"
 							entities={filteredEntities.notes}
-							entityType="notes"
+							entityType="note"
 							onSelect={handleEntitySelect}
 							hasSearchQuery={!!searchQuery}
 						/>
 						<EntityTabContent
 							value="quests"
 							entities={filteredEntities.quests}
-							entityType="quests"
+							entityType="quest"
 							onSelect={handleEntitySelect}
 							hasSearchQuery={!!searchQuery}
 						/>

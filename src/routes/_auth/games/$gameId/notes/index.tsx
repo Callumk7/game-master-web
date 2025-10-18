@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Scroll } from "lucide-react";
 import { listNotesOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { NotesTable } from "~/components/notes/notes-table";
 import { PageHeader } from "~/components/page-header";
 import { useListNotesSuspenseQuery } from "~/queries/notes";
+import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId/notes/")({
 	component: RouteComponent,
@@ -17,17 +18,14 @@ export const Route = createFileRoute("/_auth/games/$gameId/notes/")({
 
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { data, isLoading } = useListNotesSuspenseQuery(gameId);
-	const navigate = useNavigate();
+	const { data } = useListNotesSuspenseQuery(gameId);
 
 	const notes = data?.data || [];
 
-	if (isLoading) {
-		return <div className="text-muted-foreground">Loading notes...</div>;
-	}
+	const { setIsCreateNoteOpen } = useUIActions();
 
 	const handleCreate = () => {
-		navigate({ to: "/games/$gameId/notes/new", params: { gameId } });
+		setIsCreateNoteOpen(true);
 	};
 
 	return (

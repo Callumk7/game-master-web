@@ -10,7 +10,7 @@ import {
 	updateFactionMutation,
 	useGetFactionLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
-import { useEntityTabs } from "~/components/entity-tabs";
+import { useUIActions } from "~/state/ui";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                QUERIES
@@ -74,7 +74,7 @@ export const useUpdateFactionMutation = (gameId: string, factionId: string) => {
 
 export const useDeleteFactionMutation = (gameId: string, factionId: string) => {
 	const client = useQueryClient();
-	const { removeTab } = useEntityTabs();
+	const { removeTab } = useUIActions();
 	return useMutation({
 		...deleteFactionMutation(),
 		onSuccess: () => {

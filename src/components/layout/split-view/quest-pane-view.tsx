@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getQuestOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateQuestMutation } from "~/queries/quests";
-import { EntityContentRenderer } from "./entity-content-renderer";
-import type { EntityMutationPayload } from "~/types/split-view";
 import type { Quest } from "~/api/types.gen";
+import { useUpdateQuestMutation } from "~/queries/quests";
+import type { EntityMutationPayload } from "~/types/split-view";
+import { EntityContentRenderer } from "./entity-content-renderer";
 import { useEntityNavigation } from "./hooks";
 
 interface QuestPaneViewProps {
@@ -40,11 +40,11 @@ export function QuestPaneView({
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("quests", questId);
+		refreshEntity("quest", questId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("quests", questId);
+		openFullView("quest", questId);
 	};
 
 	// Transform API quest to match our component's expected format
@@ -53,7 +53,7 @@ export function QuestPaneView({
 	return (
 		<EntityContentRenderer
 			entity={quest}
-			entityType="quests"
+			entityType="quest"
 			gameId={gameId}
 			onSave={handleSave}
 			isLoading={isLoading}
@@ -65,4 +65,3 @@ export function QuestPaneView({
 		/>
 	);
 }
-

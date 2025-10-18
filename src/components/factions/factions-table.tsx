@@ -55,7 +55,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 				const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
 				return (
-					<div className="flex flex-row gap-2">
+					<div className="flex gap-2 justify-end mr-2">
 						<EntityLinkButton
 							entity={{
 								id: faction.id,

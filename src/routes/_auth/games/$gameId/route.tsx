@@ -14,7 +14,7 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { Commander } from "~/components/commander";
-import { EntityTabs, EntityTabsProvider } from "~/components/entity-tabs";
+import { EntityTabs } from "~/components/entity-tabs";
 import { BasicErrorComponent } from "~/components/error";
 import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
 import { EntityWindowManager } from "~/components/layout/entity-window-manager";
@@ -72,53 +72,51 @@ function RouteComponent() {
 	const { setIsCommanderOpen } = useUIActions();
 
 	return (
-		<EntityTabsProvider>
-			<SidebarProvider>
-				<div className="flex h-screen w-full">
-					<GameSidebar />
-					{/* Main Content */}
-					<div className="flex-1 flex flex-col min-w-0">
-						<main className="relative max-w-full flex-1 overflow-y-scroll">
-							<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20 h-[73px]">
-								<SidebarTrigger />
-								<Commander gameId={gameId} />
-								<div className="flex-1 max-w-md">
-									<button
-										type="button"
-										onClick={() => setIsCommanderOpen(true)}
-										className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
+		<SidebarProvider>
+			<div className="flex h-screen w-full">
+				<GameSidebar />
+				{/* Main Content */}
+				<div className="flex-1 flex flex-col min-w-0">
+					<main className="relative max-w-full flex-1 overflow-y-hidden">
+						<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20 h-[73px]">
+							<SidebarTrigger />
+							<Commander gameId={gameId} />
+							<div className="flex-1 max-w-md">
+								<button
+									type="button"
+									onClick={() => setIsCommanderOpen(true)}
+									className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
+								>
+									<Search className="mr-3 w-4 h-4 text-muted-foreground" />
+									<span className="text-muted-foreground">
+										Search entities...
+									</span>
+									<Badge
+										variant="secondary"
+										className="ml-auto text-xs"
 									>
-										<Search className="mr-3 w-4 h-4 text-muted-foreground" />
-										<span className="text-muted-foreground">
-											Search entities...
-										</span>
-										<Badge
-											variant="secondary"
-											className="ml-auto text-xs"
-										>
-											⌘J
-										</Badge>
-									</button>
-								</div>
-							</header>
-							<EntityTabs />
-							<div className="mb-20">
-								<Outlet />
+										⌘J
+									</Badge>
+								</button>
 							</div>
-						</main>
-						<CreateCharacterSheet />
-						<CreateFactionSheet />
-						<CreateNoteSheet />
-						<CreateLocationSheet />
-						<CreateQuestSheet />
-						<EntityWindowManager />
-						<WindowTray />
-						<ClientOnly>
-							<TodosDrawer />
-						</ClientOnly>
-					</div>
+						</header>
+						<EntityTabs gameId={gameId} />
+						<div className="w-full overflow-y-scroll h-[calc(100vh-120px)] top-[80px]">
+							<Outlet />
+						</div>
+					</main>
+					<CreateCharacterSheet />
+					<CreateFactionSheet />
+					<CreateNoteSheet />
+					<CreateLocationSheet />
+					<CreateQuestSheet />
+					<EntityWindowManager />
+					<WindowTray />
+					<ClientOnly>
+						<TodosDrawer />
+					</ClientOnly>
 				</div>
-			</SidebarProvider>
-		</EntityTabsProvider>
+			</div>
+		</SidebarProvider>
 	);
 }

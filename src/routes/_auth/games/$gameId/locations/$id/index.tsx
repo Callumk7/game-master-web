@@ -15,7 +15,7 @@ function RouteComponent() {
 
 	useAddTab({
 		data: location,
-		entityType: "locations",
+		entityType: "location",
 		gameId,
 	});
 

@@ -1,6 +1,16 @@
 import { create } from "zustand";
 import type { EntityLink } from "~/components/links/types";
+import type { EntityType } from "~/types";
 import type { EntityPath } from "~/types/split-view";
+
+export interface Tab {
+	data: {
+		id: string;
+		name: string;
+	};
+	entityType: EntityType; // e.g., 'characters', 'factions', 'notes'
+	gameId: string;
+}
 
 interface EntityWindow {
 	id: string;
@@ -27,6 +37,8 @@ interface State {
 	splitViewRightPane?: EntityPath;
 	splitViewLeftSelectorOpen: boolean;
 	splitViewRightSelectorOpen: boolean;
+	// Tab state
+	tabList: Tab[];
 }
 
 interface Actions {
@@ -51,6 +63,10 @@ interface Actions {
 	openSplitViewRightSelector: () => void;
 	closeSplitViewSelectors: () => void;
 	clearSplitView: () => void;
+	// Tab actions
+	addTab: (tab: Tab) => void;
+	removeTab: (tabId: string) => void;
+	clearAllTabs: () => void;
 }
 
 export type Store = State & {
@@ -75,6 +91,9 @@ const useUIStore = create<Store>()((set, get) => ({
 	splitViewRightPane: undefined,
 	splitViewLeftSelectorOpen: false,
 	splitViewRightSelectorOpen: false,
+	// Tab inital state
+	tabList: [],
+	// Actions
 	actions: {
 		setIsCreateFactionOpen: (isOpen: boolean) => set({ isCreateFactionOpen: isOpen }),
 		setIsCreateCharacterOpen: (isOpen: boolean) =>
@@ -85,6 +104,7 @@ const useUIStore = create<Store>()((set, get) => ({
 		setIsCreateQuestOpen: (isOpen: boolean) => set({ isCreateQuestOpen: isOpen }),
 		setIsCommanderOpen: (isOpen: boolean) => set({ isCommanderOpen: isOpen }),
 		setIsTodoDrawerOpen: (isOpen: boolean) => set({ isTodoDrawerOpen: isOpen }),
+		// Entity window actions
 		openEntityWindow: (entity: EntityLink) => {
 			const existingWindow = get().entityWindows.find(
 				(w) => w.entity.id === entity.id && w.entity.type === entity.type,
@@ -92,11 +112,11 @@ const useUIStore = create<Store>()((set, get) => ({
 
 			if (existingWindow) {
 				// Window already exists, just bring it to front or ensure it's open
-				set({
-					entityWindows: get().entityWindows.map((w) =>
+				set((state) => ({
+					entityWindows: state.entityWindows.map((w) =>
 						w.id === existingWindow.id ? { ...w, isOpen: true } : w,
 					),
-				});
+				}));
 				return;
 			}
 
@@ -116,71 +136,71 @@ const useUIStore = create<Store>()((set, get) => ({
 				layerOrder: globalLayerCounter,
 			};
 
-			set({
-				entityWindows: [...get().entityWindows, newWindow],
-			});
+			set((state) => ({
+				entityWindows: [...state.entityWindows, newWindow],
+			}));
 		},
 		closeEntityWindow: (windowId: string) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, isOpen: false } : w,
 				),
-			});
+			}));
 		},
 		minimizeEntityWindow: (windowId: string) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, isMinimized: true } : w,
 				),
-			});
+			}));
 		},
 		restoreEntityWindow: (windowId: string) => {
 			globalLayerCounter += 1;
 			const newZIndex = BASE_Z_INDEX + globalLayerCounter;
-			
-			set({
-				entityWindows: get().entityWindows.map((w) =>
-					w.id === windowId 
-						? { 
-							...w, 
-							isMinimized: false, 
-							zIndex: newZIndex, 
-							layerOrder: globalLayerCounter 
-						} 
+
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
+					w.id === windowId
+						? {
+								...w,
+								isMinimized: false,
+								zIndex: newZIndex,
+								layerOrder: globalLayerCounter,
+							}
 						: w,
 				),
-			});
+			}));
 		},
 		updateWindowPosition: (windowId: string, position: { x: number; y: number }) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, position } : w,
 				),
-			});
+			}));
 		},
 		updateWindowSize: (windowId: string, size: { width: number; height: number }) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, size } : w,
 				),
-			});
+			}));
 		},
 		bringWindowToFront: (windowId: string) => {
 			globalLayerCounter += 1;
 			const newZIndex = BASE_Z_INDEX + globalLayerCounter;
 
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId
 						? { ...w, zIndex: newZIndex, layerOrder: globalLayerCounter }
 						: w,
 				),
-			});
+			}));
 		},
 		closeAllEntityWindows: () => {
-			set({
-				entityWindows: get().entityWindows.map((w) => ({ ...w, isOpen: false })),
-			});
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) => ({ ...w, isOpen: false })),
+			}));
 		},
 		// Split view actions
 		updateSplitViewPanes: (leftPane?: EntityPath, rightPane?: EntityPath) => {
@@ -209,6 +229,35 @@ const useUIStore = create<Store>()((set, get) => ({
 				splitViewRightSelectorOpen: false,
 			});
 		},
+		// Tab actions
+		addTab: (tab: Tab) => {
+			// Do not add duplicate tabs
+			if (!get().tabList.some((t) => t.data.id === tab.data.id)) {
+				set((state) => ({
+					tabList: [...state.tabList, tab],
+				}));
+			}
+			// Integrate with split view
+			if (
+				!get().splitViewLeftPane &&
+				get().splitViewRightPane?.id !== tab.data.id
+			) {
+				set({ splitViewLeftPane: { type: tab.entityType, id: tab.data.id } });
+			} else if (
+				!get().splitViewRightPane &&
+				get().splitViewLeftPane?.id !== tab.data.id
+			) {
+				set({ splitViewRightPane: { type: tab.entityType, id: tab.data.id } });
+			}
+		},
+		removeTab: (tabId: string) => {
+			set((state) => ({
+				tabList: state.tabList.filter((t) => t.data.id !== tabId),
+			}));
+		},
+		clearAllTabs: () => {
+			set({ tabList: [] });
+		},
 	},
 }));
 
@@ -228,14 +277,16 @@ export const useIsTodoDrawerOpen = () => useUIStore((state) => state.isTodoDrawe
 export const useEntityWindows = () => useUIStore((state) => state.entityWindows);
 
 // Split view selectors
-export const useSplitViewLeftPane = () =>
-	useUIStore((state) => state.splitViewLeftPane);
+export const useSplitViewLeftPane = () => useUIStore((state) => state.splitViewLeftPane);
 export const useSplitViewRightPane = () =>
 	useUIStore((state) => state.splitViewRightPane);
 export const useSplitViewLeftSelectorOpen = () =>
 	useUIStore((state) => state.splitViewLeftSelectorOpen);
 export const useSplitViewRightSelectorOpen = () =>
 	useUIStore((state) => state.splitViewRightSelectorOpen);
+
+// Tab selectors
+export const useTabList = () => useUIStore((state) => state.tabList);
 
 // Actions
 export const useUIActions = () => useUIStore((state) => state.actions);

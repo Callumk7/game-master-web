@@ -8,6 +8,7 @@ import {
 	Pin,
 	Scroll,
 	Shield,
+	SquareArrowDownRight,
 	Trash2,
 	User,
 } from "lucide-react";
@@ -33,7 +34,9 @@ import {
 } from "~/components/ui/sidebar";
 import { useListPinnedEntitiesSuspenseQuery } from "~/queries/quests";
 import { getEntityQueryKey, useDeleteEntity, useUpdateEntity } from "~/queries/utils";
-import type { EntityType } from "~/types";
+import { useUIActions } from "~/state/ui";
+import type { Entity, EntityType } from "~/types";
+import { pluralise } from "~/utils/pluralise";
 
 interface SidebarPinnedEntitiesProps {
 	gameId: string;
@@ -52,13 +55,12 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 							params={{ gameId, id: item.id }}
 						>
 							<Scroll />
-							{item.name}
+							<span className="truncate pr-6">{item.name}</span>
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
-							pinnedEntityId={item.id}
-							pinnedEntityType="note"
-							isPinned={item.pinned}
+							entity={item}
+							entityType="note"
 						/>
 					</SidebarMenuItem>
 				))}
@@ -73,9 +75,8 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
-							pinnedEntityId={item.id}
-							pinnedEntityType="character"
-							isPinned={item.pinned}
+							entity={item}
+							entityType="character"
 						/>
 					</SidebarMenuItem>
 				))}
@@ -90,9 +91,8 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
-							pinnedEntityId={item.id}
-							pinnedEntityType="faction"
-							isPinned={item.pinned}
+							entity={item}
+							entityType="faction"
 						/>
 					</SidebarMenuItem>
 				))}
@@ -107,9 +107,8 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
-							pinnedEntityId={item.id}
-							pinnedEntityType="location"
-							isPinned={item.pinned}
+							entity={item}
+							entityType="location"
 						/>
 					</SidebarMenuItem>
 				))}
@@ -124,9 +123,8 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						</SidebarMenuLink>
 						<SidebarPinnedEntitiesDropdown
 							gameId={gameId}
-							pinnedEntityId={item.id}
-							pinnedEntityType="quest"
-							isPinned={item.pinned}
+							entity={item}
+							entityType="quest"
 						/>
 					</SidebarMenuItem>
 				))}
@@ -137,15 +135,13 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 
 interface SidebarPinnedEntitiesDropdownProps {
 	gameId: string;
-	pinnedEntityId: string;
-	pinnedEntityType: EntityType;
-	isPinned: boolean;
+	entity: Entity;
+	entityType: EntityType;
 }
 function SidebarPinnedEntitiesDropdown({
 	gameId,
-	pinnedEntityId,
-	pinnedEntityType,
-	isPinned,
+	entity,
+	entityType,
 }: SidebarPinnedEntitiesDropdownProps) {
 	const { isMobile } = useSidebar();
 	const navigate = useNavigate();
@@ -157,7 +153,7 @@ function SidebarPinnedEntitiesDropdown({
 		});
 		client.invalidateQueries({
 			queryKey: getEntityQueryKey(
-				{ entityId: pinnedEntityId, entityType: pinnedEntityType },
+				{ entityId: entity.id, entityType: entityType },
 				gameId,
 			),
 		});
@@ -165,9 +161,9 @@ function SidebarPinnedEntitiesDropdown({
 	const handleTogglePin = async () => {
 		mutate({
 			gameId,
-			entityType: pinnedEntityType,
-			entityId: pinnedEntityId,
-			payload: { pinned: !isPinned },
+			entityType: entityType,
+			entityId: entity.id,
+			payload: { pinned: !entity.pinned },
 		});
 	};
 
@@ -182,10 +178,12 @@ function SidebarPinnedEntitiesDropdown({
 	const handleDelete = () => {
 		deleteMutate({
 			gameId,
-			entityId: pinnedEntityId,
-			entityType: pinnedEntityType,
+			entityId: entity.id,
+			entityType: entityType,
 		});
 	};
+
+	const { openEntityWindow } = useUIActions();
 
 	return (
 		<DropdownMenu>
@@ -202,12 +200,20 @@ function SidebarPinnedEntitiesDropdown({
 					<DropdownMenuItem
 						onClick={() =>
 							navigate({
-								to: `/games/${gameId}/${pinnedEntityType}s/${pinnedEntityId}`,
+								to: `/games/${gameId}/${pluralise(entityType)}/${entity.id}`,
 							})
 						}
 					>
 						<ArrowRight className="mr-1" />
 						Go
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={() => {
+							openEntityWindow({ ...entity, type: entityType });
+						}}
+					>
+						<SquareArrowDownRight className="mr-1" />
+						Popout
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={handleTogglePin}>
 						<Pin className="mr-1" />

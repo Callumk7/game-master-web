@@ -46,6 +46,7 @@ function RouteComponent() {
 				allEntities.push({
 					...location,
 					type: "location" as EntityType,
+					locationType: location.type,
 				});
 			}
 		}

@@ -11,7 +11,7 @@ import {
 	updateLocationMutation,
 	useGetLocationLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
-import { useEntityTabs } from "~/components/entity-tabs";
+import { useUIActions } from "~/state/ui";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                QUERIES
@@ -49,7 +49,7 @@ export const useGetLocationNotesQuery = (gameId: string, locationId: string) => 
 
 export const useDeleteLocationMutation = (gameId: string, locationId: string) => {
 	const client = useQueryClient();
-	const { removeTab } = useEntityTabs();
+	const { removeTab } = useUIActions();
 	return useMutation({
 		...deleteLocationMutation(),
 		onSuccess: () => {

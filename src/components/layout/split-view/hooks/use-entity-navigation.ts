@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import type { EntityType } from "~/types/split-view";
+import type { EntityType } from "~/types";
 
 interface UseEntityNavigationParams {
 	gameId: string;
@@ -21,11 +21,11 @@ export function useEntityNavigation({
 	const openFullView = useCallback(
 		(entityType: EntityType, entityId: string) => {
 			const routeMap = {
-				characters: "/games/$gameId/characters/$id" as const,
-				factions: "/games/$gameId/factions/$id" as const,
-				locations: "/games/$gameId/locations/$id" as const,
-				notes: "/games/$gameId/notes/$id" as const,
-				quests: "/games/$gameId/quests/$id" as const,
+				character: "/games/$gameId/characters/$id" as const,
+				faction: "/games/$gameId/factions/$id" as const,
+				location: "/games/$gameId/locations/$id" as const,
+				note: "/games/$gameId/notes/$id" as const,
+				quest: "/games/$gameId/quests/$id" as const,
 			};
 
 			const route = routeMap[entityType];

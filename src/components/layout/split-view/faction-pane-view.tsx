@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFactionOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateFactionMutation } from "~/queries/factions";
-import { EntityContentRenderer } from "./entity-content-renderer";
-import type { EntityMutationPayload } from "~/types/split-view";
 import type { Faction } from "~/api/types.gen";
+import { useUpdateFactionMutation } from "~/queries/factions";
+import type { EntityMutationPayload } from "~/types/split-view";
+import { EntityContentRenderer } from "./entity-content-renderer";
 import { useEntityNavigation } from "./hooks";
 
 interface FactionPaneViewProps {
@@ -40,11 +40,11 @@ export function FactionPaneView({
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("factions", factionId);
+		refreshEntity("faction", factionId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("factions", factionId);
+		openFullView("faction", factionId);
 	};
 
 	// Transform API faction to match our component's expected format
@@ -53,7 +53,7 @@ export function FactionPaneView({
 	return (
 		<EntityContentRenderer
 			entity={faction}
-			entityType="factions"
+			entityType="faction"
 			gameId={gameId}
 			onSave={handleSave}
 			isLoading={isLoading}
@@ -65,4 +65,3 @@ export function FactionPaneView({
 		/>
 	);
 }
-

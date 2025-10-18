@@ -11,7 +11,7 @@ import {
 	updateCharacterMutation,
 	useGetCharacterLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
-import { useEntityTabs } from "~/components/entity-tabs";
+import { useUIActions } from "~/state/ui";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                SUSPENSE
@@ -45,7 +45,7 @@ export const useGetCharacterNotesQuery = (gameId: string, characterId: string) =
 
 export const useDeleteCharacterMutation = (gameId: string, characterId: string) => {
 	const client = useQueryClient();
-	const { removeTab } = useEntityTabs();
+	const { removeTab } = useUIActions();
 	return useMutation({
 		...deleteCharacterMutation(),
 		onSuccess: () => {

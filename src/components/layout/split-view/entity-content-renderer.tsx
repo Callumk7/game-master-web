@@ -6,16 +6,8 @@ import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Spinner } from "~/components/ui/spinner";
 import { EntityViewHeader } from "~/components/views/entity-view";
-import type { EntityType as SingularEntityType } from "~/types";
-import type { EntityMutationPayload, EntityType } from "~/types/split-view";
-
-const singularTypeMap: Record<EntityType, SingularEntityType> = {
-	characters: "character",
-	factions: "faction",
-	locations: "location",
-	notes: "note",
-	quests: "quest",
-};
+import type { EntityType } from "~/types";
+import type { EntityMutationPayload } from "~/types/split-view";
 
 interface BaseEntity {
 	id: string;
@@ -62,15 +54,13 @@ export function EntityContentRenderer<T extends EntityUnion>({
 	onRefresh,
 	onOpenFullView,
 }: EntityContentRendererProps<T>) {
-	const singularType = singularTypeMap[entityType];
-
 	return (
-		<div className="h-full flex flex-col">
+		<div className="h-[calc(100vh-170px)] flex flex-col">
 			{/* Pane Header */}
 			<div className="flex-shrink-0 flex items-center justify-between p-2 border-b bg-card">
 				<div className="flex items-center gap-2">
 					<Badge variant="outline" className="text-xs">
-						{entityType.slice(0, -1)} {/* Remove 's' suffix */}
+						{entityType}
 					</Badge>
 					<span className="text-sm font-medium truncate">{entity?.name}</span>
 				</div>
@@ -121,14 +111,14 @@ export function EntityContentRenderer<T extends EntityUnion>({
 						</div>
 					) : isError || !entity ? (
 						<div className="p-4 text-center text-muted-foreground">
-							{singularType} not found
+							{entityType} not found
 						</div>
 					) : (
 						<div className="p-4 space-y-4">
 							<EntityViewHeader
 								id={entity.id}
 								gameId={gameId}
-								type={singularType}
+								type={entityType}
 								content={entity.content || ""}
 								content_plain_text={entity.content_plain_text || ""}
 								name={entity.name}
@@ -138,7 +128,7 @@ export function EntityContentRenderer<T extends EntityUnion>({
 							<EntityEditor
 								content={entity.content || ""}
 								gameId={gameId}
-								entityType={singularType}
+								entityType={entityType}
 								entityId={entity.id}
 								onSave={onSave}
 								className="min-h-[200px]"
@@ -166,7 +156,7 @@ function createEntityBadges(
 	);
 
 	switch (entityType) {
-		case "characters": {
+		case "character": {
 			const character = entity as CharacterEntity;
 			return (
 				<div className="flex flex-wrap gap-2">
@@ -176,7 +166,7 @@ function createEntityBadges(
 				</div>
 			);
 		}
-		case "quests": {
+		case "quest": {
 			const quest = entity as QuestEntity;
 			return (
 				<div className="flex flex-wrap gap-2">

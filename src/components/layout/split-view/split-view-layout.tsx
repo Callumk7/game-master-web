@@ -1,6 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
 import { PlusCircle } from "lucide-react";
-import * as React from "react";
 import { Button } from "~/components/ui/button";
 import {
 	ResizableHandle,
@@ -24,44 +22,13 @@ import { QuestPaneView } from "./quest-pane-view";
 
 interface SplitViewLayoutProps {
 	gameId: string;
-	leftPane?: string;
-	rightPane?: string;
 }
 
-function parseEntityPath(entityPath?: string): EntityPath | undefined {
-	if (!entityPath) return undefined;
-	const [type, id] = entityPath.split("/");
-	return {
-		type: type as EntityPath["type"],
-		id,
-	};
+export function SplitViewLayout({ gameId }: SplitViewLayoutProps) {
+	return <SplitViewLayoutContent gameId={gameId} />;
 }
 
-function serializeEntityPath(entityPath?: EntityPath): string | undefined {
-	if (!entityPath) return undefined;
-	return `${entityPath.type}/${entityPath.id}`;
-}
-
-export function SplitViewLayout({ gameId, leftPane, rightPane }: SplitViewLayoutProps) {
-	return (
-		<SplitViewLayoutContent
-			gameId={gameId}
-			initialLeftPane={leftPane}
-			initialRightPane={rightPane}
-		/>
-	);
-}
-
-function SplitViewLayoutContent({
-	gameId,
-	initialLeftPane,
-	initialRightPane,
-}: {
-	gameId: string;
-	initialLeftPane?: string;
-	initialRightPane?: string;
-}) {
-	const navigate = useNavigate({ from: "/games/$gameId/split" });
+function SplitViewLayoutContent({ gameId }: { gameId: string }) {
 	const leftPane = useSplitViewLeftPane();
 	const rightPane = useSplitViewRightPane();
 	const leftSelectorOpen = useSplitViewLeftSelectorOpen();
@@ -71,30 +38,7 @@ function SplitViewLayoutContent({
 		openSplitViewLeftSelector,
 		openSplitViewRightSelector,
 		closeSplitViewSelectors,
-		clearSplitView,
 	} = useUIActions();
-
-	// Initialize from URL on mount
-	React.useEffect(() => {
-		const parsedLeft = parseEntityPath(initialLeftPane);
-		const parsedRight = parseEntityPath(initialRightPane);
-		updateSplitViewPanes(parsedLeft, parsedRight);
-
-		// Cleanup on unmount
-		return () => {
-			clearSplitView();
-		};
-	}, [initialLeftPane, initialRightPane, updateSplitViewPanes, clearSplitView]);
-
-	// Sync zustand state to URL when panes change
-	React.useEffect(() => {
-		navigate({
-			search: {
-				left: serializeEntityPath(leftPane),
-				right: serializeEntityPath(rightPane),
-			},
-		});
-	}, [leftPane, rightPane, navigate]);
 
 	const handleLeftPaneSelect = (entityPath: EntityPath) => {
 		updateSplitViewPanes(entityPath, rightPane);
@@ -183,15 +127,15 @@ function SplitPane({ entityPath, gameId, onAddEntity, onClearEntity }: SplitPane
 		};
 
 		switch (entityPath.type) {
-			case "characters":
+			case "character":
 				return <CharacterPaneView {...commonProps} characterId={entityPath.id} />;
-			case "factions":
+			case "faction":
 				return <FactionPaneView {...commonProps} factionId={entityPath.id} />;
-			case "locations":
+			case "location":
 				return <LocationPaneView {...commonProps} locationId={entityPath.id} />;
-			case "notes":
+			case "note":
 				return <NotePaneView {...commonProps} noteId={entityPath.id} />;
-			case "quests":
+			case "quest":
 				return <QuestPaneView {...commonProps} questId={entityPath.id} />;
 			default:
 				return <EmptyPaneContent onAddEntity={onAddEntity} />;

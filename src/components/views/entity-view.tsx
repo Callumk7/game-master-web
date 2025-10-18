@@ -18,7 +18,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useUIActions } from "~/state/ui";
+import { useSplitViewLeftPane, useSplitViewRightPane, useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { PrimaryImageBanner } from "../images/primary-image-banner";
 import { Button } from "../ui/button";
@@ -148,6 +148,9 @@ export function EntityControls({
 }: EntityControlsProps) {
 	const { openEntityWindow } = useUIActions();
 	const navigate = useNavigate();
+	const { updateSplitViewPanes } = useUIActions();
+	const leftPane = useSplitViewLeftPane();
+	const rightPane = useSplitViewRightPane();
 
 	const entity = {
 		id: entityId,
@@ -158,25 +161,28 @@ export function EntityControls({
 	};
 
 	const openInSplitView = () => {
-		// Convert singular entity type to plural for the URL
-		const urlEntityTypeMap = {
-			character: "characters",
-			faction: "factions",
-			location: "locations",
-			note: "notes",
-			quest: "quests",
-		} as const;
-
-		const urlEntityType = urlEntityTypeMap[entityType];
-
 		// Extract gameId from current URL path
 		// TODO: Probably use tanstack router params for this instead
 		const gameId = window.location.pathname.split("/")[2];
 
+		const newPane = {
+			type: entityType,
+			id: entityId,
+		};
+
+		const arrangePanes = () => {
+			if (!leftPane) {
+				updateSplitViewPanes(newPane, rightPane);
+			} else {
+				updateSplitViewPanes(leftPane, newPane);
+			}
+		};
+
+		arrangePanes();
+
 		navigate({
 			to: "/games/$gameId/split",
 			params: { gameId },
-			search: { left: `${urlEntityType}/${entityId}` },
 		});
 	};
 

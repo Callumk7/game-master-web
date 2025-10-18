@@ -16,10 +16,10 @@ import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
 import { QuestNoteView } from "~/components/quests/quest-note-view";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { useDeleteQuestMutation, useUpdateQuestMutation } from "~/queries/quests";
+import { capitalise } from "~/utils/capitalise";
 import { createBadges } from "../utils";
 import { EntityView } from "../views/entity-view";
 import { SubQuestView } from "./sub-quest-view";
-import { capitalise } from "~/utils/capitalise";
 
 interface QuestViewProps {
 	quest: Quest;

@@ -9,7 +9,7 @@ import {
 	updateNoteMutation,
 	useGetNoteLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
-import { useEntityTabs } from "~/components/entity-tabs";
+import { useUIActions } from "~/state/ui";
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                QUERIES
@@ -42,7 +42,7 @@ export const useGetNoteNotesQuery = (gameId: string, noteId: string) => {
 
 export const useDeleteNoteMutation = (gameId: string, noteId: string) => {
 	const client = useQueryClient();
-	const { removeTab } = useEntityTabs();
+	const { removeTab } = useUIActions();
 	return useMutation({
 		...deleteNoteMutation(),
 		onSuccess: () => {
