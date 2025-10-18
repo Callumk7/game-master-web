@@ -1,8 +1,7 @@
 import type { AnyFieldApi } from "@tanstack/react-form";
-import type * as React from "react";
+import * as React from "react";
 import { Checkbox } from "~/components/ui/checkbox";
 import { TagInput } from "~/components/ui/composite/tag-input";
-import { Tiptap } from "~/components/ui/editor";
 import { Input } from "~/components/ui/input";
 import {
 	Select,
@@ -14,6 +13,21 @@ import {
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import type { FieldConfig } from "../types";
+
+// Lazy load the editor component to reduce initial bundle size
+const LazyTiptap = React.lazy(() =>
+	import("~/components/ui/editor").then((module) => ({
+		default: module.Tiptap,
+	})),
+);
+
+// Fallback skeleton component that matches the editor's styling
+const EditorSkeleton: React.FC = () => (
+	<div className="border min-h-1/2 bg-input/30 rounded-lg overflow-hidden animate-pulse">
+		<div className="border-b px-3 py-1.5 h-10 bg-muted/50" />
+		<div className="min-h-[360px] px-3 pt-1 pb-2" />
+	</div>
+);
 
 /**
  * Renders form field controls based on field configuration
@@ -48,13 +62,15 @@ export const FormFieldControl: React.FC<{
 
 		case "editor":
 			return (
-				<Tiptap
-					content={fieldApi.state?.value ?? null}
-					onChange={fieldApi.handleChange}
-					placeholder={field.placeholder}
-					editable={!field.disabled}
-					className={field.className}
-				/>
+				<React.Suspense fallback={<EditorSkeleton />}>
+					<LazyTiptap
+						content={fieldApi.state?.value ?? null}
+						onChange={fieldApi.handleChange}
+						placeholder={field.placeholder}
+						editable={!field.disabled}
+						className={field.className}
+					/>
+				</React.Suspense>
 			);
 
 		case "select":
