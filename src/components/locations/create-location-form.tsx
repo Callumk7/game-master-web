@@ -9,7 +9,7 @@ import {
 	useListLocationsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
-import { useSmartForm, schemas } from "~/lib/smart-form-factory";
+import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import { ParentLocationSelect } from "./parent-location-select";
 
 interface CreateLocationFormProps {
@@ -142,7 +142,9 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 			{mutation.isError && (
 				<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
 					<p className="text-sm">
-						{mutation.error instanceof Error ? mutation.error.message : "Something went wrong"}
+						{mutation.error instanceof Error
+							? mutation.error.message
+							: "Something went wrong"}
 					</p>
 				</div>
 			)}

@@ -14,8 +14,8 @@ import {
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import { Button } from "../ui/button";
 import { FormField } from "../ui/composite/form-field";
-import { FactionSelect } from "./faction-select";
 import { Label } from "../ui/label";
+import { FactionSelect } from "./faction-select";
 
 interface CreateCharacterFormProps {
 	onSuccess?: () => void;

@@ -28,17 +28,17 @@ function calculateDisplayDimensions(
 ): { width: number; height: number } {
 	// Calculate how the image would actually display when constrained by max dimensions
 	const aspectRatio = naturalWidth / naturalHeight;
-	
+
 	// Calculate dimensions constrained by max width
 	let displayWidth = Math.min(naturalWidth, maxDisplayWidth);
 	let displayHeight = displayWidth / aspectRatio;
-	
+
 	// If height exceeds max, constrain by height instead
 	if (displayHeight > maxDisplayHeight) {
 		displayHeight = Math.min(naturalHeight, maxDisplayHeight);
 		displayWidth = displayHeight * aspectRatio;
 	}
-	
+
 	return { width: displayWidth, height: displayHeight };
 }
 

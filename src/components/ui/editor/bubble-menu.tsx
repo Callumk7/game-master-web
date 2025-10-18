@@ -1,6 +1,14 @@
 import type { Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { Bold, Code, Highlighter, Italic, Link, Strikethrough, Unlink } from "lucide-react";
+import {
+	Bold,
+	Code,
+	Highlighter,
+	Italic,
+	Link,
+	Strikethrough,
+	Unlink,
+} from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button } from "../button";
 import { Toggle } from "../toggle";

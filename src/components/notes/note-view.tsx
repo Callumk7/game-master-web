@@ -16,10 +16,7 @@ import { NoteLinksPopover } from "~/components/notes/note-links-popover";
 import { NoteNoteView } from "~/components/notes/notes-note-view";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityView } from "~/components/views/entity-view";
-import {
-	useDeleteNoteMutation,
-	useUpdateNoteMutation,
-} from "~/queries/notes";
+import { useDeleteNoteMutation, useUpdateNoteMutation } from "~/queries/notes";
 import { createBadges } from "../utils";
 
 interface NoteViewProps {

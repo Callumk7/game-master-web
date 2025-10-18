@@ -328,12 +328,12 @@ function EntityItem({ entity, entityType, onSelect }: EntityItemProps) {
 							{entity.name}
 						</span>
 						<div className="flex items-center gap-2 flex-shrink-0">
-							{'class' in entity && entity.class && (
+							{"class" in entity && entity.class && (
 								<Badge variant="outline" className="text-xs">
 									{entity.class}
 								</Badge>
 							)}
-							{'level' in entity && entity.level && (
+							{"level" in entity && entity.level && (
 								<Badge variant="outline" className="text-xs">
 									Level {entity.level}
 								</Badge>

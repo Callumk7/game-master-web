@@ -50,4 +50,3 @@ export interface GenericNode {
 	children?: GenericNode[];
 	strength?: number;
 }
-

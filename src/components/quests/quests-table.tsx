@@ -154,9 +154,9 @@ export function QuestsTable({ data, gameId }: QuestsTableProps) {
 				actions: 0.6,
 			}}
 			initialSort={[
-			{ id: "status", desc: false },
-			{ id: "updated_at", desc: true },
-		]}
+				{ id: "status", desc: false },
+				{ id: "updated_at", desc: true },
+			]}
 		/>
 	);
 }

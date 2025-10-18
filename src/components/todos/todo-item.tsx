@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
-import { type Todo, useTodoActions } from "~/state/todos";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
+import { type Todo, useTodoActions } from "~/state/todos";
 import { cn } from "~/utils/cn";
 
 interface TodoItemProps {

@@ -1,9 +1,9 @@
+import { useGetQuestQuery } from "~/api/@tanstack/react-query.gen";
 import type { Objective } from "~/api/types.gen";
 import { Checkbox } from "~/components/ui/checkbox";
 import { cn } from "~/utils/cn";
-import { useObjectiveMutations } from "./hooks/useObjectiveMutations";
-import { useGetQuestQuery } from "~/api/@tanstack/react-query.gen";
 import { Spinner } from "../ui/spinner";
+import { useObjectiveMutations } from "./hooks/useObjectiveMutations";
 
 interface ObjectiveItemProps {
 	gameId: string;

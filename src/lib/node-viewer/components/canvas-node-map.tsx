@@ -13,18 +13,18 @@ interface CanvasNodeMapProps {
 // D&D themed colors matching your CSS variables
 const NODE_COLORS = {
 	character: "#6366f1", // Indigo - matches chart-1
-	faction: "#a855f7",   // Purple - matches chart-2  
-	location: "#10b981",  // Emerald - matches chart-4
-	quest: "#f59e0b",     // Amber/gold - matches chart-3
-	note: "#ef4444",      // Red - matches chart-5
+	faction: "#a855f7", // Purple - matches chart-2
+	location: "#10b981", // Emerald - matches chart-4
+	quest: "#f59e0b", // Amber/gold - matches chart-3
+	note: "#ef4444", // Red - matches chart-5
 } as const;
 
 const NODE_COLORS_DARK = {
 	character: "#818cf8", // Lighter indigo
-	faction: "#c084fc",   // Lighter purple
-	location: "#34d399",  // Lighter emerald
-	quest: "#fbbf24",     // Brighter gold
-	note: "#f87171",      // Lighter red
+	faction: "#c084fc", // Lighter purple
+	location: "#34d399", // Lighter emerald
+	quest: "#fbbf24", // Brighter gold
+	note: "#f87171", // Lighter red
 } as const;
 
 export function CanvasNodeMap({
@@ -149,8 +149,8 @@ export function CanvasNodeMap({
 
 			// Hover background
 			if (isHovered) {
-				ctx.fillStyle = isDarkMode 
-					? "rgba(74, 222, 128, 0.3)" 
+				ctx.fillStyle = isDarkMode
+					? "rgba(74, 222, 128, 0.3)"
 					: "rgba(34, 197, 94, 0.3)"; // green accent
 				ctx.beginPath();
 				ctx.arc(node.x, node.y, nodeSize + 4, 0, 2 * Math.PI);

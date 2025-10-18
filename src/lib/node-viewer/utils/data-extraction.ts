@@ -46,9 +46,10 @@ export function extractNodesAndConnections<T extends Record<string, object>>(
 	return { nodes: uniqueNodes, connections };
 }
 
-export function extractNodesAndConnectionsFromTree(
-	treeData: GenericNode,
-): { nodes: Map<string, GenericNode>; connections: Connection[] } {
+export function extractNodesAndConnectionsFromTree(treeData: GenericNode): {
+	nodes: Map<string, GenericNode>;
+	connections: Connection[];
+} {
 	const uniqueNodes = new Map<string, GenericNode>();
 	const connections: Connection[] = [];
 	const processedConnections = new Set<string>();
@@ -87,4 +88,3 @@ export function createDefaultNodeExtractor(entityKeys?: string[]) {
 export function createTreeNodeExtractor() {
 	return (treeData: GenericNode) => extractNodesAndConnectionsFromTree(treeData);
 }
-

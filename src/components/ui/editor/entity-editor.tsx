@@ -28,7 +28,9 @@ export function EntityEditor({
 	const { isUpdated, setIsUpdated, onChange, getPayload, updatedContent } =
 		useEditorContentActions();
 	const { createLinksFromMentions } = useCreateLinksFromMentions();
-	const [autoSaveStatus, setAutoSaveStatus] = React.useState<'idle' | 'saving' | 'saved'>('idle');
+	const [autoSaveStatus, setAutoSaveStatus] = React.useState<
+		"idle" | "saving" | "saved"
+	>("idle");
 
 	// Memoize parsed content to avoid creating new objects on every render
 	const parsedContent = React.useMemo(
@@ -42,11 +44,11 @@ export function EntityEditor({
 			return;
 		}
 
-		setAutoSaveStatus('idle');
+		setAutoSaveStatus("idle");
 
 		// Debounce the save operation by 750ms
 		const timeoutId = setTimeout(async () => {
-			setAutoSaveStatus('saving');
+			setAutoSaveStatus("saving");
 
 			try {
 				// Get the payload for this entity type
@@ -70,24 +72,34 @@ export function EntityEditor({
 				}
 
 				setIsUpdated(false);
-				setAutoSaveStatus('saved');
+				setAutoSaveStatus("saved");
 
 				// Reset to idle after 2 seconds
-				setTimeout(() => setAutoSaveStatus('idle'), 2000);
+				setTimeout(() => setAutoSaveStatus("idle"), 2000);
 			} catch (error) {
 				console.error("Auto-save failed:", error);
-				setAutoSaveStatus('idle');
+				setAutoSaveStatus("idle");
 			}
 		}, 750);
 
 		return () => clearTimeout(timeoutId);
-	}, [isUpdated, entityType, getPayload, onSave, updatedContent, createLinksFromMentions, gameId, entityId, setIsUpdated]);
+	}, [
+		isUpdated,
+		entityType,
+		getPayload,
+		onSave,
+		updatedContent,
+		createLinksFromMentions,
+		gameId,
+		entityId,
+		setIsUpdated,
+	]);
 
 	return (
 		<div className={`space-y-4 ${className || ""}`}>
 			{/* Auto-save status indicator */}
 			<div className="flex items-center justify-end h-6 text-sm text-muted-foreground">
-				{autoSaveStatus === 'saved' ? (
+				{autoSaveStatus === "saved" ? (
 					<span className="text-green-600 dark:text-green-400">Saved</span>
 				) : isUpdated ? (
 					<span>Updated</span>

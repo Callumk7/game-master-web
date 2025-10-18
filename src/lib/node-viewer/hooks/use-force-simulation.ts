@@ -81,7 +81,12 @@ export function useForceSimulation<T>(
 		setSimNodes(initialNodes);
 		setConnections(extractedConnections);
 		setIsRunning(true);
-	}, [extractedNodes, extractedConnections, config.simulationWidth, config.simulationHeight]);
+	}, [
+		extractedNodes,
+		extractedConnections,
+		config.simulationWidth,
+		config.simulationHeight,
+	]);
 
 	const runSimulation = React.useCallback(() => {
 		if (performanceMonitoring) {

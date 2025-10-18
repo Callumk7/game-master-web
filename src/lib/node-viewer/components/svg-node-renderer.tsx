@@ -6,7 +6,7 @@ import type { Connection, NodePosition, NodeTypeConfig, ViewTransform } from "..
 function getDefaultNodeColor(nodeType: string): string {
 	const colorMap: Record<string, string> = {
 		character: "fill-chart-1",
-		faction: "fill-chart-2", 
+		faction: "fill-chart-2",
 		location: "fill-chart-4",
 		quest: "fill-chart-3",
 		note: "fill-chart-5",
@@ -175,4 +175,3 @@ export const SvgNodeRenderer = React.forwardRef<SVGSVGElement, SvgNodeRendererPr
 );
 
 SvgNodeRenderer.displayName = "SvgNodeRenderer";
-

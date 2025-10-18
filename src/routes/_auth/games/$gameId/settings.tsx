@@ -5,11 +5,11 @@ import { Badge } from "~/components/ui/badge";
 import { Card } from "~/components/ui/card";
 import {
 	Table,
-	TableHeader,
-	TableRow,
 	TableBody,
 	TableCell,
 	TableHead,
+	TableHeader,
+	TableRow,
 } from "~/components/ui/table";
 
 export const Route = createFileRoute("/_auth/games/$gameId/settings")({

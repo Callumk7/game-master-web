@@ -91,7 +91,7 @@ export function NodeViewer<T>({
 			// Center the view on the nodes
 			// Offset by half the viewport to center in view
 			setTransform({
-				x: -centerX + (height * 0.67), // Approximate viewport width ratio
+				x: -centerX + height * 0.67, // Approximate viewport width ratio
 				y: -centerY + height / 2,
 				scale: 1,
 			});
@@ -178,7 +178,7 @@ export function NodeViewer<T>({
 
 			// Center the view on the nodes
 			setTransform({
-				x: -centerX + (height * 0.67),
+				x: -centerX + height * 0.67,
 				y: -centerY + height / 2,
 				scale: 1,
 			});

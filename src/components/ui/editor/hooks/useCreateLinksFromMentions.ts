@@ -45,7 +45,7 @@ export function useCreateLinksFromMentions() {
 				if (
 					!(error instanceof Error) ||
 					(!error.message?.includes("already exists") &&
-					!error.message?.includes("duplicate"))
+						!error.message?.includes("duplicate"))
 				) {
 					console.warn(
 						`Failed to create mention link to ${mention.type}:${mention.id}:`,

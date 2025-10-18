@@ -208,7 +208,9 @@ export function Controls({
 									value={[config.linkFlexibility]}
 									onValueChange={(value) =>
 										onConfigChange({
-											linkFlexibility: Array.isArray(value) ? value[0] : value,
+											linkFlexibility: Array.isArray(value)
+												? value[0]
+												: value,
 										})
 									}
 									min={0.0}
@@ -222,7 +224,8 @@ export function Controls({
 									htmlFor="unconnected-repulsion-slider"
 									className="text-xs font-medium"
 								>
-									Unconnected Node Separation: {config.unconnectedNodeRepulsion.toFixed(1)}x
+									Unconnected Node Separation:{" "}
+									{config.unconnectedNodeRepulsion.toFixed(1)}x
 								</label>
 								<p className="text-xs text-gray-500">
 									Higher values = unconnected nodes push apart more
