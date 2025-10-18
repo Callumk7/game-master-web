@@ -3,6 +3,7 @@ import { SplitSquareHorizontal } from "lucide-react";
 import * as React from "react";
 import { type Tab, useTabList, useUIActions } from "~/state/ui";
 import type { Optional } from "~/types";
+import { pluralise } from "~/utils/pluralise";
 import { Button } from "./ui/button";
 import { Link } from "./ui/link";
 import { ScrollArea } from "./ui/scroll-area";
@@ -50,7 +51,7 @@ export function EntityTabs({ gameId }: { gameId: string }) {
 					)}
 					{tabList.map((tab) => {
 						// Construct the path dynamically to prevent staleness
-						const path = `/games/${tab.gameId}/${tab.entityType}/${tab.data.id}/`;
+						const path = `/games/${tab.gameId}/${pluralise(tab.entityType)}/${tab.data.id}/`;
 						const params = { gameId: tab.gameId, id: tab.data.id };
 
 						return (

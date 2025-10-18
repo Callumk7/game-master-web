@@ -15,7 +15,7 @@ function RouteComponent() {
 
 	useAddTab({
 		data: faction,
-		entityType: "factions",
+		entityType: "faction",
 		gameId,
 	});
 
@@ -25,5 +25,3 @@ function RouteComponent() {
 
 	return <FactionView faction={faction} gameId={gameId} />;
 }
-
-

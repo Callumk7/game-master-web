@@ -127,15 +127,15 @@ function SplitPane({ entityPath, gameId, onAddEntity, onClearEntity }: SplitPane
 		};
 
 		switch (entityPath.type) {
-			case "characters":
+			case "character":
 				return <CharacterPaneView {...commonProps} characterId={entityPath.id} />;
-			case "factions":
+			case "faction":
 				return <FactionPaneView {...commonProps} factionId={entityPath.id} />;
-			case "locations":
+			case "location":
 				return <LocationPaneView {...commonProps} locationId={entityPath.id} />;
-			case "notes":
+			case "note":
 				return <NotePaneView {...commonProps} noteId={entityPath.id} />;
-			case "quests":
+			case "quest":
 				return <QuestPaneView {...commonProps} questId={entityPath.id} />;
 			default:
 				return <EmptyPaneContent onAddEntity={onAddEntity} />;

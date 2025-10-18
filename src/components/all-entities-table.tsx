@@ -39,7 +39,11 @@ export type AllEntity = {
 	faction_role?: string;
 	race?: string;
 	// Quest / Location specific
+	// Quest specific
+	status?: string;
 	parent_id?: string;
+	// Location specific
+	locationType?: string;
 };
 
 interface AllEntitiesTableProps {

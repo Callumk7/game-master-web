@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getLocationOptions } from "~/api/@tanstack/react-query.gen";
-import { useUpdateLocationMutation } from "~/queries/locations";
-import { EntityContentRenderer } from "./entity-content-renderer";
-import type { EntityMutationPayload } from "~/types/split-view";
 import type { Location } from "~/api/types.gen";
+import { useUpdateLocationMutation } from "~/queries/locations";
+import type { EntityMutationPayload } from "~/types/split-view";
+import { EntityContentRenderer } from "./entity-content-renderer";
 import { useEntityNavigation } from "./hooks";
 
 interface LocationPaneViewProps {
@@ -40,11 +40,11 @@ export function LocationPaneView({
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("locations", locationId);
+		refreshEntity("location", locationId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("locations", locationId);
+		openFullView("location", locationId);
 	};
 
 	// Transform API location to match our component's expected format
@@ -53,7 +53,7 @@ export function LocationPaneView({
 	return (
 		<EntityContentRenderer
 			entity={location}
-			entityType="locations"
+			entityType="location"
 			gameId={gameId}
 			onSave={handleSave}
 			isLoading={isLoading}
@@ -65,4 +65,3 @@ export function LocationPaneView({
 		/>
 	);
 }
-

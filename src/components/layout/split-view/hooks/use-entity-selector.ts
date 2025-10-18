@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useGetGameLinksSuspenseQuery } from "~/queries/games";
-import type { Entity, EntitySelectorState, EntityType } from "~/types/split-view";
+import type { Entity, EntityCollection } from "~/types";
+import type { EntitySelectorState } from "~/types/split-view";
 import { transformEntitiesForSelector } from "~/utils/entity-transformers";
 
 interface UseEntitySelectorParams {
@@ -30,14 +31,14 @@ export function useEntitySelector({
 			entities.filter((entity) => {
 				const searchLower = searchQuery.toLowerCase();
 				return (
-					entity.name.toLowerCase().includes(searchLower) ||
+					entity.name?.toLowerCase().includes(searchLower) ||
 					entity.tags?.some((tag) => tag.toLowerCase().includes(searchLower)) ||
 					("class" in entity &&
 						entity.class?.toLowerCase().includes(searchLower))
 				);
 			});
 
-		const filtered: Record<EntityType, Entity[]> = {
+		const filtered: EntityCollection = {
 			characters: filterEntities(all.characters),
 			factions: filterEntities(all.factions),
 			locations: filterEntities(all.locations),

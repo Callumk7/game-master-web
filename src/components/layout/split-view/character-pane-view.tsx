@@ -40,11 +40,11 @@ export function CharacterPaneView({
 	};
 
 	const handleRefresh = () => {
-		refreshEntity("characters", characterId);
+		refreshEntity("character", characterId);
 	};
 
 	const handleOpenFullView = () => {
-		openFullView("characters", characterId);
+		openFullView("character", characterId);
 	};
 
 	// Transform API character to match our component's expected format
@@ -53,7 +53,7 @@ export function CharacterPaneView({
 	return (
 		<EntityContentRenderer
 			entity={character}
-			entityType="characters"
+			entityType="character"
 			gameId={gameId}
 			onSave={handleSave}
 			isLoading={isLoading}
@@ -65,4 +65,3 @@ export function CharacterPaneView({
 		/>
 	);
 }
-

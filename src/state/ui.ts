@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { EntityLink } from "~/components/links/types";
+import type { EntityType } from "~/types";
 import type { EntityPath } from "~/types/split-view";
 
 export interface Tab {
@@ -7,7 +8,7 @@ export interface Tab {
 		id: string;
 		name: string;
 	};
-	entityType: string; // e.g., 'characters', 'factions', 'notes'
+	entityType: EntityType; // e.g., 'characters', 'factions', 'notes'
 	gameId: string;
 }
 
@@ -231,12 +232,23 @@ const useUIStore = create<Store>()((set, get) => ({
 		// Tab actions
 		addTab: (tab: Tab) => {
 			// Do not add duplicate tabs
-			if (get().tabList.some((t) => t.data.id === tab.data.id)) {
-				return;
+			if (!get().tabList.some((t) => t.data.id === tab.data.id)) {
+				set((state) => ({
+					tabList: [...state.tabList, tab],
+				}));
 			}
-			set((state) => ({
-				tabList: [...state.tabList, tab],
-			}));
+			// Integrate with split view
+			if (
+				!get().splitViewLeftPane &&
+				get().splitViewRightPane?.id !== tab.data.id
+			) {
+				set({ splitViewLeftPane: { type: tab.entityType, id: tab.data.id } });
+			} else if (
+				!get().splitViewRightPane &&
+				get().splitViewLeftPane?.id !== tab.data.id
+			) {
+				set({ splitViewRightPane: { type: tab.entityType, id: tab.data.id } });
+			}
 		},
 		removeTab: (tabId: string) => {
 			set((state) => ({

@@ -15,7 +15,7 @@ function RouteComponent() {
 
 	useAddTab({
 		data: character,
-		entityType: "characters",
+		entityType: "character",
 		gameId,
 	});
 

@@ -15,7 +15,7 @@ function RouteComponent() {
 
 	useAddTab({
 		data: note,
-		entityType: "notes",
+		entityType: "note",
 		gameId,
 	});
 
@@ -25,5 +25,3 @@ function RouteComponent() {
 
 	return <NoteView note={note} gameId={gameId} />;
 }
-
-

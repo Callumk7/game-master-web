@@ -161,23 +161,12 @@ export function EntityControls({
 	};
 
 	const openInSplitView = () => {
-		// Convert singular entity type to plural for the URL
-		const urlEntityTypeMap = {
-			character: "characters",
-			faction: "factions",
-			location: "locations",
-			note: "notes",
-			quest: "quests",
-		} as const;
-
-		const urlEntityType = urlEntityTypeMap[entityType];
-
 		// Extract gameId from current URL path
 		// TODO: Probably use tanstack router params for this instead
 		const gameId = window.location.pathname.split("/")[2];
 
 		const newPane = {
-			type: urlEntityType,
+			type: entityType,
 			id: entityId,
 		};
 
