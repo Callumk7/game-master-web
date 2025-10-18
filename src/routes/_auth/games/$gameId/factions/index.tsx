@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Shield } from "lucide-react";
 import { listFactionsOptions } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { FactionsTable } from "~/components/factions/factions-table";
@@ -34,6 +35,7 @@ function RouteComponent() {
 			<PageHeader
 				title="All Factions"
 				description="Browse all factions in your game."
+				Icon={Shield}
 				handleCreate={handleCreate}
 			/>
 			<FactionsTable gameId={gameId} data={factions} />

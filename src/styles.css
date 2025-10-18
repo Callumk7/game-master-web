@@ -61,6 +61,17 @@
 	--tracking-normal: 0em;
 	--spacing: 0.25rem;
 
+	/* Core UI colors */
+	--color-success-bg: hsl(135 60% 95%);
+	--color-success-text: hsl(135 65% 35%);
+	--color-success-border: hsl(135 65% 45%);
+	--color-warning-bg: hsl(45 90% 92%);
+	--color-warning-text: hsl(45 85% 30%);
+	--color-warning-border: hsl(45 90% 50%);
+	--color-info-bg: hsl(215 85% 94%);
+	--color-info-text: hsl(215 85% 35%);
+	--color-info-border: hsl(215 85% 55%);
+
 	/* Editor-specific variables - D&D themed */
 	--editor-text-brown: hsl(30 80% 45%);
 	--editor-text-orange: hsl(35 85% 50%);
@@ -92,15 +103,15 @@
 	--editor-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 
 	/* Toast-specific variables - light theme */
-	--toast-success-bg: hsl(135 60% 95%);
-	--toast-success-text: hsl(135 65% 35%);
-	--toast-success-border: hsl(135 65% 45%);
-	--toast-warning-bg: hsl(45 90% 92%);
-	--toast-warning-text: hsl(45 85% 30%);
-	--toast-warning-border: hsl(45 90% 50%);
-	--toast-info-bg: hsl(215 85% 94%);
-	--toast-info-text: hsl(215 85% 35%);
-	--toast-info-border: hsl(215 85% 55%);
+	--toast-success-bg: var(--color-success-bg);
+	--toast-success-text: var(--color-success-text);
+	--toast-success-border: var(--color-success-border);
+	--toast-warning-bg: var(--color-warning-bg);
+	--toast-warning-text: var(--color-warning-text);
+	--toast-warning-border: var(--color-warning-border);
+	--toast-info-bg: var(--color-info-bg);
+	--toast-info-text: var(--color-info-text);
+	--toast-info-border: var(--color-info-border);
 }
 
 .dark {
@@ -159,6 +170,17 @@
 	--shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
 	--shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
+	/* Core UI colors */
+	--color-success-bg: hsl(135 50% 15%);
+	--color-success-text: hsl(135 70% 75%);
+	--color-success-border: hsl(135 65% 45%);
+	--color-warning-bg: hsl(45 70% 18%);
+	--color-warning-text: hsl(45 90% 75%);
+	--color-warning-border: hsl(45 85% 55%);
+	--color-info-bg: hsl(215 60% 18%);
+	--color-info-text: hsl(215 85% 75%);
+	--color-info-border: hsl(215 80% 55%);
+
 	/* Editor-specific dark mode variables - mystical D&D */
 	--editor-highlight-brown: hsl(40 70% 12%);
 	--editor-highlight-orange: hsl(35 75% 12%);
@@ -170,15 +192,15 @@
 	--editor-highlight-red: hsl(5 70% 12%);
 
 	/* Toast-specific variables - dark theme */
-	--toast-success-bg: hsl(135 50% 15%);
-	--toast-success-text: hsl(135 70% 75%);
-	--toast-success-border: hsl(135 65% 45%);
-	--toast-warning-bg: hsl(45 70% 18%);
-	--toast-warning-text: hsl(45 90% 75%);
-	--toast-warning-border: hsl(45 85% 55%);
-	--toast-info-bg: hsl(215 60% 18%);
-	--toast-info-text: hsl(215 85% 75%);
-	--toast-info-border: hsl(215 80% 55%);
+	--toast-success-bg: var(--color-success-bg);
+	--toast-success-text: var(--color-success-text);
+	--toast-success-border: var(--color-success-border);
+	--toast-warning-bg: var(--color-warning-bg);
+	--toast-warning-text: var(--color-warning-text);
+	--toast-warning-border: var(--color-warning-border);
+	--toast-info-bg: var(--color-info-bg);
+	--toast-info-text: var(--color-info-text);
+	--toast-info-border: var(--color-info-border);
 }
 
 @theme inline {
@@ -198,6 +220,15 @@
 	--color-accent-foreground: var(--accent-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--color-success-bg);
+	--color-success-foreground: var(--color-success-text);
+	--color-success-border: var(--color-success-border);
+	--color-warning: var(--color-warning-bg);
+	--color-warning-foreground: var(--color-warning-text);
+	--color-warning-border: var(--color-warning-border);
+	--color-info: var(--color-info-bg);
+	--color-info-foreground: var(--color-info-text);
+	--color-info-border: var(--color-info-border);
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);

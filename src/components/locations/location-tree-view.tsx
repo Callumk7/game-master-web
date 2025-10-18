@@ -21,7 +21,9 @@ import {
 	CollapsibleTrigger,
 } from "~/components/ui/collapsible";
 import { Link } from "~/components/ui/link";
+import { capitalise } from "~/utils/capitalise";
 import { cn } from "~/utils/cn";
+import { PageHeader } from "../page-header";
 
 interface LocationTreeViewProps {
 	gameId: string;
@@ -44,92 +46,30 @@ type LocationType =
 	| "building"
 	| "complex";
 
-const getLocationTypeConfig = (type: LocationType) => {
+const getLocationIcon = (type: LocationType) => {
 	switch (type) {
 		case "continent":
-			return {
-				icon: Globe,
-				color: "text-slate-700 dark:text-slate-300",
-				bgColor: "bg-slate-50 dark:bg-slate-800/50",
-				borderColor: "border-slate-200 dark:border-slate-700",
-				label: "Continent",
-				description: "A vast landmass",
-			};
+			return Globe;
 		case "nation":
-			return {
-				icon: Mountain,
-				color: "text-slate-700 dark:text-slate-300",
-				bgColor: "bg-slate-50 dark:bg-slate-800/50",
-				borderColor: "border-slate-200 dark:border-slate-700",
-				label: "Nation",
-				description: "A sovereign country",
-			};
+			return Mountain;
 		case "region":
-			return {
-				icon: Trees,
-				color: "text-slate-700 dark:text-slate-300",
-				bgColor: "bg-slate-50 dark:bg-slate-800/50",
-				borderColor: "border-slate-200 dark:border-slate-700",
-				label: "Region",
-				description: "A geographic area",
-			};
+			return Trees;
 		case "city":
-			return {
-				icon: Building2,
-				color: "text-slate-700 dark:text-slate-300",
-				bgColor: "bg-slate-50 dark:bg-slate-800/50",
-				borderColor: "border-slate-200 dark:border-slate-700",
-				label: "City",
-				description: "A major urban center",
-			};
+			return Building2;
 		case "settlement":
-			return {
-				icon: Home,
-				color: "text-slate-700 dark:text-slate-300",
-				bgColor: "bg-slate-50 dark:bg-slate-800/50",
-				borderColor: "border-slate-200 dark:border-slate-700",
-				label: "Settlement",
-				description: "A small community",
-			};
+			return Home;
 		case "building":
-			return {
-				icon: Castle,
-				color: "text-slate-700 dark:text-slate-300",
-				bgColor: "bg-slate-50 dark:bg-slate-800/50",
-				borderColor: "border-slate-200 dark:border-slate-700",
-				label: "Building",
-				description: "A single structure",
-			};
+			return Castle;
 		default: // 'complex'
-			return {
-				icon: Factory,
-				color: "text-slate-700 dark:text-slate-300",
-				bgColor: "bg-slate-50 dark:bg-slate-800/50",
-				borderColor: "border-slate-200 dark:border-slate-700",
-				label: "Complex",
-				description: "A group of structures",
-			};
+			return Factory;
 	}
-};
-
-const getLocationDepthVisual = (level: number) => {
-	const colors = [
-		"border-l-slate-300 dark:border-l-slate-600", // continent
-		"border-l-slate-300 dark:border-l-slate-600", // nation
-		"border-l-slate-300 dark:border-l-slate-600", // region
-		"border-l-slate-300 dark:border-l-slate-600", // city
-		"border-l-slate-300 dark:border-l-slate-600", // settlement
-		"border-l-slate-300 dark:border-l-slate-600", // building
-		"border-l-slate-300 dark:border-l-slate-600", // complex
-	];
-
-	return colors[Math.min(level, colors.length - 1)];
 };
 
 function LocationNode({ node, gameId, level = 0 }: LocationNodeProps) {
 	const [isOpen, setIsOpen] = React.useState(level < 3); // Auto-expand first 3 levels
 	const hasChildren = !!(node.children && node.children.length > 0);
-	const typeConfig = getLocationTypeConfig(node.type);
+	const Icon = getLocationIcon(node.type);
+	const label = capitalise(node.type);
 
 	const locationPath = `/games/${gameId}/locations/${node.id}`;
 	const isTopLevel = level === 0;
@@ -137,48 +77,40 @@ function LocationNode({ node, gameId, level = 0 }: LocationNodeProps) {
 		<div
 			className={cn(
 				"relative group",
-				level > 0 && `ml-6 border-l-4 pl-4 ${getLocationDepthVisual(level - 1)}`,
+				level > 0 && "ml-6 border-l-2 border-border/30 pl-4",
 			)}
 		>
 			{/* Connection line for nested items */}
 			{level > 0 && (
-				<div
-					className={cn(
-						"absolute -left-[2px] top-8 w-6 h-[1px]",
-						getLocationDepthVisual(level - 1).replace("border-l-", "bg-"),
-					)}
-				/>
+				<div className="absolute -left-[1px] top-6 w-4 h-[1px] bg-border/30" />
 			)}
 
 			<div
 				className={cn(
 					"rounded-lg border transition-all duration-200",
-					"hover:shadow-md hover:border-primary/30",
-					typeConfig.borderColor,
-					typeConfig.bgColor,
+					"hover:shadow-md hover:shadow-primary/5 hover:border-primary/30",
+					"border-slate-500/20",
+					"bg-slate-500/10",
 					isTopLevel ? "p-4" : "p-3",
 				)}
 			>
-				<div className="flex items-start gap-4">
+				<div className="flex items-start gap-3">
 					{/* Location Type Icon */}
-					<div className="shrink-0">
-						<div
-							className={cn(
-								"flex items-center justify-center rounded-full",
-								"h-10 w-10 border",
-								typeConfig.borderColor,
-								"bg-background",
-							)}
-						>
-							<typeConfig.icon
-								className={cn("h-5 w-5", typeConfig.color)}
-							/>
-						</div>
+					<div
+						className={cn(
+							"flex items-center justify-center rounded-full shrink-0",
+							"h-8 w-8",
+							"bg-slate-500/10",
+							"border-slate-500/20",
+							"border-2",
+						)}
+					>
+						<Icon className="h-4 w-4 text-slate-500" />
 					</div>
 
 					{/* Location Content */}
 					<div className="flex-1 min-w-0">
-						<div className="flex items-start justify-between gap-3 mb-3">
+						<div className="flex items-start justify-between gap-3 mb-2">
 							<div className="flex-1 min-w-0">
 								<Link
 									to={locationPath}
@@ -199,8 +131,8 @@ function LocationNode({ node, gameId, level = 0 }: LocationNodeProps) {
 										size="sm"
 										className="text-xs"
 									>
-										<typeConfig.icon className="h-3 w-3 mr-1" />
-										{typeConfig.label}
+										<Icon className="h-3 w-3 mr-1" />
+										{label}
 									</Badge>
 
 									{hasChildren && (
@@ -305,7 +237,7 @@ export function LocationTreeView({
 		return (
 			<div
 				className={cn(
-					"flex flex-col items-center justify-center p-8 text-center",
+					"flex flex-col items-center justify-center p-12 text-center",
 					"rounded-lg border border-dashed border-border/50",
 					"bg-muted/20",
 					className,
@@ -333,16 +265,11 @@ export function LocationTreeView({
 
 	return (
 		<div className={cn("w-full", className)}>
-			{/* Header */}
-			<div className="mb-6">
-				<h2 className="text-2xl font-bold flex items-center gap-2 mb-2">
-					<MapIcon className="h-6 w-6 text-primary" />
-					Locations
-				</h2>
-				<p className="text-muted-foreground mb-4">
-					Explore the geography and settlements of your world
-				</p>
-
+			<PageHeader
+				title="Locations"
+				description="Explore the geography and settlements of your world"
+				Icon={MapIcon}
+			>
 				{/* Stats */}
 				<div className="flex gap-3 flex-wrap">
 					<Badge variant="secondary" size="sm">
@@ -354,7 +281,7 @@ export function LocationTreeView({
 						{locationTreeResponse.data.length} top-level
 					</Badge>
 				</div>
-			</div>
+			</PageHeader>
 
 			{/* Location Tree */}
 			<div className="space-y-4">

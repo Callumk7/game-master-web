@@ -26,21 +26,17 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
-				<EntityLink
-					entityType="location"
-					gameId={gameId}
-					entityId={row.original.id}
-					name={row.getValue("name")}
-				/>
-			),
-		},
-		{
-			accessorKey: "type",
-			header: "Type",
-			cell: ({ row }) => (
-				<Badge variant="secondary" className="capitalize">
-					{row.getValue("type")}
-				</Badge>
+				<div className="flex flex-col">
+					<EntityLink
+						entityType="location"
+						gameId={gameId}
+						entityId={row.original.id}
+						name={row.getValue("name")}
+					/>
+					<Badge variant="secondary" className="capitalize mb-1">
+						{row.original.type}
+					</Badge>
+				</div>
 			),
 		},
 		{
@@ -57,28 +53,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 		},
 		{
-			id: "view",
-			header: "View",
-			maxSize: 60,
-			enableHiding: false,
-			cell: ({ row }) => {
-				const location = row.original;
-				return (
-					<EntityLinkButton
-						entity={{
-							id: location.id,
-							name: location.name,
-							type: "location",
-							content: location.content,
-							content_plain_text: location.content_plain_text,
-						}}
-					/>
-				);
-			},
-		},
-		{
 			id: "actions",
-			maxSize: 80,
 			enableHiding: false,
 			cell: ({ row }) => {
 				const location = row.original;
@@ -86,7 +61,16 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<>
+					<div className="flex flex-row gap-2">
+						<EntityLinkButton
+							entity={{
+								id: location.id,
+								name: location.name,
+								type: "location",
+								content: location.content,
+								content_plain_text: location.content_plain_text,
+							}}
+						/>
 						<ActionsDropdown
 							entityType="location"
 							entityName="location"
@@ -105,7 +89,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 							setIsOpen={setEditModalOpen}
 							location={location}
 						/>
-					</>
+					</div>
 				);
 			},
 		},
@@ -125,9 +109,7 @@ export function LocationsTable({ data, gameId }: LocationsTableProps) {
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
-				name: 1.2,
-				actions: 0.5,
-				type: 0.6,
+				actions: 0.6,
 				updated_at: 0.6,
 			}}
 			initialSort={[{ id: "updated_at", desc: true }]}

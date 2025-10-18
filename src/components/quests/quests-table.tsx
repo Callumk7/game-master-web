@@ -4,7 +4,6 @@ import * as React from "react";
 import type { Quest } from "~/api/types.gen";
 import {
 	ActionsDropdown,
-	ContentDisplay,
 	DateDisplay,
 	EntityLink,
 	EntityTable,
@@ -38,17 +37,6 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			),
 		},
 		{
-			accessorKey: "content_plain_text",
-			header: "Content",
-			cell: ({ row }) => (
-				<ContentDisplay
-					content={row.getValue("content_plain_text")}
-					maxWidth="max-w-[300px]"
-					placeholder="No content"
-				/>
-			),
-		},
-		{
 			accessorKey: "tags",
 			header: "Tags",
 			filterFn: "fuzzy",
@@ -69,26 +57,6 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			cell: ({ row }) => <StatusDisplay status={row.getValue("status")} />,
 		},
 		{
-			id: "view",
-			header: "View",
-			maxSize: 60,
-			enableHiding: false,
-			cell: ({ row }) => {
-				const quest = row.original;
-				return (
-					<EntityLinkButton
-						entity={{
-							id: quest.id,
-							name: quest.name,
-							type: "quest",
-							content: quest.content,
-							content_plain_text: quest.content_plain_text,
-						}}
-					/>
-				);
-			},
-		},
-		{
 			id: "actions",
 			maxSize: 80,
 			enableHiding: false,
@@ -98,7 +66,16 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<>
+					<div className="flex flex-row gap-2">
+						<EntityLinkButton
+							entity={{
+								id: quest.id,
+								name: quest.name,
+								type: "quest",
+								content: quest.content,
+								content_plain_text: quest.content_plain_text,
+							}}
+						/>
 						<ActionsDropdown
 							entityType="quest"
 							entityName="quest"
@@ -117,7 +94,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 							setIsOpen={setEditModalOpen}
 							quest={quest}
 						/>
-					</>
+					</div>
 				);
 			},
 		},
@@ -154,9 +131,10 @@ export function QuestsTable({ data, gameId }: QuestsTableProps) {
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
-				name: 2,
-				actions: 0.5,
-				content_plain_text: 2,
+				name: 1.2,
+				updated_at: 0.6,
+				status: 0.6,
+				actions: 0.6,
 			}}
 			initialSort={[{ id: "updated_at", desc: true }]}
 		/>

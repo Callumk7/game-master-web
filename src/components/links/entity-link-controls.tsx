@@ -18,7 +18,7 @@ export function EntityLinkControls({
 	link,
 }: EntityLinkControlsProps) {
 	return (
-		<div className="flex gap-1">
+		<div className="flex items-center gap-1">
 			<EntityLinkButton entity={link} />
 			<UpdateLinkDialog
 				link={link}

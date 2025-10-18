@@ -47,7 +47,9 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import { getVariantFromStatus } from "~/components/utils";
 import type { Status } from "~/types";
+import { cn } from "~/utils/cn";
 import { tableFilterFns } from "~/utils/table-filters";
 
 // ============================================================================
@@ -80,13 +82,14 @@ export function SortableHeader<TData, TValue>({
 	children,
 }: SortableHeaderProps<TData, TValue>) {
 	return (
-		<Button
-			variant="ghost"
+		<button
+			type="button"
 			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+			className="flex items-center gap-2 cursor-pointer hover:bg-accent hover:text-accent-foreground py-2 px-1"
 		>
 			{children}
-			<ArrowUpDown className="ml-2 h-4 w-4" />
-		</Button>
+			<ArrowUpDown className="h-4 w-4" />
+		</button>
 	);
 }
 
@@ -108,7 +111,7 @@ export function EntityLink({
 	return (
 		<Link
 			to={`/games/${gameId}/${entityType}s/${entityId}` as string}
-			className={className}
+			className={cn(className, "pl-0")}
 		>
 			{name}
 		</Link>
@@ -149,19 +152,8 @@ interface StatusDisplayProps {
 }
 
 export function StatusDisplay({ status }: StatusDisplayProps) {
-	const variant =
-		status === "cancelled"
-			? "destructive"
-			: status === "completed"
-				? "success"
-				: status === "ready"
-					? "ready"
-					: status === "active"
-						? "warning"
-						: "outline";
-
 	return (
-		<Badge variant={variant} className="text-xs">
+		<Badge variant={getVariantFromStatus(status)} className="text-xs">
 			{status}
 		</Badge>
 	);

@@ -47,36 +47,24 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
 		},
 		{
-			id: "view",
-			header: "View",
-			enableHiding: false,
-			maxSize: 60,
-			cell: ({ row }) => {
-				const faction = row.original;
-				return (
-					<EntityLinkButton
-						entity={{
-							id: faction.id,
-							name: faction.name,
-							type: "faction",
-							content: faction.content,
-							content_plain_text: faction.content_plain_text,
-						}}
-					/>
-				);
-			},
-		},
-		{
 			id: "actions",
 			enableHiding: false,
-			maxSize: 80,
 			cell: ({ row }) => {
 				const faction = row.original;
 				const deleteFaction = useDeleteFactionMutation(gameId, faction.id);
 				const [editDialogOpen, setEditDialogOpen] = React.useState(false);
 
 				return (
-					<>
+					<div className="flex flex-row gap-2">
+						<EntityLinkButton
+							entity={{
+								id: faction.id,
+								name: faction.name,
+								type: "faction",
+								content: faction.content,
+								content_plain_text: faction.content_plain_text,
+							}}
+						/>
 						<ActionsDropdown
 							entityType="faction"
 							entityName="faction"
@@ -95,7 +83,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 							setIsOpen={setEditDialogOpen}
 							faction={faction}
 						/>
-					</>
+					</div>
 				);
 			},
 		},
@@ -115,8 +103,9 @@ export function FactionsTable({ data, gameId }: FactionsTableProps) {
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
-				name: 2,
-				actions: 0.5,
+				name: 1.5,
+				actions: 0.7,
+				updated_at: 0.5,
 			}}
 			initialSort={[{ id: "updated_at", desc: true }]}
 		/>

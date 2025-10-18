@@ -5,6 +5,7 @@ import * as React from "react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
+	ActionsDropdown,
 	ContentDisplay,
 	DateDisplay,
 	EntityLink,
@@ -21,7 +22,7 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import type { EntityType } from "~/types";
-import { EntityLinkControls } from "./links/entity-link-controls";
+import { EntityLinkButton } from "./links/entity-link-button";
 
 export type AllEntity = {
 	id: string;
@@ -36,7 +37,8 @@ export type AllEntity = {
 	class?: string;
 	level?: number;
 	faction_role?: string;
-	// Quest specific
+	race?: string;
+	// Quest / Location specific
 	parent_id?: string;
 };
 
@@ -59,24 +61,18 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
-				<EntityLink
-					entityType={row.original.type}
-					gameId={gameId}
-					entityId={row.original.id}
-					name={row.getValue("name")}
-				/>
+				<div className="flex flex-col">
+					<EntityLink
+						entityType={row.original.type}
+						gameId={gameId}
+						entityId={row.original.id}
+						name={row.getValue("name")}
+					/>
+					<Badge variant="secondary" className="capitalize mb-1">
+						{row.original.type}
+					</Badge>
+				</div>
 			),
-			size: 200,
-		},
-		{
-			accessorKey: "type",
-			header: "Type",
-			cell: ({ row }) => (
-				<Badge variant="secondary" className="capitalize">
-					{row.getValue("type")}
-				</Badge>
-			),
-			size: 100,
 		},
 		{
 			accessorKey: "content_plain_text",
@@ -88,39 +84,27 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 					placeholder="No description"
 				/>
 			),
-			size: 300,
 		},
 		{
 			accessorKey: "tags",
 			header: "Tags",
 			filterFn: "fuzzy",
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
-			size: 150,
 		},
 		{
 			accessorKey: "updated_at",
 			header: ({ column }) => (
-				<SortableHeader column={column}>Last Updated</SortableHeader>
+				<SortableHeader column={column}>Updated</SortableHeader>
 			),
 			cell: ({ row }) => <DateDisplay date={row.getValue("updated_at")} />,
-			size: 120,
 		},
 		{
-			id: "view",
-			header: "View",
+			id: "actions",
 			enableHiding: false,
 			cell: ({ row }) => {
 				const entity = row.original;
-				return (
-					<EntityLinkControls
-						gameId={gameId}
-						sourceId={entity.id}
-						sourceType={entity.type}
-						link={entity}
-					/>
-				);
+				return <EntityControls gameId={gameId} entity={entity} />;
 			},
-			size: 60,
 		},
 	];
 
@@ -175,9 +159,31 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 				enablePaginationSizeSelector={true}
 				defaultHidden={["content_plain_text"]}
 				columnRelativeWidths={{
-					name: 2,
+					name: 1.4,
+					actions: 0.6,
+					updated_at: 0.6,
 				}}
 				initialSort={[{ id: "updated_at", desc: true }]}
+			/>
+		</div>
+	);
+}
+
+// === Entity Controls ===
+interface EntityControlsProps {
+	gameId: string;
+	entity: AllEntity;
+}
+
+function EntityControls({ gameId, entity }: EntityControlsProps) {
+	return (
+		<div>
+			<EntityLinkButton entity={entity} />
+			<ActionsDropdown
+				entityType={entity.type}
+				entityName={entity.type}
+				entity={entity}
+				gameId={gameId}
 			/>
 		</div>
 	);

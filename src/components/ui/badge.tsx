@@ -16,9 +16,11 @@ const badgeVariants = cva(
 					"border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
 				outline:
 					"text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-				success: "bg-emerald-800 text-emerald-200 [a&]:hover:bg-emerald-700",
-				warning: "bg-amber-800 text-amber-200 [a&]:hover:bg-amber-700",
-				ready: "bg-blue-700 text-blue-200 [a&]:hover:bg-blue-600",
+				success:
+					"bg-success text-success-foreground border-success-border [a&]:hover:bg-success/90",
+				warning:
+					"bg-warning text-warning-foreground border-warning-border [a&]:hover:bg-warning/90",
+				info: "bg-info text-info-foreground border-info-border [a&]:hover:bg-info/90",
 			},
 			size: {
 				default: "px-2 py-0.5 text-xs",
@@ -50,4 +52,6 @@ function Badge({
 	});
 }
 
-export { Badge, badgeVariants };
+type BadgeVariant = VariantProps<typeof badgeVariants>["variant"];
+
+export { Badge, badgeVariants, type BadgeVariant };

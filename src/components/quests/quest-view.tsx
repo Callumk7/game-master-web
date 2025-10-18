@@ -19,6 +19,7 @@ import { useDeleteQuestMutation, useUpdateQuestMutation } from "~/queries/quests
 import { createBadges } from "../utils";
 import { EntityView } from "../views/entity-view";
 import { SubQuestView } from "./sub-quest-view";
+import { capitalise } from "~/utils/capitalise";
 
 interface QuestViewProps {
 	quest: Quest;
@@ -85,6 +86,8 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 		},
 	];
 
+	const badges = createBadges(capitalise(quest.status), quest.tags);
+
 	return (
 		<EntityView
 			id={quest.id}
@@ -93,7 +96,7 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 			content={quest.content}
 			content_plain_text={quest.content_plain_text}
 			name={quest.name}
-			badges={createBadges(quest.tags)}
+			badges={badges}
 			tabs={tabs}
 			pinned={quest.pinned}
 			onEdit={() => navigate({ to: "edit" })}

@@ -10,7 +10,7 @@
 	--editor-bg-subtle: var(--color-muted);
 	--editor-bg-muted: var(--color-accent);
 
-	--editor-highlight-default: var(--color-primary);
+	--editor-highlight-default: var(--color-accent);
 	--editor-highlight-gray: var(--color-accent);
 
 	--editor-border-default: var(--color-border);
