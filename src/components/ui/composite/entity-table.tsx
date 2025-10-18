@@ -16,7 +16,7 @@ import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
-import { Badge, BadgeVariant } from "~/components/ui/badge";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,

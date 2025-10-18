@@ -4,7 +4,6 @@ import * as React from "react";
 import type { Quest } from "~/api/types.gen";
 import {
 	ActionsDropdown,
-	ContentDisplay,
 	DateDisplay,
 	EntityLink,
 	EntityTable,
