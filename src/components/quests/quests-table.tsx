@@ -21,6 +21,16 @@ interface QuestsTableProps {
 	gameId: string;
 }
 
+// Define custom status sort order
+const statusOrder: Record<string, number> = {
+	active: 0,
+	paused: 1,
+	ready: 2,
+	preparing: 3,
+	completed: 4,
+	cancelled: 5,
+};
+
 function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 	return [
 		{
@@ -54,6 +64,13 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			header: ({ column }) => (
 				<SortableHeader column={column}>Status</SortableHeader>
 			),
+			sortingFn: (rowA, rowB) => {
+				const statusA = rowA.getValue("status") as string;
+				const statusB = rowB.getValue("status") as string;
+				const orderA = statusOrder[statusA] ?? 999;
+				const orderB = statusOrder[statusB] ?? 999;
+				return orderA - orderB;
+			},
 			cell: ({ row }) => <StatusDisplay status={row.getValue("status")} />,
 		},
 		{
@@ -136,7 +153,10 @@ export function QuestsTable({ data, gameId }: QuestsTableProps) {
 				status: 0.6,
 				actions: 0.6,
 			}}
-			initialSort={[{ id: "updated_at", desc: true }]}
+			initialSort={[
+			{ id: "status", desc: false },
+			{ id: "updated_at", desc: true },
+		]}
 		/>
 	);
 }
