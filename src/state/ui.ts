@@ -103,6 +103,7 @@ const useUIStore = create<Store>()((set, get) => ({
 		setIsCreateQuestOpen: (isOpen: boolean) => set({ isCreateQuestOpen: isOpen }),
 		setIsCommanderOpen: (isOpen: boolean) => set({ isCommanderOpen: isOpen }),
 		setIsTodoDrawerOpen: (isOpen: boolean) => set({ isTodoDrawerOpen: isOpen }),
+		// Entity window actions
 		openEntityWindow: (entity: EntityLink) => {
 			const existingWindow = get().entityWindows.find(
 				(w) => w.entity.id === entity.id && w.entity.type === entity.type,
@@ -110,11 +111,11 @@ const useUIStore = create<Store>()((set, get) => ({
 
 			if (existingWindow) {
 				// Window already exists, just bring it to front or ensure it's open
-				set({
-					entityWindows: get().entityWindows.map((w) =>
+				set((state) => ({
+					entityWindows: state.entityWindows.map((w) =>
 						w.id === existingWindow.id ? { ...w, isOpen: true } : w,
 					),
-				});
+				}));
 				return;
 			}
 
@@ -134,30 +135,30 @@ const useUIStore = create<Store>()((set, get) => ({
 				layerOrder: globalLayerCounter,
 			};
 
-			set({
-				entityWindows: [...get().entityWindows, newWindow],
-			});
+			set((state) => ({
+				entityWindows: [...state.entityWindows, newWindow],
+			}));
 		},
 		closeEntityWindow: (windowId: string) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, isOpen: false } : w,
 				),
-			});
+			}));
 		},
 		minimizeEntityWindow: (windowId: string) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, isMinimized: true } : w,
 				),
-			});
+			}));
 		},
 		restoreEntityWindow: (windowId: string) => {
 			globalLayerCounter += 1;
 			const newZIndex = BASE_Z_INDEX + globalLayerCounter;
 
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId
 						? {
 								...w,
@@ -167,38 +168,38 @@ const useUIStore = create<Store>()((set, get) => ({
 							}
 						: w,
 				),
-			});
+			}));
 		},
 		updateWindowPosition: (windowId: string, position: { x: number; y: number }) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, position } : w,
 				),
-			});
+			}));
 		},
 		updateWindowSize: (windowId: string, size: { width: number; height: number }) => {
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId ? { ...w, size } : w,
 				),
-			});
+			}));
 		},
 		bringWindowToFront: (windowId: string) => {
 			globalLayerCounter += 1;
 			const newZIndex = BASE_Z_INDEX + globalLayerCounter;
 
-			set({
-				entityWindows: get().entityWindows.map((w) =>
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) =>
 					w.id === windowId
 						? { ...w, zIndex: newZIndex, layerOrder: globalLayerCounter }
 						: w,
 				),
-			});
+			}));
 		},
 		closeAllEntityWindows: () => {
-			set({
-				entityWindows: get().entityWindows.map((w) => ({ ...w, isOpen: false })),
-			});
+			set((state) => ({
+				entityWindows: state.entityWindows.map((w) => ({ ...w, isOpen: false })),
+			}));
 		},
 		// Split view actions
 		updateSplitViewPanes: (leftPane?: EntityPath, rightPane?: EntityPath) => {
@@ -229,18 +230,18 @@ const useUIStore = create<Store>()((set, get) => ({
 		},
 		// Tab actions
 		addTab: (tab: Tab) => {
+			// Do not add duplicate tabs
 			if (get().tabList.some((t) => t.data.id === tab.data.id)) {
 				return;
 			}
-			set({
-				tabList: [...get().tabList, tab],
-			});
+			set((state) => ({
+				tabList: [...state.tabList, tab],
+			}));
 		},
-		// WARN: Is this immutable state?
 		removeTab: (tabId: string) => {
-			set({
-				tabList: get().tabList.filter((t) => t.data.id !== tabId),
-			});
+			set((state) => ({
+				tabList: state.tabList.filter((t) => t.data.id !== tabId),
+			}));
 		},
 		clearAllTabs: () => {
 			set({ tabList: [] });
