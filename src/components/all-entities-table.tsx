@@ -177,7 +177,7 @@ interface EntityControlsProps {
 
 function EntityControls({ gameId, entity }: EntityControlsProps) {
 	return (
-		<div>
+		<div className="flex gap-2 justify-end mr-2">
 			<EntityLinkButton entity={entity} />
 			<ActionsDropdown
 				entityType={entity.type}

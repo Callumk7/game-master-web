@@ -66,7 +66,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<div className="flex flex-row gap-2">
+					<div className="flex gap-2 justify-end mr-2">
 						<EntityLinkButton
 							entity={{
 								id: quest.id,

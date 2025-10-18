@@ -94,7 +94,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 				const [editModalOpen, setEditModalOpen] = React.useState(false);
 
 				return (
-					<div className="flex">
+					<div className="flex gap-2 justify-end mr-2">
 						<EntityLinkButton
 							entity={{
 								id: character.id,
