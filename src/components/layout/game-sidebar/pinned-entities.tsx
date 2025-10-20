@@ -35,14 +35,7 @@ import {
 } from "~/components/ui/sidebar";
 import { useListPinnedEntitiesSuspenseQuery } from "~/queries/quests";
 import { getEntityQueryKey, useDeleteEntity, useUpdateEntity } from "~/queries/utils";
-import {
-	useHandleEditCharacter,
-	useHandleEditFaction,
-	useHandleEditLocation,
-	useHandleEditNote,
-	useHandleEditQuest,
-	useUIActions,
-} from "~/state/ui";
+import { useHandleEditEntity, useUIActions } from "~/state/ui";
 import type { Entity, EntityType } from "~/types";
 import { pluralise } from "~/utils/pluralise";
 
@@ -175,24 +168,7 @@ function SidebarPinnedEntitiesDropdown({
 	const navigate = useNavigate();
 	const client = useQueryClient();
 
-	const handleEditCharacter = useHandleEditCharacter(entity.id);
-	const handleEditFaction = useHandleEditFaction(entity.id);
-	const handleEditLocation = useHandleEditLocation(entity.id);
-	const handleEditNote = useHandleEditNote(entity.id);
-	const handleEditQuest = useHandleEditQuest(entity.id);
-
-	const handleEdit =
-		entityType === "character"
-			? handleEditCharacter
-			: entityType === "faction"
-				? handleEditFaction
-				: entityType === "location"
-					? handleEditLocation
-					: entityType === "note"
-						? handleEditNote
-						: entityType === "quest"
-							? handleEditQuest
-							: undefined;
+	const handleEdit = useHandleEditEntity(entity.id, entityType);
 
 	const { mutate } = useUpdateEntity(() => {
 		client.invalidateQueries({

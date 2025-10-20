@@ -21,6 +21,7 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { useHandleEditEntity } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { EntityLinkButton } from "./links/entity-link-button";
 
@@ -181,6 +182,7 @@ interface EntityControlsProps {
 }
 
 function EntityControls({ gameId, entity }: EntityControlsProps) {
+	const handleEdit = useHandleEditEntity(entity.id, entity.type);
 	return (
 		<div className="flex gap-2 justify-end mr-2">
 			<EntityLinkButton entity={entity} />
@@ -189,6 +191,7 @@ function EntityControls({ gameId, entity }: EntityControlsProps) {
 				entityName={entity.type}
 				entity={entity}
 				isPinned={entity.pinned}
+				onEdit={handleEdit}
 				gameId={gameId}
 			/>
 		</div>

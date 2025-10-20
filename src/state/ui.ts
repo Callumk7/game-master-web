@@ -397,6 +397,27 @@ export const useHandleEditQuest = (id: string) => {
 	};
 };
 
+// Single interface for editing an entity
+export const useHandleEditEntity = (id: string, entityType: EntityType) => {
+	const handleEditCharacter = useHandleEditCharacter(id);
+	const handleEditFaction = useHandleEditFaction(id);
+	const handleEditLocation = useHandleEditLocation(id);
+	const handleEditNote = useHandleEditNote(id);
+	const handleEditQuest = useHandleEditQuest(id);
+
+	return entityType === "character"
+		? handleEditCharacter
+		: entityType === "faction"
+			? handleEditFaction
+			: entityType === "location"
+				? handleEditLocation
+				: entityType === "note"
+					? handleEditNote
+					: entityType === "quest"
+						? handleEditQuest
+						: undefined;
+};
+
 // Entity window selectors
 export const useEntityWindows = () => useUIStore((state) => state.entityWindows);
 
