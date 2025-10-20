@@ -6,7 +6,6 @@ import {
 	getLocationTreeQueryKey,
 	listGameEntitiesQueryKey,
 	listLocationsQueryKey,
-	useListLocationsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
@@ -20,12 +19,6 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-
-	// Fetch existing locations for parent selection
-	const { data: locationsData, isLoading: locationsLoading } = useListLocationsQuery({
-		path: { game_id: gameId },
-	});
-	const locations = locationsData?.data || [];
 
 	const { form, mutation, renderSmartField } = useSmartForm({
 		mutation: () =>
@@ -86,19 +79,13 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 								<form.Item>
 									<field.Label>Parent Location</field.Label>
 									<field.Control>
-										{locationsLoading ? (
-											<div className="text-muted-foreground text-sm p-2">
-												Loading locations...
-											</div>
-										) : (
-											<ParentLocationSelect
-												locations={locations}
-												value={field.state.value}
-												onChange={field.handleChange}
-												currentType={form.getFieldValue("type")}
-												placeholder="Select parent location (optional)"
-											/>
-										)}
+										<ParentLocationSelect
+											gameId={gameId}
+											value={field.state.value}
+											onChange={field.handleChange}
+											currentType={form.getFieldValue("type")}
+											placeholder="Select parent location (optional)"
+										/>
 									</field.Control>
 									<field.Description>
 										Choose a parent location to create a hierarchical

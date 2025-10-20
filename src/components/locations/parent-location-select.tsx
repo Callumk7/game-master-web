@@ -1,3 +1,4 @@
+import { useListLocationsQuery } from "~/api/@tanstack/react-query.gen";
 import type { Location } from "~/api/types.gen";
 import {
 	Select,
@@ -9,7 +10,7 @@ import {
 } from "~/components/ui/select";
 
 interface ParentLocationSelectProps {
-	locations: Location[];
+	gameId: string;
 	value?: string;
 	onChange: (value: string | undefined) => void;
 	currentType?: string;
@@ -17,6 +18,7 @@ interface ParentLocationSelectProps {
 	placeholder?: string;
 }
 
+// WARN: We don't really care about this, do we?
 // Location type hierarchy - defines which types can be parents of which
 const LOCATION_HIERARCHY = {
 	continent: [],
@@ -72,13 +74,25 @@ function formatLocationLabel(location: Location, hierarchy: Location[]): string 
 }
 
 export function ParentLocationSelect({
-	locations,
+	gameId,
 	value,
 	onChange,
 	currentType,
 	disabled = false,
 	placeholder = "Select parent location",
 }: ParentLocationSelectProps) {
+	// Fetch existing locations for parent selection
+	const { data: locationsData, isLoading: locationsLoading } = useListLocationsQuery({
+		path: { game_id: gameId },
+	});
+
+	if (locationsLoading) {
+		return (
+			<div className="text-muted-foreground text-sm p-2">Loading locations...</div>
+		);
+	}
+
+	const locations = locationsData?.data || [];
 	// Filter locations that can be valid parents
 	const validParentLocations = locations.filter((location) =>
 		isValidParent(location.type as LocationType, currentType),
