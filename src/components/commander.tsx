@@ -62,28 +62,31 @@ export function Commander({ gameId }: { gameId: string }) {
 	const isCommanderOpen = useIsCommanderOpen();
 	const modifierKeyPressed = React.useRef(false);
 
-	const handleEntitySelect = (entity: {
-		id: string;
-		name: string;
-		type: EntityType;
-		content?: string;
-	}) => {
-		if (modifierKeyPressed.current) {
-			setIsCommanderOpen(false);
-			openEntityWindow({
-				id: entity.id,
-				name: entity.name,
-				type: entity.type,
-				content: entity.content,
-			});
-		} else {
-			setIsCommanderOpen(false);
-			navigate({
-				to: `/games/$gameId/${entity.type}s/$id`,
-				params: { gameId, id: entity.id },
-			});
-		}
-	};
+	const handleEntitySelect = React.useCallback(
+		(entity: {
+			id: string;
+			name: string;
+			type: EntityType;
+			content?: string;
+		}) => {
+			if (modifierKeyPressed.current) {
+				setIsCommanderOpen(false);
+				openEntityWindow({
+					id: entity.id,
+					name: entity.name,
+					type: entity.type,
+					content: entity.content,
+				});
+			} else {
+				setIsCommanderOpen(false);
+				navigate({
+					to: `/games/$gameId/${entity.type}s/$id`,
+					params: { gameId, id: entity.id },
+				});
+			}
+		},
+		[gameId, navigate, setIsCommanderOpen, openEntityWindow],
+	);
 
 	// Track modifier keys globally when commander is open
 	React.useEffect(() => {
@@ -112,61 +115,75 @@ export function Commander({ gameId }: { gameId: string }) {
 	}, [isCommanderOpen]);
 
 	// Set up keyboard shortcuts
-	useKeyboardShortcut([
-		// Global shortcut to toggle commander
-		createPlatformShortcut("j", () => {
-			setIsCommanderOpen(!isCommanderOpen);
-		}),
-		// Commander-specific shortcuts (Cmd+Shift to avoid browser conflicts)
-		createPlatformShiftShortcut(
-			"c",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateCharacterOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"f",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateFactionOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"l",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateLocationOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"n",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateNoteOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"q",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateQuestOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"t",
-			() => {
-				setIsCommanderOpen(false);
-				setIsTodoDrawerOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-	]);
+	const shortcuts = React.useMemo(
+		() => [
+			// Global shortcut to toggle commander
+			createPlatformShortcut("j", () => {
+				setIsCommanderOpen(!isCommanderOpen);
+			}),
+			// Commander-specific shortcuts (Cmd+Shift to avoid browser conflicts)
+			createPlatformShiftShortcut(
+				"c",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateCharacterOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"f",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateFactionOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"l",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateLocationOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"n",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateNoteOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"q",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateQuestOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"t",
+				() => {
+					setIsCommanderOpen(false);
+					setIsTodoDrawerOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+		],
+		[
+			isCommanderOpen,
+			setIsCommanderOpen,
+			setIsCreateCharacterOpen,
+			setIsCreateFactionOpen,
+			setIsCreateLocationOpen,
+			setIsCreateNoteOpen,
+			setIsCreateQuestOpen,
+			setIsTodoDrawerOpen,
+		],
+	);
+
+	useKeyboardShortcut(shortcuts);
 
 	return (
 		<CommandDialog open={isCommanderOpen} onOpenChange={setIsCommanderOpen}>
