@@ -12,7 +12,6 @@ import { CharacterImages } from "~/components/characters/character-images";
 import { CharacterNodeViewer } from "~/components/characters/character-node-viewer";
 import { CharacterNotesView } from "~/components/characters/character-note-view";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
-import { EditCharacterDialog } from "~/components/characters/edit-character-dialog";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
 import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
 import type { GenericLinksResponse } from "~/components/links/types";
@@ -23,8 +22,8 @@ import {
 	useDeleteCharacterMutation,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
+import { useHandleEditCharacter } from "~/state/ui";
 import { createBadges } from "../utils";
-import { useHandleEditCharacter, useUIActions } from "~/state/ui";
 
 interface CharacterViewProps {
 	character: Character;
