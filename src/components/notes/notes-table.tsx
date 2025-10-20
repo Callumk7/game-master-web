@@ -1,6 +1,4 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import * as React from "react";
-
 import type { Note } from "~/api/types.gen";
 import {
 	ActionsDropdown,
@@ -11,8 +9,8 @@ import {
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteNoteMutation } from "~/queries/notes";
+import { useHandleEditNote } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
-import { EditNoteDialog } from "./edit-note-dialog";
 
 interface NotesTableProps {
 	data: Note[];
@@ -53,7 +51,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			cell: ({ row }) => {
 				const note = row.original;
 				const deleteNote = useDeleteNoteMutation(gameId, note.id);
-				const [editModalOpen, setEditModalOpen] = React.useState(false);
+				const handleEdit = useHandleEditNote(note.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -77,19 +75,13 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 								content_plain_text: note.content_plain_text,
 							}}
 							gameId={gameId}
-							onEdit={() => setEditModalOpen(true)}
+							onEdit={handleEdit}
 							onDelete={() => {
 								deleteNote.mutate({
 									path: { game_id: gameId, id: note.id },
 								});
 							}}
 							isPinned={note.pinned}
-						/>
-						<EditNoteDialog
-							gameId={gameId}
-							isOpen={editModalOpen}
-							setIsOpen={setEditModalOpen}
-							note={note}
 						/>
 					</div>
 				);

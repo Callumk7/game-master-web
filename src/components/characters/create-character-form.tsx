@@ -12,6 +12,7 @@ import {
 	listGameEntitiesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
+import { useCreateCharacterFactionId } from "~/state/ui";
 import { Button } from "../ui/button";
 import { FormField } from "../ui/composite/form-field";
 import { Label } from "../ui/label";
@@ -19,18 +20,14 @@ import { FactionSelect } from "./faction-select";
 
 interface CreateCharacterFormProps {
 	onSuccess?: () => void;
-	factionId?: string;
 	container?: React.RefObject<HTMLElement | null>;
 }
 
-export function CreateCharacterForm({
-	onSuccess,
-	factionId,
-	container,
-}: CreateCharacterFormProps) {
+export function CreateCharacterForm({ onSuccess, container }: CreateCharacterFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+	const factionId = useCreateCharacterFactionId();
 
 	const [selectedFaction, setSelectedFaction] = React.useState<string>();
 	const [factionRole, setFactionRole] = React.useState<string>("");

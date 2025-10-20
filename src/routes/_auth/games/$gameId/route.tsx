@@ -13,16 +13,21 @@ import {
 	listQuestsOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
+import { EditCharacterDialog } from "~/components/characters/edit-character-dialog";
 import { Commander } from "~/components/commander";
 import { EntityTabs } from "~/components/entity-tabs";
 import { BasicErrorComponent } from "~/components/error";
 import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
+import { EditFactionDialog } from "~/components/factions/edit-faction-dialog";
 import { EntityWindowManager } from "~/components/layout/entity-window-manager";
 import { GameSidebar } from "~/components/layout/game-sidebar";
 import { WindowTray } from "~/components/layout/window-tray";
 import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
+import { EditLocationDialog } from "~/components/locations/edit-location-dialog";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
+import { EditNoteDialog } from "~/components/notes/edit-note-dialog";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
+import { EditQuestDialog } from "~/components/quests/edit-quest-dialog";
 import { TodosDrawer } from "~/components/todos/todos-drawer";
 import { Badge } from "~/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
@@ -111,6 +116,11 @@ function RouteComponent() {
 					<CreateLocationSheet />
 					<CreateQuestSheet />
 					<EntityWindowManager />
+					<EditCharacterDialog gameId={gameId} />
+					<EditFactionDialog gameId={gameId} />
+					<EditLocationDialog gameId={gameId} />
+					<EditNoteDialog gameId={gameId} />
+					<EditQuestDialog gameId={gameId} />
 					<WindowTray />
 					<ClientOnly>
 						<TodosDrawer />

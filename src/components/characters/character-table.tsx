@@ -1,6 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Check, Cross } from "lucide-react";
-import * as React from "react";
 import type { Character } from "~/api/types.gen";
 import {
 	ActionsDropdown,
@@ -12,9 +11,9 @@ import {
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteCharacterMutation } from "~/queries/characters";
+import { useHandleEditCharacter } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
 import { Badge } from "../ui/badge";
-import { EditCharacterDialog } from "./edit-character-dialog";
 
 interface CharacterTableProps {
 	data: Character[];
@@ -91,7 +90,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			cell: ({ row }) => {
 				const character = row.original;
 				const deleteCharacter = useDeleteCharacterMutation(gameId, character.id);
-				const [editModalOpen, setEditModalOpen] = React.useState(false);
+				const handleEdit = useHandleEditCharacter(character.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -120,14 +119,8 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 									path: { id: character.id, game_id: gameId },
 								});
 							}}
-							onEdit={() => setEditModalOpen(true)}
+							onEdit={handleEdit}
 							isPinned={character.pinned}
-						/>
-						<EditCharacterDialog
-							gameId={gameId}
-							isOpen={editModalOpen}
-							setIsOpen={setEditModalOpen}
-							character={character}
 						/>
 					</div>
 				);

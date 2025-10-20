@@ -1,6 +1,4 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import * as React from "react";
-
 import type { Location } from "~/api/types.gen";
 import {
 	ActionsDropdown,
@@ -11,9 +9,9 @@ import {
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteLocationMutation } from "~/queries/locations";
+import { useHandleEditLocation } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
 import { Badge } from "../ui/badge";
-import { EditLocationDialog } from "./edit-location-dialog";
 
 interface LocationsTableProps {
 	data: Location[];
@@ -58,7 +56,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			cell: ({ row }) => {
 				const location = row.original;
 				const deleteLocation = useDeleteLocationMutation(gameId, location.id);
-				const [editModalOpen, setEditModalOpen] = React.useState(false);
+				const handleEdit = useHandleEditLocation(location.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -82,18 +80,12 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 								content_plain_text: location.content_plain_text,
 							}}
 							gameId={gameId}
-							onEdit={() => setEditModalOpen(true)}
+							onEdit={handleEdit}
 							onDelete={() => {
 								deleteLocation.mutate({
 									path: { game_id: gameId, id: location.id },
 								});
 							}}
-						/>
-						<EditLocationDialog
-							gameId={gameId}
-							isOpen={editModalOpen}
-							setIsOpen={setEditModalOpen}
-							location={location}
 						/>
 					</div>
 				);

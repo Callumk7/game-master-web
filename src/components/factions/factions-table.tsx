@@ -1,6 +1,4 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import * as React from "react";
-
 import type { Faction } from "~/api/types.gen";
 import {
 	ActionsDropdown,
@@ -11,8 +9,8 @@ import {
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteFactionMutation } from "~/queries/factions";
+import { useHandleEditFaction } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
-import { EditFactionDialog } from "./edit-faction-dialog";
 
 interface FactionsTableProps {
 	data: Faction[];
@@ -52,7 +50,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			cell: ({ row }) => {
 				const faction = row.original;
 				const deleteFaction = useDeleteFactionMutation(gameId, faction.id);
-				const [editDialogOpen, setEditDialogOpen] = React.useState(false);
+				const handleEdit = useHandleEditFaction(faction.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -76,18 +74,12 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 								content_plain_text: faction.content_plain_text,
 							}}
 							gameId={gameId}
-							onEdit={() => setEditDialogOpen(true)}
+							onEdit={handleEdit}
 							onDelete={() => {
 								deleteFaction.mutate({
 									path: { game_id: gameId, id: faction.id },
 								});
 							}}
-						/>
-						<EditFactionDialog
-							gameId={gameId}
-							isOpen={editDialogOpen}
-							setIsOpen={setEditDialogOpen}
-							faction={faction}
 						/>
 					</div>
 				);

@@ -5,6 +5,7 @@ import {
 	Gem,
 	MapPin,
 	MoreHorizontal,
+	Pencil,
 	Pin,
 	Scroll,
 	Shield,
@@ -34,7 +35,14 @@ import {
 } from "~/components/ui/sidebar";
 import { useListPinnedEntitiesSuspenseQuery } from "~/queries/quests";
 import { getEntityQueryKey, useDeleteEntity, useUpdateEntity } from "~/queries/utils";
-import { useUIActions } from "~/state/ui";
+import {
+	useHandleEditCharacter,
+	useHandleEditFaction,
+	useHandleEditLocation,
+	useHandleEditNote,
+	useHandleEditQuest,
+	useUIActions,
+} from "~/state/ui";
 import type { Entity, EntityType } from "~/types";
 import { pluralise } from "~/utils/pluralise";
 
@@ -167,6 +175,25 @@ function SidebarPinnedEntitiesDropdown({
 	const navigate = useNavigate();
 	const client = useQueryClient();
 
+	const handleEditCharacter = useHandleEditCharacter(entity.id);
+	const handleEditFaction = useHandleEditFaction(entity.id);
+	const handleEditLocation = useHandleEditLocation(entity.id);
+	const handleEditNote = useHandleEditNote(entity.id);
+	const handleEditQuest = useHandleEditQuest(entity.id);
+
+	const handleEdit =
+		entityType === "character"
+			? handleEditCharacter
+			: entityType === "faction"
+				? handleEditFaction
+				: entityType === "location"
+					? handleEditLocation
+					: entityType === "note"
+						? handleEditNote
+						: entityType === "quest"
+							? handleEditQuest
+							: undefined;
+
 	const { mutate } = useUpdateEntity(() => {
 		client.invalidateQueries({
 			queryKey: listPinnedEntitiesQueryKey({ path: { game_id: gameId } }),
@@ -238,6 +265,10 @@ function SidebarPinnedEntitiesDropdown({
 					<DropdownMenuItem onClick={handleTogglePin}>
 						<Pin className="mr-1" />
 						Unpin
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleEdit}>
+						<Pencil className="mr-1" />
+						Edit
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={handleDelete}>
 						<Trash2 className="mr-1" />

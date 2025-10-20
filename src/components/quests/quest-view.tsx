@@ -16,6 +16,7 @@ import { QuestLinksPopover } from "~/components/quests/quest-links-popover";
 import { QuestNoteView } from "~/components/quests/quest-note-view";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { useDeleteQuestMutation, useUpdateQuestMutation } from "~/queries/quests";
+import { useHandleEditQuest } from "~/state/ui";
 import { capitalise } from "~/utils/capitalise";
 import { createBadges } from "../utils";
 import { EntityView } from "../views/entity-view";
@@ -55,8 +56,10 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 			path: { game_id: gameId, id: quest.id },
 		});
 		toast.warning("Quest deleted successfully!");
-		navigate({ to: "." });
+		navigate({ to: ".." });
 	};
+
+	const handleEdit = useHandleEditQuest(quest.id);
 
 	const tabs = [
 		{
@@ -99,7 +102,7 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 			badges={badges}
 			tabs={tabs}
 			pinned={quest.pinned}
-			onEdit={() => navigate({ to: "edit" })}
+			onEdit={handleEdit}
 			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
 		/>

@@ -24,6 +24,7 @@ import {
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
 import { createBadges } from "../utils";
+import { useHandleEditCharacter, useUIActions } from "~/state/ui";
 
 interface CharacterViewProps {
 	character: Character;
@@ -95,31 +96,23 @@ export function CharacterView({ character, gameId }: CharacterViewProps) {
 		},
 	];
 
-	const [editModalOpen, setEditModalOpen] = React.useState(false);
+	const handleEdit = useHandleEditCharacter(character.id);
 
 	return (
-		<>
-			<EntityView
-				id={character.id}
-				gameId={gameId}
-				type="character"
-				content={character.content}
-				content_plain_text={character.content_plain_text}
-				name={character.name}
-				badges={badges}
-				tabs={tabs}
-				pinned={character.pinned}
-				onEdit={() => setEditModalOpen(true)}
-				onDelete={handleDelete}
-				onTogglePin={handleTogglePin}
-			/>
-			<EditCharacterDialog
-				gameId={gameId}
-				isOpen={editModalOpen}
-				setIsOpen={setEditModalOpen}
-				character={character}
-			/>
-		</>
+		<EntityView
+			id={character.id}
+			gameId={gameId}
+			type="character"
+			content={character.content}
+			content_plain_text={character.content_plain_text}
+			name={character.name}
+			badges={badges}
+			tabs={tabs}
+			pinned={character.pinned}
+			onEdit={handleEdit}
+			onDelete={handleDelete}
+			onTogglePin={handleTogglePin}
+		/>
 	);
 }
 

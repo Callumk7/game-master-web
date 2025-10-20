@@ -1,6 +1,4 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import * as React from "react";
-
 import type { Quest } from "~/api/types.gen";
 import {
 	ActionsDropdown,
@@ -13,8 +11,8 @@ import {
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteQuestMutation } from "~/queries/quests";
+import { useHandleEditQuest } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
-import { EditQuestDialog } from "./edit-quest-dialog";
 
 interface QuestsTableProps {
 	data: Quest[];
@@ -80,7 +78,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			cell: ({ row }) => {
 				const quest = row.original;
 				const deleteQuest = useDeleteQuestMutation(gameId, quest.id);
-				const [editModalOpen, setEditModalOpen] = React.useState(false);
+				const handleEdit = useHandleEditQuest(quest.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -104,18 +102,12 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 								content_plain_text: quest.content_plain_text,
 							}}
 							gameId={gameId}
-							onEdit={() => setEditModalOpen(true)}
+							onEdit={handleEdit}
 							onDelete={() => {
 								deleteQuest.mutate({
 									path: { game_id: gameId, id: quest.id },
 								});
 							}}
-						/>
-						<EditQuestDialog
-							gameId={gameId}
-							isOpen={editModalOpen}
-							setIsOpen={setEditModalOpen}
-							quest={quest}
 						/>
 					</div>
 				);
