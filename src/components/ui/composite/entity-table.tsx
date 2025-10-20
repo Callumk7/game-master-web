@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Link as RouterLink } from "@tanstack/react-router";
 import {
 	type Column,
@@ -15,7 +16,8 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-
+import { listPinnedEntitiesQueryKey } from "~/api/@tanstack/react-query.gen";
+import type { EntityLink } from "~/components/links/types";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -48,7 +50,9 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 import { getVariantFromStatus } from "~/components/utils";
-import type { Status } from "~/types";
+import { getEntityQueryKey, useUpdateEntity } from "~/queries/utils";
+import { useUIActions } from "~/state/ui";
+import type { EntityType, Status } from "~/types";
 import { cn } from "~/utils/cn";
 import { tableFilterFns } from "~/utils/table-filters";
 
@@ -93,7 +97,7 @@ export function SortableHeader<TData, TValue>({
 	);
 }
 
-interface EntityLinkProps {
+interface TableLinkProps {
 	entityType: string;
 	gameId: string;
 	entityId: string | number;
@@ -101,13 +105,13 @@ interface EntityLinkProps {
 	className?: string;
 }
 
-export function EntityLink({
+export function TableLink({
 	entityType,
 	gameId,
 	entityId,
 	name,
 	className = "font-medium hover:underline truncate block",
-}: EntityLinkProps) {
+}: TableLinkProps) {
 	return (
 		<Link
 			to={`/games/${gameId}/${entityType}s/${entityId}` as string}
@@ -193,9 +197,10 @@ export function ContentDisplay({
 }
 
 interface ActionsDropdownProps {
-	entityType: string;
+	entityType: EntityType;
 	entityName: string;
-	entity: { id: string | number };
+	entity: EntityLink;
+	isPinned?: boolean;
 	gameId: string;
 	onDelete?: () => void;
 	onEdit?: () => void;
@@ -205,13 +210,36 @@ interface ActionsDropdownProps {
 export function ActionsDropdown({
 	entityType,
 	entityName,
-	entity,
 	gameId,
+	entity,
+	isPinned,
 	onDelete,
 	onEdit,
 	showDelete = true,
 }: ActionsDropdownProps) {
 	const capitalizedType = entityType.charAt(0).toUpperCase() + entityType.slice(1);
+	const { openEntityWindow } = useUIActions();
+	const client = useQueryClient();
+
+	const { mutate } = useUpdateEntity(() => {
+		client.invalidateQueries({
+			queryKey: listPinnedEntitiesQueryKey({ path: { game_id: gameId } }),
+		});
+		client.invalidateQueries({
+			queryKey: getEntityQueryKey(
+				{ entityId: entity.id, entityType: entityType },
+				gameId,
+			),
+		});
+	});
+	const handleTogglePin = async () => {
+		mutate({
+			gameId,
+			entityType: entityType,
+			entityId: entity.id,
+			payload: { pinned: !isPinned },
+		});
+	};
 
 	return (
 		<DropdownMenu>
@@ -228,7 +256,7 @@ export function ActionsDropdown({
 					<DropdownMenuContent>
 						<DropdownMenuItem
 							onClick={() => {
-								navigator.clipboard.writeText(entity.id.toString());
+								navigator.clipboard.writeText(entity.id);
 								toast.info(`${capitalizedType} ID copied to clipboard!`);
 							}}
 						>
@@ -244,6 +272,12 @@ export function ActionsDropdown({
 							}
 						>
 							View {entityName}
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={handleTogglePin}>
+							Toggle Pin
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => openEntityWindow(entity)}>
+							Popout
 						</DropdownMenuItem>
 						<DropdownMenuItem onClick={onEdit}>
 							Edit {entityName}

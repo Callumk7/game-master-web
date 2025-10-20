@@ -5,11 +5,11 @@ import type { Quest } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
 	type FilterConfig,
 	SortableHeader,
 	StatusDisplay,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteQuestMutation } from "~/queries/quests";
@@ -37,7 +37,7 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
-				<EntityLink
+				<TableLink
 					entityType="quest"
 					quest-table
 					gameId={gameId}
@@ -96,7 +96,13 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 						<ActionsDropdown
 							entityType="quest"
 							entityName="quest"
-							entity={quest}
+							entity={{
+								id: quest.id,
+								name: quest.name,
+								type: "quest",
+								content: quest.content,
+								content_plain_text: quest.content_plain_text,
+							}}
 							gameId={gameId}
 							onEdit={() => setEditModalOpen(true)}
 							onDelete={() => {

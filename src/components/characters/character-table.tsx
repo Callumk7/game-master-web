@@ -6,9 +6,9 @@ import {
 	ActionsDropdown,
 	ContentDisplay,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteCharacterMutation } from "~/queries/characters";
@@ -29,7 +29,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			minSize: 200,
 			cell: ({ row }) => (
 				<div className="flex flex-col w-full">
-					<EntityLink
+					<TableLink
 						entityType="character"
 						gameId={gameId}
 						entityId={row.original.id}
@@ -107,7 +107,13 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 						<ActionsDropdown
 							entityType="character"
 							entityName="character"
-							entity={character}
+							entity={{
+								id: character.id,
+								name: character.name,
+								type: "character",
+								content: character.content,
+								content_plain_text: character.content_plain_text,
+							}}
 							gameId={gameId}
 							onDelete={() => {
 								deleteCharacter.mutate({
@@ -115,6 +121,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 								});
 							}}
 							onEdit={() => setEditModalOpen(true)}
+							isPinned={character.pinned}
 						/>
 						<EditCharacterDialog
 							gameId={gameId}

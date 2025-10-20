@@ -5,9 +5,9 @@ import type { Faction } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteFactionMutation } from "~/queries/factions";
@@ -25,7 +25,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
-				<EntityLink
+				<TableLink
 					entityType="faction"
 					gameId={gameId}
 					entityId={row.original.id}
@@ -68,7 +68,13 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 						<ActionsDropdown
 							entityType="faction"
 							entityName="faction"
-							entity={faction}
+							entity={{
+								id: faction.id,
+								name: faction.name,
+								type: "faction",
+								content: faction.content,
+								content_plain_text: faction.content_plain_text,
+							}}
 							gameId={gameId}
 							onEdit={() => setEditDialogOpen(true)}
 							onDelete={() => {

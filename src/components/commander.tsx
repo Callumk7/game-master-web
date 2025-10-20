@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import {
 	CheckSquare,
 	FileText,
+	Gem,
 	MapPin,
 	Plus,
 	Shield,
@@ -10,6 +11,7 @@ import {
 	Users,
 } from "lucide-react";
 import * as React from "react";
+import { useListPinnedEntitiesQuery } from "~/api/@tanstack/react-query.gen";
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -41,6 +43,11 @@ export function Commander({ gameId }: { gameId: string }) {
 	const locations = links?.data?.entities?.locations;
 	const notes = links?.data?.entities?.notes;
 	const quests = links?.data?.entities?.quests;
+
+	const { data: pinnedEntitiesResponse, isLoading: pinnedLoading } =
+		useListPinnedEntitiesQuery({
+			path: { game_id: gameId },
+		});
 
 	const {
 		setIsCommanderOpen,
@@ -174,8 +181,105 @@ export function Commander({ gameId }: { gameId: string }) {
 					</CommandGroup>
 				) : (
 					<>
-						<CommandGroup heading="Controls">
-							<CommandItem>Popout</CommandItem>
+						<CommandGroup heading="Pinned">
+							{pinnedLoading ? (
+								<CommandItem disabled>
+									<span>Loading pinned entities...</span>
+								</CommandItem>
+							) : (
+								<>
+									{pinnedEntitiesResponse?.data?.pinned_entities.notes?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "note",
+														content: item.content,
+													})
+												}
+											>
+												<FileText />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.characters?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "character",
+														content: item.content,
+													})
+												}
+											>
+												<User />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.factions?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "faction",
+														content: item.content,
+													})
+												}
+											>
+												<Shield />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.locations?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "location",
+														content: item.content,
+													})
+												}
+											>
+												<MapPin />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.quests?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "quest",
+														content: item.content,
+													})
+												}
+											>
+												<Gem />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+								</>
+							)}
 						</CommandGroup>
 						<CommandGroup heading="Characters">
 							<CommandItem

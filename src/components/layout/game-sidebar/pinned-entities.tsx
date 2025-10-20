@@ -53,6 +53,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/notes/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<Scroll />
 							<span className="truncate pr-6">{item.name}</span>
@@ -69,6 +73,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/characters/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<User />
 							<span className="truncate pr-6">{item.name}</span>
@@ -85,6 +93,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/factions/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<Shield />
 							<span className="truncate pr-6">{item.name}</span>
@@ -101,6 +113,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/locations/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<MapPin />
 							<span className="truncate pr-6">{item.name}</span>
@@ -117,6 +133,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/quests/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<Gem />
 							<span className="truncate pr-6">{item.name}</span>

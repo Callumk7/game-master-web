@@ -5,9 +5,9 @@ import type { Location } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteLocationMutation } from "~/queries/locations";
@@ -27,7 +27,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
 				<div className="flex flex-col">
-					<EntityLink
+					<TableLink
 						entityType="location"
 						gameId={gameId}
 						entityId={row.original.id}
@@ -74,7 +74,13 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 						<ActionsDropdown
 							entityType="location"
 							entityName="location"
-							entity={location}
+							entity={{
+								id: location.id,
+								name: location.name,
+								type: "location",
+								content: location.content,
+								content_plain_text: location.content_plain_text,
+							}}
 							gameId={gameId}
 							onEdit={() => setEditModalOpen(true)}
 							onDelete={() => {

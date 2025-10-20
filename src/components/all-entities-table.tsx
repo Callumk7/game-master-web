@@ -8,9 +8,9 @@ import {
 	ActionsDropdown,
 	ContentDisplay,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import {
@@ -33,6 +33,7 @@ export type AllEntity = {
 	tags?: string[];
 	created_at?: string;
 	updated_at?: string;
+	pinned?: boolean;
 	// Character specific
 	class?: string;
 	level?: number;
@@ -66,7 +67,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
 				<div className="flex flex-col">
-					<EntityLink
+					<TableLink
 						entityType={row.original.type}
 						gameId={gameId}
 						entityId={row.original.id}
@@ -187,6 +188,7 @@ function EntityControls({ gameId, entity }: EntityControlsProps) {
 				entityType={entity.type}
 				entityName={entity.type}
 				entity={entity}
+				isPinned={entity.pinned}
 				gameId={gameId}
 			/>
 		</div>

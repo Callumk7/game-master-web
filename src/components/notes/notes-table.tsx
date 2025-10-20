@@ -5,9 +5,9 @@ import type { Note } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteNoteMutation } from "~/queries/notes";
@@ -25,7 +25,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
-				<EntityLink
+				<TableLink
 					entityType="note"
 					gameId={gameId}
 					entityId={row.original.id}
@@ -69,7 +69,13 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 						<ActionsDropdown
 							entityType="note"
 							entityName="note"
-							entity={note}
+							entity={{
+								id: note.id,
+								name: note.name,
+								type: "note",
+								content: note.content,
+								content_plain_text: note.content_plain_text,
+							}}
 							gameId={gameId}
 							onEdit={() => setEditModalOpen(true)}
 							onDelete={() => {
@@ -77,6 +83,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 									path: { game_id: gameId, id: note.id },
 								});
 							}}
+							isPinned={note.pinned}
 						/>
 						<EditNoteDialog
 							gameId={gameId}
