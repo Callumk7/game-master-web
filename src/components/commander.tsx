@@ -63,12 +63,7 @@ export function Commander({ gameId }: { gameId: string }) {
 	const modifierKeyPressed = React.useRef(false);
 
 	const handleEntitySelect = React.useCallback(
-		(entity: {
-			id: string;
-			name: string;
-			type: EntityType;
-			content?: string;
-		}) => {
+		(entity: { id: string; name: string; type: EntityType; content?: string }) => {
 			if (modifierKeyPressed.current) {
 				setIsCommanderOpen(false);
 				openEntityWindow({
@@ -118,9 +113,13 @@ export function Commander({ gameId }: { gameId: string }) {
 	const shortcuts = React.useMemo(
 		() => [
 			// Global shortcut to toggle commander
-			createPlatformShortcut("j", () => {
-				setIsCommanderOpen(!isCommanderOpen);
-			}),
+			createPlatformShortcut(
+				"k",
+				() => {
+					setIsCommanderOpen(!isCommanderOpen);
+				},
+				{ allowInInputs: true },
+			),
 			// Commander-specific shortcuts (Cmd+Shift to avoid browser conflicts)
 			createPlatformShiftShortcut(
 				"c",

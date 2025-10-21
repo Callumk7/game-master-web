@@ -100,7 +100,7 @@ function RouteComponent() {
 										variant="secondary"
 										className="ml-auto text-xs"
 									>
-										⌘J
+										⌘K
 									</Badge>
 								</button>
 							</div>
