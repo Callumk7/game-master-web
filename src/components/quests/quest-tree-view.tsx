@@ -39,6 +39,7 @@ interface QuestNodeProps {
 	level?: number;
 }
 
+// TODO: Clean up all this claude stuff
 const getStatusConfig = (status: QuestTreeNode["status"]) => {
 	switch (status) {
 		case "completed":
