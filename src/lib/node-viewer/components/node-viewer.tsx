@@ -17,10 +17,11 @@ import { SvgNodeRenderer } from "./svg-node-renderer";
 const DEFAULT_CONFIG: ForceSimulationConfig = {
 	repulsionStrength: 15000,
 	attractionStrength: 15,
-	centerForceStrength: 5,
+	centerForceStrength: 10,
 	targetLinkLength: 150,
 	linkFlexibility: 0.5,
 	unconnectedNodeRepulsion: 2.0,
+	repulsionCutoffDistance: 200,
 	simulationWidth: 3200,
 	simulationHeight: 2400,
 };

@@ -126,7 +126,7 @@ export function useForceSimulation<T>(
 			for (const nodeA of nodes) {
 				const nearby = quadTree.queryCircle(
 					{ x: nodeA.x, y: nodeA.y, id: nodeA.id },
-					200,
+					config.repulsionCutoffDistance,
 				);
 
 				for (const point of nearby) {
@@ -140,7 +140,7 @@ export function useForceSimulation<T>(
 					const dy = nodeB.y - nodeA.y;
 					const distance = Math.sqrt(dx * dx + dy * dy);
 
-					if (distance > 0 && distance < 200) {
+					if (distance > 0 && distance < config.repulsionCutoffDistance) {
 						// Check if nodes are connected
 						const areConnected = connectedPairs.has(
 							`${nodeA.id}-${nodeB.id}`,
@@ -205,8 +205,8 @@ export function useForceSimulation<T>(
 				const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
 
 				const dynamicCenterForce = Math.min(
-					distanceFromCenter * (config.centerForceStrength * 0.00001),
-					config.centerForceStrength * 0.0002,
+					distanceFromCenter * (config.centerForceStrength * 0.0001),
+					config.centerForceStrength * 0.001,
 				);
 				node.vx += dx * dynamicCenterForce;
 				node.vy += dy * dynamicCenterForce;

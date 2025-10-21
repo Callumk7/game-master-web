@@ -151,7 +151,7 @@ export function Controls({
 									htmlFor="center-slider"
 									className="text-xs font-medium"
 								>
-									Center Force: {config.centerForceStrength * 0.00001}
+									Center Force: {config.centerForceStrength}
 								</label>
 								<Slider
 									id="center-slider"
@@ -164,8 +164,8 @@ export function Controls({
 										})
 									}
 									min={1}
-									max={15}
-									step={1}
+									max={100}
+									step={5}
 									className="w-full"
 								/>
 							</div>
@@ -243,6 +243,32 @@ export function Controls({
 									min={1.0}
 									max={5.0}
 									step={0.2}
+									className="w-full"
+								/>
+							</div>
+							<div className="space-y-2">
+								<label
+									htmlFor="repulsion-cutoff-slider"
+									className="text-xs font-medium"
+								>
+									Repulsion Range: {config.repulsionCutoffDistance}px
+								</label>
+								<p className="text-xs text-gray-500">
+									Distance at which nodes stop repelling each other
+								</p>
+								<Slider
+									id="repulsion-cutoff-slider"
+									value={[config.repulsionCutoffDistance]}
+									onValueChange={(value) =>
+										onConfigChange({
+											repulsionCutoffDistance: Array.isArray(value)
+												? value[0]
+												: value,
+										})
+									}
+									min={100}
+									max={800}
+									step={50}
 									className="w-full"
 								/>
 							</div>
