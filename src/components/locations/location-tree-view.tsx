@@ -9,6 +9,7 @@ import {
 	MapIcon,
 	MapPin,
 	Mountain,
+	Plus,
 	Trees,
 } from "lucide-react";
 import * as React from "react";
@@ -21,6 +22,7 @@ import {
 	CollapsibleTrigger,
 } from "~/components/ui/collapsible";
 import { Link } from "~/components/ui/link";
+import { useUIActions } from "~/state/ui";
 import { capitalise } from "~/utils/capitalise";
 import { cn } from "~/utils/cn";
 import { PageHeader } from "../page-header";
@@ -67,6 +69,11 @@ const getLocationIcon = (type: LocationType) => {
 
 function LocationNode({ node, gameId, level = 0 }: LocationNodeProps) {
 	const [isOpen, setIsOpen] = React.useState(level < 3); // Auto-expand first 3 levels
+	const { setIsCreateLocationOpen, setCreateLocationParentId } = useUIActions();
+	const handleCreateLocation = (parentId: string) => {
+		setCreateLocationParentId(parentId);
+		setIsCreateLocationOpen(true);
+	};
 	const hasChildren = !!(node.children && node.children.length > 0);
 	const Icon = getLocationIcon(node.type);
 	const label = capitalise(node.type);
@@ -150,25 +157,34 @@ function LocationNode({ node, gameId, level = 0 }: LocationNodeProps) {
 							</div>
 
 							{/* Expand/Collapse for children */}
-							{hasChildren && (
-								<Collapsible open={isOpen} onOpenChange={setIsOpen}>
-									<CollapsibleTrigger
-										render={
-											<Button
-												variant="ghost"
-												size="icon"
-												className="h-8 w-8 shrink-0"
-											>
-												{isOpen ? (
-													<ChevronDown className="h-4 w-4" />
-												) : (
-													<ChevronRight className="h-4 w-4" />
-												)}
-											</Button>
-										}
-									/>
-								</Collapsible>
-							)}
+							<div className="flex items-center gap-2">
+								<Button
+									size={"icon"}
+									variant={"ghost"}
+									onClick={() => handleCreateLocation(node.id)}
+								>
+									<Plus className="h-4 w-4" />
+								</Button>
+								{hasChildren && (
+									<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+										<CollapsibleTrigger
+											render={
+												<Button
+													variant="ghost"
+													size="icon"
+													className="h-8 w-8 shrink-0"
+												>
+													{isOpen ? (
+														<ChevronDown className="h-4 w-4" />
+													) : (
+														<ChevronRight className="h-4 w-4" />
+													)}
+												</Button>
+											}
+										/>
+									</Collapsible>
+								)}
+							</div>
 						</div>
 
 						{/* Tags */}

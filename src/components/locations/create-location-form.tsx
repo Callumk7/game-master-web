@@ -9,6 +9,7 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
+import { useCreateLocationParentId } from "~/state/ui";
 import { ParentLocationSelect } from "./parent-location-select";
 
 interface CreateLocationFormProps {
@@ -19,6 +20,7 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+	const parentId = useCreateLocationParentId();
 
 	const { form, mutation, renderSmartField } = useSmartForm({
 		mutation: () =>
@@ -56,6 +58,9 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 				});
 			}
 		},
+		initialValues: {
+			parent_id: parentId,
+		},
 	});
 
 	return (
@@ -74,27 +79,30 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 						})}
 
 						{/* Custom parent location selector */}
-						<form.AppField name="parent_id">
-							{(field) => (
-								<form.Item>
-									<field.Label>Parent Location</field.Label>
-									<field.Control>
-										<ParentLocationSelect
-											gameId={gameId}
-											value={field.state.value}
-											onChange={field.handleChange}
-											currentType={form.getFieldValue("type")}
-											placeholder="Select parent location (optional)"
-										/>
-									</field.Control>
-									<field.Description>
-										Choose a parent location to create a hierarchical
-										structure. Leave empty for top-level locations.
-									</field.Description>
-									<field.Message />
-								</form.Item>
-							)}
-						</form.AppField>
+						{!parentId && (
+							<form.AppField name="parent_id">
+								{(field) => (
+									<form.Item>
+										<field.Label>Parent Location</field.Label>
+										<field.Control>
+											<ParentLocationSelect
+												gameId={gameId}
+												value={field.state.value}
+												onChange={field.handleChange}
+												currentType={form.getFieldValue("type")}
+												placeholder="Select parent location (optional)"
+											/>
+										</field.Control>
+										<field.Description>
+											Choose a parent location to create a
+											hierarchical structure. Leave empty for
+											top-level locations.
+										</field.Description>
+										<field.Message />
+									</form.Item>
+								)}
+							</form.AppField>
+						)}
 
 						{renderSmartField("tags")}
 						{renderSmartField("content")}

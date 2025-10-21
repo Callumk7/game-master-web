@@ -13,12 +13,14 @@ export function MembersView({ factionId, gameId }: FactionMembersViewProps) {
 	});
 	const members = memberData?.data?.members || [];
 	const { setIsCreateCharacterOpen, setCreateCharacterFactionId } = useUIActions();
-
-	setCreateCharacterFactionId(factionId);
+	const handleCreateCharacter = (factionId: string) => {
+		setCreateCharacterFactionId(factionId);
+		setIsCreateCharacterOpen(true);
+	};
 
 	return (
 		<div className="space-y-4">
-			<Button onClick={() => setIsCreateCharacterOpen(true)}>
+			<Button onClick={() => handleCreateCharacter(factionId)}>
 				Create Character
 			</Button>
 			<CharacterTable gameId={gameId} data={members} />

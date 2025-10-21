@@ -10,19 +10,15 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
+import { useCreateQuestParentId } from "~/state/ui";
 import { ParentQuestSelect } from "./parent-quest-select";
 
 interface CreateQuestFormProps {
 	container?: React.RefObject<HTMLElement | null>;
 	onSuccess?: () => void;
-	parentId?: string;
 }
 
-export function CreateQuestForm({
-	container,
-	onSuccess,
-	parentId,
-}: CreateQuestFormProps) {
+export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
 
@@ -31,6 +27,8 @@ export function CreateQuestForm({
 		path: { game_id: gameId },
 	});
 	const quests = questsData?.data || [];
+
+	const parentId = useCreateQuestParentId();
 
 	const { form, mutation, renderSmartField } = useSmartForm({
 		mutation: () => createQuestMutation({ path: { game_id: gameId } }),

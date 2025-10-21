@@ -22,10 +22,10 @@ import {
 	CollapsibleTrigger,
 } from "~/components/ui/collapsible";
 import { Link } from "~/components/ui/link";
+import { useUIActions } from "~/state/ui";
 import { cn } from "~/utils/cn";
 import { PageHeader } from "../page-header";
 import { getVariantFromStatus } from "../utils";
-import { CreateQuestSheet } from "./create-quest-sheet";
 
 interface QuestTreeViewProps {
 	gameId: string;
@@ -129,6 +129,12 @@ const getTagVariant = (tag: string) => {
 
 function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 	const [isOpen, setIsOpen] = React.useState(level < 2); // Auto-expand first 2 levels
+	const { setIsCreateQuestOpen, setCreateQuestParentId } = useUIActions();
+	const handleCreateQuest = (parentId: string) => {
+		setCreateQuestParentId(parentId);
+		setIsCreateQuestOpen(true);
+	};
+
 	const hasChildren = node.children && node.children.length > 0;
 	const statusConfig = getStatusConfig(node.status);
 
@@ -139,175 +145,161 @@ function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 			(node.content_plain_text.length > 120 ? "..." : "")
 		: "";
 
-	const [isSheetOpen, setIsSheetOpen] = React.useState(false);
-
 	return (
-		<>
+		<div
+			className={cn(
+				"relative group",
+				level > 0 && "ml-6 border-l-2 border-border/30 pl-4",
+			)}
+		>
+			{/* Connection line for nested items */}
+			{level > 0 && (
+				<div className="absolute -left-[1px] top-6 w-4 h-[1px] bg-border/30" />
+			)}
+
 			<div
 				className={cn(
-					"relative group",
-					level > 0 && "ml-6 border-l-2 border-border/30 pl-4",
+					"rounded-lg border transition-all duration-200",
+					"hover:shadow-md hover:shadow-primary/5 hover:border-primary/30",
+					statusConfig.borderColor,
+					statusConfig.bgColor,
+					isTopLevel ? "p-4" : "p-3",
 				)}
 			>
-				{/* Connection line for nested items */}
-				{level > 0 && (
-					<div className="absolute -left-[1px] top-6 w-4 h-[1px] bg-border/30" />
-				)}
+				<div className="flex items-start gap-3">
+					{/* Status Icon */}
+					<div
+						className={cn(
+							"flex items-center justify-center rounded-full shrink-0",
+							"h-8 w-8",
+							statusConfig.bgColor,
+							statusConfig.borderColor,
+							"border-2",
+						)}
+					>
+						<statusConfig.icon
+							className={cn("h-4 w-4", statusConfig.color)}
+						/>
+					</div>
 
-				<div
-					className={cn(
-						"rounded-lg border transition-all duration-200",
-						"hover:shadow-md hover:shadow-primary/5 hover:border-primary/30",
-						statusConfig.borderColor,
-						statusConfig.bgColor,
-						isTopLevel ? "p-4" : "p-3",
-					)}
-				>
-					<div className="flex items-start gap-3">
-						{/* Status Icon */}
-						<div
-							className={cn(
-								"flex items-center justify-center rounded-full shrink-0",
-								"h-8 w-8",
-								statusConfig.bgColor,
-								statusConfig.borderColor,
-								"border-2",
-							)}
-						>
-							<statusConfig.icon
-								className={cn("h-4 w-4", statusConfig.color)}
-							/>
-						</div>
+					{/* Quest Content */}
+					<div className="flex-1 min-w-0">
+						<div className="flex items-start justify-between gap-3 mb-2">
+							<div className="flex-1 min-w-0">
+								<Link
+									to={questPath}
+									className={cn(
+										"block hover:text-primary transition-colors",
+										isTopLevel
+											? "text-lg font-semibold"
+											: "text-base font-medium",
+									)}
+								>
+									<span className="truncate">{node.name}</span>
+								</Link>
 
-						{/* Quest Content */}
-						<div className="flex-1 min-w-0">
-							<div className="flex items-start justify-between gap-3 mb-2">
-								<div className="flex-1 min-w-0">
-									<Link
-										to={questPath}
-										className={cn(
-											"block hover:text-primary transition-colors",
-											isTopLevel
-												? "text-lg font-semibold"
-												: "text-base font-medium",
-										)}
+								{/* Status Badge */}
+								<div className="flex items-center gap-2 mt-1">
+									<Badge
+										variant={getVariantFromStatus(node.status)}
+										size="sm"
+										className="text-xs"
 									>
-										<span className="truncate">{node.name}</span>
-									</Link>
+										{statusConfig.label}
+									</Badge>
 
-									{/* Status Badge */}
-									<div className="flex items-center gap-2 mt-1">
+									{hasChildren && (
 										<Badge
-											variant={getVariantFromStatus(node.status)}
+											variant="outline"
 											size="sm"
 											className="text-xs"
 										>
-											{statusConfig.label}
+											{node.children?.length} subtask
+											{node.children?.length !== 1 ? "s" : ""}
 										</Badge>
-
-										{hasChildren && (
-											<Badge
-												variant="outline"
-												size="sm"
-												className="text-xs"
-											>
-												{node.children?.length} subtask
-												{node.children?.length !== 1 ? "s" : ""}
-											</Badge>
-										)}
-									</div>
-								</div>
-
-								{/* Expand/Collapse for children */}
-								<div className="flex items-center gap-2">
-									<Button
-										size={"icon"}
-										variant={"ghost"}
-										onClick={() => setIsSheetOpen(true)}
-									>
-										<Plus className="h-4 w-4" />
-									</Button>
-									{hasChildren && (
-										<Collapsible
-											open={isOpen}
-											onOpenChange={setIsOpen}
-										>
-											<CollapsibleTrigger
-												render={
-													<Button
-														variant="ghost"
-														size="icon"
-														className="h-8 w-8 shrink-0"
-													>
-														{isOpen ? (
-															<ChevronDown className="h-4 w-4" />
-														) : (
-															<ChevronRight className="h-4 w-4" />
-														)}
-													</Button>
-												}
-											/>
-										</Collapsible>
 									)}
 								</div>
 							</div>
 
-							{/* Quest Excerpt */}
-							{excerpt && isTopLevel && (
-								<p className="text-sm text-muted-foreground mb-3 leading-relaxed">
-									{excerpt}
-								</p>
-							)}
-
-							{/* Tags */}
-							{node.tags && node.tags.length > 0 && (
-								<div className="flex flex-wrap gap-1.5 mb-2">
-									{node.tags.map((tag) => {
-										const TagIcon = getTagIcon(tag);
-										return (
-											<Badge
-												key={tag}
-												variant={getTagVariant(tag)}
-												size="sm"
-												className="text-xs flex items-center gap-1"
-											>
-												{TagIcon && (
-													<TagIcon className="h-3 w-3" />
-												)}
-												{tag}
-											</Badge>
-										);
-									})}
-								</div>
-							)}
-						</div>
-					</div>
-
-					{/* Children */}
-					{hasChildren && (
-						<Collapsible open={isOpen} onOpenChange={setIsOpen}>
-							<CollapsibleContent>
-								<div className="mt-4 space-y-3">
-									{node.children?.map((child) => (
-										<QuestNode
-											key={child.id}
-											node={child}
-											gameId={gameId}
-											level={level + 1}
+							{/* Expand/Collapse for children */}
+							<div className="flex items-center gap-2">
+								<Button
+									size={"icon"}
+									variant={"ghost"}
+									onClick={() => handleCreateQuest(node.id)}
+								>
+									<Plus className="h-4 w-4" />
+								</Button>
+								{hasChildren && (
+									<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+										<CollapsibleTrigger
+											render={
+												<Button
+													variant="ghost"
+													size="icon"
+													className="h-8 w-8 shrink-0"
+												>
+													{isOpen ? (
+														<ChevronDown className="h-4 w-4" />
+													) : (
+														<ChevronRight className="h-4 w-4" />
+													)}
+												</Button>
+											}
 										/>
-									))}
-								</div>
-							</CollapsibleContent>
-						</Collapsible>
-					)}
+									</Collapsible>
+								)}
+							</div>
+						</div>
+
+						{/* Quest Excerpt */}
+						{excerpt && isTopLevel && (
+							<p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+								{excerpt}
+							</p>
+						)}
+
+						{/* Tags */}
+						{node.tags && node.tags.length > 0 && (
+							<div className="flex flex-wrap gap-1.5 mb-2">
+								{node.tags.map((tag) => {
+									const TagIcon = getTagIcon(tag);
+									return (
+										<Badge
+											key={tag}
+											variant={getTagVariant(tag)}
+											size="sm"
+											className="text-xs flex items-center gap-1"
+										>
+											{TagIcon && <TagIcon className="h-3 w-3" />}
+											{tag}
+										</Badge>
+									);
+								})}
+							</div>
+						)}
+					</div>
 				</div>
+
+				{/* Children */}
+				{hasChildren && (
+					<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+						<CollapsibleContent>
+							<div className="mt-4 space-y-3">
+								{node.children?.map((child) => (
+									<QuestNode
+										key={child.id}
+										node={child}
+										gameId={gameId}
+										level={level + 1}
+									/>
+								))}
+							</div>
+						</CollapsibleContent>
+					</Collapsible>
+				)}
 			</div>
-			<CreateQuestSheet
-				parentId={node.id}
-				isOpen={isSheetOpen}
-				setIsOpen={setIsSheetOpen}
-			/>
-		</>
+		</div>
 	);
 }
 
