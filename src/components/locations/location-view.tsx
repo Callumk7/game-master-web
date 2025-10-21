@@ -21,10 +21,10 @@ import {
 	useDeleteLocationMutation,
 	useUpdateLocationMutation,
 } from "~/queries/locations";
+import { useHandleEditLocation } from "~/state/ui";
 import { capitalise } from "~/utils/capitalise";
 import { createBadges } from "../utils";
 import { SubLocationView } from "./sub-location-view";
-import { useHandleEditLocation } from "~/state/ui";
 
 interface LocationViewProps {
 	gameId: string;
