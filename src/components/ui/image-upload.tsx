@@ -55,6 +55,8 @@ export function ImageUpload({
 				return;
 			}
 
+			toast.info("Uploading image...");
+
 			uploadImage.mutate({
 				path: {
 					game_id: gameId,
