@@ -1,4 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+	getUserProfileOptions,
+	useGetUserProfileQuery,
+} from "~/api/@tanstack/react-query.gen";
+import { UpdateProfileForm } from "~/components/account/update-username-form";
 import { AuthenticatedLayout } from "~/components/authenticated-layout";
 import {
 	Card,
@@ -8,15 +13,23 @@ import {
 	CardTitle,
 } from "~/components/ui/card";
 
-export const Route = createFileRoute("/account")({
+export const Route = createFileRoute("/_auth/account")({
 	component: RouteComponent,
+	loader: ({ context }) => {
+		return context.queryClient.ensureQueryData(getUserProfileOptions());
+	},
 });
 
 function RouteComponent() {
 	const { user } = Route.useRouteContext();
+	const { data: userProfile, isLoading } = useGetUserProfileQuery();
 
 	if (!user) {
 		return <h1>You are not logged in.</h1>;
+	}
+
+	if (isLoading) {
+		return <h1>Loading...</h1>;
 	}
 
 	return (
@@ -27,11 +40,13 @@ function RouteComponent() {
 					<CardDescription>Manage your account details.</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<div>
-						<p>Email: {user.email}</p>
+					<div className="flex flex-col gap-4">
+						<p>Email: {userProfile?.email}</p>
+						<p>Username: {userProfile?.username}</p>
 					</div>
 				</CardContent>
 			</Card>
+			<UpdateProfileForm defaultValues={{ username: userProfile?.username }} />
 		</AuthenticatedLayout>
-	);
+	)
 }
