@@ -70,9 +70,9 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			cell: ({ row }) => (
 				<div>
 					{row.getValue("alive") ? (
-						<Check className="size-3 ml-2 text-green-300" />
+						<Check className="size-3 ml-2 text-success-foreground" />
 					) : (
-						<Cross className="size-3 ml-2 text-red-300" />
+						<Cross className="size-3 ml-2 text-destructive" />
 					)}
 				</div>
 			),
