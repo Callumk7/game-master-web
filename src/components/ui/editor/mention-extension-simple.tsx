@@ -223,6 +223,10 @@ export const SimpleMention = Node.create({
 		];
 	},
 
+	renderText({ node }) {
+		return `@${node.attrs.label}`;
+	},
+
 	addNodeView() {
 		return ReactNodeViewRenderer(MentionComponent, {
 			stopEvent: ({ event }: { event: Event }) => {

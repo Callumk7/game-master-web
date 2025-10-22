@@ -9,6 +9,7 @@ import {
 	Bold,
 	ChevronDown,
 	Code,
+	Copy,
 	Heading1,
 	Heading2,
 	Heading3,
@@ -715,6 +716,26 @@ export function Tiptap({
 					disabled={!editor.can().chain().focus().redo().run()}
 				>
 					<Redo className="h-4 w-4" />
+				</Button>
+
+				<Separator orientation="vertical" className="h-6" />
+
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={async () => {
+						const text = editor.getText();
+						try {
+							await navigator.clipboard.writeText(text);
+							toast.success("Copied to clipboard");
+						} catch (error) {
+							console.error("Failed to copy:", error);
+							toast.error("Failed to copy to clipboard");
+						}
+					}}
+					title="Copy plain text to clipboard"
+				>
+					<Copy className="h-4 w-4" />
 				</Button>
 			</div>
 
