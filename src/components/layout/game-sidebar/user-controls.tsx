@@ -7,6 +7,7 @@ import {
 	LogOut,
 	Sparkles,
 } from "lucide-react";
+import { useGetUserProfileQuery } from "~/api/@tanstack/react-query.gen";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -22,16 +23,11 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { SidebarMenuButton, useSidebar } from "~/components/ui/sidebar";
 
-export function SidebarUserControls({
-	user,
-}: {
-	user: {
-		name: string;
-		email: string;
-		avatar: string;
-	};
-}) {
+export function SidebarUserControls() {
+	const { data: userProfile } = useGetUserProfileQuery();
 	const { isMobile } = useSidebar();
+
+	if (!userProfile) return null;
 
 	return (
 		<DropdownMenu>
@@ -44,12 +40,17 @@ export function SidebarUserControls({
 				}
 			>
 				<Avatar className="h-8 w-8 rounded-lg">
-					<AvatarImage src={user.avatar} alt={user.name} />
-					<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+					<AvatarImage
+						src={userProfile.avatar_url}
+						alt={userProfile.username}
+					/>
+					<AvatarFallback className="rounded-lg">
+						{userProfile.username?.slice(0, 2)}
+					</AvatarFallback>
 				</Avatar>
 				<div className="grid flex-1 text-left text-sm leading-tight">
-					<span className="truncate font-medium">{user.name}</span>
-					<span className="truncate text-xs">{user.email}</span>
+					<span className="truncate font-medium">{userProfile.username}</span>
+					<span className="truncate text-xs">{userProfile.email}</span>
 				</div>
 				<ChevronsUpDown className="ml-auto size-4" />
 			</DropdownMenuTrigger>
@@ -64,16 +65,21 @@ export function SidebarUserControls({
 						<DropdownMenuLabel>
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage src={user.avatar} alt={user.name} />
+									<AvatarImage
+										src={userProfile.avatar_url}
+										alt={userProfile.username}
+									/>
 									<AvatarFallback className="rounded-lg">
-										CN
+										{userProfile.username?.slice(0, 2)}
 									</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-medium">
-										{user.name}
+										{userProfile.username}
 									</span>
-									<span className="truncate text-xs">{user.email}</span>
+									<span className="truncate text-xs">
+										{userProfile.email}
+									</span>
 								</div>
 							</div>
 						</DropdownMenuLabel>
