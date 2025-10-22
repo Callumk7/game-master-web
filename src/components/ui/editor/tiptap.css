@@ -249,6 +249,11 @@
 	background-color: var(--editor-bg-subtle);
 }
 
+.ProseMirror mark {
+	background-color: var(--chart-1);
+	color: var(--editor-text-default);
+}
+
 /* Table selection styles */
 .ProseMirror .selectedCell:after {
 	content: "";
