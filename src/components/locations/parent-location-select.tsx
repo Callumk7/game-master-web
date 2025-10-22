@@ -4,12 +4,14 @@ import {
 	Select,
 	SelectContent,
 	SelectItem,
+	SelectPortal,
 	SelectPositioner,
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
 
 interface ParentLocationSelectProps {
+	container?: React.RefObject<HTMLElement | null>;
 	gameId: string;
 	value?: string;
 	onChange: (value: string | undefined) => void;
@@ -74,6 +76,7 @@ function formatLocationLabel(location: Location, hierarchy: Location[]): string 
 }
 
 export function ParentLocationSelect({
+	container,
 	gameId,
 	value,
 	onChange,
@@ -139,6 +142,44 @@ export function ParentLocationSelect({
 		return formatLocationLabel(selectedLocation, locationHierarchy);
 	};
 
+	const selectContent = (
+		<SelectPositioner>
+			<SelectContent>
+				<SelectItem value="none">
+					<span className="text-muted-foreground">
+						No parent (top-level location)
+					</span>
+				</SelectItem>
+
+				{sortedLocations.map((location) => {
+					const locationHierarchy = hierarchy.get(location.id) || [location];
+					const label = formatLocationLabel(location, locationHierarchy);
+
+					return (
+						<SelectItem key={location.id} value={location.id}>
+							<div className="flex items-center gap-2">
+								<span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+									{location.type}
+								</span>
+								<span>{label}</span>
+							</div>
+						</SelectItem>
+					);
+				})}
+
+				{sortedLocations.length === 0 && (
+					<SelectItem value="disabled" disabled>
+						<span className="text-muted-foreground">
+							{currentType
+								? `No valid parent locations for ${currentType}`
+								: "No locations available"}
+						</span>
+					</SelectItem>
+				)}
+			</SelectContent>
+		</SelectPositioner>
+	);
+
 	return (
 		<Select
 			value={displayValue}
@@ -161,43 +202,11 @@ export function ParentLocationSelect({
 					) : null}
 				</SelectValue>
 			</SelectTrigger>
-			<SelectPositioner>
-				<SelectContent>
-					<SelectItem value="none">
-						<span className="text-muted-foreground">
-							No parent (top-level location)
-						</span>
-					</SelectItem>
-
-					{sortedLocations.map((location) => {
-						const locationHierarchy = hierarchy.get(location.id) || [
-							location,
-						];
-						const label = formatLocationLabel(location, locationHierarchy);
-
-						return (
-							<SelectItem key={location.id} value={location.id}>
-								<div className="flex items-center gap-2">
-									<span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-										{location.type}
-									</span>
-									<span>{label}</span>
-								</div>
-							</SelectItem>
-						);
-					})}
-
-					{sortedLocations.length === 0 && (
-						<SelectItem value="disabled" disabled>
-							<span className="text-muted-foreground">
-								{currentType
-									? `No valid parent locations for ${currentType}`
-									: "No locations available"}
-							</span>
-						</SelectItem>
-					)}
-				</SelectContent>
-			</SelectPositioner>
+			{container ? (
+				<SelectPortal container={container}>{selectContent}</SelectPortal>
+			) : (
+				selectContent
+			)}
 		</Select>
 	);
 }

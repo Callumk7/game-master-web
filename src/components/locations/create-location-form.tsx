@@ -13,10 +13,11 @@ import { useCreateLocationParentId } from "~/state/ui";
 import { ParentLocationSelect } from "./parent-location-select";
 
 interface CreateLocationFormProps {
+	container?: React.RefObject<HTMLElement | null>;
 	onSuccess?: () => void;
 }
 
-export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
+export function CreateLocationForm({ container, onSuccess }: CreateLocationFormProps) {
 	const { gameId } = useParams({ from: "/_auth/games/$gameId" });
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
@@ -86,6 +87,7 @@ export function CreateLocationForm({ onSuccess }: CreateLocationFormProps) {
 										<field.Label>Parent Location</field.Label>
 										<field.Control>
 											<ParentLocationSelect
+												container={container}
 												gameId={gameId}
 												value={field.state.value}
 												onChange={field.handleChange}
