@@ -48,5 +48,5 @@ function RouteComponent() {
 			</Card>
 			<UpdateProfileForm defaultValues={{ username: userProfile?.username }} />
 		</AuthenticatedLayout>
-	)
+	);
 }
