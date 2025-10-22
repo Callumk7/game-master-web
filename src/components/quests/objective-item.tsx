@@ -1,5 +1,7 @@
+import { Trash2 } from "lucide-react";
 import { useGetQuestQuery } from "~/api/@tanstack/react-query.gen";
 import type { Objective } from "~/api/types.gen";
+import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { cn } from "~/utils/cn";
 import { Spinner } from "../ui/spinner";
@@ -12,7 +14,7 @@ interface ObjectiveItemProps {
 }
 
 export function ObjectiveItem({ objective, gameId, isGameList }: ObjectiveItemProps) {
-	const { toggleComplete } = useObjectiveMutations({
+	const { toggleComplete, deleteObjective } = useObjectiveMutations({
 		gameId,
 		questId: objective.quest_id,
 		isGameList,
@@ -25,7 +27,7 @@ export function ObjectiveItem({ objective, gameId, isGameList }: ObjectiveItemPr
 	const quest = questResponse?.data;
 
 	return (
-		<div className="py-3 flex items-center gap-3">
+		<div className="py-3 flex items-center gap-3 group">
 			<Checkbox
 				checked={objective.complete}
 				onCheckedChange={() => toggleComplete(objective.id, objective.complete)}
@@ -42,6 +44,15 @@ export function ObjectiveItem({ objective, gameId, isGameList }: ObjectiveItemPr
 					{objective.body}
 				</p>
 			</div>
+			<Button
+				variant="ghost"
+				size="icon"
+				className="opacity-0 group-hover:opacity-100 transition-opacity"
+				onClick={() => deleteObjective.mutate(objective.id)}
+				disabled={deleteObjective.isPending}
+			>
+				<Trash2 className="h-4 w-4 text-destructive" />
+			</Button>
 		</div>
 	);
 }
