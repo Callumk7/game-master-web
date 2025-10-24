@@ -1,5 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
-import { updateUserProfileMutation } from "~/api/@tanstack/react-query.gen";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import {
+	getUserProfileQueryKey,
+	updateUserProfileMutation,
+} from "~/api/@tanstack/react-query.gen";
 import { zProfileUpdate } from "~/api/zod.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
@@ -14,6 +18,7 @@ interface UpdateProfileFormProps {
 	className?: string;
 }
 export function UpdateProfileForm({ defaultValues, className }: UpdateProfileFormProps) {
+	const queryClient = useQueryClient();
 	const updateProfile = useMutation(updateUserProfileMutation());
 	const form = useAppForm({
 		defaultValues,
@@ -21,7 +26,21 @@ export function UpdateProfileForm({ defaultValues, className }: UpdateProfileFor
 			onChange: zProfileUpdate,
 		},
 		onSubmit({ value }) {
-			updateProfile.mutate({ body: value });
+			toast.info("Updating profile...");
+			updateProfile.mutate(
+				{ body: value },
+				{
+					onSuccess: () => {
+						toast.success("Profile updated!");
+						queryClient.invalidateQueries({
+							queryKey: getUserProfileQueryKey(),
+						});
+					},
+					onError: () => {
+						toast.error("Failed to update profile.");
+					},
+				},
+			);
 		},
 	});
 

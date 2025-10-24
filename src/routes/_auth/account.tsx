@@ -40,13 +40,11 @@ function RouteComponent() {
 					<CardDescription>Manage your account details.</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<div className="flex flex-col gap-4">
-						<p>Email: {userProfile?.email}</p>
-						<p>Username: {userProfile?.username}</p>
-					</div>
+					<UpdateProfileForm
+						defaultValues={{ username: userProfile?.username }}
+					/>
 				</CardContent>
 			</Card>
-			<UpdateProfileForm defaultValues={{ username: userProfile?.username }} />
 		</AuthenticatedLayout>
 	);
 }
