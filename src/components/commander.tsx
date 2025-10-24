@@ -27,7 +27,7 @@ import {
 	createPlatformShortcut,
 	useKeyboardShortcut,
 } from "~/hooks/useKeyboardShortcut";
-import { useGetGameLinksSuspenseQuery } from "~/queries/games";
+import { useGetGameLinksData } from "~/queries/utils";
 import { useIsCommanderOpen, useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { Badge } from "./ui/badge";
@@ -35,14 +35,8 @@ import { Badge } from "./ui/badge";
 export function Commander({ gameId }: { gameId: string }) {
 	const navigate = useNavigate();
 
-	const { data: links, isLoading: linksLoading } = useGetGameLinksSuspenseQuery({
-		id: gameId,
-	});
-	const characters = links?.data?.entities?.characters;
-	const factions = links?.data?.entities?.factions;
-	const locations = links?.data?.entities?.locations;
-	const notes = links?.data?.entities?.notes;
-	const quests = links?.data?.entities?.quests;
+	const { characters, factions, locations, notes, quests, isLoading } =
+		useGetGameLinksData(gameId);
 
 	const { data: pinnedEntitiesResponse, isLoading: pinnedLoading } =
 		useListPinnedEntitiesQuery({
@@ -189,7 +183,7 @@ export function Commander({ gameId }: { gameId: string }) {
 			<CommandInput placeholder="Type a command or search..." />
 			<CommandList>
 				<CommandEmpty>No results found.</CommandEmpty>
-				{linksLoading ? (
+				{isLoading ? (
 					<CommandGroup heading="Loading...">
 						<CommandItem disabled>
 							<span>Loading entities...</span>

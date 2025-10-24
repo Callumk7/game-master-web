@@ -4,13 +4,8 @@ import {
 	getGameOptions,
 	getLocationTreeOptions,
 	getQuestTreeOptions,
-	listCharactersOptions,
-	listFactionsOptions,
 	listGameEntitiesOptions,
-	listLocationsOptions,
-	listNotesOptions,
 	listPinnedEntitiesOptions,
-	listQuestsOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
 import { EditCharacterDialog } from "~/components/characters/edit-character-dialog";
@@ -37,12 +32,9 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 	component: RouteComponent,
 	loader: async ({ params, context }) => {
 		const gameId = params.gameId;
-		await context.queryClient.ensureQueryData({
+		context.queryClient.ensureQueryData({
 			...getGameOptions({ path: { id: gameId } }),
 		});
-		context.queryClient.ensureQueryData(
-			listGameEntitiesOptions({ path: { game_id: gameId } }),
-		);
 		context.queryClient.ensureQueryData(
 			getLocationTreeOptions({ path: { game_id: gameId } }),
 		);
@@ -52,20 +44,8 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 		context.queryClient.ensureQueryData(
 			listPinnedEntitiesOptions({ path: { game_id: gameId } }),
 		);
-		context.queryClient.ensureQueryData(
-			listCharactersOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listFactionsOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listNotesOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listQuestsOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listLocationsOptions({ path: { game_id: gameId } }),
+		await context.queryClient.ensureQueryData(
+			listGameEntitiesOptions({ path: { game_id: gameId } }),
 		);
 	},
 	errorComponent: BasicErrorComponent,
