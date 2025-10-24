@@ -1,4 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import type { z } from "zod";
 import { createGameMutation } from "~/api/@tanstack/react-query.gen";
 import { zGameCreateParams } from "~/api/zod.gen";
@@ -13,6 +15,7 @@ type FormData = z.infer<typeof zGameCreateParams>;
 
 export function CreateGameForm() {
 	const createGame = useMutation(createGameMutation());
+	const navigate = useNavigate();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -25,16 +28,28 @@ export function CreateGameForm() {
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await createGame.mutateAsync({
-					body: {
-						game: {
-							name: value.name,
-							content: value.content || undefined,
-							setting: value.setting || undefined,
+				await createGame.mutateAsync(
+					{
+						body: {
+							game: {
+								name: value.name,
+								content: value.content || undefined,
+								setting: value.setting || undefined,
+							},
 						},
 					},
-				});
-				form.reset();
+					{
+						onSuccess: (data) => {
+							toast.success("Game created successfully!");
+							if (data.data?.id) {
+								navigate({
+									to: "/games/$gameId",
+									params: { gameId: data.data.id },
+								});
+							}
+						},
+					},
+				);
 			} catch (error) {
 				console.error("Failed to create game:", error);
 			}
