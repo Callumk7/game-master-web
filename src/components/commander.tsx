@@ -5,6 +5,7 @@ import {
 	Gem,
 	MapPin,
 	Plus,
+	Search,
 	Shield,
 	Sword,
 	User,
@@ -519,5 +520,24 @@ export function Commander({ gameId }: { gameId: string }) {
 				)}
 			</CommandList>
 		</CommandDialog>
+	);
+}
+
+export function CommanderTrigger() {
+	const { setIsCommanderOpen } = useUIActions();
+	return (
+		<div className="flex-1 max-w-md">
+			<button
+				type="button"
+				onClick={() => setIsCommanderOpen(true)}
+				className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
+			>
+				<Search className="mr-3 w-4 h-4 text-muted-foreground" />
+				<span className="text-muted-foreground">Search entities...</span>
+				<Badge variant="secondary" className="ml-auto text-xs">
+					⌘K
+				</Badge>
+			</button>
+		</div>
 	);
 }
