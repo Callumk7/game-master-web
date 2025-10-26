@@ -1,11 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
-import type { Entity } from "~/types";
 import { EntityTable, type FilterConfig } from "../ui/composite/entity-table";
+import type { EntityLink } from "./types";
 
 interface EntityLinksTableProps {
-	links: Entity[];
-	columns: ColumnDef<Entity>[];
+	links: EntityLink[];
+	columns: ColumnDef<EntityLink>[];
 }
 
 export function EntityLinksTable({ links, columns }: EntityLinksTableProps) {

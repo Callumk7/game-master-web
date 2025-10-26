@@ -4,128 +4,7 @@
  * Linked Character
  * A character with relationship metadata
  */
-export type LinkedCharacterWithPrimary = {
-    /**
-     * Character content
-     */
-    content?: string;
-    /**
-     * Character content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Description of the relationship
-     */
-    description_meta?: string;
-    /**
-     * Role within the faction
-     */
-    faction_role?: string;
-    /**
-     * Character ID
-     */
-    id: string;
-    /**
-     * Whether the relationship is active
-     */
-    is_active?: boolean;
-    /**
-     * Whether the relationship is primary
-     */
-    is_primary?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Character name
-     */
-    name: string;
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-    /**
-     * Character tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Location Creation Link
- * Link definition for location creation
- */
-export type LocationCreationLink = {
-    /**
-     * Free-form description of the relationship
-     */
-    description?: string;
-    /**
-     * Entity ID to link
-     */
-    entity_id: string;
-    /**
-     * Entity type to link
-     */
-    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
-    /**
-     * Whether the relationship is currently active
-     */
-    is_active?: boolean;
-    /**
-     * Additional flexible metadata as JSON
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of relationship between entities
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength/importance (1-10)
-     */
-    strength?: number;
-};
-
-/**
- * Objective Update Parameters
- * Parameters for updating an objective
- */
-export type ObjectiveUpdateParams = {
-    /**
-     * Objective description
-     */
-    body?: string;
-    /**
-     * Whether the objective is complete
-     */
-    complete?: boolean;
-    /**
-     * Note link ID
-     */
-    note_link_id?: string;
-};
-
-/**
- * Game Update Request
- * Game update parameters
- */
-export type GameUpdateRequest = {
-    game: GameUpdateParams;
-};
-
-/**
- * Linked Character
- * A character with relationship metadata
- */
-export type LinkedCharacter = {
+export type LinkedCharacterWithCurrentLocation = {
     /**
      * Character content
      */
@@ -147,6 +26,10 @@ export type LinkedCharacter = {
      */
     is_active?: boolean;
     /**
+     * Whether the location is the current location
+     */
+    is_current_location?: boolean;
+    /**
      * Additional metadata
      */
     metadata?: {
@@ -165,674 +48,9 @@ export type LinkedCharacter = {
      */
     strength?: number;
     /**
-     * Character tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Quest Response
- * Response containing a single quest
- */
-export type QuestResponse = {
-    data?: Quest;
-};
-
-/**
- * Objective Update Request
- * Request body for updating an objective
- */
-export type ObjectiveUpdateRequest = {
-    objective: ObjectiveUpdateParams;
-};
-
-/**
- * Location Create Parameters
- * Parameters for creating a new location
- */
-export type LocationCreateParams = {
-    /**
-     * Location content
-     */
-    content?: string;
-    /**
-     * Location content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Location name
-     */
-    name: string;
-    /**
-     * Parent location ID
-     */
-    parent_id?: string;
-    /**
-     * Tags for this location
+     * Tags associated with this character
      */
     tags?: Array<string>;
-    /**
-     * Location type
-     */
-    type: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
-};
-
-/**
- * Objective Create Request
- * Request body for creating an objective
- */
-export type ObjectiveCreateRequest = {
-    objective: ObjectiveCreateParams;
-};
-
-/**
- * Signup Request
- * User registration credentials
- */
-export type SignupRequest = {
-    /**
-     * User email
-     */
-    email: string;
-    /**
-     * User password
-     */
-    password: string;
-};
-
-/**
- * Character Links Data
- * Links associated with a character
- */
-export type CharacterLinksData = {
-    /**
-     * Character ID
-     */
-    character_id: string;
-    /**
-     * Character name
-     */
-    character_name: string;
-    links?: CharacterLinks;
-};
-
-/**
- * User
- * User information
- */
-export type User = {
-    /**
-     * URL to user's avatar image
-     */
-    avatar_url?: string;
-    /**
-     * Email confirmation timestamp
-     */
-    confirmed_at?: string;
-    /**
-     * User email
-     */
-    email: string;
-    /**
-     * User ID
-     */
-    id: string;
-    /**
-     * Username (3-30 chars, alphanumeric + underscores/hyphens)
-     */
-    username?: string;
-};
-
-/**
- * Character Update Request
- * Character update parameters
- */
-export type CharacterUpdateRequest = {
-    character: CharacterUpdateParams;
-};
-
-/**
- * Location Links Data
- * Links associated with a location
- */
-export type LocationLinksData = {
-    links?: LocationLinks;
-    /**
-     * Location ID
-     */
-    location_id: string;
-    /**
-     * Location name
-     */
-    location_name: string;
-};
-
-/**
- * Members Response
- * Response containing a list of game members
- */
-export type MembersResponse = {
-    /**
-     * Response data
-     */
-    data?: Array<Member>;
-};
-
-/**
- * Faction Creation Link
- * Link definition for faction creation
- */
-export type FactionCreationLink = {
-    /**
-     * Free-form description of the relationship
-     */
-    description?: string;
-    /**
-     * Entity ID to link
-     */
-    entity_id: string;
-    /**
-     * Entity type to link
-     */
-    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
-    /**
-     * Whether the relationship is currently active
-     */
-    is_active?: boolean;
-    /**
-     * Additional flexible metadata as JSON
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of relationship between entities
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength/importance (1-10)
-     */
-    strength?: number;
-};
-
-/**
- * Pinned Entities Response
- * Response containing all pinned entities for a game
- */
-export type PinnedEntitiesResponse = {
-    data?: PinnedEntitiesData;
-};
-
-/**
- * Quest Create Request
- * Quest creation parameters
- */
-export type QuestCreateRequest = {
-    quest: QuestCreateParams;
-};
-
-/**
- * Linked Note
- * A note with relationship metadata
- */
-export type LinkedNote = {
-    /**
-     * Note content
-     */
-    content?: string;
-    /**
-     * Note content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Description of the relationship
-     */
-    description_meta?: string;
-    /**
-     * Note ID
-     */
-    id: string;
-    /**
-     * Whether the relationship is active
-     */
-    is_active?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Note name
-     */
-    name: string;
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-    /**
-     * Note tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Entities Data
- * Game entities data structure
- */
-export type EntitiesData = {
-    entities?: Entities;
-    /**
-     * Game ID
-     */
-    game_id: string;
-    /**
-     * Game name
-     */
-    game_name: string;
-};
-
-/**
- * Note Create Request
- * Note creation parameters
- */
-export type NoteCreateRequest = {
-    note: NoteCreateParams;
-};
-
-/**
- * Games Response
- * Response containing a list of games
- */
-export type GamesResponse = {
-    /**
-     * Response data
-     */
-    data?: Array<Game>;
-};
-
-/**
- * Location Links Response
- * Response containing location links
- */
-export type LocationLinksResponse = {
-    data?: LocationLinksData;
-};
-
-/**
- * Faction Update Parameters
- * Parameters for updating an existing faction (partial updates supported)
- */
-export type FactionUpdateParams = {
-    /**
-     * Faction content
-     */
-    content?: string;
-    /**
-     * Faction content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Faction name
-     */
-    name?: string;
-    /**
-     * Whether this faction is pinned
-     */
-    pinned?: boolean;
-    /**
-     * Tags for this faction
-     */
-    tags?: Array<string>;
-};
-
-/**
- * Location Update Parameters
- * Parameters for updating an existing location (partial updates supported)
- */
-export type LocationUpdateParams = {
-    /**
-     * Location content
-     */
-    content?: string;
-    /**
-     * Location content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Location name
-     */
-    name?: string;
-    /**
-     * Parent location ID
-     */
-    parent_id?: string;
-    /**
-     * Whether this location is pinned
-     */
-    pinned?: boolean;
-    /**
-     * Tags for this location
-     */
-    tags?: Array<string>;
-    /**
-     * Location type
-     */
-    type?: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
-};
-
-/**
- * Image Create Request
- * Form data for uploading an image - corresponds to image[field] format
- */
-export type ImageCreateRequest = {
-    image: ImageCreateParams;
-};
-
-/**
- * Quest Links Data
- * Links associated with a quest
- */
-export type QuestLinksData = {
-    links?: QuestLinks;
-    /**
-     * Quest ID
-     */
-    quest_id: string;
-    /**
-     * Quest name
-     */
-    quest_name: string;
-};
-
-/**
- * Objective
- * A quest objective
- */
-export type Objective = {
-    /**
-     * Objective description
-     */
-    body: string;
-    /**
-     * Whether the objective is complete
-     */
-    complete: boolean;
-    /**
-     * Objective ID
-     */
-    id: string;
-    /**
-     * Creation timestamp
-     */
-    inserted_at: string;
-    /**
-     * Note link ID
-     */
-    note_link_id?: string;
-    /**
-     * Quest ID
-     */
-    quest_id: string;
-    /**
-     * Last update timestamp
-     */
-    updated_at: string;
-};
-
-/**
- * Quests Response
- * Response containing a list of quests
- */
-export type QuestsResponse = {
-    /**
-     * Response data
-     */
-    data?: Array<Quest>;
-};
-
-/**
- * Note Update Parameters
- * Parameters for updating an existing note (partial updates supported)
- */
-export type NoteUpdateParams = {
-    /**
-     * Note content
-     */
-    content?: string;
-    /**
-     * Note content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Note name
-     */
-    name?: string;
-    /**
-     * Whether this note is pinned
-     */
-    pinned?: boolean;
-    /**
-     * Tags for this note
-     */
-    tags?: Array<string>;
-};
-
-/**
- * Note Links Response
- * Response containing note links
- */
-export type NoteLinksResponse = {
-    data?: NoteLinksData;
-};
-
-/**
- * Linked Faction
- * A faction with relationship metadata
- */
-export type LinkedFaction = {
-    /**
-     * Faction content
-     */
-    content?: string;
-    /**
-     * Faction content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Description of the relationship
-     */
-    description_meta?: string;
-    /**
-     * Faction ID
-     */
-    id: string;
-    /**
-     * Whether the relationship is active
-     */
-    is_active?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Faction name
-     */
-    name: string;
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-    /**
-     * Faction tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Success Response
- * Generic success response
- */
-export type SuccessResponse = {
-    /**
-     * Success message
-     */
-    message: string;
-    profile?: User;
-};
-
-/**
- * Faction Create Request
- * Faction creation parameters
- */
-export type FactionCreateRequest = {
-    faction: FactionCreateParams;
-};
-
-/**
- * Note Response
- * Response containing a single note
- */
-export type NoteResponse = {
-    data?: Note;
-};
-
-/**
- * Email Change Confirm
- * Confirm email address change with token
- */
-export type EmailChangeConfirm = {
-    /**
-     * Email change confirmation token
-     */
-    token: string;
-};
-
-/**
- * Entities
- * Collection of game entities
- */
-export type Entities = {
-    /**
-     * Characters list
-     */
-    characters?: Array<Character>;
-    /**
-     * Factions list
-     */
-    factions?: Array<Faction>;
-    /**
-     * Locations list
-     */
-    locations?: Array<Location>;
-    /**
-     * Notes list
-     */
-    notes?: Array<Note>;
-    /**
-     * Quests list
-     */
-    quests?: Array<Quest>;
-};
-
-/**
- * Quest Create Parameters
- * Parameters for creating a new quest
- */
-export type QuestCreateParams = {
-    /**
-     * Quest content
-     */
-    content?: string;
-    /**
-     * Quest content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Quest name
-     */
-    name: string;
-    /**
-     * Parent quest ID for hierarchical structure
-     */
-    parent_id?: string;
-    /**
-     * Quest status
-     */
-    status?: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
-    /**
-     * Tags for this quest
-     */
-    tags?: Array<string>;
-};
-
-/**
- * Location
- * A game location
- */
-export type Location = {
-    /**
-     * Location content
-     */
-    content?: string;
-    /**
-     * Location content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Creation timestamp
-     */
-    created_at?: string;
-    /**
-     * Associated game ID
-     */
-    game_id: string;
-    /**
-     * Location ID
-     */
-    id: string;
-    /**
-     * Location name
-     */
-    name: string;
-    /**
-     * Parent location ID
-     */
-    parent_id?: string;
-    /**
-     * Whether this location is pinned
-     */
-    pinned: boolean;
-    /**
-     * Tags associated with this location
-     */
-    tags?: Array<string>;
-    /**
-     * Location type
-     */
-    type: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
-    /**
-     * Last update timestamp
-     */
-    updated_at?: string;
-};
-
-/**
- * Image Statistics Response
- * Response containing image statistics for an entity
- */
-export type ImageStatsResponse = {
-    data?: ImageStats;
 };
 
 /**
@@ -879,340 +97,6 @@ export type QuestTreeNode = {
 };
 
 /**
- * Characters Response
- * Response containing a list of characters
- */
-export type CharactersResponse = {
-    /**
-     * Response data
-     */
-    data?: Array<Character>;
-};
-
-/**
- * Notes Response
- * Response containing a list of notes
- */
-export type NotesResponse = {
-    /**
-     * Response data
-     */
-    data?: Array<Note>;
-};
-
-/**
- * Quest
- * A game quest
- */
-export type Quest = {
-    /**
-     * Quest content
-     */
-    content?: string;
-    /**
-     * Quest content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Creation timestamp
-     */
-    created_at?: string;
-    /**
-     * Associated game ID
-     */
-    game_id: string;
-    /**
-     * Quest ID
-     */
-    id: string;
-    /**
-     * Quest name
-     */
-    name: string;
-    /**
-     * Parent quest ID for hierarchical structure
-     */
-    parent_id?: string;
-    /**
-     * Whether this quest is pinned
-     */
-    pinned: boolean;
-    /**
-     * Quest status
-     */
-    status: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
-    /**
-     * Tags associated with this quest
-     */
-    tags?: Array<string>;
-    /**
-     * Last update timestamp
-     */
-    updated_at?: string;
-    /**
-     * Creator user ID
-     */
-    user_id: string;
-};
-
-/**
- * Game Create Parameters
- * Parameters for creating a new game
- */
-export type GameCreateParams = {
-    /**
-     * Game content
-     */
-    content?: string;
-    /**
-     * Game content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Game name
-     */
-    name: string;
-    /**
-     * Game setting
-     */
-    setting?: string;
-};
-
-/**
- * Game
- * A game instance
- */
-export type Game = {
-    /**
-     * Game content
-     */
-    content?: string;
-    /**
-     * Game content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Creation timestamp
-     */
-    created_at?: string;
-    /**
-     * Game ID
-     */
-    id: string;
-    /**
-     * Game name
-     */
-    name: string;
-    /**
-     * Owner user ID
-     */
-    owner_id: string;
-    /**
-     * Game setting
-     */
-    setting?: string;
-    /**
-     * Last update timestamp
-     */
-    updated_at?: string;
-};
-
-/**
- * Pinned Entities
- * Collection of pinned entities grouped by type
- */
-export type PinnedEntities = {
-    /**
-     * Pinned characters
-     */
-    characters?: Array<Character>;
-    /**
-     * Pinned factions
-     */
-    factions?: Array<Faction>;
-    /**
-     * Pinned locations
-     */
-    locations?: Array<Location>;
-    /**
-     * Pinned notes
-     */
-    notes?: Array<Note>;
-    /**
-     * Pinned quests
-     */
-    quests?: Array<Quest>;
-};
-
-/**
- * Linked Location
- * A location with relationship metadata
- */
-export type LinkedLocation = {
-    /**
-     * Location content
-     */
-    content?: string;
-    /**
-     * Location content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Description of the relationship
-     */
-    description_meta?: string;
-    /**
-     * Location ID
-     */
-    id: string;
-    /**
-     * Whether the relationship is active
-     */
-    is_active?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Location name
-     */
-    name: string;
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-    /**
-     * Location tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Game Update Parameters
- * Parameters for updating an existing game (partial updates supported)
- */
-export type GameUpdateParams = {
-    /**
-     * Game content
-     */
-    content?: string;
-    /**
-     * Game content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Game name
-     */
-    name?: string;
-    /**
-     * Game setting
-     */
-    setting?: string;
-};
-
-/**
- * Entities Response
- * Response containing all game entities
- */
-export type EntitiesResponse = {
-    data?: EntitiesData;
-};
-
-/**
- * Linked Character
- * A character with relationship metadata
- */
-export type LinkedCharacterWithCurrentLocation = {
-    /**
-     * Character content
-     */
-    content?: string;
-    /**
-     * Character content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Description of the relationship
-     */
-    description_meta?: string;
-    /**
-     * Character ID
-     */
-    id: string;
-    /**
-     * Whether the relationship is active
-     */
-    is_active?: boolean;
-    /**
-     * Whether the location is the current location
-     */
-    is_current_location?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Character name
-     */
-    name: string;
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-    /**
-     * Character tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Quest Links Response
- * Response containing quest links
- */
-export type QuestLinksResponse = {
-    data?: QuestLinksData;
-};
-
-/**
- * Quest Links
- * Collections of entities linked to a quest
- */
-export type QuestLinks = {
-    /**
-     * Linked characters with metadata
-     */
-    characters?: Array<LinkedCharacter>;
-    /**
-     * Linked factions with metadata
-     */
-    factions?: Array<LinkedFaction>;
-    /**
-     * Linked locations with metadata
-     */
-    locations?: Array<LinkedLocation>;
-    /**
-     * Linked notes with metadata
-     */
-    notes?: Array<LinkedNote>;
-    /**
-     * Linked quests with metadata
-     */
-    quests?: Array<LinkedQuest>;
-};
-
-/**
  * Character Create Request
  * Character creation parameters with optional entity links
  */
@@ -1225,493 +109,30 @@ export type CharacterCreateRequest = {
 };
 
 /**
- * Linked Location
- * A location with relationship metadata
+ * Note Update Parameters
+ * Parameters for updating an existing note (partial updates supported)
  */
-export type LinkedLocationWithCurrent = {
+export type NoteUpdateParams = {
     /**
-     * Location content
+     * Note content
      */
     content?: string;
     /**
-     * Location content as plain text
+     * Note content as plain text
      */
     content_plain_text?: string;
     /**
-     * Description of the relationship
+     * Note name
      */
-    description_meta?: string;
+    name?: string;
     /**
-     * Location ID
+     * Whether this note is pinned
      */
-    id: string;
+    pinned?: boolean;
     /**
-     * Whether the relationship is active
+     * Tags for this note
      */
-    is_active?: boolean;
-    /**
-     * Whether the location is the current location
-     */
-    is_current_location?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Location name
-     */
-    name: string;
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-    /**
-     * Location tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Character Creation Link
- * Link definition for character creation
- */
-export type CharacterCreationLink = {
-    /**
-     * Free-form description of the relationship
-     */
-    description?: string;
-    /**
-     * Entity ID to link
-     */
-    entity_id: string;
-    /**
-     * Entity type to link
-     */
-    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
-    /**
-     * Character's role in the faction (faction links only)
-     */
-    faction_role?: string;
-    /**
-     * Whether the relationship is currently active
-     */
-    is_active?: boolean;
-    /**
-     * Whether this is the character's current location (location links only)
-     */
-    is_current_location?: boolean;
-    /**
-     * Whether this is the character's primary faction (faction links only)
-     */
-    is_primary?: boolean;
-    /**
-     * Additional flexible metadata as JSON
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of relationship between entities
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength/importance (1-10)
-     */
-    strength?: number;
-};
-
-/**
- * Error Details
- * Detailed error information
- */
-export type ErrorDetails = {
-    [key: string]: unknown;
-};
-
-/**
- * Image Create Parameters
- * Parameters for uploading a new image - multipart/form-data fields
- */
-export type ImageCreateParams = {
-    /**
-     * Alternative text for accessibility
-     */
-    alt_text?: string;
-    /**
-     * Image file to upload
-     */
-    file: Blob | File;
-    /**
-     * Whether this should be the primary image for the entity
-     */
-    is_primary?: boolean;
-    /**
-     * Vertical position percentage (0-100) for banner placement
-     */
-    position_y?: number;
-};
-
-/**
- * Faction Members Response
- * Response containing faction members
- */
-export type FactionMembersResponse = {
-    data?: FactionMembersData;
-};
-
-/**
- * Auth Status Response
- * Authentication status response
- */
-export type AuthStatusResponse = {
-    /**
-     * Whether user is authenticated
-     */
-    authenticated: boolean;
-    user?: User;
-};
-
-/**
- * Image Statistics
- * Statistics about images for an entity
- */
-export type ImageStats = {
-    /**
-     * ID of the entity
-     */
-    entity_id: string;
-    /**
-     * Type of entity
-     */
-    entity_type: 'character' | 'faction' | 'location' | 'quest';
-    /**
-     * Whether the entity has a primary image
-     */
-    has_primary: boolean;
-    /**
-     * Total number of images for this entity
-     */
-    total_count: number;
-    /**
-     * Total size of all images in bytes
-     */
-    total_size: number;
-    /**
-     * Total size of all images in megabytes
-     */
-    total_size_mb: number;
-};
-
-/**
- * Login Request
- * Login credentials - either email/password or magic link token
- */
-export type LoginRequest = {
-    /**
-     * User email
-     */
-    email?: string;
-    /**
-     * User password
-     */
-    password?: string;
-    /**
-     * Magic link token
-     */
-    token?: string;
-};
-
-/**
- * Profile Update
- * Parameters for updating user profile
- */
-export type ProfileUpdate = {
-    /**
-     * New username (3-30 chars, alphanumeric + underscores/hyphens)
-     */
-    username?: string;
-};
-
-/**
- * Faction Links Data
- * Links associated with a faction
- */
-export type FactionLinksData = {
-    /**
-     * Faction ID
-     */
-    faction_id: string;
-    /**
-     * Faction name
-     */
-    faction_name: string;
-    links?: FactionLinks;
-};
-
-/**
- * Image Update Request
- * Request body for updating image metadata
- */
-export type ImageUpdateRequest = {
-    image?: ImageUpdateParams;
-};
-
-/**
- * Game Create Request
- * Game creation parameters
- */
-export type GameCreateRequest = {
-    game: GameCreateParams;
-};
-
-/**
- * Member
- * A game member
- */
-export type Member = {
-    /**
-     * User email
-     */
-    email: string;
-    /**
-     * Join timestamp
-     */
-    joined_at?: string;
-    /**
-     * Member role
-     */
-    role: string;
-    /**
-     * User ID
-     */
-    user_id: string;
-};
-
-/**
- * Factions Response
- * Response containing a list of factions
- */
-export type FactionsResponse = {
-    /**
-     * Response data
-     */
-    data?: Array<Faction>;
-};
-
-/**
- * Images List Response
- * Response containing a list of images with metadata
- */
-export type ImagesListResponse = {
-    /**
-     * List of images
-     */
-    data: Array<Image>;
-    /**
-     * Response metadata
-     */
-    meta: {
-        [key: string]: unknown;
-    };
-};
-
-/**
- * Faction Response
- * Response containing a single faction
- */
-export type FactionResponse = {
-    data?: Faction;
-};
-
-/**
- * Error
- * Error response
- */
-export type _Error = {
-    errors?: ErrorDetails;
-};
-
-/**
- * Location Links
- * Collections of entities linked to a location
- */
-export type LocationLinks = {
-    /**
-     * Linked characters with metadata
-     */
-    characters?: Array<LinkedCharacterWithCurrentLocation>;
-    /**
-     * Linked factions with metadata
-     */
-    factions?: Array<LinkedFactionWithCurrentLocation>;
-    /**
-     * Linked locations with metadata
-     */
-    locations?: Array<LinkedLocation>;
-    /**
-     * Linked notes with metadata
-     */
-    notes?: Array<LinkedNote>;
-    /**
-     * Linked quests with metadata
-     */
-    quests?: Array<LinkedQuest>;
-};
-
-/**
- * Quest Creation Link
- * Link definition for quest creation
- */
-export type QuestCreationLink = {
-    /**
-     * Free-form description of the relationship
-     */
-    description?: string;
-    /**
-     * Entity ID to link
-     */
-    entity_id: string;
-    /**
-     * Entity type to link
-     */
-    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
-    /**
-     * Whether the relationship is currently active
-     */
-    is_active?: boolean;
-    /**
-     * Additional flexible metadata as JSON
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of objective (quest links only)
-     */
-    objective_type?: string;
-    /**
-     * Type of relationship between entities
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength/importance (1-10)
-     */
-    strength?: number;
-};
-
-export type LinkedEntityBase = {
-    /**
-     * Description of the relationship
-     */
-    description?: string;
-    /**
-     * Whether the relationship is active
-     */
-    is_active?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-};
-
-/**
- * Link Request
- * Request to create a link between entities
- */
-export type LinkRequest = {
-    /**
-     * Free-form description of the relationship
-     */
-    description?: string;
-    /**
-     * Entity ID to link
-     */
-    entity_id: string;
-    /**
-     * Entity type to link
-     */
-    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
-    /**
-     * Role within the faction
-     */
-    faction_role?: string;
-    /**
-     * Whether the relationship is currently active
-     */
-    is_active?: boolean;
-    /**
-     * Whether the location is the current location
-     */
-    is_current_location?: boolean;
-    /**
-     * Whether the relationship is the primary relationship
-     */
-    is_primary?: boolean;
-    /**
-     * Additional flexible metadata as JSON
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of relationship between entities
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength/importance (1-10)
-     */
-    strength?: number;
-};
-
-/**
- * Objective Response
- * Response containing a single objective
- */
-export type ObjectiveResponse = {
-    data?: Objective;
-};
-
-/**
- * Entity Tree Data
- * Entity relationship tree data grouped by entity types or single tree
- */
-export type EntityTreeData = {
-    /**
-     * Character trees
-     */
-    characters?: Array<EntityTreeNode>;
-    /**
-     * Faction trees
-     */
-    factions?: Array<EntityTreeNode>;
-    /**
-     * Location trees
-     */
-    locations?: Array<EntityTreeNode>;
-    /**
-     * Note trees
-     */
-    notes?: Array<EntityTreeNode>;
-    /**
-     * Quest trees
-     */
-    quests?: Array<EntityTreeNode>;
+    tags?: Array<string>;
 };
 
 /**
@@ -1780,46 +201,196 @@ export type Image = {
 };
 
 /**
- * Location Response
- * Response containing a single location
+ * Faction Update Parameters
+ * Parameters for updating an existing faction (partial updates supported)
  */
-export type LocationResponse = {
-    data?: Location;
-};
-
-/**
- * Location Update Request
- * Location update parameters
- */
-export type LocationUpdateRequest = {
-    location: LocationUpdateParams;
-};
-
-/**
- * Character Links Response
- * Response containing character links
- */
-export type CharacterLinksResponse = {
-    data?: CharacterLinksData;
-};
-
-/**
- * Faction Members Data
- * Characters that are members of a faction
- */
-export type FactionMembersData = {
+export type FactionUpdateParams = {
     /**
-     * Faction ID
+     * Faction content
      */
-    faction_id: string;
+    content?: string;
+    /**
+     * Faction content as plain text
+     */
+    content_plain_text?: string;
     /**
      * Faction name
      */
-    faction_name: string;
+    name?: string;
     /**
-     * Faction member characters
+     * Whether this faction is pinned
      */
-    members?: Array<Character>;
+    pinned?: boolean;
+    /**
+     * Tags for this faction
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Quest Creation Link
+ * Link definition for quest creation
+ */
+export type QuestCreationLink = {
+    /**
+     * Free-form description of the relationship
+     */
+    description?: string;
+    /**
+     * Entity ID to link
+     */
+    entity_id: string;
+    /**
+     * Entity type to link
+     */
+    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
+    /**
+     * Whether the relationship is currently active
+     */
+    is_active?: boolean;
+    /**
+     * Additional flexible metadata as JSON
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of objective (quest links only)
+     */
+    objective_type?: string;
+    /**
+     * Type of relationship between entities
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength/importance (1-10)
+     */
+    strength?: number;
+};
+
+/**
+ * Location Create Request
+ * Location creation parameters
+ */
+export type LocationCreateRequest = {
+    location: LocationCreateParams;
+};
+
+/**
+ * Note Create Request
+ * Note creation parameters
+ */
+export type NoteCreateRequest = {
+    note: NoteCreateParams;
+};
+
+/**
+ * Objective
+ * A quest objective
+ */
+export type Objective = {
+    /**
+     * Objective description
+     */
+    body: string;
+    /**
+     * Whether the objective is complete
+     */
+    complete: boolean;
+    /**
+     * Objective ID
+     */
+    id: string;
+    /**
+     * Creation timestamp
+     */
+    inserted_at: string;
+    /**
+     * Note link ID
+     */
+    note_link_id?: string;
+    /**
+     * Quest ID
+     */
+    quest_id: string;
+    /**
+     * Last update timestamp
+     */
+    updated_at: string;
+};
+
+/**
+ * Success Response
+ * Generic success response
+ */
+export type SuccessResponse = {
+    /**
+     * Success message
+     */
+    message: string;
+    profile?: User;
+};
+
+/**
+ * Quest Links Response
+ * Response containing quest links
+ */
+export type QuestLinksResponse = {
+    data?: QuestLinksData;
+};
+
+/**
+ * Note Update Request
+ * Note update parameters
+ */
+export type NoteUpdateRequest = {
+    note: NoteUpdateParams;
+};
+
+/**
+ * Quest Update Parameters
+ * Parameters for updating an existing quest (partial updates supported)
+ */
+export type QuestUpdateParams = {
+    /**
+     * Quest content
+     */
+    content?: string;
+    /**
+     * Quest content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Quest name
+     */
+    name?: string;
+    /**
+     * Parent quest ID for hierarchical structure
+     */
+    parent_id?: string;
+    /**
+     * Whether this quest is pinned
+     */
+    pinned?: boolean;
+    /**
+     * Quest status
+     */
+    status?: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
+    /**
+     * Tags for this quest
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Location Tree Response
+ * Response containing hierarchical location tree
+ */
+export type LocationTreeResponse = {
+    /**
+     * Response data
+     */
+    data?: Array<LocationTreeNode>;
 };
 
 /**
@@ -1839,14 +410,731 @@ export type NoteLinksData = {
 };
 
 /**
- * Location Tree Response
- * Response containing hierarchical location tree
+ * Quest Update Request
+ * Quest update parameters
  */
-export type LocationTreeResponse = {
+export type QuestUpdateRequest = {
+    quest: QuestUpdateParams;
+};
+
+/**
+ * Linked Character
+ * A character with relationship metadata
+ */
+export type LinkedCharacter = {
+    /**
+     * Character content
+     */
+    content?: string;
+    /**
+     * Character content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Description of the relationship
+     */
+    description_meta?: string;
+    /**
+     * Character ID
+     */
+    id: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Character name
+     */
+    name: string;
+    /**
+     * Type of relationship
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+    /**
+     * Tags associated with this character
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Link Request
+ * Request to create a link between entities
+ */
+export type LinkRequest = {
+    /**
+     * Free-form description of the relationship
+     */
+    description?: string;
+    /**
+     * Entity ID to link
+     */
+    entity_id: string;
+    /**
+     * Entity type to link
+     */
+    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
+    /**
+     * Role within the faction
+     */
+    faction_role?: string;
+    /**
+     * Whether the relationship is currently active
+     */
+    is_active?: boolean;
+    /**
+     * Whether the location is the current location
+     */
+    is_current_location?: boolean;
+    /**
+     * Whether the relationship is the primary relationship
+     */
+    is_primary?: boolean;
+    /**
+     * Additional flexible metadata as JSON
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of relationship between entities
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength/importance (1-10)
+     */
+    strength?: number;
+};
+
+/**
+ * Error
+ * Error response
+ */
+export type _Error = {
+    errors?: ErrorDetails;
+};
+
+/**
+ * Factions Response
+ * Response containing a list of factions
+ */
+export type FactionsResponse = {
     /**
      * Response data
      */
-    data?: Array<LocationTreeNode>;
+    data?: Array<Faction>;
+};
+
+/**
+ * Character Links Data
+ * Links associated with a character
+ */
+export type CharacterLinksData = {
+    /**
+     * Character ID
+     */
+    character_id: string;
+    /**
+     * Character name
+     */
+    character_name: string;
+    links?: CharacterLinks;
+};
+
+/**
+ * Entities
+ * Collection of game entities
+ */
+export type Entities = {
+    /**
+     * Characters list
+     */
+    characters?: Array<Character>;
+    /**
+     * Factions list
+     */
+    factions?: Array<Faction>;
+    /**
+     * Locations list
+     */
+    locations?: Array<Location>;
+    /**
+     * Notes list
+     */
+    notes?: Array<Note>;
+    /**
+     * Quests list
+     */
+    quests?: Array<Quest>;
+};
+
+/**
+ * Note Links Response
+ * Response containing note links
+ */
+export type NoteLinksResponse = {
+    data?: NoteLinksData;
+};
+
+/**
+ * Location Tree Node
+ * A node in the location hierarchy tree
+ */
+export type LocationTreeNode = {
+    /**
+     * Child locations
+     */
+    children?: Array<LocationTreeNode>;
+    /**
+     * Location content
+     */
+    content?: string;
+    /**
+     * Entity type for URL building
+     */
+    entity_type: 'location';
+    /**
+     * Location ID
+     */
+    id: string;
+    /**
+     * Location name
+     */
+    name: string;
+    /**
+     * Parent location ID
+     */
+    parent_id?: string;
+    /**
+     * Tags associated with this location
+     */
+    tags?: Array<string>;
+    /**
+     * Location type
+     */
+    type: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
+};
+
+/**
+ * Linked Location
+ * A location with relationship metadata
+ */
+export type LinkedLocationWithCurrent = {
+    /**
+     * Location content
+     */
+    content?: string;
+    /**
+     * Location content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Description of the relationship
+     */
+    description_meta?: string;
+    /**
+     * Location ID
+     */
+    id: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Whether the location is the current location
+     */
+    is_current_location?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Location name
+     */
+    name: string;
+    /**
+     * Type of relationship
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+    /**
+     * Location tags
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Note Response
+ * Response containing a single note
+ */
+export type NoteResponse = {
+    data?: Note;
+};
+
+/**
+ * Email Change Confirm
+ * Confirm email address change with token
+ */
+export type EmailChangeConfirm = {
+    /**
+     * Email change confirmation token
+     */
+    token: string;
+};
+
+/**
+ * Location Response
+ * Response containing a single location
+ */
+export type LocationResponse = {
+    data?: Location;
+};
+
+/**
+ * Image Response
+ * Response containing a single image
+ */
+export type ImageResponse = {
+    data?: Image;
+};
+
+/**
+ * Entity Tree Response
+ * Response containing hierarchical tree of entity relationships
+ */
+export type EntityTreeResponse = {
+    data?: EntityTreeData;
+};
+
+/**
+ * Faction Creation Link
+ * Link definition for faction creation
+ */
+export type FactionCreationLink = {
+    /**
+     * Free-form description of the relationship
+     */
+    description?: string;
+    /**
+     * Entity ID to link
+     */
+    entity_id: string;
+    /**
+     * Entity type to link
+     */
+    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
+    /**
+     * Whether the relationship is currently active
+     */
+    is_active?: boolean;
+    /**
+     * Additional flexible metadata as JSON
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of relationship between entities
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength/importance (1-10)
+     */
+    strength?: number;
+};
+
+export type LinkedEntityBase = {
+    /**
+     * Description of the relationship
+     */
+    description?: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of relationship
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+};
+
+/**
+ * Faction Update Request
+ * Faction update parameters
+ */
+export type FactionUpdateRequest = {
+    faction: FactionUpdateParams;
+};
+
+/**
+ * Character Primary Faction Data
+ * Primary faction information for a character
+ */
+export type CharacterPrimaryFactionData = {
+    /**
+     * Character ID
+     */
+    character_id: string;
+    faction: Faction;
+    /**
+     * Character's role in the faction
+     */
+    role: string;
+};
+
+/**
+ * Location Create Parameters
+ * Parameters for creating a new location
+ */
+export type LocationCreateParams = {
+    /**
+     * Location content
+     */
+    content?: string;
+    /**
+     * Location content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Location name
+     */
+    name: string;
+    /**
+     * Parent location ID
+     */
+    parent_id?: string;
+    /**
+     * Tags for this location
+     */
+    tags?: Array<string>;
+    /**
+     * Location type
+     */
+    type: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
+};
+
+/**
+ * Link Update Request
+ * Request to update link metadata between entities
+ */
+export type LinkUpdateRequest = {
+    /**
+     * Free-form description of the relationship
+     */
+    description?: string;
+    /**
+     * Role within the faction
+     */
+    faction_role?: string;
+    /**
+     * Whether the relationship is currently active
+     */
+    is_active?: boolean;
+    /**
+     * Whether the location is the current location
+     */
+    is_current_location?: boolean;
+    /**
+     * Whether the relationship is the primary relationship
+     */
+    is_primary?: boolean;
+    /**
+     * Additional flexible metadata as JSON
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of relationship between entities
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength/importance (1-10)
+     */
+    strength?: number;
+};
+
+/**
+ * Login Response
+ * Successful login response
+ */
+export type LoginResponse = {
+    /**
+     * Session token (Base64 encoded)
+     */
+    token: string;
+    user: User;
+};
+
+/**
+ * Character Primary Faction Response
+ * Response containing character's primary faction data
+ */
+export type CharacterPrimaryFactionResponse = {
+    data?: CharacterPrimaryFactionData;
+};
+
+/**
+ * Login Request
+ * Login credentials - either email/password or magic link token
+ */
+export type LoginRequest = {
+    /**
+     * User email
+     */
+    email?: string;
+    /**
+     * User password
+     */
+    password?: string;
+    /**
+     * Magic link token
+     */
+    token?: string;
+};
+
+/**
+ * Character Update Parameters
+ * Parameters for updating an existing character (partial updates supported)
+ */
+export type CharacterUpdateParams = {
+    /**
+     * Whether this character is alive
+     */
+    alive?: boolean;
+    /**
+     * Character class
+     */
+    class?: string;
+    /**
+     * Character content
+     */
+    content?: string;
+    /**
+     * Character content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Character level
+     */
+    level?: number;
+    /**
+     * Character name
+     */
+    name?: string;
+    /**
+     * Whether this character is pinned
+     */
+    pinned?: boolean;
+    /**
+     * Character race
+     */
+    race?: string;
+    /**
+     * Tags for this character
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Game Update Parameters
+ * Parameters for updating an existing game (partial updates supported)
+ */
+export type GameUpdateParams = {
+    /**
+     * Game content
+     */
+    content?: string;
+    /**
+     * Game content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Game name
+     */
+    name?: string;
+    /**
+     * Game setting
+     */
+    setting?: string;
+};
+
+/**
+ * Pinned Entities Response
+ * Response containing all pinned entities for a game
+ */
+export type PinnedEntitiesResponse = {
+    data?: PinnedEntitiesData;
+};
+
+/**
+ * Location
+ * A game location
+ */
+export type Location = {
+    /**
+     * Location content
+     */
+    content?: string;
+    /**
+     * Location content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Creation timestamp
+     */
+    created_at?: string;
+    /**
+     * Associated game ID
+     */
+    game_id: string;
+    /**
+     * Location ID
+     */
+    id: string;
+    /**
+     * Location name
+     */
+    name: string;
+    /**
+     * Parent location ID
+     */
+    parent_id?: string;
+    /**
+     * Whether this location is pinned
+     */
+    pinned: boolean;
+    /**
+     * Tags associated with this location
+     */
+    tags?: Array<string>;
+    /**
+     * Location type
+     */
+    type: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
+    /**
+     * Last update timestamp
+     */
+    updated_at?: string;
+};
+
+/**
+ * Game Create Request
+ * Game creation parameters
+ */
+export type GameCreateRequest = {
+    game: GameCreateParams;
+};
+
+/**
+ * Linked Quest
+ * A quest with relationship metadata
+ */
+export type LinkedQuest = {
+    /**
+     * Quest content
+     */
+    content?: string;
+    /**
+     * Quest content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Description of the relationship
+     */
+    description_meta?: string;
+    /**
+     * Quest ID
+     */
+    id: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Quest name
+     */
+    name: string;
+    /**
+     * Type of relationship
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+    /**
+     * Quest tags
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Notes Response
+ * Response containing a list of notes
+ */
+export type NotesResponse = {
+    /**
+     * Response data
+     */
+    data?: Array<Note>;
+};
+
+/**
+ * Faction Links Response
+ * Response containing faction links
+ */
+export type FactionLinksResponse = {
+    data?: FactionLinksData;
+};
+
+/**
+ * Quest Create Request
+ * Quest creation parameters
+ */
+export type QuestCreateRequest = {
+    quest: QuestCreateParams;
+};
+
+/**
+ * Objectives Response
+ * Response containing a list of objectives
+ */
+export type ObjectivesResponse = {
+    /**
+     * Response data
+     */
+    data?: Array<Objective>;
 };
 
 /**
@@ -1903,23 +1191,123 @@ export type LinkedFactionWithPrimary = {
     /**
      * Faction tags
      */
-    tags?: Array<unknown>;
+    tags?: Array<string>;
 };
 
 /**
- * Location Create Request
- * Location creation parameters
+ * Email Change Request
+ * Request to change user email address
  */
-export type LocationCreateRequest = {
-    location: LocationCreateParams;
+export type EmailChangeRequest = {
+    /**
+     * New email address
+     */
+    new_email: string;
+    /**
+     * Current password for verification
+     */
+    password: string;
 };
 
 /**
- * Faction Links Response
- * Response containing faction links
+ * Faction Links Data
+ * Links associated with a faction
  */
-export type FactionLinksResponse = {
-    data?: FactionLinksData;
+export type FactionLinksData = {
+    /**
+     * Faction ID
+     */
+    faction_id: string;
+    /**
+     * Faction name
+     */
+    faction_name: string;
+    links?: FactionLinks;
+};
+
+/**
+ * Objective Create Parameters
+ * Parameters for creating a new objective
+ */
+export type ObjectiveCreateParams = {
+    /**
+     * Objective description
+     */
+    body: string;
+    /**
+     * Whether the objective is complete
+     */
+    complete?: boolean;
+    /**
+     * Note link ID
+     */
+    note_link_id?: string;
+};
+
+/**
+ * Quest Links
+ * Collections of entities linked to a quest
+ */
+export type QuestLinks = {
+    /**
+     * Linked characters with metadata
+     */
+    characters?: Array<LinkedCharacter>;
+    /**
+     * Linked factions with metadata
+     */
+    factions?: Array<LinkedFaction>;
+    /**
+     * Linked locations with metadata
+     */
+    locations?: Array<LinkedLocation>;
+    /**
+     * Linked notes with metadata
+     */
+    notes?: Array<LinkedNote>;
+    /**
+     * Linked quests with metadata
+     */
+    quests?: Array<LinkedQuest>;
+};
+
+/**
+ * Game Update Request
+ * Game update parameters
+ */
+export type GameUpdateRequest = {
+    game: GameUpdateParams;
+};
+
+/**
+ * Game Create Parameters
+ * Parameters for creating a new game
+ */
+export type GameCreateParams = {
+    /**
+     * Game content
+     */
+    content?: string;
+    /**
+     * Game content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Game name
+     */
+    name: string;
+    /**
+     * Game setting
+     */
+    setting?: string;
+};
+
+/**
+ * Objective Create Request
+ * Request body for creating an objective
+ */
+export type ObjectiveCreateRequest = {
+    objective: ObjectiveCreateParams;
 };
 
 /**
@@ -1934,19 +1322,778 @@ export type QuestTreeResponse = {
 };
 
 /**
- * Character Primary Faction Data
- * Primary faction information for a character
+ * Location Update Request
+ * Location update parameters
  */
-export type CharacterPrimaryFactionData = {
+export type LocationUpdateRequest = {
+    location: LocationUpdateParams;
+};
+
+/**
+ * Entity Tree Data
+ * Entity relationship tree data grouped by entity types or single tree
+ */
+export type EntityTreeData = {
     /**
-     * Character ID
+     * Character trees
      */
-    character_id: string;
-    faction: Faction;
+    characters?: Array<EntityTreeNode>;
+    /**
+     * Faction trees
+     */
+    factions?: Array<EntityTreeNode>;
+    /**
+     * Location trees
+     */
+    locations?: Array<EntityTreeNode>;
+    /**
+     * Note trees
+     */
+    notes?: Array<EntityTreeNode>;
+    /**
+     * Quest trees
+     */
+    quests?: Array<EntityTreeNode>;
+};
+
+/**
+ * Faction Members Data
+ * Characters that are members of a faction
+ */
+export type FactionMembersData = {
+    /**
+     * Faction ID
+     */
+    faction_id: string;
+    /**
+     * Faction name
+     */
+    faction_name: string;
+    /**
+     * Faction member characters
+     */
+    members?: Array<Character>;
+};
+
+/**
+ * Location Links
+ * Collections of entities linked to a location
+ */
+export type LocationLinks = {
+    /**
+     * Linked characters with metadata
+     */
+    characters?: Array<LinkedCharacterWithCurrentLocation>;
+    /**
+     * Linked factions with metadata
+     */
+    factions?: Array<LinkedFactionWithCurrentLocation>;
+    /**
+     * Linked locations with metadata
+     */
+    locations?: Array<LinkedLocation>;
+    /**
+     * Linked notes with metadata
+     */
+    notes?: Array<LinkedNote>;
+    /**
+     * Linked quests with metadata
+     */
+    quests?: Array<LinkedQuest>;
+};
+
+/**
+ * Quest Links Data
+ * Links associated with a quest
+ */
+export type QuestLinksData = {
+    links?: QuestLinks;
+    /**
+     * Quest ID
+     */
+    quest_id: string;
+    /**
+     * Quest name
+     */
+    quest_name: string;
+};
+
+/**
+ * Locations Response
+ * Response containing a list of locations
+ */
+export type LocationsResponse = {
+    /**
+     * Response data
+     */
+    data?: Array<Location>;
+};
+
+/**
+ * Quests Response
+ * Response containing a list of quests
+ */
+export type QuestsResponse = {
+    /**
+     * Response data
+     */
+    data?: Array<Quest>;
+};
+
+/**
+ * Note Links
+ * Collections of entities linked to a note
+ */
+export type NoteLinks = {
+    /**
+     * Linked characters with metadata
+     */
+    characters?: Array<LinkedCharacter>;
+    /**
+     * Linked factions with metadata
+     */
+    factions?: Array<LinkedFaction>;
+    /**
+     * Linked locations with metadata
+     */
+    locations?: Array<LinkedLocation>;
+    /**
+     * Linked notes with metadata
+     */
+    notes?: Array<LinkedNote>;
+    /**
+     * Linked quests with metadata
+     */
+    quests?: Array<LinkedQuest>;
+};
+
+/**
+ * Location Update Parameters
+ * Parameters for updating an existing location (partial updates supported)
+ */
+export type LocationUpdateParams = {
+    /**
+     * Location content
+     */
+    content?: string;
+    /**
+     * Location content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Location name
+     */
+    name?: string;
+    /**
+     * Parent location ID
+     */
+    parent_id?: string;
+    /**
+     * Whether this location is pinned
+     */
+    pinned?: boolean;
+    /**
+     * Tags for this location
+     */
+    tags?: Array<string>;
+    /**
+     * Location type
+     */
+    type?: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
+};
+
+/**
+ * Image Create Request
+ * Form data for uploading an image - corresponds to image[field] format
+ */
+export type ImageCreateRequest = {
+    image: ImageCreateParams;
+};
+
+/**
+ * Member
+ * A game member
+ */
+export type Member = {
+    /**
+     * User email
+     */
+    email: string;
+    /**
+     * Join timestamp
+     */
+    joined_at?: string;
+    /**
+     * Member role
+     */
+    role: string;
+    /**
+     * User ID
+     */
+    user_id: string;
+};
+
+/**
+ * Location Links Data
+ * Links associated with a location
+ */
+export type LocationLinksData = {
+    links?: LocationLinks;
+    /**
+     * Location ID
+     */
+    location_id: string;
+    /**
+     * Location name
+     */
+    location_name: string;
+};
+
+/**
+ * Set Primary Faction Request
+ * Parameters for setting a character's primary faction
+ */
+export type SetPrimaryFactionRequest = {
+    /**
+     * Faction ID
+     */
+    faction_id: string;
     /**
      * Character's role in the faction
      */
     role: string;
+};
+
+/**
+ * Pinned Entities
+ * Collection of pinned entities grouped by type
+ */
+export type PinnedEntities = {
+    /**
+     * Pinned characters
+     */
+    characters?: Array<Character>;
+    /**
+     * Pinned factions
+     */
+    factions?: Array<Faction>;
+    /**
+     * Pinned locations
+     */
+    locations?: Array<Location>;
+    /**
+     * Pinned notes
+     */
+    notes?: Array<Note>;
+    /**
+     * Pinned quests
+     */
+    quests?: Array<Quest>;
+};
+
+/**
+ * Character Links Response
+ * Response containing character links
+ */
+export type CharacterLinksResponse = {
+    data?: CharacterLinksData;
+};
+
+/**
+ * Character Response
+ * Response containing a single character
+ */
+export type CharacterResponse = {
+    data?: Character;
+};
+
+/**
+ * Characters Response
+ * Response containing a list of characters
+ */
+export type CharactersResponse = {
+    /**
+     * Response data
+     */
+    data?: Array<Character>;
+};
+
+/**
+ * Image Statistics
+ * Statistics about images for an entity
+ */
+export type ImageStats = {
+    /**
+     * ID of the entity
+     */
+    entity_id: string;
+    /**
+     * Type of entity
+     */
+    entity_type: 'character' | 'faction' | 'location' | 'quest';
+    /**
+     * Whether the entity has a primary image
+     */
+    has_primary: boolean;
+    /**
+     * Total number of images for this entity
+     */
+    total_count: number;
+    /**
+     * Total size of all images in bytes
+     */
+    total_size: number;
+    /**
+     * Total size of all images in megabytes
+     */
+    total_size_mb: number;
+};
+
+/**
+ * Image Create Parameters
+ * Parameters for uploading a new image - multipart/form-data fields
+ */
+export type ImageCreateParams = {
+    /**
+     * Alternative text for accessibility
+     */
+    alt_text?: string;
+    /**
+     * Image file to upload
+     */
+    file: Blob | File;
+    /**
+     * Whether this should be the primary image for the entity
+     */
+    is_primary?: boolean;
+    /**
+     * Vertical position percentage (0-100) for banner placement
+     */
+    position_y?: number;
+};
+
+/**
+ * Entities Data
+ * Game entities data structure
+ */
+export type EntitiesData = {
+    entities?: Entities;
+    /**
+     * Game ID
+     */
+    game_id: string;
+    /**
+     * Game name
+     */
+    game_name: string;
+};
+
+/**
+ * Image Update Request
+ * Request body for updating image metadata
+ */
+export type ImageUpdateRequest = {
+    image?: ImageUpdateParams;
+};
+
+/**
+ * Objective Update Request
+ * Request body for updating an objective
+ */
+export type ObjectiveUpdateRequest = {
+    objective: ObjectiveUpdateParams;
+};
+
+/**
+ * Faction Create Request
+ * Faction creation parameters
+ */
+export type FactionCreateRequest = {
+    faction: FactionCreateParams;
+};
+
+/**
+ * Location Creation Link
+ * Link definition for location creation
+ */
+export type LocationCreationLink = {
+    /**
+     * Free-form description of the relationship
+     */
+    description?: string;
+    /**
+     * Entity ID to link
+     */
+    entity_id: string;
+    /**
+     * Entity type to link
+     */
+    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
+    /**
+     * Whether the relationship is currently active
+     */
+    is_active?: boolean;
+    /**
+     * Additional flexible metadata as JSON
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of relationship between entities
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength/importance (1-10)
+     */
+    strength?: number;
+};
+
+/**
+ * Images List Response
+ * Response containing a list of images with metadata
+ */
+export type ImagesListResponse = {
+    /**
+     * List of images
+     */
+    data: Array<Image>;
+    /**
+     * Response metadata
+     */
+    meta: {
+        [key: string]: unknown;
+    };
+};
+
+/**
+ * Faction Members Response
+ * Response containing faction members
+ */
+export type FactionMembersResponse = {
+    data?: FactionMembersData;
+};
+
+/**
+ * Entities Response
+ * Response containing all game entities
+ */
+export type EntitiesResponse = {
+    data?: EntitiesData;
+};
+
+/**
+ * Character Links
+ * Collections of entities linked to a character
+ */
+export type CharacterLinks = {
+    /**
+     * Linked characters with metadata
+     */
+    characters?: Array<LinkedCharacter>;
+    /**
+     * Linked factions with metadata
+     */
+    factions?: Array<LinkedFactionWithPrimary>;
+    /**
+     * Linked locations with metadata
+     */
+    locations?: Array<LinkedLocationWithCurrent>;
+    /**
+     * Linked notes with metadata
+     */
+    notes?: Array<LinkedNote>;
+    /**
+     * Linked quests with metadata
+     */
+    quests?: Array<LinkedQuest>;
+};
+
+/**
+ * Image Statistics Response
+ * Response containing image statistics for an entity
+ */
+export type ImageStatsResponse = {
+    data?: ImageStats;
+};
+
+/**
+ * Character Creation Link
+ * Link definition for character creation
+ */
+export type CharacterCreationLink = {
+    /**
+     * Free-form description of the relationship
+     */
+    description?: string;
+    /**
+     * Entity ID to link
+     */
+    entity_id: string;
+    /**
+     * Entity type to link
+     */
+    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
+    /**
+     * Character's role in the faction (faction links only)
+     */
+    faction_role?: string;
+    /**
+     * Whether the relationship is currently active
+     */
+    is_active?: boolean;
+    /**
+     * Whether this is the character's current location (location links only)
+     */
+    is_current_location?: boolean;
+    /**
+     * Whether this is the character's primary faction (faction links only)
+     */
+    is_primary?: boolean;
+    /**
+     * Additional flexible metadata as JSON
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of relationship between entities
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength/importance (1-10)
+     */
+    strength?: number;
+};
+
+/**
+ * User
+ * User information
+ */
+export type User = {
+    /**
+     * URL to user's avatar image
+     */
+    avatar_url?: string;
+    /**
+     * Email confirmation timestamp
+     */
+    confirmed_at?: string;
+    /**
+     * User email
+     */
+    email: string;
+    /**
+     * User ID
+     */
+    id: string;
+    /**
+     * Username (3-30 chars, alphanumeric + underscores/hyphens)
+     */
+    username?: string;
+};
+
+/**
+ * Quest Response
+ * Response containing a single quest
+ */
+export type QuestResponse = {
+    data?: Quest;
+};
+
+/**
+ * Signup Request
+ * User registration credentials
+ */
+export type SignupRequest = {
+    /**
+     * User email
+     */
+    email: string;
+    /**
+     * User password
+     */
+    password: string;
+};
+
+/**
+ * Location Links Response
+ * Response containing location links
+ */
+export type LocationLinksResponse = {
+    data?: LocationLinksData;
+};
+
+/**
+ * Note
+ * A game note
+ */
+export type Note = {
+    /**
+     * Note content
+     */
+    content?: string;
+    /**
+     * Note content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Creation timestamp
+     */
+    created_at?: string;
+    /**
+     * Associated game ID
+     */
+    game_id: string;
+    /**
+     * Note ID
+     */
+    id: string;
+    /**
+     * Note name
+     */
+    name: string;
+    /**
+     * Whether this note is pinned
+     */
+    pinned: boolean;
+    /**
+     * Tags associated with this note
+     */
+    tags?: Array<string>;
+    /**
+     * Last update timestamp
+     */
+    updated_at?: string;
+    /**
+     * Author user ID
+     */
+    user_id: string;
+};
+
+/**
+ * Game Response
+ * Response containing a single game
+ */
+export type GameResponse = {
+    data?: Game;
+};
+
+/**
+ * Character Create Parameters
+ * Parameters for creating a new character
+ */
+export type CharacterCreateParams = {
+    /**
+     * Whether this character is alive
+     */
+    alive?: boolean;
+    /**
+     * Character class
+     */
+    class: string;
+    /**
+     * Character content
+     */
+    content?: string;
+    /**
+     * Character content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Character level
+     */
+    level: number;
+    /**
+     * Character name
+     */
+    name: string;
+    /**
+     * Character race
+     */
+    race?: string;
+    /**
+     * Tags for this character
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Note Create Parameters
+ * Parameters for creating a new note
+ */
+export type NoteCreateParams = {
+    /**
+     * Note content
+     */
+    content?: string;
+    /**
+     * Note content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Note name
+     */
+    name: string;
+    /**
+     * Tags for this note
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Quest
+ * A game quest
+ */
+export type Quest = {
+    /**
+     * Quest content
+     */
+    content?: string;
+    /**
+     * Quest content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Creation timestamp
+     */
+    created_at?: string;
+    /**
+     * Associated game ID
+     */
+    game_id: string;
+    /**
+     * Quest ID
+     */
+    id: string;
+    /**
+     * Quest name
+     */
+    name: string;
+    /**
+     * Parent quest ID for hierarchical structure
+     */
+    parent_id?: string;
+    /**
+     * Whether this quest is pinned
+     */
+    pinned: boolean;
+    /**
+     * Quest status
+     */
+    status: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
+    /**
+     * Tags associated with this quest
+     */
+    tags?: Array<string>;
+    /**
+     * Last update timestamp
+     */
+    updated_at?: string;
+    /**
+     * Creator user ID
+     */
+    user_id: string;
 };
 
 /**
@@ -1973,14 +2120,42 @@ export type FactionCreateParams = {
 };
 
 /**
- * Objectives Response
- * Response containing a list of objectives
+ * Auth Status Response
+ * Authentication status response
  */
-export type ObjectivesResponse = {
+export type AuthStatusResponse = {
     /**
-     * Response data
+     * Whether user is authenticated
      */
-    data?: Array<Objective>;
+    authenticated: boolean;
+    user?: User;
+};
+
+/**
+ * Objective Update Parameters
+ * Parameters for updating an objective
+ */
+export type ObjectiveUpdateParams = {
+    /**
+     * Objective description
+     */
+    body?: string;
+    /**
+     * Whether the objective is complete
+     */
+    complete?: boolean;
+    /**
+     * Note link ID
+     */
+    note_link_id?: string;
+};
+
+/**
+ * Character Update Request
+ * Character update parameters
+ */
+export type CharacterUpdateRequest = {
+    character: CharacterUpdateParams;
 };
 
 /**
@@ -2047,437 +2222,6 @@ export type Character = {
 };
 
 /**
- * Note
- * A game note
- */
-export type Note = {
-    /**
-     * Note content
-     */
-    content?: string;
-    /**
-     * Note content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Creation timestamp
-     */
-    created_at?: string;
-    /**
-     * Associated game ID
-     */
-    game_id: string;
-    /**
-     * Note ID
-     */
-    id: string;
-    /**
-     * Note name
-     */
-    name: string;
-    /**
-     * Whether this note is pinned
-     */
-    pinned: boolean;
-    /**
-     * Tags associated with this note
-     */
-    tags?: Array<string>;
-    /**
-     * Last update timestamp
-     */
-    updated_at?: string;
-    /**
-     * Author user ID
-     */
-    user_id: string;
-};
-
-/**
- * Image Update Parameters
- * Parameters for updating image metadata
- */
-export type ImageUpdateParams = {
-    /**
-     * Alternative text for accessibility
-     */
-    alt_text?: string;
-    /**
-     * Whether this should be the primary image for the entity
-     */
-    is_primary?: boolean;
-    /**
-     * Vertical position percentage (0-100) for banner placement
-     */
-    position_y?: number;
-};
-
-/**
- * Character Response
- * Response containing a single character
- */
-export type CharacterResponse = {
-    data?: Character;
-};
-
-/**
- * Note Links
- * Collections of entities linked to a note
- */
-export type NoteLinks = {
-    /**
-     * Linked characters with metadata
-     */
-    characters?: Array<LinkedCharacter>;
-    /**
-     * Linked factions with metadata
-     */
-    factions?: Array<LinkedFaction>;
-    /**
-     * Linked locations with metadata
-     */
-    locations?: Array<LinkedLocation>;
-    /**
-     * Linked notes with metadata
-     */
-    notes?: Array<LinkedNote>;
-    /**
-     * Linked quests with metadata
-     */
-    quests?: Array<LinkedQuest>;
-};
-
-/**
- * Linked Quest
- * A quest with relationship metadata
- */
-export type LinkedQuest = {
-    /**
-     * Quest content
-     */
-    content?: string;
-    /**
-     * Quest content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Description of the relationship
-     */
-    description_meta?: string;
-    /**
-     * Quest ID
-     */
-    id: string;
-    /**
-     * Whether the relationship is active
-     */
-    is_active?: boolean;
-    /**
-     * Additional metadata
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Quest name
-     */
-    name: string;
-    /**
-     * Type of relationship
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength (1-10)
-     */
-    strength?: number;
-    /**
-     * Quest tags
-     */
-    tags?: Array<unknown>;
-};
-
-/**
- * Character Primary Faction Response
- * Response containing character's primary faction data
- */
-export type CharacterPrimaryFactionResponse = {
-    data?: CharacterPrimaryFactionData;
-};
-
-/**
- * Quest Update Request
- * Quest update parameters
- */
-export type QuestUpdateRequest = {
-    quest: QuestUpdateParams;
-};
-
-/**
- * Character Update Parameters
- * Parameters for updating an existing character (partial updates supported)
- */
-export type CharacterUpdateParams = {
-    /**
-     * Whether this character is alive
-     */
-    alive?: boolean;
-    /**
-     * Character class
-     */
-    class?: string;
-    /**
-     * Character content
-     */
-    content?: string;
-    /**
-     * Character content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Character level
-     */
-    level?: number;
-    /**
-     * Character name
-     */
-    name?: string;
-    /**
-     * Whether this character is pinned
-     */
-    pinned?: boolean;
-    /**
-     * Character race
-     */
-    race?: string;
-    /**
-     * Tags for this character
-     */
-    tags?: Array<string>;
-};
-
-/**
- * Game Response
- * Response containing a single game
- */
-export type GameResponse = {
-    data?: Game;
-};
-
-/**
- * Faction Update Request
- * Faction update parameters
- */
-export type FactionUpdateRequest = {
-    faction: FactionUpdateParams;
-};
-
-/**
- * Set Primary Faction Request
- * Parameters for setting a character's primary faction
- */
-export type SetPrimaryFactionRequest = {
-    /**
-     * Faction ID
-     */
-    faction_id: string;
-    /**
-     * Character's role in the faction
-     */
-    role: string;
-};
-
-/**
- * Login Response
- * Successful login response
- */
-export type LoginResponse = {
-    /**
-     * Session token (Base64 encoded)
-     */
-    token: string;
-    user: User;
-};
-
-/**
- * Faction Links
- * Collections of entities linked to a faction
- */
-export type FactionLinks = {
-    /**
-     * Linked characters with metadata
-     */
-    characters?: Array<LinkedCharacterWithPrimary>;
-    /**
-     * Linked factions with metadata
-     */
-    factions?: Array<LinkedFaction>;
-    /**
-     * Linked locations with metadata
-     */
-    locations?: Array<LinkedLocationWithCurrent>;
-    /**
-     * Linked notes with metadata
-     */
-    notes?: Array<LinkedNote>;
-    /**
-     * Linked quests with metadata
-     */
-    quests?: Array<LinkedQuest>;
-};
-
-/**
- * Pinned Entities Data
- * All pinned entities for a game
- */
-export type PinnedEntitiesData = {
-    /**
-     * Game ID
-     */
-    game_id: string;
-    pinned_entities: PinnedEntities;
-    /**
-     * Total number of pinned entities
-     */
-    total_count: number;
-};
-
-/**
- * Objective Create Parameters
- * Parameters for creating a new objective
- */
-export type ObjectiveCreateParams = {
-    /**
-     * Objective description
-     */
-    body: string;
-    /**
-     * Whether the objective is complete
-     */
-    complete?: boolean;
-    /**
-     * Note link ID
-     */
-    note_link_id?: string;
-};
-
-/**
- * Note Update Request
- * Note update parameters
- */
-export type NoteUpdateRequest = {
-    note: NoteUpdateParams;
-};
-
-/**
- * Quest Update Parameters
- * Parameters for updating an existing quest (partial updates supported)
- */
-export type QuestUpdateParams = {
-    /**
-     * Quest content
-     */
-    content?: string;
-    /**
-     * Quest content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Quest name
-     */
-    name?: string;
-    /**
-     * Parent quest ID for hierarchical structure
-     */
-    parent_id?: string;
-    /**
-     * Whether this quest is pinned
-     */
-    pinned?: boolean;
-    /**
-     * Quest status
-     */
-    status?: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
-    /**
-     * Tags for this quest
-     */
-    tags?: Array<string>;
-};
-
-/**
- * Image Response
- * Response containing a single image
- */
-export type ImageResponse = {
-    data?: Image;
-};
-
-/**
- * Character Links
- * Collections of entities linked to a character
- */
-export type CharacterLinks = {
-    /**
-     * Linked characters with metadata
-     */
-    characters?: Array<LinkedCharacter>;
-    /**
-     * Linked factions with metadata
-     */
-    factions?: Array<LinkedFactionWithPrimary>;
-    /**
-     * Linked locations with metadata
-     */
-    locations?: Array<LinkedLocationWithCurrent>;
-    /**
-     * Linked notes with metadata
-     */
-    notes?: Array<LinkedNote>;
-    /**
-     * Linked quests with metadata
-     */
-    quests?: Array<LinkedQuest>;
-};
-
-/**
- * Location Tree Node
- * A node in the location hierarchy tree
- */
-export type LocationTreeNode = {
-    /**
-     * Child locations
-     */
-    children?: Array<LocationTreeNode>;
-    /**
-     * Location content
-     */
-    content?: string;
-    /**
-     * Entity type for URL building
-     */
-    entity_type: 'location';
-    /**
-     * Location ID
-     */
-    id: string;
-    /**
-     * Location name
-     */
-    name: string;
-    /**
-     * Parent location ID
-     */
-    parent_id?: string;
-    /**
-     * Tags associated with this location
-     */
-    tags?: Array<string>;
-    /**
-     * Location type
-     */
-    type: 'continent' | 'nation' | 'region' | 'city' | 'settlement' | 'building' | 'complex';
-};
-
-/**
  * Faction
  * A game faction
  */
@@ -2522,134 +2266,6 @@ export type Faction = {
      * Creator user ID
      */
     user_id: string;
-};
-
-/**
- * Entity Tree Response
- * Response containing hierarchical tree of entity relationships
- */
-export type EntityTreeResponse = {
-    data?: EntityTreeData;
-};
-
-/**
- * Email Change Request
- * Request to change user email address
- */
-export type EmailChangeRequest = {
-    /**
-     * New email address
-     */
-    new_email: string;
-    /**
-     * Current password for verification
-     */
-    password: string;
-};
-
-/**
- * Link Update Request
- * Request to update link metadata between entities
- */
-export type LinkUpdateRequest = {
-    /**
-     * Free-form description of the relationship
-     */
-    description?: string;
-    /**
-     * Role within the faction
-     */
-    faction_role?: string;
-    /**
-     * Whether the relationship is currently active
-     */
-    is_active?: boolean;
-    /**
-     * Whether the location is the current location
-     */
-    is_current_location?: boolean;
-    /**
-     * Whether the relationship is the primary relationship
-     */
-    is_primary?: boolean;
-    /**
-     * Additional flexible metadata as JSON
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of relationship between entities
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength/importance (1-10)
-     */
-    strength?: number;
-};
-
-/**
- * Note Creation Link
- * Link definition for note creation
- */
-export type NoteCreationLink = {
-    /**
-     * Free-form description of the relationship
-     */
-    description?: string;
-    /**
-     * Entity ID to link
-     */
-    entity_id: string;
-    /**
-     * Entity type to link
-     */
-    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
-    /**
-     * Whether the relationship is currently active
-     */
-    is_active?: boolean;
-    /**
-     * Additional flexible metadata as JSON
-     */
-    metadata?: {
-        [key: string]: unknown;
-    };
-    /**
-     * Type of note relationship
-     */
-    note_type?: string;
-    /**
-     * Type of relationship between entities
-     */
-    relationship_type?: string;
-    /**
-     * Relationship strength/importance (1-10)
-     */
-    strength?: number;
-};
-
-/**
- * Note Create Parameters
- * Parameters for creating a new note
- */
-export type NoteCreateParams = {
-    /**
-     * Note content
-     */
-    content?: string;
-    /**
-     * Note content as plain text
-     */
-    content_plain_text?: string;
-    /**
-     * Note name
-     */
-    name: string;
-    /**
-     * Tags for this note
-     */
-    tags?: Array<string>;
 };
 
 /**
@@ -2702,22 +2318,172 @@ export type LinkedFactionWithCurrentLocation = {
     /**
      * Faction tags
      */
-    tags?: Array<unknown>;
+    tags?: Array<string>;
 };
 
 /**
- * Character Create Parameters
- * Parameters for creating a new character
+ * Faction Links
+ * Collections of entities linked to a faction
  */
-export type CharacterCreateParams = {
+export type FactionLinks = {
     /**
-     * Whether this character is alive
+     * Linked characters with metadata
      */
-    alive?: boolean;
+    characters?: Array<LinkedCharacterWithPrimary>;
     /**
-     * Character class
+     * Linked factions with metadata
      */
-    class: string;
+    factions?: Array<LinkedFaction>;
+    /**
+     * Linked locations with metadata
+     */
+    locations?: Array<LinkedLocationWithCurrent>;
+    /**
+     * Linked notes with metadata
+     */
+    notes?: Array<LinkedNote>;
+    /**
+     * Linked quests with metadata
+     */
+    quests?: Array<LinkedQuest>;
+};
+
+/**
+ * Members Response
+ * Response containing a list of game members
+ */
+export type MembersResponse = {
+    /**
+     * Response data
+     */
+    data?: Array<Member>;
+};
+
+/**
+ * Image Update Parameters
+ * Parameters for updating image metadata
+ */
+export type ImageUpdateParams = {
+    /**
+     * Alternative text for accessibility
+     */
+    alt_text?: string;
+    /**
+     * Whether this should be the primary image for the entity
+     */
+    is_primary?: boolean;
+    /**
+     * Vertical position percentage (0-100) for banner placement
+     */
+    position_y?: number;
+};
+
+/**
+ * Note Creation Link
+ * Link definition for note creation
+ */
+export type NoteCreationLink = {
+    /**
+     * Free-form description of the relationship
+     */
+    description?: string;
+    /**
+     * Entity ID to link
+     */
+    entity_id: string;
+    /**
+     * Entity type to link
+     */
+    entity_type: 'character' | 'faction' | 'location' | 'quest' | 'note';
+    /**
+     * Whether the relationship is currently active
+     */
+    is_active?: boolean;
+    /**
+     * Additional flexible metadata as JSON
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Type of note relationship
+     */
+    note_type?: string;
+    /**
+     * Type of relationship between entities
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength/importance (1-10)
+     */
+    strength?: number;
+};
+
+/**
+ * Profile Update
+ * Parameters for updating user profile
+ */
+export type ProfileUpdate = {
+    /**
+     * New username (3-30 chars, alphanumeric + underscores/hyphens)
+     */
+    username?: string;
+};
+
+/**
+ * Linked Note
+ * A note with relationship metadata
+ */
+export type LinkedNote = {
+    /**
+     * Note content
+     */
+    content?: string;
+    /**
+     * Note content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Description of the relationship
+     */
+    description_meta?: string;
+    /**
+     * Note ID
+     */
+    id: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Note name
+     */
+    name: string;
+    /**
+     * Type of relationship
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+    /**
+     * Note tags
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Linked Character
+ * A character with relationship metadata
+ */
+export type LinkedCharacterWithPrimary = {
     /**
      * Character content
      */
@@ -2727,32 +2493,154 @@ export type CharacterCreateParams = {
      */
     content_plain_text?: string;
     /**
-     * Character level
+     * Description of the relationship
      */
-    level: number;
+    description_meta?: string;
+    /**
+     * Role within the faction
+     */
+    faction_role?: string;
+    /**
+     * Character ID
+     */
+    id: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Whether the relationship is primary
+     */
+    is_primary?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
     /**
      * Character name
      */
     name: string;
     /**
-     * Character race
+     * Type of relationship
      */
-    race?: string;
+    relationship_type?: string;
     /**
-     * Tags for this character
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+    /**
+     * Tags associated with this character
      */
     tags?: Array<string>;
 };
 
 /**
- * Locations Response
- * Response containing a list of locations
+ * Games Response
+ * Response containing a list of games
  */
-export type LocationsResponse = {
+export type GamesResponse = {
     /**
      * Response data
      */
-    data?: Array<Location>;
+    data?: Array<Game>;
+};
+
+/**
+ * Quest Create Parameters
+ * Parameters for creating a new quest
+ */
+export type QuestCreateParams = {
+    /**
+     * Quest content
+     */
+    content?: string;
+    /**
+     * Quest content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Quest name
+     */
+    name: string;
+    /**
+     * Parent quest ID for hierarchical structure
+     */
+    parent_id?: string;
+    /**
+     * Quest status
+     */
+    status?: 'preparing' | 'ready' | 'active' | 'paused' | 'completed' | 'cancelled';
+    /**
+     * Tags for this quest
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Objective Response
+ * Response containing a single objective
+ */
+export type ObjectiveResponse = {
+    data?: Objective;
+};
+
+/**
+ * Linked Location
+ * A location with relationship metadata
+ */
+export type LinkedLocation = {
+    /**
+     * Location content
+     */
+    content?: string;
+    /**
+     * Location content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Description of the relationship
+     */
+    description_meta?: string;
+    /**
+     * Location ID
+     */
+    id: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Location name
+     */
+    name: string;
+    /**
+     * Type of relationship
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+    /**
+     * Location tags
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Error Details
+ * Detailed error information
+ */
+export type ErrorDetails = {
+    [key: string]: unknown;
 };
 
 /**
@@ -2798,6 +2686,118 @@ export type EntityTreeNode = {
      * Entity type
      */
     type: 'character' | 'faction' | 'location' | 'quest' | 'note';
+};
+
+/**
+ * Pinned Entities Data
+ * All pinned entities for a game
+ */
+export type PinnedEntitiesData = {
+    /**
+     * Game ID
+     */
+    game_id: string;
+    pinned_entities: PinnedEntities;
+    /**
+     * Total number of pinned entities
+     */
+    total_count: number;
+};
+
+/**
+ * Linked Faction
+ * A faction with relationship metadata
+ */
+export type LinkedFaction = {
+    /**
+     * Faction content
+     */
+    content?: string;
+    /**
+     * Faction content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Description of the relationship
+     */
+    description_meta?: string;
+    /**
+     * Faction ID
+     */
+    id: string;
+    /**
+     * Whether the relationship is active
+     */
+    is_active?: boolean;
+    /**
+     * Additional metadata
+     */
+    metadata?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Faction name
+     */
+    name: string;
+    /**
+     * Type of relationship
+     */
+    relationship_type?: string;
+    /**
+     * Relationship strength (1-10)
+     */
+    strength?: number;
+    /**
+     * Faction tags
+     */
+    tags?: Array<string>;
+};
+
+/**
+ * Faction Response
+ * Response containing a single faction
+ */
+export type FactionResponse = {
+    data?: Faction;
+};
+
+/**
+ * Game
+ * A game instance
+ */
+export type Game = {
+    /**
+     * Game content
+     */
+    content?: string;
+    /**
+     * Game content as plain text
+     */
+    content_plain_text?: string;
+    /**
+     * Creation timestamp
+     */
+    created_at?: string;
+    /**
+     * Game ID
+     */
+    id: string;
+    /**
+     * Game name
+     */
+    name: string;
+    /**
+     * Owner user ID
+     */
+    owner_id: string;
+    /**
+     * Game setting
+     */
+    setting?: string;
+    /**
+     * Last update timestamp
+     */
+    updated_at?: string;
 };
 
 export type ConfirmEmailChangeData = {

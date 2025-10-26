@@ -35,12 +35,7 @@ export function TagPicker({
 	const id = React.useId();
 
 	return (
-		<Combobox
-			items={tags}
-			multiple
-			value={value}
-			onValueChange={onValueChange}
-		>
+		<Combobox items={tags} multiple value={value} onValueChange={onValueChange}>
 			<div className={className || "w-full max-w-xs flex flex-col gap-3"}>
 				{label && <Label htmlFor={id}>{label}</Label>}
 				<ComboboxChips ref={containerRef}>
