@@ -20,6 +20,7 @@ import { listPinnedEntitiesQueryKey } from "~/api/@tanstack/react-query.gen";
 import type { EntityLink } from "~/components/links/types";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { TagPicker } from "~/components/ui/composite/tag-picker";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -302,9 +303,7 @@ interface EntityTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	entityName?: string; // e.g., "character", "faction", "quest"
-	searchPlaceholder?: string; // @deprecated: use filters config instead
-	tagPlaceholder?: string; // @deprecated: use filters config instead
-	filters?: FilterConfig[]; // New dynamic filter configuration
+	filters?: FilterConfig[]; // Dynamic filter configuration
 	enableColumnVisibility?: boolean;
 	enablePaginationSizeSelector?: boolean;
 	columnRelativeWidths?: Record<string, number>; // e.g., { "name": 2, "status": 1, "actions": 0.5 }
@@ -316,8 +315,6 @@ export function EntityTable<TData, TValue>({
 	columns,
 	data,
 	entityName = "entity",
-	searchPlaceholder = "Filter names...",
-	tagPlaceholder = "Filter tags...",
 	filters,
 	enableColumnVisibility = true,
 	enablePaginationSizeSelector = true,
@@ -336,23 +333,7 @@ export function EntityTable<TData, TValue>({
 
 	// Dynamic filter state management
 	const [filterValues, setFilterValues] = React.useState<Record<string, string>>({});
-
-	// Backward compatibility for legacy props
-	const [searchQuery, setSearchQuery] = React.useState("");
-	const [tagFilter, setTagFilter] = React.useState("");
 	const [paginationSize, setPaginationSize] = React.useState(20);
-
-	// Determine effective filters (new system or legacy)
-	const effectiveFilters = React.useMemo(() => {
-		if (filters && filters.length > 0) {
-			return filters;
-		}
-		// Fallback to legacy system
-		return [
-			{ type: "text" as const, columnId: "name", placeholder: searchPlaceholder },
-			{ type: "text" as const, columnId: "tags", placeholder: tagPlaceholder },
-		];
-	}, [filters, searchPlaceholder, tagPlaceholder]);
 
 	// Calculate percentage widths from relative widths
 	const columnWidths = React.useMemo(() => {
@@ -391,20 +372,16 @@ export function EntityTable<TData, TValue>({
 
 	// Apply dynamic filters
 	React.useEffect(() => {
-		effectiveFilters.forEach((filter) => {
+		if (!filters) return;
+
+		filters.forEach((filter) => {
 			const column = table.getColumn(filter.columnId);
 			if (column) {
-				const value = filters
-					? filterValues[filter.columnId]
-					: filter.columnId === "name"
-						? searchQuery
-						: filter.columnId === "tags"
-							? tagFilter
-							: "";
+				const value = filterValues[filter.columnId];
 				column.setFilterValue(value || undefined);
 			}
 		});
-	}, [effectiveFilters, filterValues, searchQuery, tagFilter, table, filters]);
+	}, [filters, filterValues, table]);
 
 	React.useEffect(() => {
 		table.setPageSize(paginationSize);
@@ -412,25 +389,10 @@ export function EntityTable<TData, TValue>({
 
 	// Helper function to render different filter types
 	const renderFilter = (filter: FilterConfig) => {
-		const value = filters
-			? filterValues[filter.columnId] || ""
-			: filter.columnId === "name"
-				? searchQuery
-				: filter.columnId === "tags"
-					? tagFilter
-					: "";
+		const value = filterValues[filter.columnId] || "";
 
 		const handleChange = (newValue: string) => {
-			if (filters) {
-				setFilterValues((prev) => ({ ...prev, [filter.columnId]: newValue }));
-			} else {
-				// Legacy mode
-				if (filter.columnId === "name") {
-					setSearchQuery(newValue);
-				} else if (filter.columnId === "tags") {
-					setTagFilter(newValue);
-				}
-			}
+			setFilterValues((prev) => ({ ...prev, [filter.columnId]: newValue }));
 		};
 
 		switch (filter.type) {
@@ -480,13 +442,16 @@ export function EntityTable<TData, TValue>({
 				);
 
 			case "multiselect":
-				// For now, treat as text - can be enhanced later
 				return (
-					<Input
+					<TagPicker
 						key={filter.columnId}
+						tags={filter.options?.map((opt) => opt.value) || []}
+						value={value ? value.split(",").filter(Boolean) : []}
+						onValueChange={(selectedTags) =>
+							handleChange(selectedTags.join(","))
+						}
 						placeholder={filter.placeholder || `Filter ${filter.columnId}...`}
-						value={value}
-						onChange={(event) => handleChange(event.target.value)}
+						label=""
 						className="max-w-sm"
 					/>
 				);
@@ -499,7 +464,7 @@ export function EntityTable<TData, TValue>({
 	return (
 		<div className="w-full max-w-full">
 			<div className="flex items-center gap-4 py-4">
-				{effectiveFilters.map(renderFilter)}
+				{filters?.map(renderFilter)}
 				{enableColumnVisibility && (
 					<DropdownMenu>
 						<DropdownMenuTrigger

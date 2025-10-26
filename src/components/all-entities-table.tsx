@@ -9,6 +9,7 @@ import {
 	ContentDisplay,
 	DateDisplay,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
 	TableLink,
 	TagsDisplay,
@@ -119,6 +120,33 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 		return types.sort();
 	}, [entities]);
 
+	// Extract unique tags from all entities
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const entity of filteredEntities) {
+			if (entity.tags) {
+				for (const tag of entity.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [filteredEntities]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Search entities..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<div className="w-full max-w-full">
 			<div className="flex items-center gap-4 py-4 mb-4">
@@ -159,8 +187,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 				columns={columns}
 				data={filteredEntities}
 				entityName="entity"
-				searchPlaceholder="Search entities..."
-				tagPlaceholder="Filter tags..."
+				filters={filters}
 				enableColumnVisibility={true}
 				enablePaginationSizeSelector={true}
 				defaultHidden={["content_plain_text"]}

@@ -1,9 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 import type { Note } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
 	TableLink,
 	TagsDisplay,
@@ -93,13 +95,39 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 export function NotesTable({ data, gameId }: NotesTableProps) {
 	const columns = createNoteColumns(gameId);
 
+	// Extract unique tags from all notes
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const note of data) {
+			if (note.tags) {
+				for (const tag of note.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="note"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

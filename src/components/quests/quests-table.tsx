@@ -1,4 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 import type { Quest } from "~/api/types.gen";
 import {
 	ActionsDropdown,
@@ -119,23 +120,44 @@ function createQuestColumns(gameId: string): ColumnDef<Quest>[] {
 export function QuestsTable({ data, gameId }: QuestsTableProps) {
 	const columns = createQuestColumns(gameId);
 
-	const filters: FilterConfig[] = [
-		{ type: "text" as const, columnId: "name", placeholder: "Filter names..." },
-		{ type: "text" as const, columnId: "tags", placeholder: "Filter tags..." },
-		{
-			type: "select" as const,
-			columnId: "status",
-			placeholder: "All statuses",
-			options: [
-				{ value: "preparing", label: "Preparing" },
-				{ value: "ready", label: "Ready" },
-				{ value: "active", label: "Active" },
-				{ value: "paused", label: "Paused" },
-				{ value: "completed", label: "Completed" },
-				{ value: "cancelled", label: "Cancelled" },
-			],
-		},
-	];
+	// Extract unique tags from all quests
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const quest of data) {
+			if (quest.tags) {
+				for (const tag of quest.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text" as const, columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect" as const,
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+			{
+				type: "select" as const,
+				columnId: "status",
+				placeholder: "All statuses",
+				options: [
+					{ value: "preparing", label: "Preparing" },
+					{ value: "ready", label: "Ready" },
+					{ value: "active", label: "Active" },
+					{ value: "paused", label: "Paused" },
+					{ value: "completed", label: "Completed" },
+					{ value: "cancelled", label: "Cancelled" },
+				],
+			},
+		],
+		[allTags],
+	);
 
 	return (
 		<EntityTable

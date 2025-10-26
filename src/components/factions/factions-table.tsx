@@ -1,9 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
 import type { Faction } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
 	TableLink,
 	TagsDisplay,
@@ -91,13 +93,39 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 export function FactionsTable({ data, gameId }: FactionsTableProps) {
 	const columns = createFactionColumns(gameId);
 
+	// Extract unique tags from all factions
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const faction of data) {
+			if (faction.tags) {
+				for (const tag of faction.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="faction"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

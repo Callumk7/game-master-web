@@ -17,20 +17,37 @@ import { Label } from "~/components/ui/label";
 
 interface TagPickerProps {
 	tags: string[];
+	value?: string[];
+	onValueChange?: (value: string[]) => void;
+	placeholder?: string;
+	label?: string;
+	className?: string;
 }
-export function TagPicker({ tags }: TagPickerProps) {
+export function TagPicker({
+	tags,
+	value = [],
+	onValueChange,
+	placeholder = "Search for tags",
+	label = "Tags",
+	className,
+}: TagPickerProps) {
 	const containerRef = React.useRef<HTMLDivElement | null>(null);
 	const id = React.useId();
 
 	return (
-		<Combobox items={tags} multiple>
-			<div className="w-full max-w-xs flex flex-col gap-3">
-				<Label htmlFor={id}>Tags</Label>
+		<Combobox
+			items={tags}
+			multiple
+			value={value}
+			onValueChange={onValueChange}
+		>
+			<div className={className || "w-full max-w-xs flex flex-col gap-3"}>
+				{label && <Label htmlFor={id}>{label}</Label>}
 				<ComboboxChips ref={containerRef}>
 					<ComboboxValue>
-						{(value: string[]) => (
+						{(selectedValues: string[]) => (
 							<React.Fragment>
-								{value.map((tag) => (
+								{selectedValues.map((tag) => (
 									<ComboboxChip key={tag} aria-label={tag}>
 										{tag}
 										<ComboboxChipRemove />
@@ -39,7 +56,7 @@ export function TagPicker({ tags }: TagPickerProps) {
 								<ComboboxInput
 									id={id}
 									placeholder={
-										value.length > 0 ? "" : "Search for tags"
+										selectedValues.length > 0 ? "" : placeholder
 									}
 									className="flex-1 h-6 border-0 bg-transparent pl-2 text-base outline-none shadow-none focus-visible:ring-0"
 								/>

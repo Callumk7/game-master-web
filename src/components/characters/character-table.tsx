@@ -1,11 +1,13 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Check, Cross } from "lucide-react";
+import * as React from "react";
 import type { Character } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	ContentDisplay,
 	DateDisplay,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
 	TableLink,
 	TagsDisplay,
@@ -132,13 +134,39 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 export function CharacterTable({ data, gameId }: CharacterTableProps) {
 	const columns = createCharacterColumns(gameId);
 
+	// Extract unique tags from all characters
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const character of data) {
+			if (character.tags) {
+				for (const tag of character.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="character"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
