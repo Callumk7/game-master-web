@@ -1,6 +1,6 @@
 import { useRouter } from "@tanstack/react-router";
 import * as React from "react";
-import type { EntityTreeData } from "~/api/types.gen";
+import { useGetGameEntityTreeQuery } from "~/api/@tanstack/react-query.gen";
 import {
 	createDefaultNodeExtractor,
 	type NodePosition,
@@ -9,7 +9,6 @@ import {
 } from "~/lib/node-viewer";
 
 interface NodeMapProps {
-	data: EntityTreeData;
 	gameId: string;
 }
 
@@ -38,7 +37,13 @@ const NODE_TYPE_CONFIG: NodeTypeConfig = {
 
 const ENTITY_KEYS = ["characters", "factions", "locations", "quests", "notes"];
 
-export function NodeMap({ data, gameId }: NodeMapProps) {
+export function NodeMap({ gameId }: NodeMapProps) {
+	const { data, isLoading } = useGetGameEntityTreeQuery({
+		path: { game_id: gameId },
+	});
+
+	const treeData = data?.data;
+
 	const router = useRouter();
 
 	const nodeExtractor = createDefaultNodeExtractor(ENTITY_KEYS);
@@ -57,7 +62,7 @@ export function NodeMap({ data, gameId }: NodeMapProps) {
 		[gameId, router],
 	);
 
-	if (!data) {
+	if (isLoading || !treeData) {
 		return (
 			<div className="flex items-center justify-center h-96">
 				<div className="text-muted-foreground">
@@ -69,7 +74,7 @@ export function NodeMap({ data, gameId }: NodeMapProps) {
 
 	return (
 		<NodeViewer
-			data={data}
+			data={treeData}
 			nodeExtractor={nodeExtractor}
 			nodeTypeConfig={NODE_TYPE_CONFIG}
 			onNodeClick={handleNodeClick}

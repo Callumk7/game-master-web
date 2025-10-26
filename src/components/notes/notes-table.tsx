@@ -1,18 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
-
 import type { Note } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteNoteMutation } from "~/queries/notes";
+import { useHandleEditNote } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
-import { EditNoteDialog } from "./edit-note-dialog";
 
 interface NotesTableProps {
 	data: Note[];
@@ -25,7 +25,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
-				<EntityLink
+				<TableLink
 					entityType="note"
 					gameId={gameId}
 					entityId={row.original.id}
@@ -53,7 +53,7 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 			cell: ({ row }) => {
 				const note = row.original;
 				const deleteNote = useDeleteNoteMutation(gameId, note.id);
-				const [editModalOpen, setEditModalOpen] = React.useState(false);
+				const handleEdit = useHandleEditNote(note.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -69,20 +69,21 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 						<ActionsDropdown
 							entityType="note"
 							entityName="note"
-							entity={note}
+							entity={{
+								id: note.id,
+								name: note.name,
+								type: "note",
+								content: note.content,
+								content_plain_text: note.content_plain_text,
+							}}
 							gameId={gameId}
-							onEdit={() => setEditModalOpen(true)}
+							onEdit={handleEdit}
 							onDelete={() => {
 								deleteNote.mutate({
 									path: { game_id: gameId, id: note.id },
 								});
 							}}
-						/>
-						<EditNoteDialog
-							gameId={gameId}
-							isOpen={editModalOpen}
-							setIsOpen={setEditModalOpen}
-							note={note}
+							isPinned={note.pinned}
 						/>
 					</div>
 				);
@@ -94,13 +95,39 @@ function createNoteColumns(gameId: string): ColumnDef<Note>[] {
 export function NotesTable({ data, gameId }: NotesTableProps) {
 	const columns = createNoteColumns(gameId);
 
+	// Extract unique tags from all notes
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const note of data) {
+			if (note.tags) {
+				for (const tag of note.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="note"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

@@ -5,6 +5,7 @@ import {
 	Gem,
 	MapPin,
 	MoreHorizontal,
+	Pencil,
 	Pin,
 	Scroll,
 	Shield,
@@ -34,7 +35,7 @@ import {
 } from "~/components/ui/sidebar";
 import { useListPinnedEntitiesSuspenseQuery } from "~/queries/quests";
 import { getEntityQueryKey, useDeleteEntity, useUpdateEntity } from "~/queries/utils";
-import { useUIActions } from "~/state/ui";
+import { useHandleEditEntity, useUIActions } from "~/state/ui";
 import type { Entity, EntityType } from "~/types";
 import { pluralise } from "~/utils/pluralise";
 
@@ -53,6 +54,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/notes/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<Scroll />
 							<span className="truncate pr-6">{item.name}</span>
@@ -69,6 +74,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/characters/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<User />
 							<span className="truncate pr-6">{item.name}</span>
@@ -85,6 +94,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/factions/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<Shield />
 							<span className="truncate pr-6">{item.name}</span>
@@ -101,6 +114,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/locations/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<MapPin />
 							<span className="truncate pr-6">{item.name}</span>
@@ -117,6 +134,10 @@ export function SidebarPinnedEntities({ gameId }: SidebarPinnedEntitiesProps) {
 						<SidebarMenuLink
 							to={"/games/$gameId/quests/$id"}
 							params={{ gameId, id: item.id }}
+							activeProps={{
+								className:
+									"bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+							}}
 						>
 							<Gem />
 							<span className="truncate pr-6">{item.name}</span>
@@ -146,6 +167,8 @@ function SidebarPinnedEntitiesDropdown({
 	const { isMobile } = useSidebar();
 	const navigate = useNavigate();
 	const client = useQueryClient();
+
+	const handleEdit = useHandleEditEntity(entity.id, entityType);
 
 	const { mutate } = useUpdateEntity(() => {
 		client.invalidateQueries({
@@ -218,6 +241,10 @@ function SidebarPinnedEntitiesDropdown({
 					<DropdownMenuItem onClick={handleTogglePin}>
 						<Pin className="mr-1" />
 						Unpin
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleEdit}>
+						<Pencil className="mr-1" />
+						Edit
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={handleDelete}>
 						<Trash2 className="mr-1" />

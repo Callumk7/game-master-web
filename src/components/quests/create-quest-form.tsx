@@ -10,6 +10,7 @@ import {
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
+import { useCreateQuestParentId } from "~/state/ui";
 import { ParentQuestSelect } from "./parent-quest-select";
 
 interface CreateQuestFormProps {
@@ -26,6 +27,8 @@ export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) 
 		path: { game_id: gameId },
 	});
 	const quests = questsData?.data || [];
+
+	const parentId = useCreateQuestParentId();
 
 	const { form, mutation, renderSmartField } = useSmartForm({
 		mutation: () => createQuestMutation({ path: { game_id: gameId } }),
@@ -52,6 +55,9 @@ export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) 
 				onSuccess();
 			}
 		},
+		initialValues: {
+			parent_id: parentId,
+		},
 	});
 
 	return (
@@ -68,33 +74,35 @@ export function CreateQuestForm({ container, onSuccess }: CreateQuestFormProps) 
 						{renderSmartField("status")}
 
 						{/* Custom parent quest selector */}
-						<form.AppField name="parent_id">
-							{(field) => (
-								<form.Item>
-									<field.Label>Parent Quest</field.Label>
-									<field.Control>
-										{questsLoading ? (
-											<div className="text-muted-foreground text-sm p-2">
-												Loading quests...
-											</div>
-										) : (
-											<ParentQuestSelect
-												quests={quests}
-												value={field.state.value}
-												onChange={field.handleChange}
-												placeholder="Select parent quest (optional)"
-												container={container}
-											/>
-										)}
-									</field.Control>
-									<field.Description>
-										Choose a parent quest to create a hierarchical
-										quest structure. Leave empty for main quests.
-									</field.Description>
-									<field.Message />
-								</form.Item>
-							)}
-						</form.AppField>
+						{!parentId && (
+							<form.AppField name="parent_id">
+								{(field) => (
+									<form.Item>
+										<field.Label>Parent Quest</field.Label>
+										<field.Control>
+											{questsLoading ? (
+												<div className="text-muted-foreground text-sm p-2">
+													Loading quests...
+												</div>
+											) : (
+												<ParentQuestSelect
+													quests={quests}
+													value={field.state.value}
+													onChange={field.handleChange}
+													placeholder="Select parent quest (optional)"
+													container={container}
+												/>
+											)}
+										</field.Control>
+										<field.Description>
+											Choose a parent quest to create a hierarchical
+											quest structure. Leave empty for main quests.
+										</field.Description>
+										<field.Message />
+									</form.Item>
+								)}
+							</form.AppField>
+						)}
 
 						{renderSmartField("tags")}
 						{renderSmartField("content")}

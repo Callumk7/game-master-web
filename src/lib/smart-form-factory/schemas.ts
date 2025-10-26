@@ -58,7 +58,7 @@ export function createSchemaFor() {
 				"building",
 				"complex",
 			]),
-			parent_id: z.string().optional(),
+			parent_id: z.string().nullable().optional(),
 			tags: z.array(z.string()).optional(),
 			content: z.string().optional(),
 		}),

@@ -21,6 +21,7 @@ import {
 	useDeleteLocationMutation,
 	useUpdateLocationMutation,
 } from "~/queries/locations";
+import { useHandleEditLocation } from "~/state/ui";
 import { capitalise } from "~/utils/capitalise";
 import { createBadges } from "../utils";
 import { SubLocationView } from "./sub-location-view";
@@ -59,8 +60,10 @@ export function LocationView({ gameId, location }: LocationViewProps) {
 			path: { game_id: gameId, id: location.id },
 		});
 		toast.success("Location deleted successfully!");
-		navigate({ to: "." });
+		navigate({ to: ".." });
 	};
+
+	const handleEdit = useHandleEditLocation(location.id);
 
 	const tabs = [
 		{
@@ -108,7 +111,7 @@ export function LocationView({ gameId, location }: LocationViewProps) {
 			badges={badges}
 			tabs={tabs}
 			pinned={location.pinned}
-			onEdit={() => navigate({ to: "edit" })}
+			onEdit={handleEdit}
 			onDelete={handleDelete}
 			onTogglePin={handleTogglePin}
 		/>

@@ -1,15 +1,18 @@
+import { useListLocationsQuery } from "~/api/@tanstack/react-query.gen";
 import type { Location } from "~/api/types.gen";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
+	SelectPortal,
 	SelectPositioner,
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
 
 interface ParentLocationSelectProps {
-	locations: Location[];
+	container?: React.RefObject<HTMLElement | null>;
+	gameId: string;
 	value?: string;
 	onChange: (value: string | undefined) => void;
 	currentType?: string;
@@ -17,6 +20,7 @@ interface ParentLocationSelectProps {
 	placeholder?: string;
 }
 
+// WARN: We don't really care about this, do we?
 // Location type hierarchy - defines which types can be parents of which
 const LOCATION_HIERARCHY = {
 	continent: [],
@@ -72,13 +76,26 @@ function formatLocationLabel(location: Location, hierarchy: Location[]): string 
 }
 
 export function ParentLocationSelect({
-	locations,
+	container,
+	gameId,
 	value,
 	onChange,
 	currentType,
 	disabled = false,
 	placeholder = "Select parent location",
 }: ParentLocationSelectProps) {
+	// Fetch existing locations for parent selection
+	const { data: locationsData, isLoading: locationsLoading } = useListLocationsQuery({
+		path: { game_id: gameId },
+	});
+
+	if (locationsLoading) {
+		return (
+			<div className="text-muted-foreground text-sm p-2">Loading locations...</div>
+		);
+	}
+
+	const locations = locationsData?.data || [];
 	// Filter locations that can be valid parents
 	const validParentLocations = locations.filter((location) =>
 		isValidParent(location.type as LocationType, currentType),
@@ -125,6 +142,44 @@ export function ParentLocationSelect({
 		return formatLocationLabel(selectedLocation, locationHierarchy);
 	};
 
+	const selectContent = (
+		<SelectPositioner>
+			<SelectContent>
+				<SelectItem value="none">
+					<span className="text-muted-foreground">
+						No parent (top-level location)
+					</span>
+				</SelectItem>
+
+				{sortedLocations.map((location) => {
+					const locationHierarchy = hierarchy.get(location.id) || [location];
+					const label = formatLocationLabel(location, locationHierarchy);
+
+					return (
+						<SelectItem key={location.id} value={location.id}>
+							<div className="flex items-center gap-2">
+								<span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+									{location.type}
+								</span>
+								<span>{label}</span>
+							</div>
+						</SelectItem>
+					);
+				})}
+
+				{sortedLocations.length === 0 && (
+					<SelectItem value="disabled" disabled>
+						<span className="text-muted-foreground">
+							{currentType
+								? `No valid parent locations for ${currentType}`
+								: "No locations available"}
+						</span>
+					</SelectItem>
+				)}
+			</SelectContent>
+		</SelectPositioner>
+	);
+
 	return (
 		<Select
 			value={displayValue}
@@ -147,43 +202,11 @@ export function ParentLocationSelect({
 					) : null}
 				</SelectValue>
 			</SelectTrigger>
-			<SelectPositioner>
-				<SelectContent>
-					<SelectItem value="none">
-						<span className="text-muted-foreground">
-							No parent (top-level location)
-						</span>
-					</SelectItem>
-
-					{sortedLocations.map((location) => {
-						const locationHierarchy = hierarchy.get(location.id) || [
-							location,
-						];
-						const label = formatLocationLabel(location, locationHierarchy);
-
-						return (
-							<SelectItem key={location.id} value={location.id}>
-								<div className="flex items-center gap-2">
-									<span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-										{location.type}
-									</span>
-									<span>{label}</span>
-								</div>
-							</SelectItem>
-						);
-					})}
-
-					{sortedLocations.length === 0 && (
-						<SelectItem value="disabled" disabled>
-							<span className="text-muted-foreground">
-								{currentType
-									? `No valid parent locations for ${currentType}`
-									: "No locations available"}
-							</span>
-						</SelectItem>
-					)}
-				</SelectContent>
-			</SelectPositioner>
+			{container ? (
+				<SelectPortal container={container}>{selectContent}</SelectPortal>
+			) : (
+				selectContent
+			)}
 		</Select>
 	);
 }

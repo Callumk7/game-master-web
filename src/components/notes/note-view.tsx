@@ -17,6 +17,7 @@ import { NoteNoteView } from "~/components/notes/notes-note-view";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityView } from "~/components/views/entity-view";
 import { useDeleteNoteMutation, useUpdateNoteMutation } from "~/queries/notes";
+import { useHandleEditNote } from "~/state/ui";
 import { createBadges } from "../utils";
 
 interface NoteViewProps {
@@ -53,8 +54,10 @@ export function NoteView({ note, gameId }: NoteViewProps) {
 			path: { game_id: gameId, id: note.id },
 		});
 		toast.success("Note deleted successfully!");
-		navigate({ to: "." });
+		navigate({ to: ".." });
 	};
+
+	const handleEdit = useHandleEditNote(note.id);
 
 	const tabs = [
 		{
@@ -92,7 +95,7 @@ export function NoteView({ note, gameId }: NoteViewProps) {
 			badges={badges}
 			pinned={note.pinned}
 			tabs={tabs}
-			onEdit={() => navigate({ to: "edit" })}
+			onEdit={handleEdit}
 			onTogglePin={handleTogglePin}
 			onDelete={handleDelete}
 		/>

@@ -1,23 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-	getGameEntityTreeOptions,
-	useGetGameEntityTreeQuery,
-} from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
 import { NodeMap } from "~/components/dashboard/node-map";
 import { StatCard } from "~/components/dashboard/stat-card";
+import { Badge } from "~/components/ui/badge";
 import { Link } from "~/components/ui/link";
-import { useGetGameLinksSuspenseQuery, useGetGameSuspenseQuery } from "~/queries/games";
+import { useGetGameSuspenseQuery } from "~/queries/games";
+import { useGetGameLinksData } from "~/queries/utils";
 
 export const Route = createFileRoute("/_auth/games/$gameId/")({
 	component: RouteComponent,
-	loader: async ({ params, context }) => {
-		await context.queryClient.ensureQueryData(
-			getGameEntityTreeOptions({
-				path: { game_id: params.gameId },
-			}),
-		);
-	},
 });
 
 function RouteComponent() {
@@ -26,25 +17,20 @@ function RouteComponent() {
 	const { data: gameData } = useGetGameSuspenseQuery({ id: gameId });
 	const game = gameData.data;
 
-	const { data: entityTreeData } = useGetGameEntityTreeQuery({
-		path: { game_id: gameId },
-	});
-
-	const { data: links } = useGetGameLinksSuspenseQuery({
-		id: gameId,
-	});
-	const characters = links?.data?.entities?.characters;
-	const factions = links?.data?.entities?.factions;
-	const locations = links?.data?.entities?.locations;
-	const notes = links?.data?.entities?.notes;
-	const quests = links?.data?.entities?.quests;
+	const { characters, factions, locations, notes, quests, totalEntityCount } =
+		useGetGameLinksData(gameId);
 
 	return (
 		<Container>
 			<div className="space-y-6 mt-4">
 				<div className="flex items-center justify-between">
 					<div>
-						<h1 className="text-3xl font-bold">Campaign Dashboard</h1>
+						<div className="flex items-center gap-5">
+							<h1 className="text-3xl font-bold">Campaign Dashboard</h1>
+							<Badge variant={"secondary"}>
+								Entities: {totalEntityCount}
+							</Badge>
+						</div>
 						<p>
 							{game?.name} - {game?.content || "A TTRPG campaign"}
 						</p>
@@ -58,10 +44,7 @@ function RouteComponent() {
 					</Link>
 				</div>
 
-				{/* Node Map Visualization */}
-				{entityTreeData?.data && (
-					<NodeMap data={entityTreeData.data} gameId={gameId} />
-				)}
+				<NodeMap gameId={gameId} />
 
 				{/* Stats Grid */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

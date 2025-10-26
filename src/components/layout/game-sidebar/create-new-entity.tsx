@@ -30,11 +30,36 @@ function SidebarCreateNewMenu() {
 	const { isMobile } = useSidebar();
 	const {
 		setIsCreateCharacterOpen,
+		setCreateCharacterFactionId,
 		setIsCreateFactionOpen,
 		setIsCreateLocationOpen,
+		setCreateLocationParentId,
 		setIsCreateNoteOpen,
+		setCreateNoteParentId,
 		setIsCreateQuestOpen,
+		setCreateQuestParentId,
 	} = useUIActions();
+
+	const handleOpenCreateCharacter = () => {
+		setCreateCharacterFactionId(undefined);
+		setIsCreateCharacterOpen(true);
+	};
+
+	const handleOpenCreateLocation = () => {
+		setCreateLocationParentId(undefined);
+		setIsCreateLocationOpen(true);
+	};
+
+	const handleOpenCreateNote = () => {
+		setCreateNoteParentId(undefined);
+		setIsCreateNoteOpen(true);
+	};
+
+	const handleOpenCreateQuest = () => {
+		setCreateQuestParentId(undefined);
+		setIsCreateQuestOpen(true);
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
@@ -53,14 +78,14 @@ function SidebarCreateNewMenu() {
 			>
 				<DropdownMenuContent className="w-56">
 					<SidebarMenuButton
-						onClick={() => setIsCreateNoteOpen(true)}
+						onClick={handleOpenCreateNote}
 						className="w-full justify-start"
 					>
 						<Plus className="w-4 h-4 mr-2" />
 						New Note
 					</SidebarMenuButton>
 					<SidebarMenuButton
-						onClick={() => setIsCreateCharacterOpen(true)}
+						onClick={handleOpenCreateCharacter}
 						className="w-full justify-start"
 					>
 						<Plus className="w-4 h-4 mr-2" />
@@ -74,14 +99,14 @@ function SidebarCreateNewMenu() {
 						New Faction
 					</SidebarMenuButton>
 					<SidebarMenuButton
-						onClick={() => setIsCreateLocationOpen(true)}
+						onClick={handleOpenCreateLocation}
 						className="w-full justify-start"
 					>
 						<Plus className="w-4 h-4 mr-2" />
 						New Location
 					</SidebarMenuButton>
 					<SidebarMenuButton
-						onClick={() => setIsCreateQuestOpen(true)}
+						onClick={handleOpenCreateQuest}
 						className="w-full justify-start"
 					>
 						<Plus className="w-4 h-4 mr-2" />

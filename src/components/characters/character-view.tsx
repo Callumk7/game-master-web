@@ -12,7 +12,6 @@ import { CharacterImages } from "~/components/characters/character-images";
 import { CharacterNodeViewer } from "~/components/characters/character-node-viewer";
 import { CharacterNotesView } from "~/components/characters/character-note-view";
 import { CreateCharacterLink } from "~/components/characters/create-character-link";
-import { EditCharacterDialog } from "~/components/characters/edit-character-dialog";
 import { EntityLinksTable } from "~/components/links/entity-links-table";
 import { createBaseLinkTableColumns } from "~/components/links/link-table-columns";
 import type { GenericLinksResponse } from "~/components/links/types";
@@ -23,6 +22,7 @@ import {
 	useDeleteCharacterMutation,
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
+import { useHandleEditCharacter } from "~/state/ui";
 import { createBadges } from "../utils";
 
 interface CharacterViewProps {
@@ -95,31 +95,23 @@ export function CharacterView({ character, gameId }: CharacterViewProps) {
 		},
 	];
 
-	const [editModalOpen, setEditModalOpen] = React.useState(false);
+	const handleEdit = useHandleEditCharacter(character.id);
 
 	return (
-		<>
-			<EntityView
-				id={character.id}
-				gameId={gameId}
-				type="character"
-				content={character.content}
-				content_plain_text={character.content_plain_text}
-				name={character.name}
-				badges={badges}
-				tabs={tabs}
-				pinned={character.pinned}
-				onEdit={() => setEditModalOpen(true)}
-				onDelete={handleDelete}
-				onTogglePin={handleTogglePin}
-			/>
-			<EditCharacterDialog
-				gameId={gameId}
-				isOpen={editModalOpen}
-				setIsOpen={setEditModalOpen}
-				character={character}
-			/>
-		</>
+		<EntityView
+			id={character.id}
+			gameId={gameId}
+			type="character"
+			content={character.content}
+			content_plain_text={character.content_plain_text}
+			name={character.name}
+			badges={badges}
+			tabs={tabs}
+			pinned={character.pinned}
+			onEdit={handleEdit}
+			onDelete={handleDelete}
+			onTogglePin={handleTogglePin}
+		/>
 	);
 }
 

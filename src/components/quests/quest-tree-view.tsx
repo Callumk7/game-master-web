@@ -5,6 +5,7 @@ import {
 	Circle,
 	Crown,
 	Pause,
+	Plus,
 	Scroll,
 	Target,
 	Users,
@@ -21,6 +22,7 @@ import {
 	CollapsibleTrigger,
 } from "~/components/ui/collapsible";
 import { Link } from "~/components/ui/link";
+import { useUIActions } from "~/state/ui";
 import { cn } from "~/utils/cn";
 import { PageHeader } from "../page-header";
 import { getVariantFromStatus } from "../utils";
@@ -37,6 +39,7 @@ interface QuestNodeProps {
 	level?: number;
 }
 
+// TODO: Clean up all this claude stuff
 const getStatusConfig = (status: QuestTreeNode["status"]) => {
 	switch (status) {
 		case "completed":
@@ -127,6 +130,12 @@ const getTagVariant = (tag: string) => {
 
 function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 	const [isOpen, setIsOpen] = React.useState(level < 2); // Auto-expand first 2 levels
+	const { setIsCreateQuestOpen, setCreateQuestParentId } = useUIActions();
+	const handleCreateQuest = (parentId: string) => {
+		setCreateQuestParentId(parentId);
+		setIsCreateQuestOpen(true);
+	};
+
 	const hasChildren = node.children && node.children.length > 0;
 	const statusConfig = getStatusConfig(node.status);
 
@@ -214,25 +223,34 @@ function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 							</div>
 
 							{/* Expand/Collapse for children */}
-							{hasChildren && (
-								<Collapsible open={isOpen} onOpenChange={setIsOpen}>
-									<CollapsibleTrigger
-										render={
-											<Button
-												variant="ghost"
-												size="icon"
-												className="h-8 w-8 shrink-0"
-											>
-												{isOpen ? (
-													<ChevronDown className="h-4 w-4" />
-												) : (
-													<ChevronRight className="h-4 w-4" />
-												)}
-											</Button>
-										}
-									/>
-								</Collapsible>
-							)}
+							<div className="flex items-center gap-2">
+								<Button
+									size={"icon"}
+									variant={"ghost"}
+									onClick={() => handleCreateQuest(node.id)}
+								>
+									<Plus className="h-4 w-4" />
+								</Button>
+								{hasChildren && (
+									<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+										<CollapsibleTrigger
+											render={
+												<Button
+													variant="ghost"
+													size="icon"
+													className="h-8 w-8 shrink-0"
+												>
+													{isOpen ? (
+														<ChevronDown className="h-4 w-4" />
+													) : (
+														<ChevronRight className="h-4 w-4" />
+													)}
+												</Button>
+											}
+										/>
+									</Collapsible>
+								)}
+							</div>
 						</div>
 
 						{/* Quest Excerpt */}

@@ -39,6 +39,7 @@ export interface ForceSimulationConfig {
 	targetLinkLength: number;
 	linkFlexibility: number;
 	unconnectedNodeRepulsion: number;
+	repulsionCutoffDistance: number;
 	simulationWidth: number;
 	simulationHeight: number;
 }

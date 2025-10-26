@@ -2,14 +2,17 @@ import { useNavigate } from "@tanstack/react-router";
 import {
 	CheckSquare,
 	FileText,
+	Gem,
 	MapPin,
 	Plus,
+	Search,
 	Shield,
 	Sword,
 	User,
 	Users,
 } from "lucide-react";
 import * as React from "react";
+import { useListPinnedEntitiesQuery } from "~/api/@tanstack/react-query.gen";
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -25,7 +28,7 @@ import {
 	createPlatformShortcut,
 	useKeyboardShortcut,
 } from "~/hooks/useKeyboardShortcut";
-import { useGetGameLinksSuspenseQuery } from "~/queries/games";
+import { useGetGameLinksData } from "~/queries/utils";
 import { useIsCommanderOpen, useUIActions } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { Badge } from "./ui/badge";
@@ -33,14 +36,13 @@ import { Badge } from "./ui/badge";
 export function Commander({ gameId }: { gameId: string }) {
 	const navigate = useNavigate();
 
-	const { data: links, isLoading: linksLoading } = useGetGameLinksSuspenseQuery({
-		id: gameId,
-	});
-	const characters = links?.data?.entities?.characters;
-	const factions = links?.data?.entities?.factions;
-	const locations = links?.data?.entities?.locations;
-	const notes = links?.data?.entities?.notes;
-	const quests = links?.data?.entities?.quests;
+	const { characters, factions, locations, notes, quests, isLoading } =
+		useGetGameLinksData(gameId);
+
+	const { data: pinnedEntitiesResponse, isLoading: pinnedLoading } =
+		useListPinnedEntitiesQuery({
+			path: { game_id: gameId },
+		});
 
 	const {
 		setIsCommanderOpen,
@@ -55,28 +57,26 @@ export function Commander({ gameId }: { gameId: string }) {
 	const isCommanderOpen = useIsCommanderOpen();
 	const modifierKeyPressed = React.useRef(false);
 
-	const handleEntitySelect = (entity: {
-		id: string;
-		name: string;
-		type: EntityType;
-		content?: string;
-	}) => {
-		if (modifierKeyPressed.current) {
-			setIsCommanderOpen(false);
-			openEntityWindow({
-				id: entity.id,
-				name: entity.name,
-				type: entity.type,
-				content: entity.content,
-			});
-		} else {
-			setIsCommanderOpen(false);
-			navigate({
-				to: `/games/$gameId/${entity.type}s/$id`,
-				params: { gameId, id: entity.id },
-			});
-		}
-	};
+	const handleEntitySelect = React.useCallback(
+		(entity: { id: string; name: string; type: EntityType; content?: string }) => {
+			if (modifierKeyPressed.current) {
+				setIsCommanderOpen(false);
+				openEntityWindow({
+					id: entity.id,
+					name: entity.name,
+					type: entity.type,
+					content: entity.content,
+				});
+			} else {
+				setIsCommanderOpen(false);
+				navigate({
+					to: `/games/$gameId/${entity.type}s/$id`,
+					params: { gameId, id: entity.id },
+				});
+			}
+		},
+		[gameId, navigate, setIsCommanderOpen, openEntityWindow],
+	);
 
 	// Track modifier keys globally when commander is open
 	React.useEffect(() => {
@@ -105,68 +105,86 @@ export function Commander({ gameId }: { gameId: string }) {
 	}, [isCommanderOpen]);
 
 	// Set up keyboard shortcuts
-	useKeyboardShortcut([
-		// Global shortcut to toggle commander
-		createPlatformShortcut("j", () => {
-			setIsCommanderOpen(!isCommanderOpen);
-		}),
-		// Commander-specific shortcuts (Cmd+Shift to avoid browser conflicts)
-		createPlatformShiftShortcut(
-			"c",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateCharacterOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"f",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateFactionOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"l",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateLocationOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"n",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateNoteOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"q",
-			() => {
-				setIsCommanderOpen(false);
-				setIsCreateQuestOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-		createPlatformShiftShortcut(
-			"t",
-			() => {
-				setIsCommanderOpen(false);
-				setIsTodoDrawerOpen(true);
-			},
-			{ scope: () => isCommanderOpen, allowInInputs: true },
-		),
-	]);
+	const shortcuts = React.useMemo(
+		() => [
+			// Global shortcut to toggle commander
+			createPlatformShortcut(
+				"k",
+				() => {
+					setIsCommanderOpen(!isCommanderOpen);
+				},
+				{ allowInInputs: true },
+			),
+			// Commander-specific shortcuts (Cmd+Shift to avoid browser conflicts)
+			createPlatformShiftShortcut(
+				"c",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateCharacterOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"f",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateFactionOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"l",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateLocationOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"n",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateNoteOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"q",
+				() => {
+					setIsCommanderOpen(false);
+					setIsCreateQuestOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+			createPlatformShiftShortcut(
+				"t",
+				() => {
+					setIsCommanderOpen(false);
+					setIsTodoDrawerOpen(true);
+				},
+				{ scope: () => isCommanderOpen, allowInInputs: true },
+			),
+		],
+		[
+			isCommanderOpen,
+			setIsCommanderOpen,
+			setIsCreateCharacterOpen,
+			setIsCreateFactionOpen,
+			setIsCreateLocationOpen,
+			setIsCreateNoteOpen,
+			setIsCreateQuestOpen,
+			setIsTodoDrawerOpen,
+		],
+	);
+
+	useKeyboardShortcut(shortcuts);
 
 	return (
 		<CommandDialog open={isCommanderOpen} onOpenChange={setIsCommanderOpen}>
 			<CommandInput placeholder="Type a command or search..." />
 			<CommandList>
 				<CommandEmpty>No results found.</CommandEmpty>
-				{linksLoading ? (
+				{isLoading ? (
 					<CommandGroup heading="Loading...">
 						<CommandItem disabled>
 							<span>Loading entities...</span>
@@ -174,8 +192,105 @@ export function Commander({ gameId }: { gameId: string }) {
 					</CommandGroup>
 				) : (
 					<>
-						<CommandGroup heading="Controls">
-							<CommandItem>Popout</CommandItem>
+						<CommandGroup heading="Pinned">
+							{pinnedLoading ? (
+								<CommandItem disabled>
+									<span>Loading pinned entities...</span>
+								</CommandItem>
+							) : (
+								<>
+									{pinnedEntitiesResponse?.data?.pinned_entities.notes?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "note",
+														content: item.content,
+													})
+												}
+											>
+												<FileText />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.characters?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "character",
+														content: item.content,
+													})
+												}
+											>
+												<User />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.factions?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "faction",
+														content: item.content,
+													})
+												}
+											>
+												<Shield />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.locations?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "location",
+														content: item.content,
+													})
+												}
+											>
+												<MapPin />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+									{pinnedEntitiesResponse?.data?.pinned_entities.quests?.map(
+										(item) => (
+											<CommandItem
+												key={item.id}
+												onSelect={() =>
+													handleEntitySelect({
+														id: item.id,
+														name: item.name,
+														type: "quest",
+														content: item.content,
+													})
+												}
+											>
+												<Gem />
+												<span>{item.name}</span>
+											</CommandItem>
+										),
+									)}
+								</>
+							)}
 						</CommandGroup>
 						<CommandGroup heading="Characters">
 							<CommandItem
@@ -405,5 +520,24 @@ export function Commander({ gameId }: { gameId: string }) {
 				)}
 			</CommandList>
 		</CommandDialog>
+	);
+}
+
+export function CommanderTrigger() {
+	const { setIsCommanderOpen } = useUIActions();
+	return (
+		<div className="flex-1 max-w-md">
+			<button
+				type="button"
+				onClick={() => setIsCommanderOpen(true)}
+				className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
+			>
+				<Search className="mr-3 w-4 h-4 text-muted-foreground" />
+				<span className="text-muted-foreground">Search entities...</span>
+				<Badge variant="secondary" className="ml-auto text-xs">
+					⌘K
+				</Badge>
+			</button>
+		</div>
 	);
 }

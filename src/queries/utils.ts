@@ -34,6 +34,40 @@ import {
 	updateQuestLinkMutation,
 } from "~/api/@tanstack/react-query.gen";
 import type { EntityType } from "~/types";
+import { resolveArray } from "~/utils/resolve-array";
+import { useGetGameLinksSuspenseQuery } from "./games";
+
+export const useGetGameLinksData = (gameId: string) => {
+	const {
+		data: links,
+		isLoading,
+		isError,
+	} = useGetGameLinksSuspenseQuery({ id: gameId });
+
+	const characters = resolveArray(links?.data?.entities?.characters);
+	const factions = resolveArray(links?.data?.entities?.factions);
+	const locations = resolveArray(links?.data?.entities?.locations);
+	const notes = resolveArray(links?.data?.entities?.notes);
+	const quests = resolveArray(links?.data?.entities?.quests);
+
+	const totalEntityCount =
+		(characters?.length || 0) +
+		(factions?.length || 0) +
+		(locations?.length || 0) +
+		(notes?.length || 0) +
+		(quests?.length || 0);
+
+	return {
+		characters,
+		factions,
+		locations,
+		notes,
+		quests,
+		totalEntityCount,
+		isLoading,
+		isError,
+	};
+};
 
 export function getEntityQueryKey(
 	entity: { entityId: string; entityType: EntityType },

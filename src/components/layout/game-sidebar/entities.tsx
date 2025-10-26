@@ -8,8 +8,7 @@ import {
 	SidebarMenuItem,
 	SidebarMenuLink,
 } from "~/components/ui/sidebar";
-import { useGetGameLinksSuspenseQuery } from "~/queries/games";
-import { resolveEntityArray } from "./utils";
+import { useGetGameLinksData } from "~/queries/utils";
 
 interface SidebarEntitiesProps {
 	gameId: string;
@@ -17,20 +16,8 @@ interface SidebarEntitiesProps {
 
 export function SidebarEntities({ gameId }: SidebarEntitiesProps) {
 	const params = useParams({ from: "/_auth/games/$gameId" });
-	const { data: links } = useGetGameLinksSuspenseQuery({ id: gameId });
-
-	const characters = resolveEntityArray(links?.data?.entities?.characters);
-	const factions = resolveEntityArray(links?.data?.entities?.factions);
-	const locations = resolveEntityArray(links?.data?.entities?.locations);
-	const notes = resolveEntityArray(links?.data?.entities?.notes);
-	const quests = resolveEntityArray(links?.data?.entities?.quests);
-
-	const totalEntityCount =
-		(characters?.length || 0) +
-		(factions?.length || 0) +
-		(locations?.length || 0) +
-		(notes?.length || 0) +
-		(quests?.length || 0);
+	const { characters, factions, locations, notes, quests, totalEntityCount } =
+		useGetGameLinksData(gameId);
 
 	return (
 		<SidebarGroup>

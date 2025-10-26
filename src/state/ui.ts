@@ -26,11 +26,27 @@ interface EntityWindow {
 interface State {
 	isCreateFactionOpen: boolean;
 	isCreateCharacterOpen: boolean;
+	createCharacterFactionId?: string;
 	isCreateLocationOpen: boolean;
+	createLocationParentId: string | undefined;
 	isCreateNoteOpen: boolean;
+	createNoteParentId: string | undefined;
 	isCreateQuestOpen: boolean;
+	createQuestParentId: string | undefined;
 	isCommanderOpen: boolean;
 	isTodoDrawerOpen: boolean;
+	// Edit modal state
+	isEditCharacterOpen: boolean;
+	editCharacterId: string | undefined;
+	isEditFactionOpen: boolean;
+	editFactionId: string | undefined;
+	isEditLocationOpen: boolean;
+	editLocationId: string | undefined;
+	isEditNoteOpen: boolean;
+	editNoteId: string | undefined;
+	isEditQuestOpen: boolean;
+	editQuestId: string | undefined;
+	// Windows
 	entityWindows: EntityWindow[];
 	// Split view state
 	splitViewLeftPane?: EntityPath;
@@ -44,11 +60,27 @@ interface State {
 interface Actions {
 	setIsCreateFactionOpen: (isOpen: boolean) => void;
 	setIsCreateCharacterOpen: (isOpen: boolean) => void;
+	setCreateCharacterFactionId: (factionId: string | undefined) => void;
 	setIsCreateLocationOpen: (isOpen: boolean) => void;
+	setCreateLocationParentId: (parentId: string | undefined) => void;
 	setIsCreateNoteOpen: (isOpen: boolean) => void;
+	setCreateNoteParentId: (parentId: string | undefined) => void;
 	setIsCreateQuestOpen: (isOpen: boolean) => void;
+	setCreateQuestParentId: (parentId: string | undefined) => void;
 	setIsCommanderOpen: (isOpen: boolean) => void;
 	setIsTodoDrawerOpen: (isOpen: boolean) => void;
+	// Edit modal actions
+	setIsEditCharacterOpen: (isOpen: boolean) => void;
+	setEditCharacterId: (id: string | undefined) => void;
+	setIsEditFactionOpen: (isOpen: boolean) => void;
+	setEditFactionId: (id: string | undefined) => void;
+	setIsEditLocationOpen: (isOpen: boolean) => void;
+	setEditLocationId: (id: string | undefined) => void;
+	setIsEditNoteOpen: (isOpen: boolean) => void;
+	setEditNoteId: (id: string | undefined) => void;
+	setIsEditQuestOpen: (isOpen: boolean) => void;
+	setEditQuestId: (id: string | undefined) => void;
+	// Window actions
 	openEntityWindow: (entity: EntityLink) => void;
 	closeEntityWindow: (windowId: string) => void;
 	minimizeEntityWindow: (windowId: string) => void;
@@ -80,11 +112,27 @@ const BASE_Z_INDEX = 1000;
 const useUIStore = create<Store>()((set, get) => ({
 	isCreateFactionOpen: false,
 	isCreateCharacterOpen: false,
+	createCharacterFactionId: undefined,
 	isCreateLocationOpen: false,
+	createLocationParentId: undefined,
 	isCreateNoteOpen: false,
+	createNoteParentId: undefined,
 	isCreateQuestOpen: false,
+	createQuestParentId: undefined,
 	isCommanderOpen: false,
 	isTodoDrawerOpen: false,
+	// Edit modal state
+	isEditCharacterOpen: false,
+	editCharacterId: undefined,
+	isEditFactionOpen: false,
+	editFactionId: undefined,
+	isEditLocationOpen: false,
+	editLocationId: undefined,
+	isEditNoteOpen: false,
+	editNoteId: undefined,
+	isEditQuestOpen: false,
+	editQuestId: undefined,
+	// Windows
 	entityWindows: [],
 	// Split view initial state
 	splitViewLeftPane: undefined,
@@ -98,12 +146,31 @@ const useUIStore = create<Store>()((set, get) => ({
 		setIsCreateFactionOpen: (isOpen: boolean) => set({ isCreateFactionOpen: isOpen }),
 		setIsCreateCharacterOpen: (isOpen: boolean) =>
 			set({ isCreateCharacterOpen: isOpen }),
+		setCreateCharacterFactionId: (factionId: string | undefined) =>
+			set({ createCharacterFactionId: factionId }),
 		setIsCreateLocationOpen: (isOpen: boolean) =>
 			set({ isCreateLocationOpen: isOpen }),
+		setCreateLocationParentId: (parentId: string | undefined) =>
+			set({ createLocationParentId: parentId }),
 		setIsCreateNoteOpen: (isOpen: boolean) => set({ isCreateNoteOpen: isOpen }),
+		setCreateNoteParentId: (parentId: string | undefined) =>
+			set({ createNoteParentId: parentId }),
 		setIsCreateQuestOpen: (isOpen: boolean) => set({ isCreateQuestOpen: isOpen }),
+		setCreateQuestParentId: (parentId: string | undefined) =>
+			set({ createQuestParentId: parentId }),
 		setIsCommanderOpen: (isOpen: boolean) => set({ isCommanderOpen: isOpen }),
 		setIsTodoDrawerOpen: (isOpen: boolean) => set({ isTodoDrawerOpen: isOpen }),
+		// Edit modal actions
+		setIsEditCharacterOpen: (isOpen: boolean) => set({ isEditCharacterOpen: isOpen }),
+		setEditCharacterId: (id: string | undefined) => set({ editCharacterId: id }),
+		setIsEditFactionOpen: (isOpen: boolean) => set({ isEditFactionOpen: isOpen }),
+		setEditFactionId: (id: string | undefined) => set({ editFactionId: id }),
+		setIsEditLocationOpen: (isOpen: boolean) => set({ isEditLocationOpen: isOpen }),
+		setEditLocationId: (id: string | undefined) => set({ editLocationId: id }),
+		setIsEditNoteOpen: (isOpen: boolean) => set({ isEditNoteOpen: isOpen }),
+		setEditNoteId: (id: string | undefined) => set({ editNoteId: id }),
+		setIsEditQuestOpen: (isOpen: boolean) => set({ isEditQuestOpen: isOpen }),
+		setEditQuestId: (id: string | undefined) => set({ editQuestId: id }),
 		// Entity window actions
 		openEntityWindow: (entity: EntityLink) => {
 			const existingWindow = get().entityWindows.find(
@@ -266,12 +333,90 @@ export const useIsCreateFactionOpen = () =>
 	useUIStore((state) => state.isCreateFactionOpen);
 export const useIsCreateCharacterOpen = () =>
 	useUIStore((state) => state.isCreateCharacterOpen);
+export const useCreateCharacterFactionId = () =>
+	useUIStore((state) => state.createCharacterFactionId);
 export const useIsCreateLocationOpen = () =>
 	useUIStore((state) => state.isCreateLocationOpen);
+export const useCreateLocationParentId = () =>
+	useUIStore((state) => state.createLocationParentId);
 export const useIsCreateNoteOpen = () => useUIStore((state) => state.isCreateNoteOpen);
+export const useCreateNoteParentId = () =>
+	useUIStore((state) => state.createNoteParentId);
 export const useIsCreateQuestOpen = () => useUIStore((state) => state.isCreateQuestOpen);
+export const useCreateQuestParentId = () =>
+	useUIStore((state) => state.createQuestParentId);
 export const useIsCommanderOpen = () => useUIStore((state) => state.isCommanderOpen);
 export const useIsTodoDrawerOpen = () => useUIStore((state) => state.isTodoDrawerOpen);
+
+// Edit modal selectors
+export const useIsEditCharacterOpen = () =>
+	useUIStore((state) => state.isEditCharacterOpen);
+export const useEditCharacterId = () => useUIStore((state) => state.editCharacterId);
+export const useHandleEditCharacter = (id: string) => {
+	const { setIsEditCharacterOpen, setEditCharacterId } = useUIActions();
+	return () => {
+		setIsEditCharacterOpen(true);
+		setEditCharacterId(id);
+	};
+};
+export const useIsEditFactionOpen = () => useUIStore((state) => state.isEditFactionOpen);
+export const useEditFactionId = () => useUIStore((state) => state.editFactionId);
+export const useHandleEditFaction = (id: string) => {
+	const { setIsEditFactionOpen, setEditFactionId } = useUIActions();
+	return () => {
+		setIsEditFactionOpen(true);
+		setEditFactionId(id);
+	};
+};
+export const useIsEditLocationOpen = () =>
+	useUIStore((state) => state.isEditLocationOpen);
+export const useEditLocationId = () => useUIStore((state) => state.editLocationId);
+export const useHandleEditLocation = (id: string) => {
+	const { setIsEditLocationOpen, setEditLocationId } = useUIActions();
+	return () => {
+		setIsEditLocationOpen(true);
+		setEditLocationId(id);
+	};
+};
+export const useIsEditNoteOpen = () => useUIStore((state) => state.isEditNoteOpen);
+export const useEditNoteId = () => useUIStore((state) => state.editNoteId);
+export const useHandleEditNote = (id: string) => {
+	const { setIsEditNoteOpen, setEditNoteId } = useUIActions();
+	return () => {
+		setIsEditNoteOpen(true);
+		setEditNoteId(id);
+	};
+};
+export const useIsEditQuestOpen = () => useUIStore((state) => state.isEditQuestOpen);
+export const useEditQuestId = () => useUIStore((state) => state.editQuestId);
+export const useHandleEditQuest = (id: string) => {
+	const { setIsEditQuestOpen, setEditQuestId } = useUIActions();
+	return () => {
+		setIsEditQuestOpen(true);
+		setEditQuestId(id);
+	};
+};
+
+// Single interface for editing an entity
+export const useHandleEditEntity = (id: string, entityType: EntityType) => {
+	const handleEditCharacter = useHandleEditCharacter(id);
+	const handleEditFaction = useHandleEditFaction(id);
+	const handleEditLocation = useHandleEditLocation(id);
+	const handleEditNote = useHandleEditNote(id);
+	const handleEditQuest = useHandleEditQuest(id);
+
+	return entityType === "character"
+		? handleEditCharacter
+		: entityType === "faction"
+			? handleEditFaction
+			: entityType === "location"
+				? handleEditLocation
+				: entityType === "note"
+					? handleEditNote
+					: entityType === "quest"
+						? handleEditQuest
+						: undefined;
+};
 
 // Entity window selectors
 export const useEntityWindows = () => useUIStore((state) => state.entityWindows);

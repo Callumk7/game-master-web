@@ -1,43 +1,37 @@
 import { ClientOnly, createFileRoute, Outlet } from "@tanstack/react-router";
-import { Search } from "lucide-react";
 import {
 	getGameOptions,
 	getLocationTreeOptions,
 	getQuestTreeOptions,
-	listCharactersOptions,
-	listFactionsOptions,
 	listGameEntitiesOptions,
-	listLocationsOptions,
-	listNotesOptions,
 	listPinnedEntitiesOptions,
-	listQuestsOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { CreateCharacterSheet } from "~/components/characters/create-character-sheet";
-import { Commander } from "~/components/commander";
+import { EditCharacterDialog } from "~/components/characters/edit-character-dialog";
+import { Commander, CommanderTrigger } from "~/components/commander";
 import { EntityTabs } from "~/components/entity-tabs";
 import { BasicErrorComponent } from "~/components/error";
 import { CreateFactionSheet } from "~/components/factions/create-faction-sheet";
+import { EditFactionDialog } from "~/components/factions/edit-faction-dialog";
 import { EntityWindowManager } from "~/components/layout/entity-window-manager";
 import { GameSidebar } from "~/components/layout/game-sidebar";
 import { WindowTray } from "~/components/layout/window-tray";
 import { CreateLocationSheet } from "~/components/locations/create-location-sheet";
+import { EditLocationDialog } from "~/components/locations/edit-location-dialog";
 import { CreateNoteSheet } from "~/components/notes/create-note-sheet";
+import { EditNoteDialog } from "~/components/notes/edit-note-dialog";
 import { CreateQuestSheet } from "~/components/quests/create-quest-sheet";
+import { EditQuestDialog } from "~/components/quests/edit-quest-dialog";
 import { TodosDrawer } from "~/components/todos/todos-drawer";
-import { Badge } from "~/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { useUIActions } from "~/state/ui";
 
 export const Route = createFileRoute("/_auth/games/$gameId")({
 	component: RouteComponent,
 	loader: async ({ params, context }) => {
 		const gameId = params.gameId;
-		await context.queryClient.ensureQueryData({
+		context.queryClient.ensureQueryData({
 			...getGameOptions({ path: { id: gameId } }),
 		});
-		context.queryClient.ensureQueryData(
-			listGameEntitiesOptions({ path: { game_id: gameId } }),
-		);
 		context.queryClient.ensureQueryData(
 			getLocationTreeOptions({ path: { game_id: gameId } }),
 		);
@@ -47,20 +41,8 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 		context.queryClient.ensureQueryData(
 			listPinnedEntitiesOptions({ path: { game_id: gameId } }),
 		);
-		context.queryClient.ensureQueryData(
-			listCharactersOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listFactionsOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listNotesOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listQuestsOptions({ path: { game_id: gameId } }),
-		);
-		context.queryClient.ensureQueryData(
-			listLocationsOptions({ path: { game_id: gameId } }),
+		await context.queryClient.ensureQueryData(
+			listGameEntitiesOptions({ path: { game_id: gameId } }),
 		);
 	},
 	errorComponent: BasicErrorComponent,
@@ -69,7 +51,6 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 // Games Layout
 function RouteComponent() {
 	const { gameId } = Route.useParams();
-	const { setIsCommanderOpen } = useUIActions();
 
 	return (
 		<SidebarProvider>
@@ -81,24 +62,7 @@ function RouteComponent() {
 						<header className="sticky top-0 border-b p-4 flex items-center gap-4 backdrop-blur-md bg-background/80 z-20 h-[73px]">
 							<SidebarTrigger />
 							<Commander gameId={gameId} />
-							<div className="flex-1 max-w-md">
-								<button
-									type="button"
-									onClick={() => setIsCommanderOpen(true)}
-									className="relative w-full h-10 px-3 py-2 text-left text-sm bg-background border border-input rounded-md hover:ring-2 hover:ring-ring focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer flex items-center"
-								>
-									<Search className="mr-3 w-4 h-4 text-muted-foreground" />
-									<span className="text-muted-foreground">
-										Search entities...
-									</span>
-									<Badge
-										variant="secondary"
-										className="ml-auto text-xs"
-									>
-										⌘J
-									</Badge>
-								</button>
-							</div>
+							<CommanderTrigger />
 						</header>
 						<EntityTabs gameId={gameId} />
 						<div className="w-full overflow-y-scroll h-[calc(100vh-120px)] top-[80px]">
@@ -111,6 +75,11 @@ function RouteComponent() {
 					<CreateLocationSheet />
 					<CreateQuestSheet />
 					<EntityWindowManager />
+					<EditCharacterDialog gameId={gameId} />
+					<EditFactionDialog gameId={gameId} />
+					<EditLocationDialog gameId={gameId} />
+					<EditNoteDialog gameId={gameId} />
+					<EditQuestDialog gameId={gameId} />
 					<WindowTray />
 					<ClientOnly>
 						<TodosDrawer />

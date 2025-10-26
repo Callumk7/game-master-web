@@ -168,17 +168,22 @@
 /* Lists */
 .ProseMirror ul,
 .ProseMirror ol {
-	margin: var(--editor-spacing-4) 0;
+	margin: var(--editor-spacing-1) 0;
 	padding-left: var(--editor-spacing-6);
 }
 
 .ProseMirror li {
-	margin: var(--editor-spacing-2) 0;
+	margin: var(--editor-spacing-1) 0;
 	padding-left: var(--editor-spacing-2);
 }
 
 .ProseMirror ul {
 	list-style-type: disc;
+}
+
+.ProseMirror li ul,
+.ProseMirror li ol {
+	margin: 0;
 }
 
 .ProseMirror ul ul {
@@ -242,6 +247,11 @@
 
 .ProseMirror tr:hover td {
 	background-color: var(--editor-bg-subtle);
+}
+
+.ProseMirror mark {
+	background-color: var(--chart-1);
+	color: var(--editor-text-default);
 }
 
 /* Table selection styles */

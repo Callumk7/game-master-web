@@ -1,18 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
-
 import type { Faction } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteFactionMutation } from "~/queries/factions";
+import { useHandleEditFaction } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
-import { EditFactionDialog } from "./edit-faction-dialog";
 
 interface FactionsTableProps {
 	data: Faction[];
@@ -25,7 +25,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
-				<EntityLink
+				<TableLink
 					entityType="faction"
 					gameId={gameId}
 					entityId={row.original.id}
@@ -52,7 +52,7 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			cell: ({ row }) => {
 				const faction = row.original;
 				const deleteFaction = useDeleteFactionMutation(gameId, faction.id);
-				const [editDialogOpen, setEditDialogOpen] = React.useState(false);
+				const handleEdit = useHandleEditFaction(faction.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -68,20 +68,20 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 						<ActionsDropdown
 							entityType="faction"
 							entityName="faction"
-							entity={faction}
+							entity={{
+								id: faction.id,
+								name: faction.name,
+								type: "faction",
+								content: faction.content,
+								content_plain_text: faction.content_plain_text,
+							}}
 							gameId={gameId}
-							onEdit={() => setEditDialogOpen(true)}
+							onEdit={handleEdit}
 							onDelete={() => {
 								deleteFaction.mutate({
 									path: { game_id: gameId, id: faction.id },
 								});
 							}}
-						/>
-						<EditFactionDialog
-							gameId={gameId}
-							isOpen={editDialogOpen}
-							setIsOpen={setEditDialogOpen}
-							faction={faction}
 						/>
 					</div>
 				);
@@ -93,13 +93,39 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 export function FactionsTable({ data, gameId }: FactionsTableProps) {
 	const columns = createFactionColumns(gameId);
 
+	// Extract unique tags from all factions
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const faction of data) {
+			if (faction.tags) {
+				for (const tag of faction.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="faction"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

@@ -33,7 +33,7 @@ export interface EntityLink {
 		[key: string]: unknown;
 	};
 	strength?: number;
-	tags?: Array<unknown>;
+	tags?: Array<string>;
 
 	// Special fields for specific link types
 	is_current_location?: boolean; // character-location, faction-location

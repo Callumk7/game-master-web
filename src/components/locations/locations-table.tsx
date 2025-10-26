@@ -1,19 +1,19 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
-
 import type { Location } from "~/api/types.gen";
 import {
 	ActionsDropdown,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteLocationMutation } from "~/queries/locations";
+import { useHandleEditLocation } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
 import { Badge } from "../ui/badge";
-import { EditLocationDialog } from "./edit-location-dialog";
 
 interface LocationsTableProps {
 	data: Location[];
@@ -27,7 +27,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
 				<div className="flex flex-col">
-					<EntityLink
+					<TableLink
 						entityType="location"
 						gameId={gameId}
 						entityId={row.original.id}
@@ -58,7 +58,7 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 			cell: ({ row }) => {
 				const location = row.original;
 				const deleteLocation = useDeleteLocationMutation(gameId, location.id);
-				const [editModalOpen, setEditModalOpen] = React.useState(false);
+				const handleEdit = useHandleEditLocation(location.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -74,20 +74,20 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 						<ActionsDropdown
 							entityType="location"
 							entityName="location"
-							entity={location}
+							entity={{
+								id: location.id,
+								name: location.name,
+								type: "location",
+								content: location.content,
+								content_plain_text: location.content_plain_text,
+							}}
 							gameId={gameId}
-							onEdit={() => setEditModalOpen(true)}
+							onEdit={handleEdit}
 							onDelete={() => {
 								deleteLocation.mutate({
 									path: { game_id: gameId, id: location.id },
 								});
 							}}
-						/>
-						<EditLocationDialog
-							gameId={gameId}
-							isOpen={editModalOpen}
-							setIsOpen={setEditModalOpen}
-							location={location}
 						/>
 					</div>
 				);
@@ -99,13 +99,39 @@ function createLocationColumns(gameId: string): ColumnDef<Location>[] {
 export function LocationsTable({ data, gameId }: LocationsTableProps) {
 	const columns = createLocationColumns(gameId);
 
+	// Extract unique tags from all locations
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const location of data) {
+			if (location.tags) {
+				for (const tag of location.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="location"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{

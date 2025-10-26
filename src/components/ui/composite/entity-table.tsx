@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Link as RouterLink } from "@tanstack/react-router";
 import {
 	type Column,
@@ -15,9 +16,11 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-
+import { listPinnedEntitiesQueryKey } from "~/api/@tanstack/react-query.gen";
+import type { EntityLink } from "~/components/links/types";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { TagPicker } from "~/components/ui/composite/tag-picker";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -48,7 +51,9 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 import { getVariantFromStatus } from "~/components/utils";
-import type { Status } from "~/types";
+import { getEntityQueryKey, useUpdateEntity } from "~/queries/utils";
+import { useUIActions } from "~/state/ui";
+import type { EntityType, Status } from "~/types";
 import { cn } from "~/utils/cn";
 import { tableFilterFns } from "~/utils/table-filters";
 
@@ -93,7 +98,7 @@ export function SortableHeader<TData, TValue>({
 	);
 }
 
-interface EntityLinkProps {
+interface TableLinkProps {
 	entityType: string;
 	gameId: string;
 	entityId: string | number;
@@ -101,13 +106,13 @@ interface EntityLinkProps {
 	className?: string;
 }
 
-export function EntityLink({
+export function TableLink({
 	entityType,
 	gameId,
 	entityId,
 	name,
 	className = "font-medium hover:underline truncate block",
-}: EntityLinkProps) {
+}: TableLinkProps) {
 	return (
 		<Link
 			to={`/games/${gameId}/${entityType}s/${entityId}` as string}
@@ -193,9 +198,10 @@ export function ContentDisplay({
 }
 
 interface ActionsDropdownProps {
-	entityType: string;
+	entityType: EntityType;
 	entityName: string;
-	entity: { id: string | number };
+	entity: EntityLink;
+	isPinned?: boolean;
 	gameId: string;
 	onDelete?: () => void;
 	onEdit?: () => void;
@@ -205,13 +211,36 @@ interface ActionsDropdownProps {
 export function ActionsDropdown({
 	entityType,
 	entityName,
-	entity,
 	gameId,
+	entity,
+	isPinned,
 	onDelete,
 	onEdit,
 	showDelete = true,
 }: ActionsDropdownProps) {
 	const capitalizedType = entityType.charAt(0).toUpperCase() + entityType.slice(1);
+	const { openEntityWindow } = useUIActions();
+	const client = useQueryClient();
+
+	const { mutate } = useUpdateEntity(() => {
+		client.invalidateQueries({
+			queryKey: listPinnedEntitiesQueryKey({ path: { game_id: gameId } }),
+		});
+		client.invalidateQueries({
+			queryKey: getEntityQueryKey(
+				{ entityId: entity.id, entityType: entityType },
+				gameId,
+			),
+		});
+	});
+	const handleTogglePin = async () => {
+		mutate({
+			gameId,
+			entityType: entityType,
+			entityId: entity.id,
+			payload: { pinned: !isPinned },
+		});
+	};
 
 	return (
 		<DropdownMenu>
@@ -228,7 +257,7 @@ export function ActionsDropdown({
 					<DropdownMenuContent>
 						<DropdownMenuItem
 							onClick={() => {
-								navigator.clipboard.writeText(entity.id.toString());
+								navigator.clipboard.writeText(entity.id);
 								toast.info(`${capitalizedType} ID copied to clipboard!`);
 							}}
 						>
@@ -244,6 +273,12 @@ export function ActionsDropdown({
 							}
 						>
 							View {entityName}
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={handleTogglePin}>
+							Toggle Pin
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => openEntityWindow(entity)}>
+							Popout
 						</DropdownMenuItem>
 						<DropdownMenuItem onClick={onEdit}>
 							Edit {entityName}
@@ -268,9 +303,7 @@ interface EntityTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	entityName?: string; // e.g., "character", "faction", "quest"
-	searchPlaceholder?: string; // @deprecated: use filters config instead
-	tagPlaceholder?: string; // @deprecated: use filters config instead
-	filters?: FilterConfig[]; // New dynamic filter configuration
+	filters?: FilterConfig[]; // Dynamic filter configuration
 	enableColumnVisibility?: boolean;
 	enablePaginationSizeSelector?: boolean;
 	columnRelativeWidths?: Record<string, number>; // e.g., { "name": 2, "status": 1, "actions": 0.5 }
@@ -282,8 +315,6 @@ export function EntityTable<TData, TValue>({
 	columns,
 	data,
 	entityName = "entity",
-	searchPlaceholder = "Filter names...",
-	tagPlaceholder = "Filter tags...",
 	filters,
 	enableColumnVisibility = true,
 	enablePaginationSizeSelector = true,
@@ -302,23 +333,7 @@ export function EntityTable<TData, TValue>({
 
 	// Dynamic filter state management
 	const [filterValues, setFilterValues] = React.useState<Record<string, string>>({});
-
-	// Backward compatibility for legacy props
-	const [searchQuery, setSearchQuery] = React.useState("");
-	const [tagFilter, setTagFilter] = React.useState("");
 	const [paginationSize, setPaginationSize] = React.useState(20);
-
-	// Determine effective filters (new system or legacy)
-	const effectiveFilters = React.useMemo(() => {
-		if (filters && filters.length > 0) {
-			return filters;
-		}
-		// Fallback to legacy system
-		return [
-			{ type: "text" as const, columnId: "name", placeholder: searchPlaceholder },
-			{ type: "text" as const, columnId: "tags", placeholder: tagPlaceholder },
-		];
-	}, [filters, searchPlaceholder, tagPlaceholder]);
 
 	// Calculate percentage widths from relative widths
 	const columnWidths = React.useMemo(() => {
@@ -357,20 +372,16 @@ export function EntityTable<TData, TValue>({
 
 	// Apply dynamic filters
 	React.useEffect(() => {
-		effectiveFilters.forEach((filter) => {
+		if (!filters) return;
+
+		filters.forEach((filter) => {
 			const column = table.getColumn(filter.columnId);
 			if (column) {
-				const value = filters
-					? filterValues[filter.columnId]
-					: filter.columnId === "name"
-						? searchQuery
-						: filter.columnId === "tags"
-							? tagFilter
-							: "";
+				const value = filterValues[filter.columnId];
 				column.setFilterValue(value || undefined);
 			}
 		});
-	}, [effectiveFilters, filterValues, searchQuery, tagFilter, table, filters]);
+	}, [filters, filterValues, table]);
 
 	React.useEffect(() => {
 		table.setPageSize(paginationSize);
@@ -378,25 +389,10 @@ export function EntityTable<TData, TValue>({
 
 	// Helper function to render different filter types
 	const renderFilter = (filter: FilterConfig) => {
-		const value = filters
-			? filterValues[filter.columnId] || ""
-			: filter.columnId === "name"
-				? searchQuery
-				: filter.columnId === "tags"
-					? tagFilter
-					: "";
+		const value = filterValues[filter.columnId] || "";
 
 		const handleChange = (newValue: string) => {
-			if (filters) {
-				setFilterValues((prev) => ({ ...prev, [filter.columnId]: newValue }));
-			} else {
-				// Legacy mode
-				if (filter.columnId === "name") {
-					setSearchQuery(newValue);
-				} else if (filter.columnId === "tags") {
-					setTagFilter(newValue);
-				}
-			}
+			setFilterValues((prev) => ({ ...prev, [filter.columnId]: newValue }));
 		};
 
 		switch (filter.type) {
@@ -446,13 +442,16 @@ export function EntityTable<TData, TValue>({
 				);
 
 			case "multiselect":
-				// For now, treat as text - can be enhanced later
 				return (
-					<Input
+					<TagPicker
 						key={filter.columnId}
+						tags={filter.options?.map((opt) => opt.value) || []}
+						value={value ? value.split(",").filter(Boolean) : []}
+						onValueChange={(selectedTags) =>
+							handleChange(selectedTags.join(","))
+						}
 						placeholder={filter.placeholder || `Filter ${filter.columnId}...`}
-						value={value}
-						onChange={(event) => handleChange(event.target.value)}
+						label=""
 						className="max-w-sm"
 					/>
 				);
@@ -465,7 +464,7 @@ export function EntityTable<TData, TValue>({
 	return (
 		<div className="w-full max-w-full">
 			<div className="flex items-center gap-4 py-4">
-				{effectiveFilters.map(renderFilter)}
+				{filters?.map(renderFilter)}
 				{enableColumnVisibility && (
 					<DropdownMenu>
 						<DropdownMenuTrigger

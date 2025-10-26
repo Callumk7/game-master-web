@@ -55,7 +55,7 @@ export function EntityContentRenderer<T extends EntityUnion>({
 	onOpenFullView,
 }: EntityContentRendererProps<T>) {
 	return (
-		<div className="h-[calc(100vh-170px)] flex flex-col">
+		<div className="h-full flex flex-col">
 			{/* Pane Header */}
 			<div className="flex-shrink-0 flex items-center justify-between p-2 border-b bg-card">
 				<div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export function EntityContentRenderer<T extends EntityUnion>({
 
 			{/* Entity Content */}
 			<div className="flex-1 min-h-0">
-				<ScrollArea className="h-[85vh]">
+				<ScrollArea className="h-full">
 					{isLoading ? (
 						<div className="flex items-center justify-center h-32">
 							<Spinner className="h-6 w-6" />
@@ -114,7 +114,7 @@ export function EntityContentRenderer<T extends EntityUnion>({
 							{entityType} not found
 						</div>
 					) : (
-						<div className="p-4 space-y-4">
+						<div className="p-4 space-y-4 mb-80">
 							<EntityViewHeader
 								id={entity.id}
 								gameId={gameId}

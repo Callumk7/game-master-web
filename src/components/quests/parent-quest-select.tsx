@@ -85,6 +85,40 @@ export function ParentQuestSelect({
 		return formatQuestLabel(selectedQuest, questHierarchy);
 	};
 
+	const selectContent = (
+		<SelectPositioner>
+			<SelectContent>
+				<SelectItem value="none">
+					<span className="text-muted-foreground">No parent (main quest)</span>
+				</SelectItem>
+
+				{sortedQuests.map((quest) => {
+					const questHierarchy = hierarchy.get(quest.id) || [quest];
+					const label = formatQuestLabel(quest, questHierarchy);
+
+					return (
+						<SelectItem key={quest.id} value={quest.id}>
+							<div className="flex items-center gap-2">
+								<span className="text-xs bg-blue-100 dark:bg-blue-950 px-1.5 py-0.5 rounded text-blue-700 dark:text-blue-300">
+									quest
+								</span>
+								<span>{label}</span>
+							</div>
+						</SelectItem>
+					);
+				})}
+
+				{sortedQuests.length === 0 && (
+					<SelectItem value="disabled" disabled>
+						<span className="text-muted-foreground">
+							No other quests available
+						</span>
+					</SelectItem>
+				)}
+			</SelectContent>
+		</SelectPositioner>
+	);
+
 	return (
 		<Select
 			value={displayValue}
@@ -107,41 +141,11 @@ export function ParentQuestSelect({
 					) : null}
 				</SelectValue>
 			</SelectTrigger>
-			<SelectPortal container={container}>
-				<SelectPositioner>
-					<SelectContent>
-						<SelectItem value="none">
-							<span className="text-muted-foreground">
-								No parent (main quest)
-							</span>
-						</SelectItem>
-
-						{sortedQuests.map((quest) => {
-							const questHierarchy = hierarchy.get(quest.id) || [quest];
-							const label = formatQuestLabel(quest, questHierarchy);
-
-							return (
-								<SelectItem key={quest.id} value={quest.id}>
-									<div className="flex items-center gap-2">
-										<span className="text-xs bg-blue-100 dark:bg-blue-950 px-1.5 py-0.5 rounded text-blue-700 dark:text-blue-300">
-											quest
-										</span>
-										<span>{label}</span>
-									</div>
-								</SelectItem>
-							);
-						})}
-
-						{sortedQuests.length === 0 && (
-							<SelectItem value="disabled" disabled>
-								<span className="text-muted-foreground">
-									No other quests available
-								</span>
-							</SelectItem>
-						)}
-					</SelectContent>
-				</SelectPositioner>
-			</SelectPortal>
+			{container ? (
+				<SelectPortal container={container}>{selectContent}</SelectPortal>
+			) : (
+				selectContent
+			)}
 		</Select>
 	);
 }

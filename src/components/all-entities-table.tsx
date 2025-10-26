@@ -8,9 +8,10 @@ import {
 	ActionsDropdown,
 	ContentDisplay,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import {
@@ -21,6 +22,7 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { useHandleEditEntity } from "~/state/ui";
 import type { EntityType } from "~/types";
 import { EntityLinkButton } from "./links/entity-link-button";
 
@@ -33,6 +35,7 @@ export type AllEntity = {
 	tags?: string[];
 	created_at?: string;
 	updated_at?: string;
+	pinned?: boolean;
 	// Character specific
 	class?: string;
 	level?: number;
@@ -66,7 +69,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 			header: ({ column }) => <SortableHeader column={column}>Name</SortableHeader>,
 			cell: ({ row }) => (
 				<div className="flex flex-col">
-					<EntityLink
+					<TableLink
 						entityType={row.original.type}
 						gameId={gameId}
 						entityId={row.original.id}
@@ -117,6 +120,33 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 		return types.sort();
 	}, [entities]);
 
+	// Extract unique tags from all entities
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const entity of filteredEntities) {
+			if (entity.tags) {
+				for (const tag of entity.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [filteredEntities]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Search entities..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<div className="w-full max-w-full">
 			<div className="flex items-center gap-4 py-4 mb-4">
@@ -157,8 +187,7 @@ export function AllEntitiesTable({ entities, gameId }: AllEntitiesTableProps) {
 				columns={columns}
 				data={filteredEntities}
 				entityName="entity"
-				searchPlaceholder="Search entities..."
-				tagPlaceholder="Filter tags..."
+				filters={filters}
 				enableColumnVisibility={true}
 				enablePaginationSizeSelector={true}
 				defaultHidden={["content_plain_text"]}
@@ -180,6 +209,7 @@ interface EntityControlsProps {
 }
 
 function EntityControls({ gameId, entity }: EntityControlsProps) {
+	const handleEdit = useHandleEditEntity(entity.id, entity.type);
 	return (
 		<div className="flex gap-2 justify-end mr-2">
 			<EntityLinkButton entity={entity} />
@@ -187,6 +217,8 @@ function EntityControls({ gameId, entity }: EntityControlsProps) {
 				entityType={entity.type}
 				entityName={entity.type}
 				entity={entity}
+				isPinned={entity.pinned}
+				onEdit={handleEdit}
 				gameId={gameId}
 			/>
 		</div>

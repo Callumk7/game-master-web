@@ -6,15 +6,16 @@ import {
 	ActionsDropdown,
 	ContentDisplay,
 	DateDisplay,
-	EntityLink,
 	EntityTable,
+	type FilterConfig,
 	SortableHeader,
+	TableLink,
 	TagsDisplay,
 } from "~/components/ui/composite/entity-table";
 import { useDeleteCharacterMutation } from "~/queries/characters";
+import { useHandleEditCharacter } from "~/state/ui";
 import { EntityLinkButton } from "../links/entity-link-button";
 import { Badge } from "../ui/badge";
-import { EditCharacterDialog } from "./edit-character-dialog";
 
 interface CharacterTableProps {
 	data: Character[];
@@ -29,7 +30,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			minSize: 200,
 			cell: ({ row }) => (
 				<div className="flex flex-col w-full">
-					<EntityLink
+					<TableLink
 						entityType="character"
 						gameId={gameId}
 						entityId={row.original.id}
@@ -71,9 +72,9 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			cell: ({ row }) => (
 				<div>
 					{row.getValue("alive") ? (
-						<Check className="size-3 ml-2 text-green-300" />
+						<Check className="size-3 ml-2 text-success-foreground" />
 					) : (
-						<Cross className="size-3 ml-2 text-red-300" />
+						<Cross className="size-3 ml-2 text-destructive" />
 					)}
 				</div>
 			),
@@ -91,7 +92,7 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 			cell: ({ row }) => {
 				const character = row.original;
 				const deleteCharacter = useDeleteCharacterMutation(gameId, character.id);
-				const [editModalOpen, setEditModalOpen] = React.useState(false);
+				const handleEdit = useHandleEditCharacter(character.id);
 
 				return (
 					<div className="flex gap-2 justify-end mr-2">
@@ -107,20 +108,21 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 						<ActionsDropdown
 							entityType="character"
 							entityName="character"
-							entity={character}
+							entity={{
+								id: character.id,
+								name: character.name,
+								type: "character",
+								content: character.content,
+								content_plain_text: character.content_plain_text,
+							}}
 							gameId={gameId}
 							onDelete={() => {
 								deleteCharacter.mutate({
 									path: { id: character.id, game_id: gameId },
 								});
 							}}
-							onEdit={() => setEditModalOpen(true)}
-						/>
-						<EditCharacterDialog
-							gameId={gameId}
-							isOpen={editModalOpen}
-							setIsOpen={setEditModalOpen}
-							character={character}
+							onEdit={handleEdit}
+							isPinned={character.pinned}
 						/>
 					</div>
 				);
@@ -132,13 +134,39 @@ function createCharacterColumns(gameId: string): ColumnDef<Character>[] {
 export function CharacterTable({ data, gameId }: CharacterTableProps) {
 	const columns = createCharacterColumns(gameId);
 
+	// Extract unique tags from all characters
+	const allTags = React.useMemo(() => {
+		const tagSet = new Set<string>();
+		for (const character of data) {
+			if (character.tags) {
+				for (const tag of character.tags) {
+					tagSet.add(tag);
+				}
+			}
+		}
+		return Array.from(tagSet).sort();
+	}, [data]);
+
+	// Configure filters
+	const filters: FilterConfig[] = React.useMemo(
+		() => [
+			{ type: "text", columnId: "name", placeholder: "Filter names..." },
+			{
+				type: "multiselect",
+				columnId: "tags",
+				placeholder: "Filter tags...",
+				options: allTags.map((tag) => ({ value: tag, label: tag })),
+			},
+		],
+		[allTags],
+	);
+
 	return (
 		<EntityTable
 			columns={columns}
 			data={data}
 			entityName="character"
-			searchPlaceholder="Filter names..."
-			tagPlaceholder="Filter tags..."
+			filters={filters}
 			enableColumnVisibility={true}
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
