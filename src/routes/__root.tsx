@@ -29,6 +29,7 @@ const fetchSession = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	ssr: true,
 	beforeLoad: async () => {
 		const session = await fetchSession();
 

@@ -6,8 +6,8 @@ import { GamesList } from "~/components/games-list";
 export const Route = createFileRoute("/_auth/games/")({
 	ssr: true,
 	component: RouteComponent,
-	loader: ({ context }) =>
-		context.queryClient.ensureQueryData({ ...listGamesOptions() }),
+	loader: async ({ context }) =>
+		await context.queryClient.ensureQueryData(listGamesOptions()),
 });
 
 function RouteComponent() {

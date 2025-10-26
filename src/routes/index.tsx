@@ -11,6 +11,7 @@ import {
 import { Link } from "~/components/ui/link";
 
 export const Route = createFileRoute("/")({
+	ssr: true,
 	component: App,
 });
 
