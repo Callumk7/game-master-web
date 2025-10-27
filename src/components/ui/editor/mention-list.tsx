@@ -15,6 +15,7 @@ export const MentionList = React.forwardRef<MentionListRef, MentionListProps>(
 	(props, ref) => {
 		const [selectedIndex, setSelectedIndex] = React.useState(0);
 		const divRef = React.useRef<HTMLDivElement>(null);
+		const buttonRefs = React.useRef<Map<number, HTMLButtonElement>>(new Map());
 
 		const selectItem = (index: number) => {
 			const item = props.items[index];
@@ -41,6 +42,17 @@ export const MentionList = React.forwardRef<MentionListRef, MentionListProps>(
 		React.useEffect(() => {
 			setSelectedIndex(0);
 		}, [props.items]);
+
+		// Scroll selected item into view when navigating with keyboard
+		React.useEffect(() => {
+			const selectedButton = buttonRefs.current.get(selectedIndex);
+			if (selectedButton) {
+				selectedButton.scrollIntoView({
+					block: "nearest",
+					behavior: "smooth",
+				});
+			}
+		}, [selectedIndex]);
 
 		React.useImperativeHandle(ref, () => ({
 			onKeyDown: ({ event }: { event: KeyboardEvent }) => {
@@ -106,7 +118,7 @@ export const MentionList = React.forwardRef<MentionListRef, MentionListProps>(
 		return (
 			<div
 				ref={divRef}
-				className="bg-popover border border-border rounded-lg shadow-md max-h-60 overflow-auto p-1"
+				className="bg-popover border border-border rounded-lg shadow-md max-h-60 overflow-scroll p-1"
 			>
 				{props.items.length ? (
 					<>
@@ -114,6 +126,13 @@ export const MentionList = React.forwardRef<MentionListRef, MentionListProps>(
 						{regularItems.map((item, index) => (
 							<button
 								key={item.id}
+								ref={(el) => {
+									if (el) {
+										buttonRefs.current.set(index, el);
+									} else {
+										buttonRefs.current.delete(index);
+									}
+								}}
 								type="button"
 								className={cn(
 									"flex items-center gap-2 w-full px-2 py-1.5 text-left text-sm rounded hover:bg-accent",
@@ -146,6 +165,13 @@ export const MentionList = React.forwardRef<MentionListRef, MentionListProps>(
 							return (
 								<button
 									key={item.id}
+									ref={(el) => {
+										if (el) {
+											buttonRefs.current.set(absoluteIndex, el);
+										} else {
+											buttonRefs.current.delete(absoluteIndex);
+										}
+									}}
 									type="button"
 									className={cn(
 										"flex items-center gap-2 w-full px-2 py-1.5 text-left text-sm rounded hover:bg-accent",
