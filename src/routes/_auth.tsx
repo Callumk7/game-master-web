@@ -4,7 +4,6 @@ import { Login } from "~/components/login";
 import { clearApiAuth, updateApiAuth } from "~/utils/api-client";
 
 export const Route = createFileRoute("/_auth")({
-	ssr: true,
 	beforeLoad: ({ context }) => {
 		if (!context.token) {
 			throw new Error("Not authenticated");

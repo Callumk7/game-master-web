@@ -17,7 +17,7 @@ export const createRouter = () => {
 		routeTree,
 		context: { ...rqContext },
 		defaultPreload: "intent",
-		defaultPreloadStaleTime: 1000 * 60,
+		defaultPreloadStaleTime: 1000 * 60 * 5,
 		Wrap: (props: { children: React.ReactNode }) => {
 			return (
 				<TanstackQuery.Provider {...rqContext}>
