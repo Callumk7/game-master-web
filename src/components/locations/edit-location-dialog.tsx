@@ -1,4 +1,4 @@
-import { useListLocationsQuery } from "~/api/@tanstack/react-query.gen";
+import { useGetGameLinksData } from "~/queries/utils";
 import { useEditLocationId, useIsEditLocationOpen, useUIActions } from "~/state/ui";
 import { EditEntityDialog } from "../edit-entity-dialog";
 import { EditLocationForm } from "./edit-location-form";
@@ -11,10 +11,7 @@ export function EditLocationDialog({ gameId }: EditLocationDialogProps) {
 	const isOpen = useIsEditLocationOpen();
 	const { setIsEditLocationOpen } = useUIActions();
 	const locationId = useEditLocationId();
-	const { data: listLocationsResponse } = useListLocationsQuery({
-		path: { game_id: gameId },
-	});
-	const locations = listLocationsResponse?.data ?? [];
+	const { locations } = useGetGameLinksData(gameId);
 	const location = locations.find((l) => l.id === locationId);
 
 	if (!location) {

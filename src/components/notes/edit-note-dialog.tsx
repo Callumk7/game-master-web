@@ -1,4 +1,4 @@
-import { useListNotesQuery } from "~/api/@tanstack/react-query.gen";
+import { useGetGameLinksData } from "~/queries/utils";
 import { useEditNoteId, useIsEditNoteOpen, useUIActions } from "~/state/ui";
 import { EditEntityDialog } from "../edit-entity-dialog";
 import { EditNoteForm } from "./edit-note-form";
@@ -11,10 +11,7 @@ export function EditNoteDialog({ gameId }: EditNoteDialogProps) {
 	const isOpen = useIsEditNoteOpen();
 	const { setIsEditNoteOpen } = useUIActions();
 	const noteId = useEditNoteId();
-	const { data: listNotesResponse } = useListNotesQuery({
-		path: { game_id: gameId },
-	});
-	const notes = listNotesResponse?.data ?? [];
+	const { notes } = useGetGameLinksData(gameId);
 	const note = notes.find((n) => n.id === noteId);
 
 	if (!note) {

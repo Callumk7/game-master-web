@@ -16,7 +16,7 @@ export function EditEntityDialog({
 }: EditEntityDialogProps) {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogContent>
+			<DialogContent className="min-w-fit">
 				<DialogHeader>
 					<DialogTitle>{`Edit ${entity.name}`}</DialogTitle>
 				</DialogHeader>

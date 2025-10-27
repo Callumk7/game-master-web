@@ -1,4 +1,4 @@
-import { useListQuestsQuery } from "~/api/@tanstack/react-query.gen";
+import { useGetGameLinksData } from "~/queries/utils";
 import { useEditQuestId, useIsEditQuestOpen, useUIActions } from "~/state/ui";
 import { EditEntityDialog } from "../edit-entity-dialog";
 import { EditQuestForm } from "./edit-quest-form";
@@ -11,10 +11,7 @@ export function EditQuestDialog({ gameId }: EditQuestDialogProps) {
 	const isOpen = useIsEditQuestOpen();
 	const { setIsEditQuestOpen } = useUIActions();
 	const questId = useEditQuestId();
-	const { data: listQuestsResponse } = useListQuestsQuery({
-		path: { game_id: gameId },
-	});
-	const quests = listQuestsResponse?.data ?? [];
+	const { quests } = useGetGameLinksData(gameId);
 	const quest = quests.find((q) => q.id === questId);
 
 	if (!quest) {

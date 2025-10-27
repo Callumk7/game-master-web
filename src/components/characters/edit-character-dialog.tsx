@@ -1,4 +1,4 @@
-import { useListCharactersQuery } from "~/api/@tanstack/react-query.gen";
+import { useGetGameLinksData } from "~/queries/utils";
 import { useEditCharacterId, useIsEditCharacterOpen, useUIActions } from "~/state/ui";
 import { EditEntityDialog } from "../edit-entity-dialog";
 import { EditCharacterForm } from "./edit-character-form";
@@ -11,10 +11,7 @@ export function EditCharacterDialog({ gameId }: EditCharacterDialogProps) {
 	const isOpen = useIsEditCharacterOpen();
 	const { setIsEditCharacterOpen } = useUIActions();
 	const characterId = useEditCharacterId();
-	const { data: listCharactersResponse } = useListCharactersQuery({
-		path: { game_id: gameId },
-	});
-	const characters = listCharactersResponse?.data ?? [];
+	const { characters } = useGetGameLinksData(gameId);
 	const character = characters.find((c) => c.id === characterId);
 
 	if (!character) {
