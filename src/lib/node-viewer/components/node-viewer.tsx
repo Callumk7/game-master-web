@@ -15,13 +15,13 @@ import { Controls } from "./controls";
 import { SvgNodeRenderer } from "./svg-node-renderer";
 
 const DEFAULT_CONFIG: ForceSimulationConfig = {
-	repulsionStrength: 15000,
+	repulsionStrength: 46000,
 	attractionStrength: 15,
 	centerForceStrength: 10,
-	targetLinkLength: 150,
-	linkFlexibility: 0.5,
-	unconnectedNodeRepulsion: 2.0,
-	repulsionCutoffDistance: 200,
+	targetLinkLength: 100,
+	linkFlexibility: 0.2,
+	unconnectedNodeRepulsion: 3.6,
+	repulsionCutoffDistance: 700,
 	simulationWidth: 3200,
 	simulationHeight: 2400,
 };
