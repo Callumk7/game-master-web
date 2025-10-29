@@ -1,3 +1,4 @@
+import * as React from "react";
 import { create } from "zustand";
 import type { EntityLink } from "~/components/links/types";
 import type { EntityType } from "~/types";
@@ -432,6 +433,13 @@ export const useSplitViewRightSelectorOpen = () =>
 
 // Tab selectors
 export const useTabList = () => useUIStore((state) => state.tabList);
+export const useGameTabs = (gameId: string) => {
+	const allTabs = useTabList();
+	return React.useMemo(
+		() => allTabs.filter((t) => t.gameId === gameId),
+		[allTabs, gameId],
+	);
+};
 
 // Actions
 export const useUIActions = () => useUIStore((state) => state.actions);

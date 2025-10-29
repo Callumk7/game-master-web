@@ -202,7 +202,8 @@ export function Commander({ gameId }: { gameId: string }) {
 									{pinnedEntitiesResponse?.data?.pinned_entities.notes?.map(
 										(item) => (
 											<CommandItem
-												key={item.id}
+												key={`${item.id}-pinned`}
+												value={`pinned-note-${item.name}`}
 												onSelect={() =>
 													handleEntitySelect({
 														id: item.id,
@@ -220,7 +221,8 @@ export function Commander({ gameId }: { gameId: string }) {
 									{pinnedEntitiesResponse?.data?.pinned_entities.characters?.map(
 										(item) => (
 											<CommandItem
-												key={item.id}
+												key={`${item.id}-pinned`}
+												value={`pinned-character-${item.name}`}
 												onSelect={() =>
 													handleEntitySelect({
 														id: item.id,
@@ -238,7 +240,8 @@ export function Commander({ gameId }: { gameId: string }) {
 									{pinnedEntitiesResponse?.data?.pinned_entities.factions?.map(
 										(item) => (
 											<CommandItem
-												key={item.id}
+												key={`${item.id}-pinned`}
+												value={`pinned-faction-${item.name}`}
 												onSelect={() =>
 													handleEntitySelect({
 														id: item.id,
@@ -256,7 +259,8 @@ export function Commander({ gameId }: { gameId: string }) {
 									{pinnedEntitiesResponse?.data?.pinned_entities.locations?.map(
 										(item) => (
 											<CommandItem
-												key={item.id}
+												key={`${item.id}-pinned`}
+												value={`pinned-location-${item.name}`}
 												onSelect={() =>
 													handleEntitySelect({
 														id: item.id,
@@ -274,7 +278,8 @@ export function Commander({ gameId }: { gameId: string }) {
 									{pinnedEntitiesResponse?.data?.pinned_entities.quests?.map(
 										(item) => (
 											<CommandItem
-												key={item.id}
+												key={`${item.id}-pinned`}
+												value={`pinned-quest-${item.name}`}
 												onSelect={() =>
 													handleEntitySelect({
 														id: item.id,

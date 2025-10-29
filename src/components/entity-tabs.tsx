@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { SplitSquareHorizontal } from "lucide-react";
 import * as React from "react";
-import { type Tab, useTabList, useUIActions } from "~/state/ui";
+import { type Tab, useGameTabs, useUIActions } from "~/state/ui";
 import type { Optional } from "~/types";
 import { pluralise } from "~/utils/pluralise";
 import { Button } from "./ui/button";
@@ -18,7 +18,7 @@ export const useAddTab = (tab: Optional<Tab, "data">) => {
 };
 
 export function EntityTabs({ gameId }: { gameId: string }) {
-	const tabList = useTabList();
+	const tabList = useGameTabs(gameId);
 	const { removeTab, clearAllTabs } = useUIActions();
 	const navigate = useNavigate();
 
