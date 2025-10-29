@@ -6,6 +6,7 @@ import {
 	updateFactionMutation,
 } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm, schemas } from "~/lib/smart-form-factory";
+import { useUIActions } from "~/state/ui";
 
 interface EditFactionFormProps {
 	params: {
@@ -18,6 +19,7 @@ interface EditFactionFormProps {
 export function EditFactionForm({ initialData, params }: EditFactionFormProps) {
 	const { gameId, id } = params;
 	const queryClient = useQueryClient();
+	const { setIsEditFactionOpen } = useUIActions();
 
 	const FormWithContext = createSmartForm({
 		mutation: () =>
@@ -42,6 +44,7 @@ export function EditFactionForm({ initialData, params }: EditFactionFormProps) {
 					},
 				}),
 			});
+			setIsEditFactionOpen(false);
 		},
 		schema: schemas.faction,
 		initialValues: initialData,

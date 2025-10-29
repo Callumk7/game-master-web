@@ -1,5 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { NoteUpdateParams } from "~/api";
 import {
@@ -8,6 +7,7 @@ import {
 	updateNoteMutation,
 } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm, schemas } from "~/lib/smart-form-factory";
+import { useUIActions } from "~/state/ui";
 
 interface EditNoteFormProps {
 	params: {
@@ -20,7 +20,7 @@ interface EditNoteFormProps {
 export function EditNoteForm({ initialData, params }: EditNoteFormProps) {
 	const { gameId, id } = params;
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
+	const { setIsEditNoteOpen } = useUIActions();
 
 	const FormComponent = createSmartForm({
 		mutation: () =>
@@ -45,7 +45,7 @@ export function EditNoteForm({ initialData, params }: EditNoteFormProps) {
 					},
 				}),
 			});
-			navigate({ to: ".." });
+			setIsEditNoteOpen(false);
 		},
 		schema: schemas.note,
 		entityName: "note",

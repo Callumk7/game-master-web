@@ -1,5 +1,4 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { LocationUpdateParams } from "~/api";
 import {
@@ -9,6 +8,7 @@ import {
 	updateLocationMutation,
 } from "~/api/@tanstack/react-query.gen";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
+import { useUIActions } from "~/state/ui";
 import { Button } from "../ui/button";
 import { ParentLocationSelect } from "./parent-location-select";
 
@@ -23,7 +23,7 @@ interface EditLocationFormProps {
 export function EditLocationForm({ initialData, params }: EditLocationFormProps) {
 	const { gameId, id } = params;
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
+	const { setIsEditLocationOpen } = useUIActions();
 
 	const { form, mutation, renderSmartField } = useSmartForm({
 		mutation: () =>
@@ -53,7 +53,7 @@ export function EditLocationForm({ initialData, params }: EditLocationFormProps)
 					},
 				}),
 			});
-			navigate({ to: ".." });
+			setIsEditLocationOpen(false);
 		},
 		schema: schemas.location,
 		entityName: "location",

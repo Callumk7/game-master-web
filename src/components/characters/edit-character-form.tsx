@@ -7,6 +7,7 @@ import {
 	updateCharacterMutation,
 } from "~/api/@tanstack/react-query.gen";
 import { createSmartForm, schemas } from "~/lib/smart-form-factory";
+import { useUIActions } from "~/state/ui";
 
 interface EditCharacterFormProps {
 	params: {
@@ -19,6 +20,7 @@ interface EditCharacterFormProps {
 export function EditCharacterForm({ initialData, params }: EditCharacterFormProps) {
 	const { gameId, id } = params;
 	const queryClient = useQueryClient();
+	const { setIsEditCharacterOpen } = useUIActions();
 
 	// Create form component with proper context handling
 	const FormComponent = createSmartForm({
@@ -44,6 +46,7 @@ export function EditCharacterForm({ initialData, params }: EditCharacterFormProp
 					},
 				}),
 			});
+			setIsEditCharacterOpen(false);
 		},
 		schema: schemas.character.omit({ content: true }),
 		entityName: "character",

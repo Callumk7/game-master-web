@@ -8,6 +8,7 @@ import {
 	useListQuestsQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
+import { useUIActions } from "~/state/ui";
 import { Button } from "../ui/button";
 import { ParentQuestSelect } from "./parent-quest-select";
 
@@ -22,6 +23,7 @@ interface EditQuestFormProps {
 export function EditQuestForm({ initialData, params }: EditQuestFormProps) {
 	const { gameId, id } = params;
 	const queryClient = useQueryClient();
+	const { setIsEditQuestOpen } = useUIActions();
 
 	const { data: questsData, isLoading: questsLoading } = useListQuestsQuery({
 		path: { game_id: gameId },
@@ -51,6 +53,7 @@ export function EditQuestForm({ initialData, params }: EditQuestFormProps) {
 					},
 				}),
 			});
+			setIsEditQuestOpen(false);
 		},
 		schema: schemas.quest,
 		entityName: "quest",
@@ -62,7 +65,12 @@ export function EditQuestForm({ initialData, params }: EditQuestFormProps) {
 	return (
 		<div className="space-y-6">
 			<form.AppForm>
-				<form>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						form.handleSubmit();
+					}}
+				>
 					<div className="space-y-6">
 						{renderSmartField("name")}
 						{renderSmartField("status")}
