@@ -1,5 +1,5 @@
 import { Plus, X } from "lucide-react";
-import { useState } from "react";
+import * as React from "react";
 import { Badge } from "../badge";
 import { Button } from "../button";
 import { Input } from "../input";
@@ -17,7 +17,7 @@ export function TagInput({
 	placeholder = "Add a tag",
 	disabled = false,
 }: TagInputProps) {
-	const [newTag, setNewTag] = useState("");
+	const [newTag, setNewTag] = React.useState("");
 
 	const addTag = () => {
 		if (newTag.trim() && !value.includes(newTag.trim())) {
