@@ -39,6 +39,7 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 	className = "space-y-6",
 	submitText = "Submit",
 	initialValues,
+	resetOnSuccess = false,
 }: SmartFormOptions<TData, TError, TMutationData>) {
 	return function SmartFormComponent() {
 		// Auto-generate fields from schema
@@ -52,7 +53,9 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 			...mutation(),
 			onSuccess: (data) => {
 				onSuccess?.(data);
-				form.reset();
+				if (resetOnSuccess) {
+					form.reset();
+				}
 			},
 		});
 
@@ -252,6 +255,7 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 	entityName,
 	onSuccess,
 	initialValues,
+	resetOnSuccess = false,
 }: HookFormOptions<TData, TError, TMutationData>) {
 	// Auto-generate fields from schema (needed for processing)
 	const fields = generateFieldsFromSchema(schema, {});
@@ -264,7 +268,9 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 		...mutation(),
 		onSuccess: (data) => {
 			onSuccess?.(data);
-			form.reset();
+			if (resetOnSuccess) {
+				form.reset();
+			}
 		},
 	});
 

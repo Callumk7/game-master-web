@@ -68,6 +68,8 @@ export interface SmartFormOptions<TData, TError, TMutationData extends TDataShap
 	submitText?: string;
 	/** Initial values for form fields (for edit forms) */
 	initialValues?: Record<string, unknown>;
+	/** Whether to reset form to initial values after successful submission (default: false) */
+	resetOnSuccess?: boolean;
 }
 
 export interface HookFormOptions<TData, TError, TMutationData extends TDataShape> {
@@ -83,6 +85,8 @@ export interface HookFormOptions<TData, TError, TMutationData extends TDataShape
 	onSuccess?: (data: TData) => void;
 	/** Initial values for form fields (for edit forms) */
 	initialValues?: Record<string, unknown>;
+	/** Whether to reset form to initial values after successful submission (default: false) */
+	resetOnSuccess?: boolean;
 }
 
 // ===================================
