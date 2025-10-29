@@ -31,6 +31,10 @@ export function EntityTabs({ gameId }: { gameId: string }) {
 		}
 	};
 
+	if (tabList.length === 0) {
+		return null;
+	}
+
 	// TODO: Add pin button
 	// TODO: Add drag to reorder
 	return (
