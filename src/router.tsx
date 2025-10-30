@@ -1,7 +1,7 @@
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
+import { Spinner } from "./components/ui/spinner";
 import * as TanstackQuery from "./integrations/tanstack-query/root-provider";
-
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
@@ -18,6 +18,11 @@ export const createRouter = () => {
 		context: { ...rqContext },
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 1000 * 60 * 5,
+		defaultPendingComponent: () => (
+			<div className="flex h-screen w-full items-center justify-center">
+				<Spinner />
+			</div>
+		),
 		Wrap: (props: { children: React.ReactNode }) => {
 			return (
 				<TanstackQuery.Provider {...rqContext}>
