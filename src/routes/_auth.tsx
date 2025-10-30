@@ -1,22 +1,17 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { useLayoutEffect } from "react";
-import { Login } from "~/components/login";
 import { clearApiAuth, updateApiAuth } from "~/utils/api-client";
 
 export const Route = createFileRoute("/_auth")({
-	beforeLoad: ({ context }) => {
+	beforeLoad: ({ context, location }) => {
 		if (!context.token) {
-			throw new Error("Not authenticated");
+			throw redirect({
+				to: "/login",
+				search: { redirect: location.href },
+			});
 		}
 
 		updateApiAuth(context.token);
-	},
-	errorComponent: ({ error }) => {
-		if (error.message === "Not authenticated") {
-			return <Login />;
-		}
-
-		throw error;
 	},
 	component: AuthLayout,
 });
