@@ -142,7 +142,7 @@ function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 	const questPath = `/games/${gameId}/quests/${node.id}`;
 	const isTopLevel = level === 0;
 	const excerpt = node.content_plain_text
-		? node.content_plain_text.split("\n")[0].substring(0, 120) +
+		? node.content_plain_text.split("\n")[0].substring(0, 1000) +
 			(node.content_plain_text.length > 120 ? "..." : "")
 		: "";
 
@@ -254,7 +254,7 @@ function QuestNode({ node, gameId, level = 0 }: QuestNodeProps) {
 						</div>
 
 						{/* Quest Excerpt */}
-						{excerpt && isTopLevel && (
+						{excerpt && (
 							<p className="text-sm text-muted-foreground mb-3 leading-relaxed">
 								{excerpt}
 							</p>
