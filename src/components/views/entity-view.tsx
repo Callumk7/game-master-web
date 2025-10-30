@@ -192,6 +192,7 @@ export function EntityControls({
 	const handleDeleteConfirm = () => {
 		if (onDelete) {
 			onDelete();
+			setIsDeleteDialogOpen(false);
 		}
 	};
 

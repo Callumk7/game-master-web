@@ -247,6 +247,7 @@ export function ActionsDropdown({
 	const handleDeleteConfirm = () => {
 		if (onDelete) {
 			onDelete();
+			setIsDeleteDialogOpen(false);
 		}
 	};
 

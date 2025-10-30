@@ -211,6 +211,7 @@ function SidebarPinnedEntitiesDropdown({
 
 	const handleDeleteConfirm = () => {
 		handleDelete();
+		setIsDeleteDialogOpen(false);
 	};
 
 	const { openEntityWindow } = useUIActions();
