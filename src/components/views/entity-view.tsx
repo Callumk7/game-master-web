@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -22,6 +23,7 @@ import { useSplitViewLeftPane, useSplitViewRightPane, useUIActions } from "~/sta
 import type { EntityType } from "~/types";
 import { PrimaryImageBanner } from "../images/primary-image-banner";
 import { Button } from "../ui/button";
+import { DeleteConfirmationDialog } from "../ui/delete-confirmation-dialog";
 
 type EntityTab = {
 	id: string;
@@ -151,6 +153,7 @@ export function EntityControls({
 	const { updateSplitViewPanes } = useUIActions();
 	const leftPane = useSplitViewLeftPane();
 	const rightPane = useSplitViewRightPane();
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
 	const entity = {
 		id: entityId,
@@ -186,6 +189,12 @@ export function EntityControls({
 		});
 	};
 
+	const handleDeleteConfirm = () => {
+		if (onDelete) {
+			onDelete();
+		}
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger render={<Button size={"icon"} variant={"ghost"} />}>
@@ -209,12 +218,19 @@ export function EntityControls({
 						<Pin />
 						{pinned ? "Unpin" : "Pin"}
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={onDelete}>
+					<DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
 						<Trash2 />
 						Delete
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenuPositioner>
+			<DeleteConfirmationDialog
+				isOpen={isDeleteDialogOpen}
+				onClose={() => setIsDeleteDialogOpen(false)}
+				onConfirm={handleDeleteConfirm}
+				entityName={entityName}
+				entityType={entityType}
+			/>
 		</DropdownMenu>
 	);
 }

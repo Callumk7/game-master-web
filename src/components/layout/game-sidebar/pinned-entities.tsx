@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -24,6 +25,7 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { DeleteConfirmationDialog } from "~/components/ui/delete-confirmation-dialog";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -167,6 +169,7 @@ function SidebarPinnedEntitiesDropdown({
 	const { isMobile } = useSidebar();
 	const navigate = useNavigate();
 	const client = useQueryClient();
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
 	const handleEdit = useHandleEditEntity(entity.id, entityType);
 
@@ -204,6 +207,10 @@ function SidebarPinnedEntitiesDropdown({
 			entityId: entity.id,
 			entityType: entityType,
 		});
+	};
+
+	const handleDeleteConfirm = () => {
+		handleDelete();
 	};
 
 	const { openEntityWindow } = useUIActions();
@@ -246,12 +253,19 @@ function SidebarPinnedEntitiesDropdown({
 						<Pencil className="mr-1" />
 						Edit
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={handleDelete}>
+					<DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
 						<Trash2 className="mr-1" />
 						Delete
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenuPositioner>
+			<DeleteConfirmationDialog
+				isOpen={isDeleteDialogOpen}
+				onClose={() => setIsDeleteDialogOpen(false)}
+				onConfirm={handleDeleteConfirm}
+				entityName={entity.name}
+				entityType={entityType}
+			/>
 		</DropdownMenu>
 	);
 }
