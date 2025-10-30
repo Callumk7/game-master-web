@@ -14,7 +14,6 @@ import {
 } from "~/components/ui/card";
 
 export const Route = createFileRoute("/_auth/account")({
-	ssr: true,
 	component: RouteComponent,
 	loader: ({ context }) => {
 		return context.queryClient.ensureQueryData(getUserProfileOptions());

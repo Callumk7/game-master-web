@@ -3,7 +3,6 @@ import { AuthenticatedLayout } from "~/components/authenticated-layout";
 import { CreateGameForm } from "~/components/games/create-game-form";
 
 export const Route = createFileRoute("/_auth/games/new")({
-	ssr: true,
 	component: RouteComponent,
 });
 

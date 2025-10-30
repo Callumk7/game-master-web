@@ -4,7 +4,6 @@ import { AuthenticatedLayout } from "~/components/authenticated-layout";
 import { GamesList } from "~/components/games-list";
 
 export const Route = createFileRoute("/_auth/games/")({
-	ssr: true,
 	component: RouteComponent,
 	loader: async ({ context }) =>
 		await context.queryClient.ensureQueryData(listGamesOptions()),
