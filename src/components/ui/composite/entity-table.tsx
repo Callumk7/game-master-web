@@ -21,6 +21,7 @@ import type { EntityLink } from "~/components/links/types";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { TagPicker } from "~/components/ui/composite/tag-picker";
+import { DeleteConfirmationDialog } from "~/components/ui/delete-confirmation-dialog";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -221,6 +222,7 @@ export function ActionsDropdown({
 	const capitalizedType = entityType.charAt(0).toUpperCase() + entityType.slice(1);
 	const { openEntityWindow } = useUIActions();
 	const client = useQueryClient();
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
 
 	const { mutate } = useUpdateEntity(() => {
 		client.invalidateQueries({
@@ -240,6 +242,13 @@ export function ActionsDropdown({
 			entityId: entity.id,
 			payload: { pinned: !isPinned },
 		});
+	};
+
+	const handleDeleteConfirm = () => {
+		if (onDelete) {
+			onDelete();
+			setIsDeleteDialogOpen(false);
+		}
 	};
 
 	return (
@@ -284,13 +293,23 @@ export function ActionsDropdown({
 							Edit {entityName}
 						</DropdownMenuItem>
 						{showDelete && (
-							<DropdownMenuItem variant="destructive" onClick={onDelete}>
+							<DropdownMenuItem
+							variant="destructive"
+							onClick={() => setIsDeleteDialogOpen(true)}
+							>
 								Delete {entityName}
 							</DropdownMenuItem>
 						)}
 					</DropdownMenuContent>
 				</DropdownMenuPositioner>
 			</DropdownMenuPortal>
+			<DeleteConfirmationDialog
+				isOpen={isDeleteDialogOpen}
+				onClose={() => setIsDeleteDialogOpen(false)}
+				onConfirm={handleDeleteConfirm}
+				entityName={entity.name}
+				entityType={entityType}
+			/>
 		</DropdownMenu>
 	);
 }
