@@ -208,6 +208,7 @@ interface EntityControlsProps {
 	entity: AllEntity;
 }
 
+// TODO: Handle delete from the all entities table
 function EntityControls({ gameId, entity }: EntityControlsProps) {
 	const handleEdit = useHandleEditEntity(entity.id, entity.type);
 	return (
