@@ -40,6 +40,11 @@ function createFactionColumns(gameId: string): ColumnDef<Faction>[] {
 			cell: ({ row }) => <TagsDisplay tags={row.getValue("tags")} />,
 		},
 		{
+			accessorKey: "member_count",
+			header: "Members",
+			cell: ({ row }) => row.getValue("member_count"),
+		},
+		{
 			accessorKey: "updated_at",
 			header: ({ column }) => (
 				<SortableHeader column={column}>Updated</SortableHeader>
@@ -130,6 +135,7 @@ export function FactionsTable({ data, gameId }: FactionsTableProps) {
 			enablePaginationSizeSelector={true}
 			columnRelativeWidths={{
 				name: 1.5,
+				member_count: 0.5,
 				actions: 0.7,
 				updated_at: 0.5,
 			}}
