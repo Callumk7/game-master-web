@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
 	deleteNoteMutation,
 	getNoteOptions,
@@ -9,6 +10,7 @@ import {
 	updateNoteMutation,
 	useGetNoteLinksQuery,
 } from "~/api/@tanstack/react-query.gen";
+import { zError } from "~/api/zod.gen";
 import { useUIActions } from "~/state/ui";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,6 +78,15 @@ export const useUpdateNoteMutation = (gameId: string, noteId: string) => {
 					path: { game_id: gameId, id: noteId },
 				}),
 			});
+		},
+		onError: (err) => {
+			console.log(err);
+			const parsedErr = zError.safeParse(err);
+			if (parsedErr.success) {
+				toast.error(parsedErr.data.error);
+			} else {
+				toast.error("An error occurred while updating the note.");
+			}
 		},
 	});
 };
