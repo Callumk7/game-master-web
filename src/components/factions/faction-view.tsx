@@ -19,6 +19,7 @@ import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityView } from "~/components/views/entity-view";
 import { useDeleteFactionMutation, useUpdateFactionMutation } from "~/queries/factions";
 import { createBadges } from "../utils";
+import { FactionChart } from "./faction-chart";
 
 interface FactionViewProps {
 	faction: Faction;
@@ -82,6 +83,11 @@ export function FactionView({ faction, gameId }: FactionViewProps) {
 			id: "images",
 			label: "Images",
 			content: <FactionImages gameId={gameId} factionId={faction.id} />,
+		},
+		{
+			id: "chart",
+			label: "Chart",
+			content: <FactionChart gameId={gameId} factionId={faction.id} />,
 		},
 	];
 
