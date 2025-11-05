@@ -23,10 +23,11 @@ interface TreeNode {
 interface TreeProps {
 	parentNode: TreeNode;
 	gameId: string;
+	defaultOpen?: boolean;
 }
 
-export function SidebarTree({ parentNode, gameId }: TreeProps) {
-	const [isOpen, setIsOpen] = React.useState(true);
+export function SidebarTree({ parentNode, gameId, defaultOpen = true }: TreeProps) {
+	const [isOpen, setIsOpen] = React.useState(defaultOpen);
 
 	if (!parentNode.children?.length) {
 		return (
@@ -91,6 +92,7 @@ export function SidebarTree({ parentNode, gameId }: TreeProps) {
 								gameId={gameId}
 								key={subNode.id}
 								parentNode={subNode}
+								defaultOpen={false}
 							/>
 						))}
 					</SidebarMenuSub>
