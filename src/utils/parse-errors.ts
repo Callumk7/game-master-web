@@ -1,11 +1,11 @@
-import type { _Error } from "~/api";
+import type { ValidationError } from "~/api";
 
 /**
  * Parses an ApiError object into a formatted string.
  * @param apiError The error object from the API.
  * @returns A string representing the formatted errors, or a default message.
  */
-export const parseApiErrors = (apiError: _Error): string => {
+export const parseApiErrors = (apiError: ValidationError): string => {
 	// Check if the errors object exists and is not empty
 	if (!apiError.errors || Object.keys(apiError.errors).length === 0) {
 		return "An unknown error occurred.";
