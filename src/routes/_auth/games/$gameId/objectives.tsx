@@ -4,6 +4,7 @@ import {
 	useListGameObjectivesQuery,
 } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
+import { CreateObjectiveForm } from "~/components/quests/create-objective-form";
 import { ObjectiveItem } from "~/components/quests/objective-item";
 import { Badge } from "~/components/ui/badge";
 import {
@@ -42,45 +43,61 @@ function RouteComponent() {
 	}
 	return (
 		<Container>
-			<Card className="max-w-xl mx-auto">
-				<CardHeader>
-					<div className="flex items-center justify-between">
-						<div>
-							<CardTitle>Quest Objectives</CardTitle>
-							<CardDescription>
-								Track your progress through this quest
-							</CardDescription>
+			<div className="max-w-xl mx-auto space-y-6">
+				{/* Create Objective Form */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Create New Objective</CardTitle>
+						<CardDescription>
+							Add a new objective to track for a quest
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<CreateObjectiveForm gameId={gameId} />
+					</CardContent>
+				</Card>
+
+				{/* Objectives List */}
+				<Card>
+					<CardHeader>
+						<div className="flex items-center justify-between">
+							<div>
+								<CardTitle>Quest Objectives</CardTitle>
+								<CardDescription>
+									Track your progress through your quests
+								</CardDescription>
+							</div>
+							{totalCount > 0 && (
+								<Badge
+									variant={
+										completedCount === totalCount ? "success" : "outline"
+									}
+								>
+									{completedCount}/{totalCount} complete
+								</Badge>
+							)}
 						</div>
-						{totalCount > 0 && (
-							<Badge
-								variant={
-									completedCount === totalCount ? "success" : "outline"
-								}
-							>
-								{completedCount}/{totalCount} complete
-							</Badge>
+					</CardHeader>
+					<CardContent className="space-y-4">
+						{objectives.length > 0 ? (
+							<div className="space-y-2">
+								{objectives.map((objective) => (
+									<ObjectiveItem
+										key={objective.id}
+										gameId={gameId}
+										objective={objective}
+										isGameList
+									/>
+								))}
+							</div>
+						) : (
+							<div className="text-muted-foreground text-sm text-center py-8 border-2 border-dashed rounded-lg">
+								No objectives yet. Create one above to get started.
+							</div>
 						)}
-					</div>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					{objectives.length > 0 ? (
-						<div className="space-y-2">
-							{objectives.map((objective) => (
-								<ObjectiveItem
-									key={objective.id}
-									gameId={gameId}
-									objective={objective}
-									isGameList
-								/>
-							))}
-						</div>
-					) : (
-						<div className="text-muted-foreground text-sm text-center py-8 border-2 border-dashed rounded-lg">
-							No objectives yet. Add one above to get started.
-						</div>
-					)}
-				</CardContent>
-			</Card>
+					</CardContent>
+				</Card>
+			</div>
 		</Container>
 	);
 }
