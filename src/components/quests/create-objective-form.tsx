@@ -13,20 +13,15 @@ import { QuestSelect } from "./quest-select";
 
 interface CreateObjectiveFormProps {
 	gameId: string;
-	container?: React.RefObject<HTMLElement | null>;
 	onSuccess?: () => void;
 }
 
-export function CreateObjectiveForm({
-	gameId,
-	container,
-	onSuccess,
-}: CreateObjectiveFormProps) {
+export function CreateObjectiveForm({ gameId, onSuccess }: CreateObjectiveFormProps) {
 	const queryClient = useQueryClient();
 	const [objectiveTitle, setObjectiveTitle] = React.useState("");
-	const [selectedQuestId, setSelectedQuestId] = React.useState<
-		string | undefined
-	>(undefined);
+	const [selectedQuestId, setSelectedQuestId] = React.useState<string | undefined>(
+		undefined,
+	);
 
 	// Fetch quests for the dropdown
 	const { data: questsData, isLoading: questsLoading } = useListQuestsQuery({
@@ -121,7 +116,6 @@ export function CreateObjectiveForm({
 						onChange={setSelectedQuestId}
 						placeholder="Select a quest"
 						disabled={mutation.isPending}
-						container={container}
 						required
 					/>
 				)}
