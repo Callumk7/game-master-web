@@ -93,7 +93,7 @@ export function CreateObjectiveForm({ gameId, onSuccess }: CreateObjectiveFormPr
 					type="text"
 					placeholder="Enter objective description"
 					value={objectiveTitle}
-					onChange={(e) => setObjectiveTitle(e.target.value)}
+					onChange={(e) => setObjectiveTitle(e.target.value.trim())}
 					disabled={mutation.isPending}
 					required
 				/>
