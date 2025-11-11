@@ -1,4 +1,4 @@
-import type * as React from "react";
+import * as React from "react";
 import type { Quest } from "~/api/types.gen";
 import {
 	Select,
@@ -64,7 +64,7 @@ export function QuestSelect({
 	required = false,
 }: QuestSelectProps) {
 	// Build hierarchy for display
-	const hierarchy = buildQuestHierarchy(quests);
+	const hierarchy = React.useMemo(() => buildQuestHierarchy(quests), [quests]);
 
 	// Sort quests alphabetically by name
 	const sortedQuests = [...quests].sort((a, b) => a.name.localeCompare(b.name));
