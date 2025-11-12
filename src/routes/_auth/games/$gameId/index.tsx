@@ -3,7 +3,6 @@ import { Container } from "~/components/container";
 import { NodeMap } from "~/components/dashboard/node-map";
 import { StatCard } from "~/components/dashboard/stat-card";
 import { Badge } from "~/components/ui/badge";
-import { Link } from "~/components/ui/link";
 import { useGetGameSuspenseQuery } from "~/queries/games";
 import { useGetGameLinksData } from "~/queries/utils";
 
@@ -35,13 +34,6 @@ function RouteComponent() {
 							{game?.name} - {game?.content || "A TTRPG campaign"}
 						</p>
 					</div>
-					<Link
-						to="/games/$gameId/tree"
-						params={{ gameId }}
-						variant={"default"}
-					>
-						View Raw Data
-					</Link>
 				</div>
 
 				<NodeMap gameId={gameId} />
