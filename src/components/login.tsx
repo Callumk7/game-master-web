@@ -1,11 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { createServerFn, useServerFn } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
 import { loginUser } from "~/api";
-import { signupFn } from "~/routes/signup";
+import { parseApiErrors } from "~/utils/parse-errors";
 import { getAppSession } from "~/utils/session";
 import { Auth } from "./auth";
-import { Button } from "./ui/button";
 
 export const loginFn = createServerFn({ method: "POST" })
 	.inputValidator((d: { email: string; password: string }) => d)
@@ -15,8 +14,7 @@ export const loginFn = createServerFn({ method: "POST" })
 		if (error) {
 			return {
 				error: true,
-				message: "There was an error",
-				userNotFound: true,
+				message: parseApiErrors(error),
 			};
 		}
 
@@ -44,10 +42,6 @@ export function Login() {
 		},
 	});
 
-	const signupMutation = useMutation({
-		mutationFn: useServerFn(signupFn),
-	});
-
 	return (
 		<Auth
 			actionText="Login"
@@ -63,33 +57,10 @@ export function Login() {
 				});
 			}}
 			afterSubmit={
-				loginMutation.data ? (
-					<>
-						<div className="text-red-400">{loginMutation.data.message}</div>
-						{loginMutation.data.userNotFound ? (
-							<div>
-								<Button
-									onClick={(e) => {
-										const formData = new FormData(
-											(e.target as HTMLButtonElement).form!,
-										);
-
-										signupMutation.mutate({
-											data: {
-												email: formData.get("email") as string,
-												password: formData.get(
-													"password",
-												) as string,
-											},
-										});
-									}}
-									type="button"
-								>
-									Sign up instead?
-								</Button>
-							</div>
-						) : null}
-					</>
+				loginMutation.data?.error ? (
+					<div className="text-destructive text-sm mt-2">
+						{loginMutation.data.message}
+					</div>
 				) : null
 			}
 		/>

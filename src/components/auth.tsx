@@ -15,9 +15,9 @@ export function Auth({
 	afterSubmit?: React.ReactNode;
 }) {
 	return (
-		<Card className="max-w-xl mx-auto">
+		<Card className="w-full">
 			<CardHeader>
-				<CardTitle>{actionText}</CardTitle>
+				<CardTitle className="text-2xl">{actionText}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<form
@@ -35,13 +35,25 @@ export function Auth({
 						type="password"
 					/>
 					<Button type="submit" disabled={status === "pending"}>
-						{status === "pending" ? "..." : actionText}
+						{status === "pending" ? "Loading..." : actionText}
 					</Button>
-					{actionText === "Login" ? (
-						<Link to="/signup">Need an account?</Link>
-					) : (
-						<Link to="/login">Already have an account?</Link>
-					)}
+					<div className="text-center text-sm text-muted-foreground">
+						{actionText === "Login" ? (
+							<>
+								Don't have an account?{" "}
+								<Link to="/signup" className="text-primary hover:underline">
+									Sign up
+								</Link>
+							</>
+						) : (
+							<>
+								Already have an account?{" "}
+								<Link to="/login" className="text-primary hover:underline">
+									Log in
+								</Link>
+							</>
+						)}
+					</div>
 					{afterSubmit ? afterSubmit : null}
 				</form>
 			</CardContent>
