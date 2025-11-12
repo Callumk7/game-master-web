@@ -1,52 +1,29 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AuthenticatedLayout } from "~/components/authenticated-layout";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Login } from "~/components/login";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "~/components/ui/card";
-import { Link } from "~/components/ui/link";
 
 export const Route = createFileRoute("/")({
 	ssr: true,
 	component: App,
+	beforeLoad: async ({ context }) => {
+		// Redirect authenticated users directly to games
+		if (context.token && context.user) {
+			throw redirect({ to: "/games" });
+		}
+	},
 });
 
 function App() {
-	const { user, token } = Route.useRouteContext();
-
-	if (!token || !user) {
-		return (
-			<div className="min-h-screen flex flex-col items-center justify-center">
-				<div className="max-w-md w-full">
-					<div className="text-center mb-8">
-						<h1 className="text-3xl font-bold mb-2">Game Master</h1>
-						<p>Login to see your games</p>
-					</div>
-					<Login />
-				</div>
-			</div>
-		);
-	}
-
 	return (
-		<AuthenticatedLayout user={user}>
-			<div className="w-1/2 mx-auto">
-				<Card>
-					<CardHeader>
-						<CardTitle>Welcome back, {user.email.split("@")[0]}!</CardTitle>
-						<CardDescription>Ready to manage your campaigns?</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<Link to="/games" variant="default">
-							Go to Games
-						</Link>
-					</CardContent>
-				</Card>
+		<div className="min-h-screen flex flex-col items-center justify-center bg-background">
+			<div className="max-w-md w-full px-4">
+				<div className="text-center mb-8">
+					<h1 className="text-4xl font-bold mb-2">Game Master</h1>
+					<p className="text-muted-foreground">
+						Manage your campaigns and adventures
+					</p>
+				</div>
+				<Login />
 			</div>
-		</AuthenticatedLayout>
+		</div>
 	);
 }
