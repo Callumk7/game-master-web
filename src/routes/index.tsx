@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { Login } from "~/components/login";
+import { LandingPage } from "~/components/landing-page";
 
 export const Route = createFileRoute("/")({
 	ssr: true,
@@ -13,17 +13,5 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	return (
-		<div className="min-h-screen flex flex-col items-center justify-center bg-background">
-			<div className="max-w-md w-full px-4">
-				<div className="text-center mb-8">
-					<h1 className="text-4xl font-bold mb-2">Game Master</h1>
-					<p className="text-muted-foreground">
-						Manage your campaigns and adventures
-					</p>
-				</div>
-				<Login />
-			</div>
-		</div>
-	);
+	return <LandingPage />;
 }
