@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Button } from "./button";
 import {
 	Dialog,
@@ -38,9 +37,7 @@ export function DeleteConfirmationDialog({
 					<DialogDescription>
 						Are you sure you want to delete{" "}
 						{entityName ? (
-							<>
-								<strong>{entityName}</strong>
-							</>
+							<strong>{entityName}</strong>
 						) : (
 							`this ${entityType}`
 						)}
@@ -51,7 +48,11 @@ export function DeleteConfirmationDialog({
 					<Button variant="outline" onClick={onClose} disabled={isDeleting}>
 						Cancel
 					</Button>
-					<Button variant="destructive" onClick={handleConfirm} disabled={isDeleting}>
+					<Button
+						variant="destructive"
+						onClick={handleConfirm}
+						disabled={isDeleting}
+					>
 						{isDeleting ? "Deleting..." : "Delete"}
 					</Button>
 				</DialogFooter>

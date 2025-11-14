@@ -294,8 +294,8 @@ export function ActionsDropdown({
 						</DropdownMenuItem>
 						{showDelete && (
 							<DropdownMenuItem
-							variant="destructive"
-							onClick={() => setIsDeleteDialogOpen(true)}
+								variant="destructive"
+								onClick={() => setIsDeleteDialogOpen(true)}
 							>
 								Delete {entityName}
 							</DropdownMenuItem>

@@ -41,14 +41,20 @@ export function Auth({
 						{actionText === "Login" ? (
 							<>
 								Don't have an account?{" "}
-								<Link to="/signup" className="text-primary hover:underline">
+								<Link
+									to="/signup"
+									className="text-primary hover:underline"
+								>
 									Sign up
 								</Link>
 							</>
 						) : (
 							<>
 								Already have an account?{" "}
-								<Link to="/login" className="text-primary hover:underline">
+								<Link
+									to="/login"
+									className="text-primary hover:underline"
+								>
 									Log in
 								</Link>
 							</>

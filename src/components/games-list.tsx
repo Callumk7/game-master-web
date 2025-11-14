@@ -11,7 +11,9 @@ export function GamesList() {
 	return (
 		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 			{error && (
-				<div className="text-destructive text-sm mb-4">Error: {error.message}</div>
+				<div className="text-destructive text-sm mb-4">
+					Error: {error.message}
+				</div>
 			)}
 			{games.data && games.data.length > 0 ? (
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

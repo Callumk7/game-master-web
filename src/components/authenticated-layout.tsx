@@ -15,7 +15,10 @@ export function AuthenticatedLayout({ user, children }: AuthenticatedLayoutProps
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center py-4">
 						<div className="flex items-center gap-6">
-							<Link to="/games" className="text-xl font-semibold hover:text-primary">
+							<Link
+								to="/games"
+								className="text-xl font-semibold hover:text-primary"
+							>
 								Game Master
 							</Link>
 							<nav className="flex items-center gap-4 text-sm">
