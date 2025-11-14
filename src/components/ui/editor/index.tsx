@@ -56,7 +56,6 @@ import {
 import { Separator } from "../separator";
 import { Toggle } from "../toggle";
 import { EditorBubbleMenu } from "./bubble-menu";
-import { EntityImage } from "./entity-image-extension";
 import { ImagePickerModal } from "./image-picker-modal";
 import { MentionCreateDialog } from "./mention-create-dialog";
 import { type MentionItem, SimpleMention } from "./mention-extension-simple";
@@ -283,7 +282,6 @@ export function Tiptap({
 			TableRow,
 			TableHeader,
 			TableCell,
-			EntityImage,
 			SimpleMention.configure({
 				onCreateRequest: ({
 					type,
@@ -412,26 +410,22 @@ export function Tiptap({
 	// Handle image selection from gallery
 	const handleImageInsert = React.useCallback(
 		(image: ImageType) => {
-			if (!gameId || !entityType || !entityId || !editor) return;
+			if (!editor) return;
+
+			const imageUrl = `${SERVER_URL}/${image.file_url}`;
 
 			editor
 				.chain()
 				.focus()
-				.insertContent({
-					type: "entityImage",
-					attrs: {
-						imageId: image.id,
-						entityId,
-						entityType,
-						gameId,
-						alt: image.alt_text ?? undefined,
-					},
+				.setImage({
+					src: imageUrl,
+					alt: image.alt_text || image.filename,
 				})
 				.run();
 
 			setImagePickerOpen(false);
 		},
-		[gameId, entityType, entityId, editor],
+		[editor],
 	);
 
 	// Cleanup effect to prevent memory leaks and flushSync issues on unmount
