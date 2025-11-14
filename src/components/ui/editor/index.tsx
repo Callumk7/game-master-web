@@ -37,6 +37,7 @@ import { useParams } from "@tanstack/react-router";
 import type { Range } from "@tiptap/core";
 import type { Editor } from "@tiptap/react";
 import { toast } from "sonner";
+import type { Image as ImageType } from "~/api";
 import {
 	listGameEntitiesOptions,
 	uploadEntityImageMutation,
@@ -55,6 +56,8 @@ import {
 import { Separator } from "../separator";
 import { Toggle } from "../toggle";
 import { EditorBubbleMenu } from "./bubble-menu";
+import { EntityImage } from "./entity-image-extension";
+import { ImagePickerModal } from "./image-picker-modal";
 import { MentionCreateDialog } from "./mention-create-dialog";
 import { type MentionItem, SimpleMention } from "./mention-extension-simple";
 
@@ -89,6 +92,9 @@ export function Tiptap({
 		position: number; // Changed from Range
 		editor: Editor;
 	} | null>(null);
+
+	// Image picker modal state
+	const [imagePickerOpen, setImagePickerOpen] = React.useState(false);
 
 	// Image upload mutation
 	const uploadImage = useMutation({
@@ -277,6 +283,7 @@ export function Tiptap({
 			TableRow,
 			TableHeader,
 			TableCell,
+			EntityImage,
 			SimpleMention.configure({
 				onCreateRequest: ({
 					type,
@@ -402,6 +409,31 @@ export function Tiptap({
 		[createDialogState, gameId],
 	);
 
+	// Handle image selection from gallery
+	const handleImageInsert = React.useCallback(
+		(image: ImageType) => {
+			if (!gameId || !entityType || !entityId || !editor) return;
+
+			editor
+				.chain()
+				.focus()
+				.insertContent({
+					type: "entityImage",
+					attrs: {
+						imageId: image.id,
+						entityId,
+						entityType,
+						gameId,
+						alt: image.alt_text ?? undefined,
+					},
+				})
+				.run();
+
+			setImagePickerOpen(false);
+		},
+		[gameId, entityType, entityId, editor],
+	);
+
 	// Cleanup effect to prevent memory leaks and flushSync issues on unmount
 	React.useEffect(() => {
 		return () => {
@@ -482,33 +514,57 @@ export function Tiptap({
 					<Link className="h-4 w-4" />
 				</Button>
 
-				<Button
-					variant="ghost"
-					size="sm"
-					onClick={() => {
-						const input = document.createElement("input");
-						input.type = "file";
-						input.accept = "image/*";
-						input.onchange = async (e) => {
-							const file = (e.target as HTMLInputElement).files?.[0];
-							if (file) {
-								const url = await handleImageUpload(file);
-								if (url) {
-									editor
-										.chain()
-										.focus()
-										.setImage({ src: url, alt: file.name })
-										.run();
-								}
-							}
-						};
-						input.click();
-					}}
-					disabled={!gameId || !entityType || !entityId}
-					title="Insert image"
-				>
-					<ImageIcon className="h-4 w-4" />
-				</Button>
+				<DropdownMenu>
+					<DropdownMenuTrigger
+						render={
+							<Button
+								variant="ghost"
+								size="sm"
+								title="Insert image"
+								disabled={!gameId || !entityType || !entityId}
+							/>
+						}
+					>
+						<ImageIcon className="h-4 w-4" />
+						<ChevronDown className="h-3 w-3" />
+					</DropdownMenuTrigger>
+					<DropdownMenuPositioner>
+						<DropdownMenuContent>
+							<DropdownMenuItem
+								onClick={() => {
+									const input = document.createElement("input");
+									input.type = "file";
+									input.accept = "image/*";
+									input.onchange = async (e) => {
+										const file = (e.target as HTMLInputElement)
+											.files?.[0];
+										if (file) {
+											const url = await handleImageUpload(file);
+											if (url) {
+												editor
+													.chain()
+													.focus()
+													.setImage({
+														src: url,
+														alt: file.name,
+													})
+													.run();
+											}
+										}
+									};
+									input.click();
+								}}
+							>
+								<Plus className="h-4 w-4 mr-2" />
+								Upload New Image
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setImagePickerOpen(true)}>
+								<ImageIcon className="h-4 w-4 mr-2" />
+								Insert from Gallery
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenuPositioner>
+				</DropdownMenu>
 
 				{editor.isActive("link") && (
 					<Button
@@ -755,6 +811,16 @@ export function Tiptap({
 					defaultName={createDialogState.query}
 					gameId={gameId}
 					onSuccess={handleEntityCreated}
+				/>
+			)}
+
+			{/* Image picker modal */}
+			{gameId && (
+				<ImagePickerModal
+					open={imagePickerOpen}
+					onOpenChange={setImagePickerOpen}
+					gameId={gameId}
+					onInsert={handleImageInsert}
 				/>
 			)}
 		</div>
