@@ -70,7 +70,9 @@ function RouteComponent() {
 							{totalCount > 0 && (
 								<Badge
 									variant={
-										completedCount === totalCount ? "success" : "outline"
+										completedCount === totalCount
+											? "success"
+											: "outline"
 									}
 								>
 									{completedCount}/{totalCount} complete

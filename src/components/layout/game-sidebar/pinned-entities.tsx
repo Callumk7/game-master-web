@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -14,10 +13,12 @@ import {
 	Trash2,
 	User,
 } from "lucide-react";
+import * as React from "react";
 import {
 	listGameEntitiesQueryKey,
 	listPinnedEntitiesQueryKey,
 } from "~/api/@tanstack/react-query.gen";
+import { DeleteConfirmationDialog } from "~/components/ui/delete-confirmation-dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -25,7 +26,6 @@ import {
 	DropdownMenuPositioner,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { DeleteConfirmationDialog } from "~/components/ui/delete-confirmation-dialog";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
