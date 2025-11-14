@@ -25,7 +25,7 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
 export function LandingPage() {
 	const features = [
 		{
-			icon: "⚔",
+			icon: "⚔️",
 			title: "Character Management",
 			description:
 				"Track NPCs, allies, and enemies with detailed profiles. Keep all character information organized and accessible during your sessions.",
