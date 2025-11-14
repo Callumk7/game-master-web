@@ -43,7 +43,7 @@ export function LandingPage() {
 				"Build and organize your game world with a hierarchical location system. Navigate through cities, dungeons, and regions with ease.",
 		},
 		{
-			icon: "⚜",
+			icon: "⚜️",
 			title: "Faction Management",
 			description:
 				"Track organizations, guilds, and political entities. Manage relationships and dynamics between different groups in your world.",
