@@ -25,13 +25,13 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
 export function LandingPage() {
 	const features = [
 		{
-			icon: "⚔️",
+			icon: "⚔",
 			title: "Character Management",
 			description:
 				"Track NPCs, allies, and enemies with detailed profiles. Keep all character information organized and accessible during your sessions.",
 		},
 		{
-			icon: "🗺️",
+			icon: "🗺",
 			title: "Quest & Objectives",
 			description:
 				"Manage storylines, quests, and objectives. Track progress and ensure your narrative stays on course with hierarchical quest organization.",
@@ -43,7 +43,7 @@ export function LandingPage() {
 				"Build and organize your game world with a hierarchical location system. Navigate through cities, dungeons, and regions with ease.",
 		},
 		{
-			icon: "⚜️",
+			icon: "⚜",
 			title: "Faction Management",
 			description:
 				"Track organizations, guilds, and political entities. Manage relationships and dynamics between different groups in your world.",
@@ -76,9 +76,9 @@ export function LandingPage() {
 							Your Ultimate DM Companion
 						</p>
 						<p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-							Organize campaigns, track characters, manage quests, and bring your
-							tabletop adventures to life with powerful tools designed for game
-							masters.
+							Organize campaigns, track characters, manage quests, and bring
+							your tabletop adventures to life with powerful tools designed
+							for game masters.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
 							<Button
@@ -126,7 +126,7 @@ export function LandingPage() {
 			</div>
 
 			{/* CTA Section */}
-			<div className="bg-primary/5 border-y border-primary/10">
+			<div className="bg-card border-y border-border">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
 					<h2 className="text-3xl sm:text-4xl font-bold mb-4">
 						Ready to Elevate Your Game?
