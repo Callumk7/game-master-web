@@ -55,7 +55,7 @@ export function LandingPage() {
 				"Keep all your DM notes organized in one place. Quick access to session notes, plot hooks, and important information.",
 		},
 		{
-			icon: "⚡",
+			icon: "⚡️",
 			title: "Initiative Tracker",
 			description:
 				"Streamline combat management with an intuitive initiative tracker. Keep battles moving smoothly and efficiently.",
