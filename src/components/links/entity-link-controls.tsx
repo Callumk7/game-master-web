@@ -1,6 +1,5 @@
 import type { EntityType } from "~/types";
 import { DeleteLink } from "./delete-link";
-import { EntityLinkButton } from "./entity-link-button";
 import type { EntityLink } from "./types";
 import { UpdateLinkDialog } from "./update-link-dialog";
 
@@ -19,7 +18,6 @@ export function EntityLinkControls({
 }: EntityLinkControlsProps) {
 	return (
 		<div className="flex items-center gap-1">
-			<EntityLinkButton entity={link} />
 			<UpdateLinkDialog
 				link={link}
 				gameId={gameId}

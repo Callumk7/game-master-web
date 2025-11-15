@@ -3,6 +3,7 @@ import { Badge } from "~/components/ui/badge";
 import type { EntityType } from "~/types";
 import { TagsDisplay } from "../ui/composite/entity-table";
 import { Link } from "../ui/link";
+import { EntityLinkButton } from "./entity-link-button";
 import { EntityLinkControls } from "./entity-link-controls";
 import type { EntityLink } from "./types";
 
@@ -20,12 +21,15 @@ export function createBaseLinkTableColumns<T extends EntityLink>(
 				const type = row.original.type;
 				const id = row.original.id;
 				return (
-					<Link
-						to={`/games/${gameId}/${type}s/${id}` as string}
-						className="font-medium hover:underline"
-					>
-						{row.getValue("name")}
-					</Link>
+					<div>
+						<EntityLinkButton entity={row.original} />
+						<Link
+							to={`/games/${gameId}/${type}s/${id}` as string}
+							className="font-medium hover:underline"
+						>
+							{row.getValue("name")}
+						</Link>
+					</div>
 				);
 			},
 		},
