@@ -273,6 +273,33 @@
 		@apply bg-background text-foreground;
 	}
 
+	/* Thin scrollbars for Firefox and modern browsers */
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: var(--border) transparent;
+	}
+
+	/* Webkit browsers (Chrome, Safari, Edge) */
+	*::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		background-color: var(--border);
+		border-radius: 6px;
+		border: 2px solid transparent;
+		background-clip: padding-box;
+	}
+
+	*::-webkit-scrollbar-thumb:hover {
+		background-color: var(--muted-foreground);
+	}
+
 	/* Sonner toast overrides - default/normal state */
 	[data-sonner-toast] {
 		background: var(--popover) !important;
