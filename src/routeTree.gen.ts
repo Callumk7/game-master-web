@@ -16,7 +16,6 @@ import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
 import { Route as ConfirmRouteImport } from './routes/confirm'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthAccountRouteImport } from './routes/_auth/account'
 import { Route as AuthGamesIndexRouteImport } from './routes/_auth/games/index'
 import { Route as ApiChatGameIdRouteImport } from './routes/api/chat/$gameId'
@@ -94,11 +93,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthAccountRoute = AuthAccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -110,9 +104,9 @@ const AuthGamesIndexRoute = AuthGamesIndexRouteImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 const ApiChatGameIdRoute = ApiChatGameIdRouteImport.update({
-  id: '/$gameId',
-  path: '/$gameId',
-  getParentRoute: () => ApiChatRoute,
+  id: '/api/chat/$gameId',
+  path: '/api/chat/$gameId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthGamesNewRoute = AuthGamesNewRouteImport.update({
   id: '/games/new',
@@ -346,7 +340,6 @@ export interface FileRoutesByFullPath {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/account': typeof AuthAccountRoute
-  '/api/chat': typeof ApiChatRouteWithChildren
   '/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/games/new': typeof AuthGamesNewRoute
   '/api/chat/$gameId': typeof ApiChatGameIdRoute
@@ -397,7 +390,6 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/account': typeof AuthAccountRoute
-  '/api/chat': typeof ApiChatRouteWithChildren
   '/games/new': typeof AuthGamesNewRoute
   '/api/chat/$gameId': typeof ApiChatGameIdRoute
   '/games': typeof AuthGamesIndexRoute
@@ -444,7 +436,6 @@ export interface FileRoutesById {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/_auth/account': typeof AuthAccountRoute
-  '/api/chat': typeof ApiChatRouteWithChildren
   '/_auth/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/_auth/games/new': typeof AuthGamesNewRoute
   '/api/chat/$gameId': typeof ApiChatGameIdRoute
@@ -497,7 +488,6 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/account'
-    | '/api/chat'
     | '/games/$gameId'
     | '/games/new'
     | '/api/chat/$gameId'
@@ -548,7 +538,6 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/account'
-    | '/api/chat'
     | '/games/new'
     | '/api/chat/$gameId'
     | '/games'
@@ -594,7 +583,6 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/_auth/account'
-    | '/api/chat'
     | '/_auth/games/$gameId'
     | '/_auth/games/new'
     | '/api/chat/$gameId'
@@ -646,7 +634,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   SignupRoute: typeof SignupRoute
-  ApiChatRoute: typeof ApiChatRouteWithChildren
+  ApiChatGameIdRoute: typeof ApiChatGameIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -700,13 +688,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth/account': {
       id: '/_auth/account'
       path: '/account'
@@ -723,10 +704,10 @@ declare module '@tanstack/react-router' {
     }
     '/api/chat/$gameId': {
       id: '/api/chat/$gameId'
-      path: '/$gameId'
+      path: '/api/chat/$gameId'
       fullPath: '/api/chat/$gameId'
       preLoaderRoute: typeof ApiChatGameIdRouteImport
-      parentRoute: typeof ApiChatRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_auth/games/new': {
       id: '/_auth/games/new'
@@ -1169,17 +1150,6 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface ApiChatRouteChildren {
-  ApiChatGameIdRoute: typeof ApiChatGameIdRoute
-}
-
-const ApiChatRouteChildren: ApiChatRouteChildren = {
-  ApiChatGameIdRoute: ApiChatGameIdRoute,
-}
-
-const ApiChatRouteWithChildren =
-  ApiChatRoute._addFileChildren(ApiChatRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
@@ -1188,7 +1158,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   SignupRoute: SignupRoute,
-  ApiChatRoute: ApiChatRouteWithChildren,
+  ApiChatGameIdRoute: ApiChatGameIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

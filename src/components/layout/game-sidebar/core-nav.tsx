@@ -1,4 +1,4 @@
-import { BowArrow, Home, Settings, Target } from "lucide-react";
+import { BowArrow, Home, Settings, Speech, Target } from "lucide-react";
 import {
 	SidebarGroup,
 	SidebarMenu,
@@ -36,6 +36,12 @@ export function SidebarCoreNav({ gameId }: SidebarCoreNavProps) {
 					<SidebarMenuLink to="/games/$gameId/objectives" params={{ gameId }}>
 						<Target className="w-4 h-4" />
 						All Objectives
+					</SidebarMenuLink>
+				</SidebarMenuItem>
+				<SidebarMenuItem>
+					<SidebarMenuLink to="/games/$gameId/chat" params={{ gameId }}>
+						<Speech className="w-4 h-4" />
+						Chat
 					</SidebarMenuLink>
 				</SidebarMenuItem>
 			</SidebarMenu>

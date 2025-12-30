@@ -1,8 +1,8 @@
 import { google } from "@ai-sdk/google";
 import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from "ai";
-import { getGame } from "~/api/sdk.gen";
 import { tools } from "~/ai/tools";
+import { getGame } from "~/api/sdk.gen";
 import { updateApiAuth } from "~/utils/api-client";
 import { getAppSession } from "~/utils/session";
 
@@ -33,8 +33,16 @@ export const Route = createFileRoute("/api/chat/$gameId")({
 				const game = gameResponse.data?.data;
 
 				const result = streamText({
-					model: google("gemini-2.0-flash-exp"),
-					system: `You are a helpful AI assistant for a tabletop RPG game master.
+					model: google("gemini-2.5-pro"),
+					system: `You are a knowledgeable and helpful AI assistant for a tabletop RPG game master.
+
+You have extensive knowledge of tabletop RPG systems, settings, and lore, including D&D, Pathfinder, and various campaign settings like Eberron, Forgotten Realms, etc. You should freely share this knowledge to help the GM run their game.
+
+When discussing published settings:
+- Share lore, mechanics, and world-building details from your training data
+- Help the GM understand the setting and run compelling sessions
+- Provide suggestions that fit the established canon
+- Be creative and collaborative in helping develop the campaign
 
 Current Game Context:
 - Game: ${game?.name ?? "Unknown"}
@@ -52,7 +60,7 @@ IMPORTANT: When you use tools to fetch information:
 
 Your workflow should be: Tool Call → Receive Results → Respond to User
 
-Be concise and helpful in your responses.`,
+Be helpful, knowledgeable, and conversational. Answer questions about RPG content directly and thoroughly.`,
 					tools,
 					messages: await convertToModelMessages(messages),
 					stopWhen: stepCountIs(5), // Allow up to 5 steps for tool calls and final response
