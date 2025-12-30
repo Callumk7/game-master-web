@@ -92,6 +92,7 @@ When creating entities with rich text content, use TipTap JSON format:
 - **blockquote**: Quote blocks
 - **horizontalRule**: Horizontal divider (no content)
 - **hardBreak**: Line break (no content)
+- **mention**: Inline entity links/mentions (see below)
 
 ### Text Marks (formatting):
 Apply to text nodes via "marks" array:
@@ -100,6 +101,44 @@ Apply to text nodes via "marks" array:
 - **strike**: {"type": "strike"}
 - **code**: {"type": "code"}
 - **highlight**: {"type": "highlight"}
+
+### Inline Mentions (Entity Links):
+You can create inline links to other entities using the **mention** node type. This allows rich text content to reference characters, factions, locations, notes, or quests.
+
+**Mention Node Structure:**
+\`\`\`json
+{
+  "type": "mention",
+  "attrs": {
+    "id": "entity-id-here",
+    "label": "Display Name",
+    "type": "character|faction|location|note|quest",
+    "gameId": "${gameId}"
+  }
+}
+\`\`\`
+
+**Important Notes:**
+- Mentions are **inline nodes** (used within paragraphs alongside text)
+- You can ONLY mention entities that **already exist** in the game
+- Always use the current gameId: "${gameId}"
+- The "id" must be the actual entity ID (UUID format)
+- The "label" is what users see (usually the entity name)
+- The "type" must match the entity type exactly
+
+**When to Use Mentions:**
+- Reference existing characters in faction/quest/note descriptions
+- Link locations within other location descriptions
+- Connect related quests or notes
+- Build rich, interconnected narrative content
+
+**How to Get Entity IDs:**
+Before creating mentions, you MUST first fetch entity lists to get valid IDs:
+- Use \`listCharacters\` to get character IDs
+- Use \`listFactions\` to get faction IDs
+- Use \`listLocations\` to get location IDs
+- Use \`listQuests\` to get quest IDs
+- Use \`listNotes\` to get note IDs
 
 ### Examples:
 
@@ -185,6 +224,41 @@ Apply to text nodes via "marks" array:
 }
 \`\`\`
 
+**With inline mentions:**
+\`\`\`json
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        {"type": "text", "text": "The brave warrior "},
+        {
+          "type": "mention",
+          "attrs": {
+            "id": "char-uuid-123",
+            "label": "Aragorn",
+            "type": "character",
+            "gameId": "${gameId}"
+          }
+        },
+        {"type": "text", "text": " leads the "},
+        {
+          "type": "mention",
+          "attrs": {
+            "id": "faction-uuid-456",
+            "label": "Rangers of the North",
+            "type": "faction",
+            "gameId": "${gameId}"
+          }
+        },
+        {"type": "text", "text": " in their quest."}
+      ]
+    }
+  ]
+}
+\`\`\`
+
 ## Creating Entities Guidelines
 
 When creating entities:
@@ -193,11 +267,21 @@ When creating entities:
    - Locations need: name, type (continent/nation/region/city/settlement/building/complex)
    - Others need: name only
 2. **Generate descriptive content** in TipTap JSON format with appropriate formatting
-3. **Suggest relevant tags** based on the entity type and description
-4. **Set appropriate defaults** for optional fields when reasonable
-5. **DO NOT call creation tools** without all required fields
-6. **On success**: Confirm creation with entity name and ID
-7. **On error**: Explain what went wrong and how to fix it
+3. **Use inline mentions** to create rich interconnected content:
+   - If the user mentions existing entities, use list tools to get their IDs first
+   - Add mention nodes within the content to link related entities
+   - Example: "Create a quest about rescuing the king" → fetch king character ID, add mention in quest description
+4. **Suggest relevant tags** based on the entity type and description
+5. **Set appropriate defaults** for optional fields when reasonable
+6. **DO NOT call creation tools** without all required fields
+7. **On success**: Confirm creation with entity name and ID
+8. **On error**: Explain what went wrong and how to fix it
+
+### Multi-Step Creation with Mentions:
+When users want to create interconnected entities:
+1. First, list existing entities to get IDs: \`listCharacters\`, \`listFactions\`, etc.
+2. Then, create new entity with mention nodes referencing those IDs
+3. Confirm the creation and the connections made
 
 ## Tool Workflow
 
