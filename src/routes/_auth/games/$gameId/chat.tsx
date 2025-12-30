@@ -1,8 +1,8 @@
 import { useChat } from "@ai-sdk/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { DefaultChatTransport } from "ai";
-import { Send } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Brain, Send, Wrench } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
@@ -144,6 +144,68 @@ function MarkdownMessage({
 	);
 }
 
+function ReasoningPart({ part }: { part: { text: string; state?: string } }) {
+	return (
+		<div className="rounded-lg border border-purple-500/20 bg-purple-500/5 px-3 py-2">
+			<div className="flex items-center gap-2 text-xs font-medium text-purple-600 dark:text-purple-400 mb-1">
+				<Brain className="size-3" />
+				<span>Thinking</span>
+				{part.state === "streaming" && <span className="animate-pulse">...</span>}
+			</div>
+			<div className="text-sm text-muted-foreground italic">{part.text}</div>
+		</div>
+	);
+}
+
+function ToolPart({
+	part,
+}: {
+	part: {
+		type: string;
+		state?: string;
+		output?: unknown;
+		errorText?: string;
+	};
+}) {
+	if (part.type === "text" || part.type === "reasoning") return null;
+
+	const toolName = part.type.startsWith("tool-")
+		? part.type.replace("tool-", "")
+		: part.type;
+
+	return (
+		<div className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2">
+			<div className="flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">
+				<Wrench className="size-3" />
+				<span>{toolName}</span>
+			</div>
+
+			{"state" in part && (
+				<>
+					{part.state === "input-streaming" && (
+						<div className="text-xs text-muted-foreground">
+							Preparing input...
+						</div>
+					)}
+					{part.state === "input-available" && (
+						<div className="text-xs text-muted-foreground">Executing...</div>
+					)}
+					{part.state === "output-available" && part.output && (
+						<pre className="text-xs overflow-auto bg-muted/50 rounded p-2 mt-2">
+							{JSON.stringify(part.output, null, 2)}
+						</pre>
+					)}
+					{part.state === "output-error" && part.errorText && (
+						<div className="text-xs text-red-600 dark:text-red-400 mt-1">
+							Error: {part.errorText}
+						</div>
+					)}
+				</>
+			)}
+		</div>
+	);
+}
+
 function Chat() {
 	const { gameId } = Route.useParams();
 	const [input, setInput] = useState("");
@@ -163,31 +225,29 @@ function Chat() {
 	};
 
 	const isStreaming = status === "streaming";
-	const bottomRef = useRef<HTMLDivElement | null>(null);
+	const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-	const displayMessages = useMemo(() => {
-		return messages.map((message) => {
-			const text = message.parts
-				.filter((p) => p.type === "text")
-				.map((p) => p.text)
-				.join("");
-			return { ...message, text };
-		});
-	}, [messages]);
-
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We want to scroll on message/streaming changes
 	useEffect(() => {
-		// Tie scrolling to message count + streaming state (otherwise Biome flags deps as unnecessary).
-		void displayMessages.length;
-		void isStreaming;
-		bottomRef.current?.scrollIntoView({ block: "end" });
-	}, [displayMessages.length, isStreaming]);
+		const container = messagesContainerRef.current;
+		if (!container) return;
+
+		// Smooth scroll to bottom when messages change or streaming state updates
+		container.scrollTo({
+			top: container.scrollHeight,
+			behavior: "smooth",
+		});
+	}, [messages, isStreaming]);
 
 	return (
 		<Container className="mt-0 mb-0 py-8 h-full min-h-0">
 			<div className="flex flex-col h-full min-h-0 max-w-4xl mx-auto">
 				{/* Messages */}
-				<div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
-					{displayMessages.map((message) => {
+				<div
+					ref={messagesContainerRef}
+					className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4"
+				>
+					{messages.map((message) => {
 						const isUser = message.role === "user";
 
 						return (
@@ -212,22 +272,66 @@ function Chat() {
 									>
 										{isUser ? "You" : "Assistant"}
 									</div>
-									<div
-										className={cn(
-											"rounded-lg border px-3 py-2",
-											isUser
-												? "bg-primary text-primary-foreground"
-												: "bg-card",
-										)}
-									>
-										{isUser ? (
-											<div className="text-sm whitespace-pre-wrap">
-												{message.text}
-											</div>
-										) : (
-											<MarkdownMessage content={message.text} />
-										)}
-									</div>
+
+									{/* Render each message part */}
+									{message.parts.map((part, partIdx) => {
+										// Text parts
+										if (part.type === "text") {
+											return (
+												<div
+													key={`${message.id}-text-${partIdx}`}
+													className={cn(
+														"rounded-lg border px-3 py-2",
+														isUser
+															? "bg-primary text-primary-foreground"
+															: "bg-card",
+													)}
+												>
+													{isUser ? (
+														<div className="text-sm whitespace-pre-wrap">
+															{part.text}
+														</div>
+													) : (
+														<MarkdownMessage
+															content={part.text}
+														/>
+													)}
+												</div>
+											);
+										}
+
+										// Reasoning parts
+										if (part.type === "reasoning") {
+											return (
+												<ReasoningPart
+													key={`${message.id}-reasoning-${partIdx}`}
+													part={part}
+												/>
+											);
+										}
+
+										// Tool parts
+										if (part.type.startsWith("tool-")) {
+											return (
+												<ToolPart
+													key={`${message.id}-tool-${partIdx}`}
+													part={part}
+												/>
+											);
+										}
+
+										// Step boundaries
+										if (part.type === "step-start") {
+											return (
+												<div
+													key={`${message.id}-step-${partIdx}`}
+													className="h-px bg-border my-2"
+												/>
+											);
+										}
+
+										return null;
+									})}
 								</div>
 							</div>
 						);
@@ -235,7 +339,6 @@ function Chat() {
 					{isStreaming && (
 						<div className="text-sm text-muted-foreground">Thinking…</div>
 					)}
-					<div ref={bottomRef} />
 				</div>
 
 				{/* Input */}
