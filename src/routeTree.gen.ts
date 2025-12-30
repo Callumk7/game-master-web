@@ -16,6 +16,7 @@ import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
 import { Route as ConfirmRouteImport } from './routes/confirm'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthAccountRouteImport } from './routes/_auth/account'
 import { Route as AuthGamesIndexRouteImport } from './routes/_auth/games/index'
 import { Route as AuthGamesNewRouteImport } from './routes/_auth/games/new'
@@ -28,6 +29,7 @@ import { Route as AuthGamesGameIdObjectivesRouteImport } from './routes/_auth/ga
 import { Route as AuthGamesGameIdInitiativeRouteImport } from './routes/_auth/games/$gameId/initiative'
 import { Route as AuthGamesGameIdImagesRouteImport } from './routes/_auth/games/$gameId/images'
 import { Route as AuthGamesGameIdEditRouteImport } from './routes/_auth/games/$gameId/edit'
+import { Route as AuthGamesGameIdChatRouteImport } from './routes/_auth/games/$gameId/chat'
 import { Route as AuthGamesGameIdAllRouteImport } from './routes/_auth/games/$gameId/all'
 import { Route as AuthGamesGameIdQuestsIndexRouteImport } from './routes/_auth/games/$gameId/quests/index'
 import { Route as AuthGamesGameIdNotesIndexRouteImport } from './routes/_auth/games/$gameId/notes/index'
@@ -91,6 +93,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthAccountRoute = AuthAccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -151,6 +158,11 @@ const AuthGamesGameIdImagesRoute = AuthGamesGameIdImagesRouteImport.update({
 const AuthGamesGameIdEditRoute = AuthGamesGameIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
+  getParentRoute: () => AuthGamesGameIdRouteRoute,
+} as any)
+const AuthGamesGameIdChatRoute = AuthGamesGameIdChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
 const AuthGamesGameIdAllRoute = AuthGamesGameIdAllRouteImport.update({
@@ -328,10 +340,12 @@ export interface FileRoutesByFullPath {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/account': typeof AuthAccountRoute
+  '/api/chat': typeof ApiChatRoute
   '/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/games/new': typeof AuthGamesNewRoute
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
@@ -376,9 +390,11 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/account': typeof AuthAccountRoute
+  '/api/chat': typeof ApiChatRoute
   '/games/new': typeof AuthGamesNewRoute
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
@@ -420,10 +436,12 @@ export interface FileRoutesById {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/_auth/account': typeof AuthAccountRoute
+  '/api/chat': typeof ApiChatRoute
   '/_auth/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/_auth/games/new': typeof AuthGamesNewRoute
   '/_auth/games/': typeof AuthGamesIndexRoute
   '/_auth/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/_auth/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/_auth/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/_auth/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/_auth/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
@@ -470,10 +488,12 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/account'
+    | '/api/chat'
     | '/games/$gameId'
     | '/games/new'
     | '/games'
     | '/games/$gameId/all'
+    | '/games/$gameId/chat'
     | '/games/$gameId/edit'
     | '/games/$gameId/images'
     | '/games/$gameId/initiative'
@@ -518,9 +538,11 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/account'
+    | '/api/chat'
     | '/games/new'
     | '/games'
     | '/games/$gameId/all'
+    | '/games/$gameId/chat'
     | '/games/$gameId/edit'
     | '/games/$gameId/images'
     | '/games/$gameId/initiative'
@@ -561,10 +583,12 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/_auth/account'
+    | '/api/chat'
     | '/_auth/games/$gameId'
     | '/_auth/games/new'
     | '/_auth/games/'
     | '/_auth/games/$gameId/all'
+    | '/_auth/games/$gameId/chat'
     | '/_auth/games/$gameId/edit'
     | '/_auth/games/$gameId/images'
     | '/_auth/games/$gameId/initiative'
@@ -610,6 +634,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   SignupRoute: typeof SignupRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -661,6 +686,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/account': {
@@ -745,6 +777,13 @@ declare module '@tanstack/react-router' {
       path: '/edit'
       fullPath: '/games/$gameId/edit'
       preLoaderRoute: typeof AuthGamesGameIdEditRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/chat': {
+      id: '/_auth/games/$gameId/chat'
+      path: '/chat'
+      fullPath: '/games/$gameId/chat'
+      preLoaderRoute: typeof AuthGamesGameIdChatRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
     '/_auth/games/$gameId/all': {
@@ -1029,6 +1068,7 @@ const AuthGamesGameIdQuestsIdRouteRouteWithChildren =
 
 interface AuthGamesGameIdRouteRouteChildren {
   AuthGamesGameIdAllRoute: typeof AuthGamesGameIdAllRoute
+  AuthGamesGameIdChatRoute: typeof AuthGamesGameIdChatRoute
   AuthGamesGameIdEditRoute: typeof AuthGamesGameIdEditRoute
   AuthGamesGameIdImagesRoute: typeof AuthGamesGameIdImagesRoute
   AuthGamesGameIdInitiativeRoute: typeof AuthGamesGameIdInitiativeRoute
@@ -1058,6 +1098,7 @@ interface AuthGamesGameIdRouteRouteChildren {
 
 const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
   AuthGamesGameIdAllRoute: AuthGamesGameIdAllRoute,
+  AuthGamesGameIdChatRoute: AuthGamesGameIdChatRoute,
   AuthGamesGameIdEditRoute: AuthGamesGameIdEditRoute,
   AuthGamesGameIdImagesRoute: AuthGamesGameIdImagesRoute,
   AuthGamesGameIdInitiativeRoute: AuthGamesGameIdInitiativeRoute,
@@ -1117,6 +1158,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   SignupRoute: SignupRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
