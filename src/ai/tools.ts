@@ -20,6 +20,8 @@ import {
 	listFactions,
 	listLocations,
 	listNotes,
+	listObjectives,
+	listPinnedEntities,
 	listQuests,
 } from "~/api/sdk.gen";
 
@@ -586,6 +588,63 @@ export const tools = {
 					success: false,
 					error:
 						error instanceof Error ? error.message : "Unknown error occurred",
+				};
+			}
+		},
+	}),
+
+	// Session Planning Tools
+	listPinnedEntities: tool({
+		description:
+			"Get all pinned entities (characters, quests, factions, locations, notes) that are marked as important by the GM. Pinned entities represent what's most relevant RIGHT NOW for session planning and active storylines.",
+		inputSchema: z.object({
+			gameId: z.string().describe("The ID of the game"),
+		}),
+		execute: async ({ gameId }) => {
+			const response = await listPinnedEntities({
+				path: { game_id: gameId },
+			});
+			return response.data?.data ?? null;
+		},
+	}),
+
+	listActiveQuests: tool({
+		description:
+			"Get only quests with 'active' status - the current ongoing storylines. Use this instead of listQuests when you need to focus on what's happening NOW, excluding completed, cancelled, or preparing quests.",
+		inputSchema: z.object({
+			gameId: z.string().describe("The ID of the game"),
+		}),
+		execute: async ({ gameId }) => {
+			const response = await listQuests({
+				path: { game_id: gameId },
+			});
+			const allQuests = response.data?.data ?? [];
+			// Filter to only active quests
+			const activeQuests = allQuests.filter((quest) => quest.status === "active");
+			return activeQuests;
+		},
+	}),
+
+	listQuestObjectives: tool({
+		description:
+			"Get all objectives for a specific quest along with their completion status. Objectives are the individual tasks/goals within a quest. Use this to understand what's been completed and what remains to be done.",
+		inputSchema: z.object({
+			gameId: z.string().describe("The ID of the game"),
+			questId: z.string().describe("The ID of the quest to get objectives for"),
+		}),
+		execute: async ({ gameId, questId }) => {
+			try {
+				const response = await listObjectives({
+					path: { game_id: gameId, quest_id: questId },
+				});
+				return response.data?.data ?? [];
+			} catch (error) {
+				return {
+					error:
+						error instanceof Error
+							? error.message
+							: "Failed to fetch objectives",
+					questId,
 				};
 			}
 		},

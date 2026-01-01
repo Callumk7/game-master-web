@@ -27,6 +27,11 @@ Current Game Context:
 ### Read Tools
 You have access to tools that let you retrieve information about game entities (characters, quests, locations, factions, notes).
 
+**Session Planning Tools:**
+- **listPinnedEntities**: Get entities the GM has marked as important RIGHT NOW - essential for understanding current focus and active storylines
+- **listActiveQuests**: Get only quests with 'active' status - use this instead of listQuests when focusing on current ongoing storylines (excludes completed, cancelled, and preparing quests)
+- **listQuestObjectives**: Get all objectives for a specific quest with completion status - essential for tracking progress within a quest and planning next steps
+
 ### Create Tools
 You can CREATE new entities using these tools:
 - createCharacter: Create new characters (requires: name, class, level)
