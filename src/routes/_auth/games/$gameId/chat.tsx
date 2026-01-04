@@ -1,17 +1,27 @@
 import { useChat } from "@ai-sdk/react";
 import { createFileRoute } from "@tanstack/react-router";
+import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
-import { Brain, Send, Wrench } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Brain, EllipsisVertical, Plus, Send, Trash2, Wrench } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import { Container } from "~/components/container";
 import { Button } from "~/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuPositioner,
+	DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Tiptap } from "~/components/ui/editor";
 import { TiptapViewer } from "~/components/ui/editor/viewer";
 import { Link } from "~/components/ui/link";
 import { Textarea } from "~/components/ui/textarea";
+import type { ChatThread } from "~/state/chats";
+import { useChatActions, useChatStore, useGameChatState } from "~/state/chats";
 import { cn } from "~/utils/cn";
 
 export const Route = createFileRoute("/_auth/games/$gameId/chat")({
@@ -567,14 +577,166 @@ function ToolPart({
 
 function Chat() {
 	const { gameId } = Route.useParams();
+	const chatState = useGameChatState(gameId);
+	const {
+		ensureGame,
+		startThread,
+		setCurrentThread,
+		replaceThreadMessages,
+		clearThread,
+	} = useChatActions();
+	const [hasHydrated, setHasHydrated] = useState(
+		() => useChatStore.persist?.hasHydrated?.() ?? false,
+	);
+	const [threadResetKeys, setThreadResetKeys] = useState<Record<string, number>>({});
+
+	useEffect(() => {
+		const unsubFinish = useChatStore.persist?.onFinishHydration?.(() =>
+			setHasHydrated(true),
+		);
+		const unsubHydrate = useChatStore.persist?.onHydrate?.(() =>
+			setHasHydrated(false),
+		);
+		return () => {
+			unsubFinish?.();
+			unsubHydrate?.();
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!hasHydrated) return;
+		const game = ensureGame(gameId);
+		if (!game.currentThreadId) {
+			startThread(gameId);
+		}
+	}, [ensureGame, gameId, hasHydrated, startThread]);
+
+	const currentThreadId = chatState?.currentThreadId ?? null;
+	const threads = chatState
+		? chatState.threadOrder
+				.map((threadKey: string) => chatState.threads[threadKey])
+				.filter((thread): thread is ChatThread => Boolean(thread))
+		: [];
+
+	const currentThread =
+		currentThreadId && chatState
+			? (chatState.threads[currentThreadId] ?? null)
+			: null;
+
+	const handleSelectThread = useCallback(
+		(threadId: string) => {
+			if (!threadId || threadId === currentThreadId) return;
+			setCurrentThread(gameId, threadId);
+		},
+		[currentThreadId, gameId, setCurrentThread],
+	);
+
+	const handleNewChat = useCallback(() => {
+		startThread(gameId);
+	}, [gameId, startThread]);
+
+	const handleMessagesChange = useCallback(
+		(updatedMessages: UIMessage[]) => {
+			if (!currentThreadId) return;
+			replaceThreadMessages(gameId, currentThreadId, updatedMessages);
+		},
+		[currentThreadId, gameId, replaceThreadMessages],
+	);
+
+	const handleClearThread = useCallback(
+		(threadId: string) => {
+			clearThread(gameId, threadId);
+			setThreadResetKeys((prev) => ({ ...prev, [threadId]: Date.now() }));
+		},
+		[clearThread, gameId],
+	);
+
+	if (!hasHydrated || !currentThread) {
+		return (
+			<Container className="mt-0 mb-0 py-8 h-full min-h-0">
+				<div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+					{hasHydrated ? "Preparing chat…" : "Loading chat history…"}
+				</div>
+			</Container>
+		);
+	}
+
+	const currentResetKey = threadResetKeys[currentThread.id] ?? 0;
+
+	return (
+		<Container className="mt-0 mb-0 py-8 h-full min-h-0">
+			<div className="flex flex-col h-full min-h-0 max-w-4xl mx-auto">
+				<ChatSessionSwitcher
+					threads={threads}
+					currentThreadId={currentThreadId}
+					onSelect={handleSelectThread}
+					onNewChat={handleNewChat}
+					onClearThread={handleClearThread}
+				/>
+				<ChatSession
+					key={currentThread.id}
+					gameId={gameId}
+					threadId={currentThread.id}
+					initialMessages={currentThread.messages}
+					onMessagesChange={handleMessagesChange}
+					resetKey={currentResetKey}
+				/>
+			</div>
+		</Container>
+	);
+}
+
+interface ChatSessionProps {
+	gameId: string;
+	threadId: string;
+	initialMessages: UIMessage[];
+	onMessagesChange: (messages: UIMessage[]) => void;
+	resetKey: number;
+}
+
+function ChatSession({
+	gameId,
+	threadId,
+	initialMessages,
+	onMessagesChange,
+	resetKey,
+}: ChatSessionProps) {
 	const [input, setInput] = useState("");
-	const { messages, sendMessage, status } = useChat({
-		transport: new DefaultChatTransport({
-			api: `/api/chat/${gameId}`,
-		}),
+	const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+	const transport = useMemo(
+		() =>
+			new DefaultChatTransport({
+				api: `/api/chat/${gameId}`,
+			}),
+		[gameId],
+	);
+	const { messages, sendMessage, status, setMessages } = useChat({
+		id: `chat-${gameId}-${threadId}`,
+		transport,
 	});
 
 	const isStreaming = status === "streaming";
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Only reseed when switching threads or a manual reset happens.
+	useEffect(() => {
+		setMessages(initialMessages);
+		setInput("");
+	}, [resetKey, setMessages, threadId]);
+
+	useEffect(() => {
+		onMessagesChange(messages);
+	}, [messages, onMessagesChange]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We want to scroll on message/streaming changes
+	useEffect(() => {
+		const container = messagesContainerRef.current;
+		if (!container) return;
+
+		container.scrollTo({
+			top: container.scrollHeight,
+			behavior: "smooth",
+		});
+	}, [messages, isStreaming]);
 
 	const handleSubmit = (
 		e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLTextAreaElement>,
@@ -586,148 +748,213 @@ function Chat() {
 		setInput("");
 	};
 
-	const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: We want to scroll on message/streaming changes
-	useEffect(() => {
-		const container = messagesContainerRef.current;
-		if (!container) return;
-
-		// Smooth scroll to bottom when messages change or streaming state updates
-		container.scrollTo({
-			top: container.scrollHeight,
-			behavior: "smooth",
-		});
-	}, [messages, isStreaming]);
-
 	return (
-		<Container className="mt-0 mb-0 py-8 h-full min-h-0">
-			<div className="flex flex-col h-full min-h-0 max-w-4xl mx-auto">
-				{/* Messages */}
-				<div
-					ref={messagesContainerRef}
-					className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4"
-				>
-					{messages.map((message) => {
-						const isUser = message.role === "user";
+		<div className="flex flex-1 flex-col min-h-0">
+			{/* Messages */}
+			<div
+				ref={messagesContainerRef}
+				className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4"
+			>
+				{messages.map((message) => {
+					const isUser = message.role === "user";
 
-						return (
+					return (
+						<div
+							key={message.id}
+							className={cn(
+								"flex w-full",
+								isUser ? "justify-end" : "justify-start",
+							)}
+						>
 							<div
-								key={message.id}
 								className={cn(
-									"flex w-full",
-									isUser ? "justify-end" : "justify-start",
+									"max-w-[85%] space-y-2",
+									isUser && "items-end",
 								)}
 							>
 								<div
 									className={cn(
-										"max-w-[85%] space-y-2",
-										isUser && "items-end",
+										"text-xs text-muted-foreground",
+										isUser ? "text-right" : "text-left",
 									)}
 								>
-									<div
-										className={cn(
-											"text-xs text-muted-foreground",
-											isUser ? "text-right" : "text-left",
-										)}
-									>
-										{isUser ? "You" : "Assistant"}
-									</div>
-
-									{/* Render each message part */}
-									{message.parts.map((part, partIdx) => {
-										// Text parts
-										if (part.type === "text") {
-											return (
-												<div
-													key={`${message.id}-text-${partIdx}`}
-													className={cn(
-														"rounded-lg border px-3 py-2",
-														isUser
-															? "bg-primary text-primary-foreground"
-															: "bg-card",
-													)}
-												>
-													{isUser ? (
-														<div className="text-sm whitespace-pre-wrap">
-															{part.text}
-														</div>
-													) : (
-														<MarkdownMessage
-															content={part.text}
-														/>
-													)}
-												</div>
-											);
-										}
-
-										// Reasoning parts
-										if (part.type === "reasoning") {
-											return (
-												<ReasoningPart
-													key={`${message.id}-reasoning-${partIdx}`}
-													part={part}
-												/>
-											);
-										}
-
-										// Tool parts
-										if (part.type.startsWith("tool-")) {
-											return (
-												<ToolPart
-													key={`${message.id}-tool-${partIdx}`}
-													part={part}
-												/>
-											);
-										}
-
-										// Step boundaries
-										if (part.type === "step-start") {
-											return (
-												<div
-													key={`${message.id}-step-${partIdx}`}
-													className="h-px bg-border my-2"
-												/>
-											);
-										}
-
-										return null;
-									})}
+									{isUser ? "You" : "Assistant"}
 								</div>
-							</div>
-						);
-					})}
-					{isStreaming && (
-						<div className="text-sm text-muted-foreground">Thinking…</div>
-					)}
-				</div>
 
-				{/* Input */}
-				<form onSubmit={handleSubmit} className="flex gap-2 pt-4 border-t">
-					<Textarea
-						value={input}
-						onChange={(e) => setInput(e.currentTarget.value)}
-						placeholder="Ask about your game..."
-						className="min-h-[60px]"
-						onKeyDown={(e) => {
-							if (e.key === "Enter" && !e.shiftKey) {
-								e.preventDefault();
-								handleSubmit(e);
-							}
-						}}
-					/>
-					<Button
-						type="submit"
-						disabled={!input.trim() || isStreaming}
-						onMouseDown={(e) => {
-							// Prevent the button from stealing focus from the textarea on click.
-							e.preventDefault();
-						}}
-					>
-						<Send className="size-4" />
-					</Button>
-				</form>
+								{/* Render each message part */}
+								{message.parts.map((part, partIdx) => {
+									// Text parts
+									if (part.type === "text") {
+										return (
+											<div
+												key={`${message.id}-text-${partIdx}`}
+												className={cn(
+													"rounded-lg border px-3 py-2",
+													isUser
+														? "bg-primary text-primary-foreground"
+														: "bg-card",
+												)}
+											>
+												{isUser ? (
+													<div className="text-sm whitespace-pre-wrap">
+														{part.text}
+													</div>
+												) : (
+													<MarkdownMessage
+														content={part.text}
+													/>
+												)}
+											</div>
+										);
+									}
+
+									// Reasoning parts
+									if (part.type === "reasoning") {
+										return (
+											<ReasoningPart
+												key={`${message.id}-reasoning-${partIdx}`}
+												part={part}
+											/>
+										);
+									}
+
+									// Tool parts
+									if (part.type.startsWith("tool-")) {
+										return (
+											<ToolPart
+												key={`${message.id}-tool-${partIdx}`}
+												part={part}
+											/>
+										);
+									}
+
+									// Step boundaries
+									if (part.type === "step-start") {
+										return (
+											<div
+												key={`${message.id}-step-${partIdx}`}
+												className="h-px bg-border my-2"
+											/>
+										);
+									}
+
+									return null;
+								})}
+							</div>
+						</div>
+					);
+				})}
+				{isStreaming && (
+					<div className="text-sm text-muted-foreground">Thinking…</div>
+				)}
 			</div>
-		</Container>
+
+			{/* Input */}
+			<form onSubmit={handleSubmit} className="flex gap-2 pt-4 border-t">
+				<Textarea
+					value={input}
+					onChange={(e) => setInput(e.currentTarget.value)}
+					placeholder="Ask about your game..."
+					className="min-h-[60px]"
+					onKeyDown={(e) => {
+						if (e.key === "Enter" && !e.shiftKey) {
+							e.preventDefault();
+							handleSubmit(e);
+						}
+					}}
+				/>
+				<Button
+					type="submit"
+					disabled={!input.trim() || isStreaming}
+					onMouseDown={(e) => {
+						// Prevent the button from stealing focus from the textarea on click.
+						e.preventDefault();
+					}}
+				>
+					<Send className="size-4" />
+				</Button>
+			</form>
+		</div>
+	);
+}
+
+function ChatSessionSwitcher({
+	threads,
+	currentThreadId,
+	onSelect,
+	onNewChat,
+	onClearThread,
+}: {
+	threads: ChatThread[];
+	currentThreadId: string | null;
+	onSelect: (threadId: string) => void;
+	onNewChat: () => void;
+	onClearThread: (threadId: string) => void;
+}) {
+	return (
+		<div className="mb-4 space-y-2">
+			<div className="flex flex-wrap items-center justify-between gap-2">
+				<div className="text-xs text-muted-foreground">
+					{threads.length
+						? "Jump between saved chats."
+						: "Start your first chat."}
+				</div>
+				<Button variant="ghost" size="sm" onClick={onNewChat}>
+					<Plus className="mr-1 size-4" />
+					New chat
+				</Button>
+			</div>
+			{threads.length ? (
+				<div className="flex flex-wrap items-center gap-2">
+					{threads.map((thread) => (
+						<div key={thread.id} className="flex items-center gap-1">
+							<Button
+								variant={
+									thread.id === currentThreadId ? "secondary" : "ghost"
+								}
+								size="sm"
+								className="rounded-full px-3"
+								onClick={() => onSelect(thread.id)}
+								title={thread.title}
+							>
+								<span className="max-w-[12rem] truncate">
+									{thread.title}
+								</span>
+							</Button>
+							<DropdownMenu>
+								<DropdownMenuTrigger>
+									<Button
+										variant="ghost"
+										size="icon"
+										className="h-7 w-7 text-muted-foreground"
+									>
+										<EllipsisVertical className="size-4" />
+										<span className="sr-only">Open chat actions</span>
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuPositioner>
+									<DropdownMenuContent>
+										<DropdownMenuItem
+											variant="destructive"
+											onSelect={(event) => {
+												event.preventDefault();
+												onClearThread(thread.id);
+											}}
+										>
+											<Trash2 className="mr-2 size-4" />
+											Clear chat
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenuPositioner>
+							</DropdownMenu>
+						</div>
+					))}
+				</div>
+			) : (
+				<div className="text-xs text-muted-foreground italic">
+					Your chats will appear here.
+				</div>
+			)}
+		</div>
 	);
 }
