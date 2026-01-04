@@ -1,7 +1,7 @@
-import type { UIMessage } from "ai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChatThread } from "~/state/chats";
 import { useChatActions, useChatStore, useGameChatState } from "~/state/chats";
+import type { ChatUIMessage } from "~/types";
 
 const compareThreadsStable = (a: ChatThread, b: ChatThread) => {
 	if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt;
@@ -79,7 +79,7 @@ export function useGameChatController(gameId: string) {
 	}, [gameId, startThread]);
 
 	const messagesChanged = useCallback(
-		(updatedMessages: UIMessage[]) => {
+		(updatedMessages: ChatUIMessage[]) => {
 			if (!currentThreadId) return;
 			replaceThreadMessages(gameId, currentThreadId, updatedMessages);
 		},

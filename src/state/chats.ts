@@ -1,11 +1,11 @@
-import type { UIMessage } from "ai";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { ChatUIMessage } from "~/types";
 
 export interface ChatThread {
 	id: string;
 	title: string;
-	messages: UIMessage[];
+	messages: ChatUIMessage[];
 	createdAt: number;
 	updatedAt: number;
 }
@@ -25,13 +25,13 @@ interface ChatActions {
 	ensureGame: (gameId: string) => GameChatState;
 	startThread: (
 		gameId: string,
-		options?: { title?: string; seedMessages?: UIMessage[] },
+		options?: { title?: string; seedMessages?: ChatUIMessage[] },
 	) => string;
 	setCurrentThread: (gameId: string, threadId: string) => void;
 	replaceThreadMessages: (
 		gameId: string,
 		threadId: string,
-		messages: UIMessage[],
+		messages: ChatUIMessage[],
 	) => void;
 	clearThread: (gameId: string, threadId: string) => void;
 	deleteThread: (gameId: string, threadId: string) => void;
@@ -51,7 +51,7 @@ const defaultGameChatState = (): GameChatState => ({
 	threads: {},
 });
 
-const trimMessages = (messages: UIMessage[]): UIMessage[] => {
+const trimMessages = (messages: ChatUIMessage[]): ChatUIMessage[] => {
 	if (messages.length > MAX_PERSISTED_MESSAGES) {
 		return messages.slice(messages.length - MAX_PERSISTED_MESSAGES);
 	}

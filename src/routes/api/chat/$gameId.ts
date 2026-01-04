@@ -1,9 +1,10 @@
 import { google } from "@ai-sdk/google";
 import { createFileRoute } from "@tanstack/react-router";
-import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from "ai";
+import { convertToModelMessages, stepCountIs, streamText } from "ai";
 import { getSystemPrompt } from "~/ai/system-prompt";
 import { tools } from "~/ai/tools";
 import { getGame } from "~/api/sdk.gen";
+import type { ChatUIMessage } from "~/types";
 import { updateApiAuth } from "~/utils/api-client";
 import { getAppSession } from "~/utils/session";
 
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/api/chat/$gameId")({
 				updateApiAuth(session.data.token);
 
 				const { gameId } = params;
-				const { messages }: { messages: UIMessage[] } = await request.json();
+				const { messages }: { messages: ChatUIMessage[] } = await request.json();
 
 				// Fetch game details for context
 				const gameResponse = await getGame({ path: { id: gameId } });
@@ -41,7 +42,25 @@ export const Route = createFileRoute("/api/chat/$gameId")({
 					stopWhen: stepCountIs(5), // Allow up to 5 steps for tool calls and final response
 				});
 
-				return result.toUIMessageStreamResponse();
+				return result.toUIMessageStreamResponse({
+					originalMessages: messages, // Enable type-safe metadata
+					messageMetadata: ({ part }) => {
+						if (part.type === "start") {
+							return {
+								createdAt: Date.now(),
+								model: "gemini-2.5-pro",
+							};
+						}
+
+						if (part.type === "finish") {
+							return {
+								totalTokens: part.totalUsage.totalTokens,
+								inputTokens: part.totalUsage.inputTokens,
+								outputTokens: part.totalUsage.outputTokens,
+							};
+						}
+					},
+				});
 			},
 		},
 	},
