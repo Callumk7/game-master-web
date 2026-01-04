@@ -3,11 +3,16 @@ import { tool } from "ai";
 import z from "zod";
 import {
 	createCharacter,
+	createCharacterLink,
 	createFaction,
+	createFactionLink,
 	createLocation,
+	createLocationLink,
 	createNote,
+	createNoteLink,
 	createObjective,
 	createQuest,
+	createQuestLink,
 	getCharacter,
 	getCharacterLinks,
 	getFaction,
@@ -641,6 +646,132 @@ export const tools = {
 					message: `Successfully created note "${name}"`,
 					id: note?.id,
 					note,
+				};
+			} catch (error) {
+				return {
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Unknown error occurred",
+				};
+			}
+		},
+	}),
+
+	// Link creation tool
+	createLink: tool({
+		description:
+			"Create a link/relationship between two entities (character, faction, location, quest, note). Use this to establish connections after creating entities or when relationships are mentioned in conversation. IMPORTANT: Always use search or list tools first to find the entity IDs before creating links.",
+		inputSchema: z.object({
+			gameId: z.string().describe("The ID of the game"),
+			sourceType: z
+				.enum(["character", "faction", "location", "quest", "note"])
+				.describe("Type of the source entity (the entity you're linking FROM)"),
+			sourceId: z
+				.string()
+				.describe("ID of the source entity (the entity you're linking FROM)"),
+			targetType: z
+				.enum(["character", "faction", "location", "quest", "note"])
+				.describe("Type of the target entity (the entity you're linking TO)"),
+			targetId: z
+				.string()
+				.describe("ID of the target entity (the entity you're linking TO)"),
+			description: z
+				.string()
+				.optional()
+				.describe(
+					"Optional description of the relationship (e.g., 'ally', 'enemy', 'mentor', 'headquarters', 'member')",
+				),
+			factionRole: z
+				.string()
+				.optional()
+				.describe(
+					"Role within the faction (only relevant for character-to-faction links, e.g., 'member', 'leader', 'scout')",
+				),
+			isActive: z
+				.boolean()
+				.optional()
+				.describe(
+					"Whether the relationship is currently active (defaults to true)",
+				),
+			isCurrentLocation: z
+				.boolean()
+				.optional()
+				.describe(
+					"Whether this is the current location (only relevant for character-to-location links)",
+				),
+		}),
+		execute: async ({
+			gameId,
+			sourceType,
+			sourceId,
+			targetType,
+			targetId,
+			description,
+			factionRole,
+			isActive,
+			isCurrentLocation,
+		}) => {
+			try {
+				// Build the link request body
+				const linkBody = {
+					entity_id: targetId,
+					entity_type: targetType,
+					...(description && { description }),
+					...(factionRole && { faction_role: factionRole }),
+					...(isActive !== undefined && { is_active: isActive }),
+					...(isCurrentLocation !== undefined && {
+						is_current_location: isCurrentLocation,
+					}),
+				};
+
+				// Call the appropriate link creation function based on source type
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				let response: any;
+				switch (sourceType) {
+					case "character":
+						response = await createCharacterLink({
+							path: { game_id: gameId, character_id: sourceId },
+							body: linkBody,
+						});
+						break;
+					case "faction":
+						response = await createFactionLink({
+							path: { game_id: gameId, faction_id: sourceId },
+							body: linkBody,
+						});
+						break;
+					case "location":
+						response = await createLocationLink({
+							path: { game_id: gameId, location_id: sourceId },
+							body: linkBody,
+						});
+						break;
+					case "quest":
+						response = await createQuestLink({
+							path: { game_id: gameId, quest_id: sourceId },
+							body: linkBody,
+						});
+						break;
+					case "note":
+						response = await createNoteLink({
+							path: { game_id: gameId, note_id: sourceId },
+							body: linkBody,
+						});
+						break;
+				}
+
+				if ("error" in response && response.error) {
+					return {
+						success: false,
+						error: response.error,
+					};
+				}
+
+				const relationshipDesc = description ? ` (${description})` : "";
+				return {
+					success: true,
+					message: `Successfully created link from ${sourceType} to ${targetType}${relationshipDesc}`,
+					link: "data" in response ? response.data : null,
 				};
 			} catch (error) {
 				return {
