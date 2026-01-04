@@ -1,3 +1,4 @@
+import { createHash, randomUUID } from "node:crypto";
 import { tool } from "ai";
 import z from "zod";
 import {
@@ -24,6 +25,59 @@ import {
 	listPinnedEntities,
 	listQuests,
 } from "~/api/sdk.gen";
+
+type EntityType = "character" | "quest" | "location" | "faction" | "note";
+
+function normalizeContentForSnapshot(content: unknown): {
+	contentString: string | null;
+	contentJson: object | null;
+} {
+	if (content == null) {
+		return { contentString: null, contentJson: null };
+	}
+
+	// Some API responses may already return TipTap JSON as an object
+	if (typeof content === "object") {
+		const obj = content as Record<string, unknown>;
+		if ("type" in obj) {
+			return {
+				contentString: JSON.stringify(obj),
+				contentJson: obj,
+			};
+		}
+	}
+
+	if (typeof content === "string") {
+		try {
+			const parsed = JSON.parse(content);
+			if (parsed && typeof parsed === "object" && "type" in (parsed as object)) {
+				return { contentString: content, contentJson: parsed as object };
+			}
+		} catch {
+			// Not JSON; treat as plain text
+		}
+
+		return {
+			contentString: content,
+			contentJson: {
+				type: "doc",
+				content: [
+					{
+						type: "paragraph",
+						content: [{ type: "text", text: content }],
+					},
+				],
+			},
+		};
+	}
+
+	// Unknown shape; ignore
+	return { contentString: null, contentJson: null };
+}
+
+function hashEntitySnapshot(snapshot: Record<string, unknown>) {
+	return createHash("sha256").update(JSON.stringify(snapshot)).digest("hex");
+}
 
 export const tools = {
 	// Character tools
@@ -647,6 +701,237 @@ export const tools = {
 					questId,
 				};
 			}
+		},
+	}),
+
+	// Update proposals (approval required)
+	//
+	// IMPORTANT: This tool DOES NOT update anything. It only proposes a change and returns
+	// a before/after snapshot that the UI can present for human approval.
+	proposeEntityUpdate: tool({
+		description:
+			"Propose an update to an existing entity (character, quest, location, faction, note). This tool NEVER applies changes; it only returns a draft proposal for user approval.",
+		inputSchema: z.discriminatedUnion("entityType", [
+			z.object({
+				gameId: z.string().describe("The ID of the game"),
+				entityType: z.literal("character"),
+				entityId: z.string().describe("The ID of the character to update"),
+				// Common editable fields
+				name: z.string().optional().describe("New character name (optional)"),
+				tags: z.array(z.string()).optional().describe("New tags (optional)"),
+				// Content is TipTap JSON
+				content: z
+					.object({})
+					.passthrough()
+					.optional()
+					.describe("New rich text content as TipTap JSON (optional)"),
+				content_plain_text: z
+					.string()
+					.optional()
+					.describe("Plain text version of content (optional)"),
+				// Character-specific
+				alive: z.boolean().optional().describe("Whether the character is alive"),
+				class: z.string().optional().describe("Character class"),
+				level: z.number().int().min(1).optional().describe("Character level"),
+				race: z.string().optional().describe("Character race"),
+			}),
+			z.object({
+				gameId: z.string().describe("The ID of the game"),
+				entityType: z.literal("quest"),
+				entityId: z.string().describe("The ID of the quest to update"),
+				name: z.string().optional().describe("New quest name (optional)"),
+				tags: z.array(z.string()).optional().describe("New tags (optional)"),
+				content: z.object({}).passthrough().optional(),
+				content_plain_text: z.string().optional(),
+				parent_id: z
+					.string()
+					.optional()
+					.describe("Parent quest ID for hierarchical structure (optional)"),
+				status: z
+					.enum([
+						"preparing",
+						"ready",
+						"active",
+						"paused",
+						"completed",
+						"cancelled",
+					])
+					.optional()
+					.describe("Quest status (optional)"),
+			}),
+			z.object({
+				gameId: z.string().describe("The ID of the game"),
+				entityType: z.literal("location"),
+				entityId: z.string().describe("The ID of the location to update"),
+				name: z.string().optional().describe("New location name (optional)"),
+				tags: z.array(z.string()).optional().describe("New tags (optional)"),
+				content: z.object({}).passthrough().optional(),
+				content_plain_text: z.string().optional(),
+				parent_id: z
+					.string()
+					.optional()
+					.describe("Parent location ID (optional)"),
+				type: z
+					.enum([
+						"continent",
+						"nation",
+						"region",
+						"city",
+						"settlement",
+						"building",
+						"complex",
+					])
+					.optional()
+					.describe("Location type (optional)"),
+			}),
+			z.object({
+				gameId: z.string().describe("The ID of the game"),
+				entityType: z.literal("faction"),
+				entityId: z.string().describe("The ID of the faction to update"),
+				name: z.string().optional().describe("New faction name (optional)"),
+				tags: z.array(z.string()).optional().describe("New tags (optional)"),
+				content: z.object({}).passthrough().optional(),
+				content_plain_text: z.string().optional(),
+			}),
+			z.object({
+				gameId: z.string().describe("The ID of the game"),
+				entityType: z.literal("note"),
+				entityId: z.string().describe("The ID of the note to update"),
+				name: z.string().optional().describe("New note name (optional)"),
+				tags: z.array(z.string()).optional().describe("New tags (optional)"),
+				content: z.object({}).passthrough().optional(),
+				content_plain_text: z.string().optional(),
+			}),
+		]),
+		execute: async (input) => {
+			const { gameId } = input;
+			const entityType: EntityType = input.entityType;
+			const entityId = input.entityId;
+
+			const changeId = randomUUID();
+
+			// Fetch current entity
+			const current = await (async () => {
+				switch (entityType) {
+					case "character": {
+						const res = await getCharacter({
+							path: { game_id: gameId, id: entityId },
+						});
+						return res.data?.data ?? null;
+					}
+					case "quest": {
+						const res = await getQuest({
+							path: { game_id: gameId, id: entityId },
+						});
+						return res.data?.data ?? null;
+					}
+					case "location": {
+						const res = await getLocation({
+							path: { game_id: gameId, id: entityId },
+						});
+						return res.data?.data ?? null;
+					}
+					case "faction": {
+						const res = await getFaction({
+							path: { game_id: gameId, id: entityId },
+						});
+						return res.data?.data ?? null;
+					}
+					case "note": {
+						const res = await getNote({
+							path: { game_id: gameId, id: entityId },
+						});
+						return res.data?.data ?? null;
+					}
+				}
+			})();
+
+			if (!current) {
+				return {
+					success: false,
+					error: `Entity not found: ${entityType} ${entityId}`,
+				};
+			}
+
+			const currentRecord = current as Record<string, unknown>;
+			const get = <T>(key: string): T | null => {
+				const value = currentRecord[key];
+				return value === undefined ? null : (value as T);
+			};
+
+			const normalizedContent = normalizeContentForSnapshot(currentRecord.content);
+
+			// Build a normalized snapshot to hash for conflict detection.
+			const beforeSnapshot = {
+				name: get<string>("name"),
+				tags: get<Array<string>>("tags"),
+				content: normalizedContent.contentString,
+				content_plain_text: get<string>("content_plain_text"),
+				// entity-specific (included so changes in these fields are detected as conflicts)
+				alive: get<boolean>("alive"),
+				class: get<string>("class"),
+				level: get<number>("level"),
+				race: get<string>("race"),
+				status: get<string>("status"),
+				parent_id: get<string>("parent_id"),
+				type: get<string>("type"),
+			};
+			const beforeHash = hashEntitySnapshot(beforeSnapshot);
+
+			const beforeContentJson = normalizedContent.contentJson;
+
+			const proposedContentJson =
+				"content" in input && input.content ? input.content : beforeContentJson;
+
+			return {
+				success: true,
+				changeId,
+				gameId,
+				entityType,
+				entityId,
+				beforeHash,
+				before: {
+					...beforeSnapshot,
+					content_json: beforeContentJson,
+				},
+				proposed: {
+					// Only include fields the user/model intends to change.
+					...(input.name !== undefined ? { name: input.name } : {}),
+					...(input.tags !== undefined ? { tags: input.tags } : {}),
+					...("content" in input && input.content !== undefined
+						? { content_json: input.content }
+						: { content_json: proposedContentJson }),
+					...("content_plain_text" in input &&
+					input.content_plain_text !== undefined
+						? { content_plain_text: input.content_plain_text }
+						: {}),
+					...("alive" in input && input.alive !== undefined
+						? { alive: input.alive }
+						: {}),
+					...("class" in input && input.class !== undefined
+						? { class: input.class }
+						: {}),
+					...("level" in input && input.level !== undefined
+						? { level: input.level }
+						: {}),
+					...("race" in input && input.race !== undefined
+						? { race: input.race }
+						: {}),
+					...("status" in input && input.status !== undefined
+						? { status: input.status }
+						: {}),
+					...("parent_id" in input && input.parent_id !== undefined
+						? { parent_id: input.parent_id }
+						: {}),
+					...("type" in input && input.type !== undefined
+						? { type: input.type }
+						: {}),
+				},
+				// Explicit reminder for the UI/model
+				approvalRequired: true,
+				message:
+					"Draft proposal created. Please review the changes in the editor and click Approve to apply, or adjust before approving.",
+			};
 		},
 	}),
 };
