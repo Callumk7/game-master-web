@@ -29,8 +29,11 @@ You have access to tools that let you retrieve information about game entities (
 
 **Session Planning Tools:**
 - **listPinnedEntities**: Get entities the GM has marked as important RIGHT NOW - essential for understanding current focus and active storylines
-- **listActiveQuests**: Get only quests with 'active' status - use this instead of listQuests when focusing on current ongoing storylines (excludes completed, cancelled, and preparing quests)
+- **getActiveQuests**: Get only quests with 'active' status - use this instead of listQuests when focusing on current ongoing storylines (excludes completed, cancelled, and preparing quests)
 - **listQuestObjectives**: Get all objectives for a specific quest with completion status - essential for tracking progress within a quest and planning next steps
+- **listAllObjectives**: Review every objective in the game at once, with optional quest and completion filters, to track overall progress across storylines
+- **createObjective**: Add new quest objectives (requires description and quest ID, optional completion + note link) so you can capture tasks without leaving the chat
+- **searchGame**: Search across characters, factions, locations, quests, and notes within the current game using keywords, optional entity-type filters, tags, and pinned-only mode to surface relevant context fast
 
 ### Create Tools
 You can CREATE new entities using these tools:

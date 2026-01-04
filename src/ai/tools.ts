@@ -6,6 +6,7 @@ import {
 	createFaction,
 	createLocation,
 	createNote,
+	createObjective,
 	createQuest,
 	getCharacter,
 	getCharacterLinks,
@@ -19,12 +20,16 @@ import {
 	getQuestLinks,
 	listCharacters,
 	listFactions,
+	listGameObjectives,
 	listLocations,
 	listNotes,
 	listObjectives,
 	listPinnedEntities,
 	listQuests,
+	searchGame,
 } from "~/api/sdk.gen";
+
+import type { Objective, SearchGameData } from "~/api/types.gen";
 
 type EntityType = "character" | "quest" | "location" | "faction" | "note";
 
@@ -647,6 +652,80 @@ export const tools = {
 		},
 	}),
 
+	// Search tools
+	searchGame: tool({
+		description:
+			"Search across characters, factions, locations, quests, and notes using keywords and optional filters to quickly surface relevant context",
+		inputSchema: z.object({
+			gameId: z.string().describe("The ID of the game"),
+			query: z
+				.string()
+				.min(1)
+				.describe("Search text applied to entity names and content"),
+			entityTypes: z
+				.array(z.enum(["character", "quest", "location", "faction", "note"]))
+				.optional()
+				.describe(
+					"Optional list of entity types to search; omit to search all supported types",
+				),
+			tags: z
+				.array(z.string().min(1))
+				.optional()
+				.describe("Optional list of tags; all tags must match"),
+			pinnedOnly: z
+				.boolean()
+				.optional()
+				.describe("Set true to only return entities that are currently pinned"),
+			limit: z
+				.number()
+				.int()
+				.min(1)
+				.max(100)
+				.optional()
+				.describe("Maximum results per entity type (default 50, max 100)"),
+			offset: z.number().int().min(0).optional().describe("Pagination offset"),
+		}),
+		execute: async ({
+			gameId,
+			query,
+			entityTypes,
+			tags,
+			pinnedOnly,
+			limit,
+			offset,
+		}) => {
+			const queryParams: SearchGameData["query"] = {
+				q: query,
+			};
+
+			if (entityTypes?.length) {
+				queryParams.types = entityTypes.join(",");
+			}
+
+			if (tags?.length) {
+				queryParams.tags = tags.join(",");
+			}
+
+			if (pinnedOnly !== undefined) {
+				queryParams.pinned_only = pinnedOnly;
+			}
+
+			if (typeof limit === "number") {
+				queryParams.limit = limit;
+			}
+
+			if (typeof offset === "number") {
+				queryParams.offset = offset;
+			}
+
+			const response = await searchGame({
+				path: { game_id: gameId },
+				query: queryParams,
+			});
+			return response.data?.data ?? null;
+		},
+	}),
+
 	// Session Planning Tools
 	listPinnedEntities: tool({
 		description:
@@ -662,7 +741,7 @@ export const tools = {
 		},
 	}),
 
-	listActiveQuests: tool({
+	getActiveQuests: tool({
 		description:
 			"Get only quests with 'active' status - the current ongoing storylines. Use this instead of listQuests when you need to focus on what's happening NOW, excluding completed, cancelled, or preparing quests.",
 		inputSchema: z.object({
@@ -699,6 +778,92 @@ export const tools = {
 							? error.message
 							: "Failed to fetch objectives",
 					questId,
+				};
+			}
+		},
+	}),
+
+	listAllObjectives: tool({
+		description:
+			"Get every quest objective in the game to review progress at a glance. Optionally filter to a specific quest or completion state.",
+		inputSchema: z.object({
+			gameId: z.string().describe("The ID of the game"),
+			questId: z
+				.string()
+				.optional()
+				.describe("If provided, only return objectives for this quest"),
+			completed: z
+				.boolean()
+				.optional()
+				.describe("Set true/false to filter by completion status"),
+		}),
+		execute: async ({ gameId, questId, completed }) => {
+			const response = await listGameObjectives({
+				path: { game_id: gameId },
+			});
+			const objectives = (response.data?.data ?? []) as Objective[];
+
+			return objectives.filter((objective) => {
+				if (questId && objective.quest_id !== questId) {
+					return false;
+				}
+				if (completed !== undefined && objective.complete !== completed) {
+					return false;
+				}
+				return true;
+			});
+		},
+	}),
+
+	createObjective: tool({
+		description:
+			"Create a new objective for a quest. Requires the quest ID and a description; you can optionally mark it complete or link a note.",
+		inputSchema: z.object({
+			gameId: z.string().describe("The ID of the game"),
+			questId: z
+				.string()
+				.describe("The ID of the quest to attach the objective to"),
+			description: z.string().min(1).describe("Objective description text"),
+			complete: z
+				.boolean()
+				.optional()
+				.describe("Whether the objective should start marked complete"),
+			noteLinkId: z
+				.string()
+				.optional()
+				.describe("Optional note link id to associate with the objective"),
+		}),
+		execute: async ({ gameId, questId, description, complete, noteLinkId }) => {
+			try {
+				const response = await createObjective({
+					path: { game_id: gameId, quest_id: questId },
+					body: {
+						objective: {
+							body: description,
+							...(complete !== undefined ? { complete } : {}),
+							...(noteLinkId ? { note_link_id: noteLinkId } : {}),
+						},
+					},
+				});
+
+				if (response.error) {
+					return {
+						success: false,
+						error: response.error,
+					};
+				}
+
+				const objective = response.data?.data;
+				return {
+					success: true,
+					message: `Objective created for quest ${questId}`,
+					objective,
+				};
+			} catch (error) {
+				return {
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Unknown error occurred",
 				};
 			}
 		},

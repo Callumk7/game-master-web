@@ -10,12 +10,38 @@ import { Container } from "~/components/container";
 import { Button } from "~/components/ui/button";
 import { Tiptap } from "~/components/ui/editor";
 import { TiptapViewer } from "~/components/ui/editor/viewer";
+import { Link } from "~/components/ui/link";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/utils/cn";
 
 export const Route = createFileRoute("/_auth/games/$gameId/chat")({
 	component: Chat,
 });
+
+const creationToolLinkConfig = {
+	createCharacter: {
+		to: "/games/$gameId/characters/$id",
+		label: "Open character",
+	},
+	createFaction: {
+		to: "/games/$gameId/factions/$id",
+		label: "Open faction",
+	},
+	createLocation: {
+		to: "/games/$gameId/locations/$id",
+		label: "Open location",
+	},
+	createQuest: {
+		to: "/games/$gameId/quests/$id",
+		label: "Open quest",
+	},
+	createNote: {
+		to: "/games/$gameId/notes/$id",
+		label: "Open note",
+	},
+} as const;
+
+type CreationToolName = keyof typeof creationToolLinkConfig;
 
 type ProposedEntityUpdateToolOutput =
 	| {
@@ -54,6 +80,40 @@ function isProposedEntityUpdateToolOutput(
 	if (!output || typeof output !== "object") return false;
 	if (!("success" in output)) return false;
 	return true;
+}
+
+function isCreationToolSuccessOutput(
+	output: unknown,
+): output is { success: true; id: string; message?: string } {
+	if (!output || typeof output !== "object") return false;
+	if (!("success" in output) || !("id" in output)) return false;
+	return (
+		Boolean((output as { success: boolean; id?: unknown }).success) &&
+		typeof (output as { id?: unknown }).id === "string"
+	);
+}
+
+function EntityCreationLink({
+	gameId,
+	entityId,
+	label,
+	message,
+	to,
+}: {
+	gameId: string;
+	entityId: string;
+	label: string;
+	message?: string;
+	to: string;
+}) {
+	return (
+		<div className="flex flex-col gap-2">
+			{message ? <div className="text-sm text-foreground">{message}</div> : null}
+			<Link to={to} params={{ gameId, id: entityId }} variant="outline" size="sm">
+				{label}
+			</Link>
+		</div>
+	);
 }
 
 function ProposedEntityUpdatePart({
@@ -438,11 +498,24 @@ function ToolPart({
 		errorText?: string;
 	};
 }) {
+	const { gameId } = Route.useParams();
+
 	if (part.type === "text" || part.type === "reasoning") return null;
 
 	const toolName = part.type.startsWith("tool-")
 		? part.type.replace("tool-", "")
 		: part.type;
+
+	const creationConfig =
+		(
+			creationToolLinkConfig as Record<
+				string,
+				(typeof creationToolLinkConfig)[CreationToolName] | undefined
+			>
+		)[toolName] ?? null;
+
+	const creationOutput =
+		creationConfig && isCreationToolSuccessOutput(part.output) ? part.output : null;
 
 	return (
 		<div className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2">
@@ -466,6 +539,14 @@ function ToolPart({
 							{toolName === "proposeEntityUpdate" &&
 							isProposedEntityUpdateToolOutput(part.output) ? (
 								<ProposedEntityUpdatePart output={part.output} />
+							) : creationConfig && creationOutput ? (
+								<EntityCreationLink
+									gameId={gameId}
+									entityId={creationOutput.id}
+									label={creationConfig.label}
+									message={creationOutput.message}
+									to={creationConfig.to}
+								/>
 							) : (
 								<pre className="text-xs overflow-auto bg-muted/50 rounded p-2">
 									{JSON.stringify(part.output, null, 2)}
