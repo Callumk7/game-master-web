@@ -23,7 +23,7 @@ function Chat() {
 	}
 
 	return (
-		<Container className="mt-0 mb-0 py-8 h-full min-h-0">
+		<Container className="mt-0 mb-0 pb-8 pt-2 h-full min-h-0">
 			<div className="flex flex-col h-full min-h-0 max-w-4xl mx-auto">
 				<ChatSessionSwitcher
 					threads={controller.threads}

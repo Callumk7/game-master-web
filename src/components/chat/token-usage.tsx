@@ -3,7 +3,7 @@ interface TokenUsageProps {
 	threshold?: number;
 }
 
-export function TokenUsage({ totalTokens, threshold = 100000 }: TokenUsageProps) {
+export function TokenUsage({ totalTokens, threshold = 1000000 }: TokenUsageProps) {
 	const percentage = (totalTokens / threshold) * 100;
 	const isWarning = percentage > 80;
 
