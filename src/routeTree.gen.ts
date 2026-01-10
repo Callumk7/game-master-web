@@ -18,16 +18,21 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthAccountRouteImport } from './routes/_auth/account'
 import { Route as AuthGamesIndexRouteImport } from './routes/_auth/games/index'
+import { Route as ApiEntityUpdatesUndoRouteImport } from './routes/api/entity-updates/undo'
+import { Route as ApiEntityUpdatesCommitRouteImport } from './routes/api/entity-updates/commit'
+import { Route as ApiChatGameIdRouteImport } from './routes/api/chat/$gameId'
 import { Route as AuthGamesNewRouteImport } from './routes/_auth/games/new'
 import { Route as AuthGamesGameIdRouteRouteImport } from './routes/_auth/games/$gameId/route'
 import { Route as AuthGamesGameIdIndexRouteImport } from './routes/_auth/games/$gameId/index'
 import { Route as AuthGamesGameIdTreeRouteImport } from './routes/_auth/games/$gameId/tree'
 import { Route as AuthGamesGameIdSplitRouteImport } from './routes/_auth/games/$gameId/split'
 import { Route as AuthGamesGameIdSettingsRouteImport } from './routes/_auth/games/$gameId/settings'
+import { Route as AuthGamesGameIdSearchRouteImport } from './routes/_auth/games/$gameId/search'
 import { Route as AuthGamesGameIdObjectivesRouteImport } from './routes/_auth/games/$gameId/objectives'
 import { Route as AuthGamesGameIdInitiativeRouteImport } from './routes/_auth/games/$gameId/initiative'
 import { Route as AuthGamesGameIdImagesRouteImport } from './routes/_auth/games/$gameId/images'
 import { Route as AuthGamesGameIdEditRouteImport } from './routes/_auth/games/$gameId/edit'
+import { Route as AuthGamesGameIdChatRouteImport } from './routes/_auth/games/$gameId/chat'
 import { Route as AuthGamesGameIdAllRouteImport } from './routes/_auth/games/$gameId/all'
 import { Route as AuthGamesGameIdQuestsIndexRouteImport } from './routes/_auth/games/$gameId/quests/index'
 import { Route as AuthGamesGameIdNotesIndexRouteImport } from './routes/_auth/games/$gameId/notes/index'
@@ -101,6 +106,21 @@ const AuthGamesIndexRoute = AuthGamesIndexRouteImport.update({
   path: '/games/',
   getParentRoute: () => AuthRoute,
 } as any)
+const ApiEntityUpdatesUndoRoute = ApiEntityUpdatesUndoRouteImport.update({
+  id: '/api/entity-updates/undo',
+  path: '/api/entity-updates/undo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiEntityUpdatesCommitRoute = ApiEntityUpdatesCommitRouteImport.update({
+  id: '/api/entity-updates/commit',
+  path: '/api/entity-updates/commit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatGameIdRoute = ApiChatGameIdRouteImport.update({
+  id: '/api/chat/$gameId',
+  path: '/api/chat/$gameId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthGamesNewRoute = AuthGamesNewRouteImport.update({
   id: '/games/new',
   path: '/games/new',
@@ -131,6 +151,11 @@ const AuthGamesGameIdSettingsRoute = AuthGamesGameIdSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
+const AuthGamesGameIdSearchRoute = AuthGamesGameIdSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthGamesGameIdRouteRoute,
+} as any)
 const AuthGamesGameIdObjectivesRoute =
   AuthGamesGameIdObjectivesRouteImport.update({
     id: '/objectives',
@@ -151,6 +176,11 @@ const AuthGamesGameIdImagesRoute = AuthGamesGameIdImagesRouteImport.update({
 const AuthGamesGameIdEditRoute = AuthGamesGameIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
+  getParentRoute: () => AuthGamesGameIdRouteRoute,
+} as any)
+const AuthGamesGameIdChatRoute = AuthGamesGameIdChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
 const AuthGamesGameIdAllRoute = AuthGamesGameIdAllRouteImport.update({
@@ -330,12 +360,17 @@ export interface FileRoutesByFullPath {
   '/account': typeof AuthAccountRoute
   '/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/games/new': typeof AuthGamesNewRoute
+  '/api/chat/$gameId': typeof ApiChatGameIdRoute
+  '/api/entity-updates/commit': typeof ApiEntityUpdatesCommitRoute
+  '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
   '/games/$gameId/objectives': typeof AuthGamesGameIdObjectivesRoute
+  '/games/$gameId/search': typeof AuthGamesGameIdSearchRoute
   '/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
@@ -377,12 +412,17 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/account': typeof AuthAccountRoute
   '/games/new': typeof AuthGamesNewRoute
+  '/api/chat/$gameId': typeof ApiChatGameIdRoute
+  '/api/entity-updates/commit': typeof ApiEntityUpdatesCommitRoute
+  '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
   '/games/$gameId/objectives': typeof AuthGamesGameIdObjectivesRoute
+  '/games/$gameId/search': typeof AuthGamesGameIdSearchRoute
   '/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
@@ -422,12 +462,17 @@ export interface FileRoutesById {
   '/_auth/account': typeof AuthAccountRoute
   '/_auth/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/_auth/games/new': typeof AuthGamesNewRoute
+  '/api/chat/$gameId': typeof ApiChatGameIdRoute
+  '/api/entity-updates/commit': typeof ApiEntityUpdatesCommitRoute
+  '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/_auth/games/': typeof AuthGamesIndexRoute
   '/_auth/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/_auth/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/_auth/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/_auth/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/_auth/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
   '/_auth/games/$gameId/objectives': typeof AuthGamesGameIdObjectivesRoute
+  '/_auth/games/$gameId/search': typeof AuthGamesGameIdSearchRoute
   '/_auth/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/_auth/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
   '/_auth/games/$gameId/tree': typeof AuthGamesGameIdTreeRoute
@@ -472,12 +517,17 @@ export interface FileRouteTypes {
     | '/account'
     | '/games/$gameId'
     | '/games/new'
+    | '/api/chat/$gameId'
+    | '/api/entity-updates/commit'
+    | '/api/entity-updates/undo'
     | '/games'
     | '/games/$gameId/all'
+    | '/games/$gameId/chat'
     | '/games/$gameId/edit'
     | '/games/$gameId/images'
     | '/games/$gameId/initiative'
     | '/games/$gameId/objectives'
+    | '/games/$gameId/search'
     | '/games/$gameId/settings'
     | '/games/$gameId/split'
     | '/games/$gameId/tree'
@@ -519,12 +569,17 @@ export interface FileRouteTypes {
     | '/signup'
     | '/account'
     | '/games/new'
+    | '/api/chat/$gameId'
+    | '/api/entity-updates/commit'
+    | '/api/entity-updates/undo'
     | '/games'
     | '/games/$gameId/all'
+    | '/games/$gameId/chat'
     | '/games/$gameId/edit'
     | '/games/$gameId/images'
     | '/games/$gameId/initiative'
     | '/games/$gameId/objectives'
+    | '/games/$gameId/search'
     | '/games/$gameId/settings'
     | '/games/$gameId/split'
     | '/games/$gameId/tree'
@@ -563,12 +618,17 @@ export interface FileRouteTypes {
     | '/_auth/account'
     | '/_auth/games/$gameId'
     | '/_auth/games/new'
+    | '/api/chat/$gameId'
+    | '/api/entity-updates/commit'
+    | '/api/entity-updates/undo'
     | '/_auth/games/'
     | '/_auth/games/$gameId/all'
+    | '/_auth/games/$gameId/chat'
     | '/_auth/games/$gameId/edit'
     | '/_auth/games/$gameId/images'
     | '/_auth/games/$gameId/initiative'
     | '/_auth/games/$gameId/objectives'
+    | '/_auth/games/$gameId/search'
     | '/_auth/games/$gameId/settings'
     | '/_auth/games/$gameId/split'
     | '/_auth/games/$gameId/tree'
@@ -610,6 +670,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   SignupRoute: typeof SignupRoute
+  ApiChatGameIdRoute: typeof ApiChatGameIdRoute
+  ApiEntityUpdatesCommitRoute: typeof ApiEntityUpdatesCommitRoute
+  ApiEntityUpdatesUndoRoute: typeof ApiEntityUpdatesUndoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -677,6 +740,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGamesIndexRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/api/entity-updates/undo': {
+      id: '/api/entity-updates/undo'
+      path: '/api/entity-updates/undo'
+      fullPath: '/api/entity-updates/undo'
+      preLoaderRoute: typeof ApiEntityUpdatesUndoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/entity-updates/commit': {
+      id: '/api/entity-updates/commit'
+      path: '/api/entity-updates/commit'
+      fullPath: '/api/entity-updates/commit'
+      preLoaderRoute: typeof ApiEntityUpdatesCommitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat/$gameId': {
+      id: '/api/chat/$gameId'
+      path: '/api/chat/$gameId'
+      fullPath: '/api/chat/$gameId'
+      preLoaderRoute: typeof ApiChatGameIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/games/new': {
       id: '/_auth/games/new'
       path: '/games/new'
@@ -719,6 +803,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGamesGameIdSettingsRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
+    '/_auth/games/$gameId/search': {
+      id: '/_auth/games/$gameId/search'
+      path: '/search'
+      fullPath: '/games/$gameId/search'
+      preLoaderRoute: typeof AuthGamesGameIdSearchRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
     '/_auth/games/$gameId/objectives': {
       id: '/_auth/games/$gameId/objectives'
       path: '/objectives'
@@ -745,6 +836,13 @@ declare module '@tanstack/react-router' {
       path: '/edit'
       fullPath: '/games/$gameId/edit'
       preLoaderRoute: typeof AuthGamesGameIdEditRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/chat': {
+      id: '/_auth/games/$gameId/chat'
+      path: '/chat'
+      fullPath: '/games/$gameId/chat'
+      preLoaderRoute: typeof AuthGamesGameIdChatRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
     '/_auth/games/$gameId/all': {
@@ -1029,10 +1127,12 @@ const AuthGamesGameIdQuestsIdRouteRouteWithChildren =
 
 interface AuthGamesGameIdRouteRouteChildren {
   AuthGamesGameIdAllRoute: typeof AuthGamesGameIdAllRoute
+  AuthGamesGameIdChatRoute: typeof AuthGamesGameIdChatRoute
   AuthGamesGameIdEditRoute: typeof AuthGamesGameIdEditRoute
   AuthGamesGameIdImagesRoute: typeof AuthGamesGameIdImagesRoute
   AuthGamesGameIdInitiativeRoute: typeof AuthGamesGameIdInitiativeRoute
   AuthGamesGameIdObjectivesRoute: typeof AuthGamesGameIdObjectivesRoute
+  AuthGamesGameIdSearchRoute: typeof AuthGamesGameIdSearchRoute
   AuthGamesGameIdSettingsRoute: typeof AuthGamesGameIdSettingsRoute
   AuthGamesGameIdSplitRoute: typeof AuthGamesGameIdSplitRoute
   AuthGamesGameIdTreeRoute: typeof AuthGamesGameIdTreeRoute
@@ -1058,10 +1158,12 @@ interface AuthGamesGameIdRouteRouteChildren {
 
 const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
   AuthGamesGameIdAllRoute: AuthGamesGameIdAllRoute,
+  AuthGamesGameIdChatRoute: AuthGamesGameIdChatRoute,
   AuthGamesGameIdEditRoute: AuthGamesGameIdEditRoute,
   AuthGamesGameIdImagesRoute: AuthGamesGameIdImagesRoute,
   AuthGamesGameIdInitiativeRoute: AuthGamesGameIdInitiativeRoute,
   AuthGamesGameIdObjectivesRoute: AuthGamesGameIdObjectivesRoute,
+  AuthGamesGameIdSearchRoute: AuthGamesGameIdSearchRoute,
   AuthGamesGameIdSettingsRoute: AuthGamesGameIdSettingsRoute,
   AuthGamesGameIdSplitRoute: AuthGamesGameIdSplitRoute,
   AuthGamesGameIdTreeRoute: AuthGamesGameIdTreeRoute,
@@ -1117,6 +1219,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   SignupRoute: SignupRoute,
+  ApiChatGameIdRoute: ApiChatGameIdRoute,
+  ApiEntityUpdatesCommitRoute: ApiEntityUpdatesCommitRoute,
+  ApiEntityUpdatesUndoRoute: ApiEntityUpdatesUndoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
