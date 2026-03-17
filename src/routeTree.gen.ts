@@ -16,7 +16,9 @@ import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
 import { Route as ConfirmRouteImport } from './routes/confirm'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthUiDemoRouteImport } from './routes/_auth/ui-demo'
 import { Route as AuthAccountRouteImport } from './routes/_auth/account'
+import { Route as ApiUiDemoIndexRouteImport } from './routes/api/ui-demo/index'
 import { Route as AuthGamesIndexRouteImport } from './routes/_auth/games/index'
 import { Route as ApiEntityUpdatesUndoRouteImport } from './routes/api/entity-updates/undo'
 import { Route as ApiEntityUpdatesCommitRouteImport } from './routes/api/entity-updates/commit'
@@ -96,10 +98,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthUiDemoRoute = AuthUiDemoRouteImport.update({
+  id: '/ui-demo',
+  path: '/ui-demo',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthAccountRoute = AuthAccountRouteImport.update({
   id: '/account',
   path: '/account',
   getParentRoute: () => AuthRoute,
+} as any)
+const ApiUiDemoIndexRoute = ApiUiDemoIndexRouteImport.update({
+  id: '/api/ui-demo/',
+  path: '/api/ui-demo/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthGamesIndexRoute = AuthGamesIndexRouteImport.update({
   id: '/games/',
@@ -358,12 +370,14 @@ export interface FileRoutesByFullPath {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/account': typeof AuthAccountRoute
+  '/ui-demo': typeof AuthUiDemoRoute
   '/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/games/new': typeof AuthGamesNewRoute
   '/api/chat/$gameId': typeof ApiChatGameIdRoute
   '/api/entity-updates/commit': typeof ApiEntityUpdatesCommitRoute
   '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/games': typeof AuthGamesIndexRoute
+  '/api/ui-demo': typeof ApiUiDemoIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
@@ -411,11 +425,13 @@ export interface FileRoutesByTo {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/account': typeof AuthAccountRoute
+  '/ui-demo': typeof AuthUiDemoRoute
   '/games/new': typeof AuthGamesNewRoute
   '/api/chat/$gameId': typeof ApiChatGameIdRoute
   '/api/entity-updates/commit': typeof ApiEntityUpdatesCommitRoute
   '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/games': typeof AuthGamesIndexRoute
+  '/api/ui-demo': typeof ApiUiDemoIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
@@ -460,12 +476,14 @@ export interface FileRoutesById {
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
   '/_auth/account': typeof AuthAccountRoute
+  '/_auth/ui-demo': typeof AuthUiDemoRoute
   '/_auth/games/$gameId': typeof AuthGamesGameIdRouteRouteWithChildren
   '/_auth/games/new': typeof AuthGamesNewRoute
   '/api/chat/$gameId': typeof ApiChatGameIdRoute
   '/api/entity-updates/commit': typeof ApiEntityUpdatesCommitRoute
   '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/_auth/games/': typeof AuthGamesIndexRoute
+  '/api/ui-demo/': typeof ApiUiDemoIndexRoute
   '/_auth/games/$gameId/all': typeof AuthGamesGameIdAllRoute
   '/_auth/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/_auth/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
@@ -515,12 +533,14 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/account'
+    | '/ui-demo'
     | '/games/$gameId'
     | '/games/new'
     | '/api/chat/$gameId'
     | '/api/entity-updates/commit'
     | '/api/entity-updates/undo'
     | '/games'
+    | '/api/ui-demo'
     | '/games/$gameId/all'
     | '/games/$gameId/chat'
     | '/games/$gameId/edit'
@@ -568,11 +588,13 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/account'
+    | '/ui-demo'
     | '/games/new'
     | '/api/chat/$gameId'
     | '/api/entity-updates/commit'
     | '/api/entity-updates/undo'
     | '/games'
+    | '/api/ui-demo'
     | '/games/$gameId/all'
     | '/games/$gameId/chat'
     | '/games/$gameId/edit'
@@ -616,12 +638,14 @@ export interface FileRouteTypes {
     | '/logout'
     | '/signup'
     | '/_auth/account'
+    | '/_auth/ui-demo'
     | '/_auth/games/$gameId'
     | '/_auth/games/new'
     | '/api/chat/$gameId'
     | '/api/entity-updates/commit'
     | '/api/entity-updates/undo'
     | '/_auth/games/'
+    | '/api/ui-demo/'
     | '/_auth/games/$gameId/all'
     | '/_auth/games/$gameId/chat'
     | '/_auth/games/$gameId/edit'
@@ -673,6 +697,7 @@ export interface RootRouteChildren {
   ApiChatGameIdRoute: typeof ApiChatGameIdRoute
   ApiEntityUpdatesCommitRoute: typeof ApiEntityUpdatesCommitRoute
   ApiEntityUpdatesUndoRoute: typeof ApiEntityUpdatesUndoRoute
+  ApiUiDemoIndexRoute: typeof ApiUiDemoIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -726,12 +751,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/ui-demo': {
+      id: '/_auth/ui-demo'
+      path: '/ui-demo'
+      fullPath: '/ui-demo'
+      preLoaderRoute: typeof AuthUiDemoRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/account': {
       id: '/_auth/account'
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AuthAccountRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/api/ui-demo/': {
+      id: '/api/ui-demo/'
+      path: '/api/ui-demo'
+      fullPath: '/api/ui-demo'
+      preLoaderRoute: typeof ApiUiDemoIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_auth/games/': {
       id: '/_auth/games/'
@@ -1197,6 +1236,7 @@ const AuthGamesGameIdRouteRouteWithChildren =
 
 interface AuthRouteChildren {
   AuthAccountRoute: typeof AuthAccountRoute
+  AuthUiDemoRoute: typeof AuthUiDemoRoute
   AuthGamesGameIdRouteRoute: typeof AuthGamesGameIdRouteRouteWithChildren
   AuthGamesNewRoute: typeof AuthGamesNewRoute
   AuthGamesIndexRoute: typeof AuthGamesIndexRoute
@@ -1204,6 +1244,7 @@ interface AuthRouteChildren {
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAccountRoute: AuthAccountRoute,
+  AuthUiDemoRoute: AuthUiDemoRoute,
   AuthGamesGameIdRouteRoute: AuthGamesGameIdRouteRouteWithChildren,
   AuthGamesNewRoute: AuthGamesNewRoute,
   AuthGamesIndexRoute: AuthGamesIndexRoute,
@@ -1222,6 +1263,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatGameIdRoute: ApiChatGameIdRoute,
   ApiEntityUpdatesCommitRoute: ApiEntityUpdatesCommitRoute,
   ApiEntityUpdatesUndoRoute: ApiEntityUpdatesUndoRoute,
+  ApiUiDemoIndexRoute: ApiUiDemoIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
