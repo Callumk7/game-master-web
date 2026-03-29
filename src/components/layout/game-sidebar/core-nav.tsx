@@ -5,6 +5,7 @@ import {
 	SidebarMenuItem,
 	SidebarMenuLink,
 } from "~/components/ui/sidebar";
+import { isChatEnabled } from "~/utils/features";
 
 interface SidebarCoreNavProps {
 	gameId: string;
@@ -48,12 +49,14 @@ export function SidebarCoreNav({ gameId }: SidebarCoreNavProps) {
 						All Objectives
 					</SidebarMenuLink>
 				</SidebarMenuItem>
-				<SidebarMenuItem>
-					<SidebarMenuLink to="/games/$gameId/chat" params={{ gameId }}>
-						<Speech className="w-4 h-4" />
-						Chat
-					</SidebarMenuLink>
-				</SidebarMenuItem>
+				{isChatEnabled ? (
+					<SidebarMenuItem>
+						<SidebarMenuLink to="/games/$gameId/chat" params={{ gameId }}>
+							<Speech className="w-4 h-4" />
+							Chat
+						</SidebarMenuLink>
+					</SidebarMenuItem>
+				) : null}
 			</SidebarMenu>
 		</SidebarGroup>
 	);
