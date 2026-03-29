@@ -1,10 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ChatSession } from "~/components/chat/chat-session";
 import { ChatSessionSwitcher } from "~/components/chat/chat-session-switcher";
 import { Container } from "~/components/container";
 import { useGameChatController } from "~/hooks/useGameChatController";
+import { isChatEnabled } from "~/utils/features";
 
 export const Route = createFileRoute("/_auth/games/$gameId/chat")({
+	beforeLoad: ({ params }) => {
+		if (!isChatEnabled) {
+			throw redirect({ to: "/games/$gameId", params });
+		}
+	},
 	component: Chat,
 });
 
