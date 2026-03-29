@@ -1,6 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Link,
+	Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import { Toaster } from "sonner";
@@ -58,8 +63,21 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 
+	notFoundComponent: NotFound,
 	shellComponent: RootDocument,
 });
+
+function NotFound() {
+	return (
+		<div className="flex h-screen w-full flex-col items-center justify-center gap-4">
+			<h1 className="text-4xl font-bold">404</h1>
+			<p className="text-muted-foreground">Page not found</p>
+			<Link to="/" className="text-primary underline underline-offset-4 hover:opacity-80">
+				Go home
+			</Link>
+		</div>
+	);
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
