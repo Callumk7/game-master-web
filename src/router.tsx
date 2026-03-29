@@ -1,4 +1,4 @@
-import { createRouter as createTanstackRouter } from "@tanstack/react-router";
+import { createRouter as createTanstackRouter, Link } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { Spinner } from "./components/ui/spinner";
 import * as TanstackQuery from "./integrations/tanstack-query/root-provider";
@@ -21,6 +21,15 @@ export const createRouter = () => {
 		defaultPendingComponent: () => (
 			<div className="flex h-screen w-full items-center justify-center">
 				<Spinner />
+			</div>
+		),
+		defaultNotFoundComponent: () => (
+			<div className="flex h-screen w-full flex-col items-center justify-center gap-4">
+				<h1 className="text-4xl font-bold">404</h1>
+				<p className="text-muted-foreground">Page not found</p>
+				<Link to="/" className="text-primary underline underline-offset-4 hover:opacity-80">
+					Go home
+				</Link>
 			</div>
 		),
 		Wrap: (props: { children: React.ReactNode }) => {
