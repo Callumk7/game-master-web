@@ -16,6 +16,7 @@ import {
 	useCanvasNodes,
 	useCanvasViewport,
 } from "~/state/canvas";
+import { CanvasToolbar } from "./canvas-toolbar";
 import EntityNode from "./entity-node";
 
 // ---------------------------------------------------------------------------
@@ -96,6 +97,7 @@ function CanvasInner({ gameId }: { gameId: string }) {
 				nodeStrokeWidth={3}
 				className="!bg-card !border-border"
 			/>
+			<CanvasToolbar gameId={gameId} />
 		</ReactFlow>
 	);
 }
