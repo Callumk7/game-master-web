@@ -1,13 +1,14 @@
 ---
 id: TASK-008
 title: Disable chat rendering in production builds
-status: In Progress
+status: Done
 assignee:
   - '@codex'
 created_date: '2026-03-29 16:56'
-updated_date: '2026-03-29 16:57'
+updated_date: '2026-03-30 14:25'
 labels: []
 dependencies: []
+ordinal: 1000
 ---
 
 ## Description

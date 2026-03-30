@@ -1,16 +1,17 @@
 ---
-id: task-004
+id: TASK-004
 title: Migrate node-map rendering from SVG to HTML5 Canvas
 status: Done
 assignee:
   - '@claude'
 created_date: '2025-10-06 10:58'
-updated_date: '2025-10-06 11:14'
+updated_date: '2026-03-30 14:25'
 labels:
   - frontend
   - performance
   - canvas
 dependencies: []
+ordinal: 5000
 ---
 
 ## Description

@@ -1,11 +1,11 @@
 ---
-id: task-006
+id: TASK-006
 title: Add active quests filter tool to AI chat
 status: Done
 assignee:
   - '@claude'
 created_date: '2025-12-30'
-updated_date: '2025-12-30'
+updated_date: '2026-03-30 14:25'
 labels:
   - ai
   - chat
@@ -13,6 +13,7 @@ labels:
   - quests
 dependencies: []
 priority: high
+ordinal: 3000
 ---
 
 ## Description

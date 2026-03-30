@@ -1,5 +1,5 @@
 ---
-id: task-002
+id: TASK-002
 title: >-
   Refactor split view architecture for better organization and separation of
   concerns
@@ -7,13 +7,14 @@ status: Done
 assignee:
   - '@myself'
 created_date: '2025-10-05 16:44'
-updated_date: '2025-10-05 16:59'
+updated_date: '2026-03-30 14:25'
 labels:
   - refactoring
   - architecture
   - split-view
 dependencies: []
 priority: medium
+ordinal: 7000
 ---
 
 ## Description
