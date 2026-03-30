@@ -1,4 +1,4 @@
-import { BowArrow, Home, Search, Settings, Speech, Target } from "lucide-react";
+import { BowArrow, Home, Pin, Search, Settings, Speech, Target } from "lucide-react";
 import {
 	SidebarGroup,
 	SidebarMenu,
@@ -41,6 +41,12 @@ export function SidebarCoreNav({ gameId }: SidebarCoreNavProps) {
 					<SidebarMenuLink to="/games/$gameId/settings" params={{ gameId }}>
 						<Settings className="w-4 h-4" />
 						Game Settings
+					</SidebarMenuLink>
+				</SidebarMenuItem>
+				<SidebarMenuItem>
+					<SidebarMenuLink to="/games/$gameId/pinned" params={{ gameId }}>
+						<Pin className="w-4 h-4" />
+						Pinned Table
 					</SidebarMenuLink>
 				</SidebarMenuItem>
 				<SidebarMenuItem>
