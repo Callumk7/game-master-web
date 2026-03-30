@@ -28,6 +28,7 @@ import { Route as AuthGamesGameIdTreeRouteImport } from './routes/_auth/games/$g
 import { Route as AuthGamesGameIdSplitRouteImport } from './routes/_auth/games/$gameId/split'
 import { Route as AuthGamesGameIdSettingsRouteImport } from './routes/_auth/games/$gameId/settings'
 import { Route as AuthGamesGameIdSearchRouteImport } from './routes/_auth/games/$gameId/search'
+import { Route as AuthGamesGameIdPinnedRouteImport } from './routes/_auth/games/$gameId/pinned'
 import { Route as AuthGamesGameIdObjectivesRouteImport } from './routes/_auth/games/$gameId/objectives'
 import { Route as AuthGamesGameIdInitiativeRouteImport } from './routes/_auth/games/$gameId/initiative'
 import { Route as AuthGamesGameIdImagesRouteImport } from './routes/_auth/games/$gameId/images'
@@ -154,6 +155,11 @@ const AuthGamesGameIdSettingsRoute = AuthGamesGameIdSettingsRouteImport.update({
 const AuthGamesGameIdSearchRoute = AuthGamesGameIdSearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => AuthGamesGameIdRouteRoute,
+} as any)
+const AuthGamesGameIdPinnedRoute = AuthGamesGameIdPinnedRouteImport.update({
+  id: '/pinned',
+  path: '/pinned',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
 const AuthGamesGameIdObjectivesRoute =
@@ -370,6 +376,7 @@ export interface FileRoutesByFullPath {
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
   '/games/$gameId/objectives': typeof AuthGamesGameIdObjectivesRoute
+  '/games/$gameId/pinned': typeof AuthGamesGameIdPinnedRoute
   '/games/$gameId/search': typeof AuthGamesGameIdSearchRoute
   '/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
@@ -422,6 +429,7 @@ export interface FileRoutesByTo {
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
   '/games/$gameId/objectives': typeof AuthGamesGameIdObjectivesRoute
+  '/games/$gameId/pinned': typeof AuthGamesGameIdPinnedRoute
   '/games/$gameId/search': typeof AuthGamesGameIdSearchRoute
   '/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
@@ -472,6 +480,7 @@ export interface FileRoutesById {
   '/_auth/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
   '/_auth/games/$gameId/initiative': typeof AuthGamesGameIdInitiativeRoute
   '/_auth/games/$gameId/objectives': typeof AuthGamesGameIdObjectivesRoute
+  '/_auth/games/$gameId/pinned': typeof AuthGamesGameIdPinnedRoute
   '/_auth/games/$gameId/search': typeof AuthGamesGameIdSearchRoute
   '/_auth/games/$gameId/settings': typeof AuthGamesGameIdSettingsRoute
   '/_auth/games/$gameId/split': typeof AuthGamesGameIdSplitRoute
@@ -527,6 +536,7 @@ export interface FileRouteTypes {
     | '/games/$gameId/images'
     | '/games/$gameId/initiative'
     | '/games/$gameId/objectives'
+    | '/games/$gameId/pinned'
     | '/games/$gameId/search'
     | '/games/$gameId/settings'
     | '/games/$gameId/split'
@@ -579,6 +589,7 @@ export interface FileRouteTypes {
     | '/games/$gameId/images'
     | '/games/$gameId/initiative'
     | '/games/$gameId/objectives'
+    | '/games/$gameId/pinned'
     | '/games/$gameId/search'
     | '/games/$gameId/settings'
     | '/games/$gameId/split'
@@ -628,6 +639,7 @@ export interface FileRouteTypes {
     | '/_auth/games/$gameId/images'
     | '/_auth/games/$gameId/initiative'
     | '/_auth/games/$gameId/objectives'
+    | '/_auth/games/$gameId/pinned'
     | '/_auth/games/$gameId/search'
     | '/_auth/games/$gameId/settings'
     | '/_auth/games/$gameId/split'
@@ -808,6 +820,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/games/$gameId/search'
       preLoaderRoute: typeof AuthGamesGameIdSearchRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/pinned': {
+      id: '/_auth/games/$gameId/pinned'
+      path: '/pinned'
+      fullPath: '/games/$gameId/pinned'
+      preLoaderRoute: typeof AuthGamesGameIdPinnedRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
     '/_auth/games/$gameId/objectives': {
@@ -1132,6 +1151,7 @@ interface AuthGamesGameIdRouteRouteChildren {
   AuthGamesGameIdImagesRoute: typeof AuthGamesGameIdImagesRoute
   AuthGamesGameIdInitiativeRoute: typeof AuthGamesGameIdInitiativeRoute
   AuthGamesGameIdObjectivesRoute: typeof AuthGamesGameIdObjectivesRoute
+  AuthGamesGameIdPinnedRoute: typeof AuthGamesGameIdPinnedRoute
   AuthGamesGameIdSearchRoute: typeof AuthGamesGameIdSearchRoute
   AuthGamesGameIdSettingsRoute: typeof AuthGamesGameIdSettingsRoute
   AuthGamesGameIdSplitRoute: typeof AuthGamesGameIdSplitRoute
@@ -1163,6 +1183,7 @@ const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
   AuthGamesGameIdImagesRoute: AuthGamesGameIdImagesRoute,
   AuthGamesGameIdInitiativeRoute: AuthGamesGameIdInitiativeRoute,
   AuthGamesGameIdObjectivesRoute: AuthGamesGameIdObjectivesRoute,
+  AuthGamesGameIdPinnedRoute: AuthGamesGameIdPinnedRoute,
   AuthGamesGameIdSearchRoute: AuthGamesGameIdSearchRoute,
   AuthGamesGameIdSettingsRoute: AuthGamesGameIdSettingsRoute,
   AuthGamesGameIdSplitRoute: AuthGamesGameIdSplitRoute,
