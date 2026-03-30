@@ -1,4 +1,10 @@
-import { ClientOnly, createFileRoute, Link, notFound, Outlet } from "@tanstack/react-router";
+import {
+	ClientOnly,
+	createFileRoute,
+	Link,
+	notFound,
+	Outlet,
+} from "@tanstack/react-router";
 import {
 	getGameOptions,
 	getLocationTreeOptions,
@@ -53,7 +59,10 @@ export const Route = createFileRoute("/_auth/games/$gameId")({
 		<div className="flex h-full w-full flex-col items-center justify-center gap-4 py-20">
 			<h1 className="text-4xl font-bold">404</h1>
 			<p className="text-muted-foreground">Game not found</p>
-			<Link to="/games" className="text-primary underline underline-offset-4 hover:opacity-80">
+			<Link
+				to="/games"
+				className="text-primary underline underline-offset-4 hover:opacity-80"
+			>
 				Back to games
 			</Link>
 		</div>

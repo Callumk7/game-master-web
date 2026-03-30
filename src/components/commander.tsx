@@ -4,6 +4,7 @@ import {
 	FileText,
 	Gem,
 	MapPin,
+	Network,
 	Plus,
 	Search,
 	Shield,
@@ -507,6 +508,21 @@ export function Commander({ gameId }: { gameId: string }) {
 									<span>{quest.name}</span>
 								</CommandItem>
 							))}
+						</CommandGroup>
+						<CommandSeparator />
+						<CommandGroup heading="Views">
+							<CommandItem
+								onSelect={() => {
+									setIsCommanderOpen(false);
+									navigate({
+										to: "/games/$gameId/canvas",
+										params: { gameId },
+									});
+								}}
+							>
+								<Network />
+								<span>Open Canvas</span>
+							</CommandItem>
 						</CommandGroup>
 						<CommandSeparator />
 						<CommandGroup heading="Todos">
