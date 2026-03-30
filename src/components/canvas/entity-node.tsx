@@ -1,6 +1,6 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { Gem, MapPin, MoreHorizontal, Scroll, Shield, Users } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 import type { EntityType } from "~/types";
 import { cn } from "~/utils/cn";
 import type { EntityCanvasNode } from "./types";
@@ -92,6 +92,39 @@ function MetadataSubtitle({
 	if (parts.length === 0) return null;
 
 	return <p className="text-muted-foreground text-xs truncate">{parts.join(" · ")}</p>;
+}
+
+// ---------------------------------------------------------------------------
+// Scrollable node content — captures wheel events at the DOM level so they
+// scroll the content instead of zooming the canvas via React Flow.
+// ---------------------------------------------------------------------------
+
+function NodeScrollArea({
+	children,
+	className,
+}: {
+	children: React.ReactNode;
+	className?: string;
+}) {
+	const ref = React.useRef<HTMLDivElement>(null);
+
+	React.useEffect(() => {
+		const el = ref.current;
+		if (!el) return;
+
+		const handleWheel = (e: WheelEvent) => {
+			e.stopPropagation();
+		};
+
+		el.addEventListener("wheel", handleWheel, { passive: true });
+		return () => el.removeEventListener("wheel", handleWheel);
+	}, []);
+
+	return (
+		<div ref={ref} className={className}>
+			{children}
+		</div>
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -188,11 +221,11 @@ function EntityNode({ data, selected }: NodeProps<EntityCanvasNode>) {
 
 			{/* ---- Scrollable content body ---- */}
 			{data.contentPlainText && (
-				<div className="nodrag nopan max-h-60 overflow-y-auto px-3 py-2">
+				<NodeScrollArea className="nodrag nopan max-h-60 overflow-y-auto px-3 py-2">
 					<p className="whitespace-pre-wrap text-xs text-muted-foreground leading-relaxed">
 						{data.contentPlainText}
 					</p>
-				</div>
+				</NodeScrollArea>
 			)}
 		</div>
 	);
