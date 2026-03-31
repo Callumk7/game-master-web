@@ -20,6 +20,7 @@ import { CanvasToolbar } from "./canvas-toolbar";
 import EntityNode, { CanvasContext } from "./entity-node";
 import { useLoadLinks } from "./hooks/use-load-links";
 import { useCanvasConnect } from "./use-canvas-connect";
+import { getClosestHandles } from "./utils/layout";
 
 // ---------------------------------------------------------------------------
 // Node types registration (stable reference — defined outside component)
@@ -64,13 +65,46 @@ function CanvasInner({ gameId }: { gameId: string }) {
 	const nodes = useCanvasNodes(gameId);
 	const edges = useCanvasEdges(gameId);
 	const viewport = useCanvasViewport(gameId);
-	const { updateNodes, updateEdges, setViewport } = useCanvasActions();
+	const { updateNodes, updateEdges, setViewport, setEdge } = useCanvasActions();
 	const onConnect = useCanvasConnect(gameId);
 	const { loadLinks, loadingNodeId } = useLoadLinks(gameId);
 
 	const debouncedSetViewport = useDebouncedCallback(
 		(vp: Viewport) => setViewport(gameId, vp),
 		300,
+	);
+
+	const onNodeDragStop = React.useCallback(
+		(_event: React.MouseEvent, draggedNode: EntityCanvasNode) => {
+			for (const edge of edges) {
+				if (edge.source !== draggedNode.id && edge.target !== draggedNode.id)
+					continue;
+
+				const sourceNode =
+					edge.source === draggedNode.id
+						? draggedNode
+						: nodes.find((n) => n.id === edge.source);
+				const targetNode =
+					edge.target === draggedNode.id
+						? draggedNode
+						: nodes.find((n) => n.id === edge.target);
+
+				if (!sourceNode || !targetNode) continue;
+
+				const { sourceHandle, targetHandle } = getClosestHandles(
+					sourceNode.position,
+					targetNode.position,
+				);
+
+				if (
+					edge.sourceHandle !== sourceHandle ||
+					edge.targetHandle !== targetHandle
+				) {
+					setEdge(gameId, edge.id, { sourceHandle, targetHandle });
+				}
+			}
+		},
+		[nodes, edges, gameId, setEdge],
 	);
 
 	const canvasContextValue = React.useMemo(
@@ -87,6 +121,7 @@ function CanvasInner({ gameId }: { gameId: string }) {
 				onNodesChange={(changes) => updateNodes(gameId, changes)}
 				onEdgesChange={(changes) => updateEdges(gameId, changes)}
 				onConnect={onConnect}
+				onNodeDragStop={onNodeDragStop}
 				onMoveEnd={(_event, vp) => debouncedSetViewport(vp)}
 				defaultViewport={viewport}
 				colorMode="dark"

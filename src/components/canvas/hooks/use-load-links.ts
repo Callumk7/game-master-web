@@ -13,7 +13,7 @@ import { flattenLinksForTable } from "~/components/links/utils";
 import { useCanvasActions, useCanvasEdges, useCanvasNodes } from "~/state/canvas";
 import type { EntityType } from "~/types";
 import type { CanvasNodeData, EntityCanvasNode } from "../types";
-import { radialLayout } from "../utils/layout";
+import { getClosestHandles, radialLayout } from "../utils/layout";
 
 // ---------------------------------------------------------------------------
 // Map linked entity → canvas node data
@@ -148,10 +148,17 @@ export function useLoadLinks(gameId: string) {
 						!existingEdgeKeys.has(edgeKey) &&
 						!existingEdgeKeys.has(reverseKey)
 					) {
+						const { sourceHandle, targetHandle } = getClosestHandles(
+							sourceNode.position,
+							pos,
+						);
+
 						addEdge(gameId, {
 							id: `${nodeId}-${newNodeId}`,
 							source: nodeId,
 							target: newNodeId,
+							sourceHandle,
+							targetHandle,
 						});
 						existingEdgeKeys.add(edgeKey);
 					}
