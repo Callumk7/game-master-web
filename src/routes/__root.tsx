@@ -88,7 +88,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body>
+			<body suppressHydrationWarning>
 				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
 					{children}
 					<TanStackRouterDevtools position="top-right" />
