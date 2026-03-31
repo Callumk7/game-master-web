@@ -18,6 +18,7 @@ import {
 } from "~/state/canvas";
 import { CanvasToolbar } from "./canvas-toolbar";
 import EntityNode from "./entity-node";
+import { useCanvasConnect } from "./use-canvas-connect";
 
 // ---------------------------------------------------------------------------
 // Node types registration (stable reference — defined outside component)
@@ -63,6 +64,7 @@ function CanvasInner({ gameId }: { gameId: string }) {
 	const edges = useCanvasEdges(gameId);
 	const viewport = useCanvasViewport(gameId);
 	const { updateNodes, updateEdges, setViewport } = useCanvasActions();
+	const onConnect = useCanvasConnect(gameId);
 
 	const debouncedSetViewport = useDebouncedCallback(
 		(vp: Viewport) => setViewport(gameId, vp),
@@ -76,6 +78,7 @@ function CanvasInner({ gameId }: { gameId: string }) {
 			nodeTypes={nodeTypes}
 			onNodesChange={(changes) => updateNodes(gameId, changes)}
 			onEdgesChange={(changes) => updateEdges(gameId, changes)}
+			onConnect={onConnect}
 			onMoveEnd={(_event, vp) => debouncedSetViewport(vp)}
 			defaultViewport={viewport}
 			colorMode="dark"
