@@ -1,17 +1,12 @@
-import { ChevronDown } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 import {
 	Combobox,
-	ComboboxClear,
+	ComboboxContent,
 	ComboboxEmpty,
 	ComboboxInput,
 	ComboboxItem,
-	ComboboxItemIndicator,
 	ComboboxList,
-	ComboboxPopup,
-	ComboboxPositioner,
-	ComboboxTrigger,
 } from "~/components/ui/combobox";
 import type { EntityType } from "~/types";
 import { Button } from "../ui/button";
@@ -103,48 +98,34 @@ export function CreateLinkForm({
 						itemToStringLabel={(entity) => entity?.label || ""}
 						disabled={isLoading || !hasEntities}
 					>
-						<div className="relative flex flex-col gap-2">
-							<ComboboxInput
-								placeholder={
-									isLoading
-										? "Loading entities..."
-										: !hasEntities
-											? "No entities available"
-											: "Select an entity to link"
-								}
-								id={id}
-							/>
-							<div className="absolute right-2 bottom-0 flex h-9 items-center justify-center text-muted-foreground">
-								<ComboboxClear />
-								<ComboboxTrigger
-									className="h-9 w-6 text-muted-foreground shadow-none bg-transparent hover:bg-transparent border-none"
-									aria-label="Open popup"
-								>
-									<ChevronDown className="size-4" />
-								</ComboboxTrigger>
-							</div>
-						</div>
+						<ComboboxInput
+							placeholder={
+								isLoading
+									? "Loading entities..."
+									: !hasEntities
+										? "No entities available"
+										: "Select an entity to link"
+							}
+							id={id}
+							showClear
+							showTrigger
+						/>
 
-						<ComboboxPositioner>
-							<ComboboxPopup>
-								<ComboboxEmpty>No entities found.</ComboboxEmpty>
-								<ComboboxList>
-									{(entity) => (
-										<ComboboxItem key={entity.value} value={entity}>
-											<ComboboxItemIndicator />
-											<div className="col-start-2">
-												<div className="flex flex-col gap-1">
-													<span className="text-xs text-muted-foreground capitalize">
-														{entity.type}
-													</span>
-													<span>{entity.label}</span>
-												</div>
-											</div>
-										</ComboboxItem>
-									)}
-								</ComboboxList>
-							</ComboboxPopup>
-						</ComboboxPositioner>
+						<ComboboxContent>
+							<ComboboxEmpty>No entities found.</ComboboxEmpty>
+							<ComboboxList>
+								{(entity) => (
+									<ComboboxItem key={entity.value} value={entity}>
+										<div className="flex flex-col gap-1">
+											<span className="text-xs text-muted-foreground capitalize">
+												{entity.type}
+											</span>
+											<span>{entity.label}</span>
+										</div>
+									</ComboboxItem>
+								)}
+							</ComboboxList>
+						</ComboboxContent>
 					</Combobox>
 				</div>
 
