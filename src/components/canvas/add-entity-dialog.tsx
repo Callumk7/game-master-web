@@ -295,17 +295,13 @@ export function AddEntityDialog({ gameId, open, onOpenChange }: AddEntityDialogP
 												"bg-accent text-accent-foreground",
 										)}
 										onClick={() => handleSelect(item)}
-										onMouseEnter={() =>
-											setHighlightedIndex(index)
-										}
+										onMouseEnter={() => setHighlightedIndex(index)}
 									>
 										<span className="flex flex-col gap-0.5">
 											<span className="text-xs capitalize text-muted-foreground">
 												{item.type}
 											</span>
-											<span className="text-sm">
-												{item.label}
-											</span>
+											<span className="text-sm">{item.label}</span>
 										</span>
 									</button>
 								))

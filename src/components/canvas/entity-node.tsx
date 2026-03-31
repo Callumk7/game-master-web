@@ -1,9 +1,26 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react";
-import { Gem, MapPin, MoreHorizontal, Scroll, Shield, Users } from "lucide-react";
+import { Gem, Loader2, MapPin, Scroll, Shield, Users } from "lucide-react";
 import * as React from "react";
 import type { EntityType } from "~/types";
 import { cn } from "~/utils/cn";
+import { NodeContextMenu } from "./node-context-menu";
 import type { EntityCanvasNode } from "./types";
+
+// ---------------------------------------------------------------------------
+// Context — shared canvas state provided by the parent CanvasInner component
+// ---------------------------------------------------------------------------
+
+export type CanvasContextValue = {
+	gameId: string;
+	loadLinks: (nodeId: string) => Promise<void>;
+	loadingNodeId: string | null;
+};
+
+export const CanvasContext = React.createContext<CanvasContextValue>({
+	gameId: "",
+	loadLinks: async () => {},
+	loadingNodeId: null,
+});
 
 // ---------------------------------------------------------------------------
 // Entity type → visual config mapping
@@ -131,9 +148,12 @@ function NodeScrollArea({
 // Entity Node
 // ---------------------------------------------------------------------------
 
-function EntityNode({ data, selected }: NodeProps<EntityCanvasNode>) {
+function EntityNode({ id, data, selected }: NodeProps<EntityCanvasNode>) {
+	const { gameId, loadingNodeId } = React.useContext(CanvasContext);
 	const config = entityVisualConfig[data.entityType];
 	const Icon = config.icon;
+
+	const isLoading = loadingNodeId === id;
 
 	return (
 		<div
@@ -195,18 +215,22 @@ function EntityNode({ data, selected }: NodeProps<EntityCanvasNode>) {
 
 			{/* ---- Header ---- */}
 			<div className="flex items-center gap-2 border-b border-border px-3 py-2">
-				<Icon className={cn("size-4 shrink-0", config.iconColor)} />
+				{isLoading ? (
+					<Loader2
+						className={cn("size-4 shrink-0 animate-spin", config.iconColor)}
+					/>
+				) : (
+					<Icon className={cn("size-4 shrink-0", config.iconColor)} />
+				)}
 				<span className="min-w-0 flex-1 truncate text-sm font-medium">
 					{data.name}
 				</span>
-				<button
-					type="button"
-					className="nodrag nopan shrink-0 rounded-sm p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-					data-action-trigger
-					aria-label="Node actions"
-				>
-					<MoreHorizontal className="size-4" />
-				</button>
+				<NodeContextMenu
+					gameId={gameId}
+					nodeId={id}
+					entityType={data.entityType}
+					entityId={data.entityId}
+				/>
 			</div>
 
 			{/* ---- Metadata subtitle ---- */}
