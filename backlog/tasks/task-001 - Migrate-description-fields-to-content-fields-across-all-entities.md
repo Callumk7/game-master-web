@@ -1,17 +1,18 @@
 ---
-id: task-001
+id: TASK-001
 title: Migrate description fields to content fields across all entities
 status: Done
 assignee:
   - '@claude'
 created_date: '2025-09-21 16:43'
-updated_date: '2025-09-21 17:19'
+updated_date: '2026-03-30 14:25'
 labels:
   - migration
   - api
   - frontend
 dependencies: []
 priority: high
+ordinal: 8000
 ---
 
 ## Description

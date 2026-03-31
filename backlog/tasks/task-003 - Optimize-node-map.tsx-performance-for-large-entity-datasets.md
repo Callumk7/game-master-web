@@ -1,17 +1,18 @@
 ---
-id: task-003
+id: TASK-003
 title: Optimize node-map.tsx performance for large entity datasets
 status: Done
 assignee:
   - '@claude'
 created_date: '2025-10-06 10:48'
-updated_date: '2025-10-06 10:56'
+updated_date: '2026-03-30 14:25'
 labels:
   - performance
   - frontend
   - optimization
 dependencies: []
 priority: high
+ordinal: 6000
 ---
 
 ## Description

@@ -1,17 +1,18 @@
 ---
-id: task-005
+id: TASK-005
 title: Add pinned entities tool to AI chat
 status: Done
 assignee:
   - '@claude'
 created_date: '2025-12-30'
-updated_date: '2025-12-30'
+updated_date: '2026-03-30 14:25'
 labels:
   - ai
   - chat
   - session-planning
 dependencies: []
 priority: high
+ordinal: 4000
 ---
 
 ## Description
