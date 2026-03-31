@@ -27,7 +27,10 @@ export const createRouter = () => {
 			<div className="flex h-screen w-full flex-col items-center justify-center gap-4">
 				<h1 className="text-4xl font-bold">404</h1>
 				<p className="text-muted-foreground">Page not found</p>
-				<Link to="/" className="text-primary underline underline-offset-4 hover:opacity-80">
+				<Link
+					to="/"
+					className="text-primary underline underline-offset-4 hover:opacity-80"
+				>
 					Go home
 				</Link>
 			</div>

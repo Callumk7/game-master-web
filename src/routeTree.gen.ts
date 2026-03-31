@@ -34,6 +34,8 @@ import { Route as AuthGamesGameIdInitiativeRouteImport } from './routes/_auth/ga
 import { Route as AuthGamesGameIdImagesRouteImport } from './routes/_auth/games/$gameId/images'
 import { Route as AuthGamesGameIdEditRouteImport } from './routes/_auth/games/$gameId/edit'
 import { Route as AuthGamesGameIdChatRouteImport } from './routes/_auth/games/$gameId/chat'
+import { Route as AuthGamesGameIdCanvasDemoRouteImport } from './routes/_auth/games/$gameId/canvas-demo'
+import { Route as AuthGamesGameIdCanvasRouteImport } from './routes/_auth/games/$gameId/canvas'
 import { Route as AuthGamesGameIdAllRouteImport } from './routes/_auth/games/$gameId/all'
 import { Route as AuthGamesGameIdQuestsIndexRouteImport } from './routes/_auth/games/$gameId/quests/index'
 import { Route as AuthGamesGameIdNotesIndexRouteImport } from './routes/_auth/games/$gameId/notes/index'
@@ -187,6 +189,17 @@ const AuthGamesGameIdEditRoute = AuthGamesGameIdEditRouteImport.update({
 const AuthGamesGameIdChatRoute = AuthGamesGameIdChatRouteImport.update({
   id: '/chat',
   path: '/chat',
+  getParentRoute: () => AuthGamesGameIdRouteRoute,
+} as any)
+const AuthGamesGameIdCanvasDemoRoute =
+  AuthGamesGameIdCanvasDemoRouteImport.update({
+    id: '/canvas-demo',
+    path: '/canvas-demo',
+    getParentRoute: () => AuthGamesGameIdRouteRoute,
+  } as any)
+const AuthGamesGameIdCanvasRoute = AuthGamesGameIdCanvasRouteImport.update({
+  id: '/canvas',
+  path: '/canvas',
   getParentRoute: () => AuthGamesGameIdRouteRoute,
 } as any)
 const AuthGamesGameIdAllRoute = AuthGamesGameIdAllRouteImport.update({
@@ -371,6 +384,8 @@ export interface FileRoutesByFullPath {
   '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/games/$gameId/canvas': typeof AuthGamesGameIdCanvasRoute
+  '/games/$gameId/canvas-demo': typeof AuthGamesGameIdCanvasDemoRoute
   '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
@@ -424,6 +439,8 @@ export interface FileRoutesByTo {
   '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/games': typeof AuthGamesIndexRoute
   '/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/games/$gameId/canvas': typeof AuthGamesGameIdCanvasRoute
+  '/games/$gameId/canvas-demo': typeof AuthGamesGameIdCanvasDemoRoute
   '/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
@@ -475,6 +492,8 @@ export interface FileRoutesById {
   '/api/entity-updates/undo': typeof ApiEntityUpdatesUndoRoute
   '/_auth/games/': typeof AuthGamesIndexRoute
   '/_auth/games/$gameId/all': typeof AuthGamesGameIdAllRoute
+  '/_auth/games/$gameId/canvas': typeof AuthGamesGameIdCanvasRoute
+  '/_auth/games/$gameId/canvas-demo': typeof AuthGamesGameIdCanvasDemoRoute
   '/_auth/games/$gameId/chat': typeof AuthGamesGameIdChatRoute
   '/_auth/games/$gameId/edit': typeof AuthGamesGameIdEditRoute
   '/_auth/games/$gameId/images': typeof AuthGamesGameIdImagesRoute
@@ -531,6 +550,8 @@ export interface FileRouteTypes {
     | '/api/entity-updates/undo'
     | '/games'
     | '/games/$gameId/all'
+    | '/games/$gameId/canvas'
+    | '/games/$gameId/canvas-demo'
     | '/games/$gameId/chat'
     | '/games/$gameId/edit'
     | '/games/$gameId/images'
@@ -584,6 +605,8 @@ export interface FileRouteTypes {
     | '/api/entity-updates/undo'
     | '/games'
     | '/games/$gameId/all'
+    | '/games/$gameId/canvas'
+    | '/games/$gameId/canvas-demo'
     | '/games/$gameId/chat'
     | '/games/$gameId/edit'
     | '/games/$gameId/images'
@@ -634,6 +657,8 @@ export interface FileRouteTypes {
     | '/api/entity-updates/undo'
     | '/_auth/games/'
     | '/_auth/games/$gameId/all'
+    | '/_auth/games/$gameId/canvas'
+    | '/_auth/games/$gameId/canvas-demo'
     | '/_auth/games/$gameId/chat'
     | '/_auth/games/$gameId/edit'
     | '/_auth/games/$gameId/images'
@@ -862,6 +887,20 @@ declare module '@tanstack/react-router' {
       path: '/chat'
       fullPath: '/games/$gameId/chat'
       preLoaderRoute: typeof AuthGamesGameIdChatRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/canvas-demo': {
+      id: '/_auth/games/$gameId/canvas-demo'
+      path: '/canvas-demo'
+      fullPath: '/games/$gameId/canvas-demo'
+      preLoaderRoute: typeof AuthGamesGameIdCanvasDemoRouteImport
+      parentRoute: typeof AuthGamesGameIdRouteRoute
+    }
+    '/_auth/games/$gameId/canvas': {
+      id: '/_auth/games/$gameId/canvas'
+      path: '/canvas'
+      fullPath: '/games/$gameId/canvas'
+      preLoaderRoute: typeof AuthGamesGameIdCanvasRouteImport
       parentRoute: typeof AuthGamesGameIdRouteRoute
     }
     '/_auth/games/$gameId/all': {
@@ -1146,6 +1185,8 @@ const AuthGamesGameIdQuestsIdRouteRouteWithChildren =
 
 interface AuthGamesGameIdRouteRouteChildren {
   AuthGamesGameIdAllRoute: typeof AuthGamesGameIdAllRoute
+  AuthGamesGameIdCanvasRoute: typeof AuthGamesGameIdCanvasRoute
+  AuthGamesGameIdCanvasDemoRoute: typeof AuthGamesGameIdCanvasDemoRoute
   AuthGamesGameIdChatRoute: typeof AuthGamesGameIdChatRoute
   AuthGamesGameIdEditRoute: typeof AuthGamesGameIdEditRoute
   AuthGamesGameIdImagesRoute: typeof AuthGamesGameIdImagesRoute
@@ -1178,6 +1219,8 @@ interface AuthGamesGameIdRouteRouteChildren {
 
 const AuthGamesGameIdRouteRouteChildren: AuthGamesGameIdRouteRouteChildren = {
   AuthGamesGameIdAllRoute: AuthGamesGameIdAllRoute,
+  AuthGamesGameIdCanvasRoute: AuthGamesGameIdCanvasRoute,
+  AuthGamesGameIdCanvasDemoRoute: AuthGamesGameIdCanvasDemoRoute,
   AuthGamesGameIdChatRoute: AuthGamesGameIdChatRoute,
   AuthGamesGameIdEditRoute: AuthGamesGameIdEditRoute,
   AuthGamesGameIdImagesRoute: AuthGamesGameIdImagesRoute,

@@ -356,6 +356,48 @@
 		border: 1px solid var(--toast-info-border) !important;
 	}
 
+	/* ---- React Flow dark mode overrides ---- */
+	.dark .react-flow {
+		--xy-background-color: var(--background);
+		--xy-node-background-color: var(--card);
+		--xy-node-border-color: var(--border);
+		--xy-edge-stroke: var(--muted-foreground);
+		--xy-edge-stroke-selected: var(--primary);
+		--xy-connectionline-stroke: var(--primary);
+		--xy-minimap-background-color: var(--card);
+		--xy-minimap-mask-background: oklch(0.15 0.03 270 / 0.7);
+		--xy-controls-button-background-color: var(--secondary);
+		--xy-controls-button-color: var(--secondary-foreground);
+		--xy-controls-button-background-color-hover: var(--accent);
+		--xy-controls-button-border-color: var(--border);
+	}
+
+	.dark .react-flow .react-flow__minimap {
+		background-color: var(--card);
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+	}
+
+	.dark .react-flow .react-flow__controls {
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		overflow: hidden;
+	}
+
+	.dark .react-flow .react-flow__controls button {
+		background-color: var(--secondary);
+		color: var(--secondary-foreground);
+		border-bottom-color: var(--border);
+	}
+
+	.dark .react-flow .react-flow__controls button:hover {
+		background-color: var(--accent);
+	}
+
+	.dark .react-flow .react-flow__controls button svg {
+		fill: var(--secondary-foreground);
+	}
+
 	/* Hide scrollbar utility */
 	.scrollbar-none {
 		scrollbar-width: none; /* Firefox */
