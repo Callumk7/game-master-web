@@ -12,6 +12,7 @@ import type { GenericLinksResponse } from "~/components/links/types";
 import { flattenLinksForTable } from "~/components/links/utils";
 import { useCanvasActions, useCanvasEdges, useCanvasNodes } from "~/state/canvas";
 import type { EntityType } from "~/types";
+import { getErrorMessage } from "~/utils/api-errors";
 import type { CanvasNodeData, EntityCanvasNode } from "../types";
 import { getClosestHandles, radialLayout } from "../utils/layout";
 
@@ -169,10 +170,7 @@ export function useLoadLinks(gameId: string) {
 				});
 			} catch (error) {
 				toast.error("Failed to load links", {
-					description:
-						error instanceof Error
-							? error.message
-							: "An unknown error occurred.",
+					description: getErrorMessage(error),
 				});
 			} finally {
 				setLoadingNodeId(null);

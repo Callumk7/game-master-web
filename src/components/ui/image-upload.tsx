@@ -3,6 +3,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { uploadEntityImageMutation } from "~/api/@tanstack/react-query.gen";
 import type { EntityType } from "~/types";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "./dropzone";
 
 interface ImageUploadProps {
@@ -32,8 +33,7 @@ export function ImageUpload({
 			onUploadSuccess?.();
 		},
 		onError: (error) => {
-			console.error("Upload error:", error);
-			toast.error("Failed to upload image");
+			showErrorToast(error, "Failed to upload image");
 		},
 	});
 

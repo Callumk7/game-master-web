@@ -18,6 +18,7 @@ import { flattenLinksForTable } from "~/components/links/utils";
 import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityView } from "~/components/views/entity-view";
 import { useDeleteFactionMutation, useUpdateFactionMutation } from "~/queries/factions";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { createBadges } from "../utils";
 import { FactionChart } from "./faction-chart";
 
@@ -51,11 +52,18 @@ export function FactionView({ faction, gameId }: FactionViewProps) {
 
 	const deleteFaction = useDeleteFactionMutation(gameId, faction.id);
 	const handleDelete = () => {
-		deleteFaction.mutate({
-			path: { game_id: gameId, id: faction.id },
-		});
-		toast.success("Faction deleted successfully!");
-		navigate({ to: "." });
+		deleteFaction.mutate(
+			{ path: { game_id: gameId, id: faction.id } },
+			{
+				onSuccess: () => {
+					toast.success("Faction deleted successfully!");
+					navigate({ to: "." });
+				},
+				onError: (error) => {
+					showErrorToast(error, "Failed to delete faction");
+				},
+			},
+		);
 	};
 
 	const tabs = [

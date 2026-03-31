@@ -9,6 +9,8 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { MutationErrorDisplay } from "~/components/ui/mutation-error";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { QuestSelect } from "./quest-select";
 
 interface CreateObjectiveFormProps {
@@ -52,9 +54,7 @@ export function CreateObjectiveForm({ gameId, onSuccess }: CreateObjectiveFormPr
 			}
 		},
 		onError: (error) => {
-			toast.error(
-				error instanceof Error ? error.message : "Failed to create objective",
-			);
+			showErrorToast(error, "Failed to create objective");
 		},
 	});
 
@@ -148,15 +148,7 @@ export function CreateObjectiveForm({ gameId, onSuccess }: CreateObjectiveFormPr
 				</Button>
 			</div>
 
-			{mutation.isError && (
-				<div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
-					<p className="text-sm">
-						{mutation.error instanceof Error
-							? mutation.error.message
-							: "Failed to create objective. Please try again."}
-					</p>
-				</div>
-			)}
+			<MutationErrorDisplay error={mutation.error} />
 		</form>
 	);
 }

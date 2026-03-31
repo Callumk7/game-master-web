@@ -3,7 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn, useServerFn } from "@tanstack/react-start";
 import { signupUser } from "~/api";
 import { Auth } from "~/components/auth";
-import { parseApiErrors } from "~/utils/parse-errors";
+import { getErrorMessage } from "~/utils/api-errors";
 
 export const signupFn = createServerFn({ method: "POST" })
 	.inputValidator((d: { email: string; password: string; redirectUrl?: string }) => d)
@@ -13,7 +13,7 @@ export const signupFn = createServerFn({ method: "POST" })
 		if (error) {
 			return {
 				error: true,
-				message: parseApiErrors(error),
+				message: getErrorMessage(error),
 			};
 		}
 

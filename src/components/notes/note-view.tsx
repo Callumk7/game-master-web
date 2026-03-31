@@ -18,6 +18,7 @@ import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { EntityView } from "~/components/views/entity-view";
 import { useDeleteNoteMutation, useUpdateNoteMutation } from "~/queries/notes";
 import { useHandleEditNote } from "~/state/ui";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { createBadges } from "../utils";
 
 interface NoteViewProps {
@@ -50,11 +51,18 @@ export function NoteView({ note, gameId }: NoteViewProps) {
 
 	const deleteNote = useDeleteNoteMutation(gameId, note.id);
 	const handleDelete = () => {
-		deleteNote.mutate({
-			path: { game_id: gameId, id: note.id },
-		});
-		toast.success("Note deleted successfully!");
-		navigate({ to: ".." });
+		deleteNote.mutate(
+			{ path: { game_id: gameId, id: note.id } },
+			{
+				onSuccess: () => {
+					toast.success("Note deleted successfully!");
+					navigate({ to: ".." });
+				},
+				onError: (error) => {
+					showErrorToast(error, "Failed to delete note");
+				},
+			},
+		);
 	};
 
 	const handleEdit = useHandleEditNote(note.id);

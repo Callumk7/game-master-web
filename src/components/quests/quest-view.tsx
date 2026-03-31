@@ -18,6 +18,7 @@ import { EntityEditor } from "~/components/ui/editor/entity-editor";
 import { useDeleteQuestMutation, useUpdateQuestMutation } from "~/queries/quests";
 import { useHandleEditQuest } from "~/state/ui";
 import { capitalise } from "~/utils/capitalise";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { createBadges } from "../utils";
 import { EntityView } from "../views/entity-view";
 import { SubQuestView } from "./sub-quest-view";
@@ -52,11 +53,18 @@ export function QuestView({ quest, gameId }: QuestViewProps) {
 
 	const deleteQuest = useDeleteQuestMutation(gameId, quest.id);
 	const handleDelete = () => {
-		deleteQuest.mutate({
-			path: { game_id: gameId, id: quest.id },
-		});
-		toast.warning("Quest deleted successfully!");
-		navigate({ to: ".." });
+		deleteQuest.mutate(
+			{ path: { game_id: gameId, id: quest.id } },
+			{
+				onSuccess: () => {
+					toast.warning("Quest deleted successfully!");
+					navigate({ to: ".." });
+				},
+				onError: (error) => {
+					showErrorToast(error, "Failed to delete quest");
+				},
+			},
+		);
 	};
 
 	const handleEdit = useHandleEditQuest(quest.id);

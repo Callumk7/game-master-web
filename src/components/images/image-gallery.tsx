@@ -19,6 +19,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Spinner } from "~/components/ui/spinner";
 import type { EntityType } from "~/types";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { type ImageControlsProps, ImageGrid } from "./image-grid";
 
 interface ImageGalleryProps {
@@ -139,8 +140,7 @@ function ImageControls({ gameId, image, entityId, entityType }: ImageControlsPro
 			toast.success("Primary image updated");
 		},
 		onError: (error) => {
-			console.error("Set primary error:", error);
-			toast.error("Failed to set primary image");
+			showErrorToast(error, "Failed to set primary image");
 		},
 	});
 
@@ -185,8 +185,7 @@ function ImageControls({ gameId, image, entityId, entityType }: ImageControlsPro
 			toast.success("Image deleted");
 		},
 		onError: (error) => {
-			console.error("Delete error:", error);
-			toast.error("Failed to delete image");
+			showErrorToast(error, "Failed to delete image");
 		},
 	});
 

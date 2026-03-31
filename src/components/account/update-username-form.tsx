@@ -8,6 +8,7 @@ import { zProfileUpdate } from "~/api/zod.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
 import { Input } from "~/components/ui/input";
+import { showErrorToast } from "~/utils/show-error-toast";
 
 const { useAppForm } = createFormHook();
 
@@ -36,8 +37,8 @@ export function UpdateProfileForm({ defaultValues, className }: UpdateProfileFor
 							queryKey: getUserProfileQueryKey(),
 						});
 					},
-					onError: () => {
-						toast.error("Failed to update profile.");
+					onError: (error) => {
+						showErrorToast(error, "Failed to update profile.");
 					},
 				},
 			);

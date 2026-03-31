@@ -23,6 +23,7 @@ import {
 } from "~/queries/locations";
 import { useHandleEditLocation } from "~/state/ui";
 import { capitalise } from "~/utils/capitalise";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { createBadges } from "../utils";
 import { SubLocationView } from "./sub-location-view";
 
@@ -56,11 +57,18 @@ export function LocationView({ gameId, location }: LocationViewProps) {
 
 	const deleteLocation = useDeleteLocationMutation(gameId, location.id);
 	const handleDelete = () => {
-		deleteLocation.mutate({
-			path: { game_id: gameId, id: location.id },
-		});
-		toast.success("Location deleted successfully!");
-		navigate({ to: ".." });
+		deleteLocation.mutate(
+			{ path: { game_id: gameId, id: location.id } },
+			{
+				onSuccess: () => {
+					toast.success("Location deleted successfully!");
+					navigate({ to: ".." });
+				},
+				onError: (error) => {
+					showErrorToast(error, "Failed to delete location");
+				},
+			},
+		);
 	};
 
 	const handleEdit = useHandleEditLocation(location.id);
