@@ -46,6 +46,9 @@ interface Actions {
 	/** Remove a single edge by id. */
 	removeEdge: (gameId: string, edgeId: string) => void;
 
+	/** Update properties of a single edge in-place. */
+	setEdge: (gameId: string, edgeId: string, patch: Partial<CanvasEdge>) => void;
+
 	/** Apply React Flow EdgeChange[]. */
 	updateEdges: (gameId: string, changes: EdgeChange<CanvasEdge>[]) => void;
 
@@ -150,6 +153,21 @@ const useCanvasStore = create<CanvasStore>()(
 							[gameId]: {
 								...canvas,
 								edges: canvas.edges.filter((e) => e.id !== edgeId),
+							},
+						},
+					});
+				},
+
+				setEdge: (gameId: string, edgeId: string, patch: Partial<CanvasEdge>) => {
+					const canvas = ensureCanvas(get().canvases, gameId);
+					set({
+						canvases: {
+							...get().canvases,
+							[gameId]: {
+								...canvas,
+								edges: canvas.edges.map((e) =>
+									e.id === edgeId ? { ...e, ...patch } : e,
+								),
 							},
 						},
 					});
