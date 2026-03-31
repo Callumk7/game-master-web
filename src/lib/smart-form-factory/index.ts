@@ -36,7 +36,6 @@ export { createSchemaFor, schemas } from "./schemas";
 
 // Export all types
 export type {
-	ApiError,
 	FieldConfig,
 	FormFactoryOptions,
 	HookFormOptions,

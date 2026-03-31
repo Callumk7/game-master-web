@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { z } from "zod";
 import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
-import { parseApiErrors } from "~/utils/parse-errors";
+import { MutationErrorDisplay } from "~/components/ui/mutation-error";
+import { getFieldErrors } from "~/utils/api-errors";
 import type {
-	ApiError,
 	FieldConfig,
 	FormFactoryOptions,
 	UseFormWithMutationOptions,
@@ -71,25 +71,10 @@ export function createFormComponent<
 						});
 					}
 
-					// Handle API field errors
-					const apiError = error as ApiError;
-					if (apiError.errors && typeof apiError.errors === "object") {
-						for (const [fieldName, errorValue] of Object.entries(
-							apiError.errors,
-						)) {
-							let messages: string[] = [];
-
-							// Normalize the error(s) into a string array, as form libraries usually expect this.
-							if (typeof errorValue === "string") {
-								messages = [errorValue]; // API returned a single string
-							} else if (Array.isArray(errorValue)) {
-								// Ensure all items in the array are strings before assigning
-								messages = errorValue.filter(
-									(item) => typeof item === "string",
-								);
-							}
-
-							// Only update the field if we have valid error messages
+					// Map API field-level errors onto form fields
+					const fieldErrors = getFieldErrors(error);
+					if (fieldErrors) {
+						for (const [fieldName, messages] of Object.entries(fieldErrors)) {
 							if (messages.length > 0) {
 								form.setFieldMeta(fieldName, (prev) => ({
 									...prev,
@@ -198,21 +183,7 @@ export function createFormComponent<
 					</div>
 				)}
 
-				{mutationInstance.isError && (
-					<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
-						<div className="flex items-center">
-							<div className="flex-shrink-0">
-								<XCircle className="h-5 w-5 text-destructive" />
-							</div>
-							<div className="ml-3">
-								<p className="text-sm font-medium">Error</p>
-								<p className="text-sm">
-									{parseApiErrors(mutationInstance.error as ApiError)}
-								</p>
-							</div>
-						</div>
-					</div>
-				)}
+				<MutationErrorDisplay error={mutationInstance.error} className="mt-4" />
 			</div>
 		);
 	};
@@ -265,25 +236,10 @@ export function useFormWithMutation<
 					});
 				}
 
-				// Handle API field errors
-				const apiError = error as ApiError;
-				if (apiError.errors && typeof apiError.errors === "object") {
-					for (const [fieldName, errorValue] of Object.entries(
-						apiError.errors,
-					)) {
-						let messages: string[] = [];
-
-						// Normalize the error(s) into a string array, as form libraries usually expect this.
-						if (typeof errorValue === "string") {
-							messages = [errorValue]; // API returned a single string
-						} else if (Array.isArray(errorValue)) {
-							// Ensure all items in the array are strings before assigning
-							messages = errorValue.filter(
-								(item) => typeof item === "string",
-							);
-						}
-
-						// Only update the field if we have valid error messages
+				// Map API field-level errors onto form fields
+				const fieldErrors = getFieldErrors(error);
+				if (fieldErrors) {
+					for (const [fieldName, messages] of Object.entries(fieldErrors)) {
 						if (messages.length > 0) {
 							form.setFieldMeta(fieldName, (prev) => ({
 								...prev,

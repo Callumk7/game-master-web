@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import { XCircle } from "lucide-react";
 import { z } from "zod";
 import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
-import { parseApiErrors } from "~/utils/parse-errors";
-import type { ApiError, FieldConfig, HookFormOptions, SmartFormOptions } from "../types";
+import { MutationErrorDisplay } from "~/components/ui/mutation-error";
+import { getFieldErrors } from "~/utils/api-errors";
+import type { FieldConfig, HookFormOptions, SmartFormOptions } from "../types";
 import {
 	processFormValuesForSubmission,
 	processInitialValues,
@@ -21,6 +21,32 @@ import {
 import { FormFieldControl } from "./field-control";
 
 const { useAppForm } = createFormHook();
+
+// ===================================
+// SHARED: apply server field errors to form
+// ===================================
+
+/**
+ * Map API field-level validation errors onto form field meta.
+ * Works for both `ValidationApiError` and `SimpleApiError` (no-op for simple).
+ */
+function applyFieldErrors(
+	error: unknown,
+	// biome-ignore lint/suspicious/noExplicitAny: TanStack Form's setFieldMeta uses internal AnyFieldMetaBase
+	setFieldMeta: (name: string, updater: (prev: any) => any) => void,
+) {
+	const fieldErrors = getFieldErrors(error);
+	if (!fieldErrors) return;
+
+	for (const [fieldName, messages] of Object.entries(fieldErrors)) {
+		if (messages.length > 0) {
+			setFieldMeta(fieldName, (prev: Record<string, unknown>) => ({
+				...prev,
+				errors: messages,
+			}));
+		}
+	}
+}
 
 // ===================================
 // SMART FORM FACTORY
@@ -92,7 +118,6 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 				} catch (error) {
 					if (error instanceof z.ZodError) {
 						console.error("Validation error:", error.issues);
-						// Set field-specific validation errors
 						for (const issue of error.issues) {
 							if (issue.path.length > 0) {
 								const fieldName = issue.path[0] as string;
@@ -104,34 +129,8 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 						}
 					}
 
-					// Handle API field errors
-					const apiError = error as ApiError;
-					// Check for the new 'errors' property instead of 'fields'
-					if (apiError.errors && typeof apiError.errors === "object") {
-						for (const [fieldName, errorValue] of Object.entries(
-							apiError.errors,
-						)) {
-							let messages: string[] = [];
-
-							// Normalize the error(s) into a string array, as form libraries usually expect this.
-							if (typeof errorValue === "string") {
-								messages = [errorValue]; // API returned a single string
-							} else if (Array.isArray(errorValue)) {
-								// Ensure all items in the array are strings before assigning
-								messages = errorValue.filter(
-									(item) => typeof item === "string",
-								);
-							}
-
-							// Only update the field if we have valid error messages
-							if (messages.length > 0) {
-								form.setFieldMeta(fieldName, (prev) => ({
-									...prev,
-									errors: messages,
-								}));
-							}
-						}
-					}
+					// Map API field-level errors onto form fields
+					applyFieldErrors(error, form.setFieldMeta);
 
 					throw error;
 				}
@@ -225,21 +224,7 @@ export function createSmartForm<TData, TError, TMutationData extends TDataShape>
 					</form>
 				</form.AppForm>
 
-				{mutationInstance.isError && (
-					<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
-						<div className="flex items-center">
-							<div className="flex-shrink-0">
-								<XCircle className="h-5 w-5 text-destructive" />
-							</div>
-							<div className="ml-3">
-								<p className="text-sm font-medium">Error</p>
-								<p className="text-sm">
-									{parseApiErrors(mutationInstance.error as ApiError)}
-								</p>
-							</div>
-						</div>
-					</div>
-				)}
+				<MutationErrorDisplay error={mutationInstance.error} className="mt-4" />
 			</div>
 		);
 	};
@@ -318,33 +303,8 @@ export function useSmartForm<TData, TError, TMutationData extends TDataShape>({
 					}
 				}
 
-				const apiError = error as ApiError;
-				// Check for the new 'errors' property instead of 'fields'
-				if (apiError.errors && typeof apiError.errors === "object") {
-					for (const [fieldName, errorValue] of Object.entries(
-						apiError.errors,
-					)) {
-						let messages: string[] = [];
-
-						// Normalize the error(s) into a string array, as form libraries usually expect this.
-						if (typeof errorValue === "string") {
-							messages = [errorValue]; // API returned a single string
-						} else if (Array.isArray(errorValue)) {
-							// Ensure all items in the array are strings before assigning
-							messages = errorValue.filter(
-								(item) => typeof item === "string",
-							);
-						}
-
-						// Only update the field if we have valid error messages
-						if (messages.length > 0) {
-							form.setFieldMeta(fieldName, (prev) => ({
-								...prev,
-								errors: messages,
-							}));
-						}
-					}
-				}
+				// Map API field-level errors onto form fields
+				applyFieldErrors(error, form.setFieldMeta);
 
 				throw error;
 			}

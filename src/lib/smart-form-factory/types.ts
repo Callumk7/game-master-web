@@ -1,6 +1,5 @@
 import type { UseMutationOptions } from "@tanstack/react-query";
 import type { z } from "zod";
-import type { ErrorDetails } from "~/api";
 import type { TDataShape } from "~/api/client/types.gen";
 import type { Options } from "~/api/sdk.gen";
 
@@ -35,14 +34,6 @@ export interface FieldConfig {
 		maxLength?: number;
 		pattern?: RegExp;
 	};
-}
-
-// ===================================
-// API ERROR TYPES
-// ===================================
-
-export interface ApiError {
-	errors?: ErrorDetails;
 }
 
 // ===================================

@@ -23,6 +23,7 @@ import {
 	useUpdateCharacterMutation,
 } from "~/queries/characters";
 import { useHandleEditCharacter } from "~/state/ui";
+import { showErrorToast } from "~/utils/show-error-toast";
 import { createBadges } from "../utils";
 
 interface CharacterViewProps {
@@ -55,11 +56,18 @@ export function CharacterView({ character, gameId }: CharacterViewProps) {
 
 	const deleteCharacter = useDeleteCharacterMutation(gameId, character.id);
 	const handleDelete = () => {
-		deleteCharacter.mutate({
-			path: { game_id: gameId, id: character.id },
-		});
-		toast.success("Character deleted successfully!");
-		navigate({ to: "." });
+		deleteCharacter.mutate(
+			{ path: { game_id: gameId, id: character.id } },
+			{
+				onSuccess: () => {
+					toast.success("Character deleted successfully!");
+					navigate({ to: "." });
+				},
+				onError: (error) => {
+					showErrorToast(error, "Failed to delete character");
+				},
+			},
+		);
 	};
 
 	const badges = createBadges(

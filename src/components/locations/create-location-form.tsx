@@ -8,6 +8,7 @@ import {
 	listLocationsQueryKey,
 } from "~/api/@tanstack/react-query.gen";
 import { Button } from "~/components/ui/button";
+import { MutationErrorDisplay } from "~/components/ui/mutation-error";
 import { schemas, useSmartForm } from "~/lib/smart-form-factory";
 import { useCreateLocationParentId } from "~/state/ui";
 import { ParentLocationSelect } from "./parent-location-select";
@@ -136,15 +137,7 @@ export function CreateLocationForm({ container, onSuccess }: CreateLocationFormP
 				</form>
 			</form.AppForm>
 
-			{mutation.isError && (
-				<div className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
-					<p className="text-sm">
-						{mutation.error instanceof Error
-							? mutation.error.message
-							: "Something went wrong"}
-					</p>
-				</div>
-			)}
+			<MutationErrorDisplay error={mutation.error} className="mt-4" />
 		</div>
 	);
 }

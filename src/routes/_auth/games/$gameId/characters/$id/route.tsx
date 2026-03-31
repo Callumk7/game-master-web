@@ -1,13 +1,12 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { toast } from "sonner";
 import {
 	getCharacterLinksOptions,
 	getCharacterOptions,
 	getEntityPrimaryImageOptions,
 } from "~/api/@tanstack/react-query.gen";
 import { Container } from "~/components/container";
-import { isApiError } from "~/utils/api-errors";
-import { parseApiErrors } from "~/utils/parse-errors";
+import { getErrorMessage } from "~/utils/api-errors";
+import { showErrorToast } from "~/utils/show-error-toast";
 
 export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 	component: RouteComponent,
@@ -34,18 +33,10 @@ export const Route = createFileRoute("/_auth/games/$gameId/characters/$id")({
 		);
 	},
 	onCatch: (error) => {
-		if (isApiError(error)) {
-			const parsedError = parseApiErrors(error);
-			console.error(parsedError);
-		}
+		console.error("[Character route]", getErrorMessage(error));
 	},
 	onError: (error) => {
-		if (isApiError(error)) {
-			const parsedError = parseApiErrors(error);
-			toast.error(parsedError);
-		} else {
-			toast.error("Something went wrong!");
-		}
+		showErrorToast(error, "Failed to load character");
 		throw redirect({ to: ".." });
 	},
 });

@@ -3,6 +3,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { useCreateLink } from "~/components/links/hooks/useCreateLink";
 import { useCanvasActions, useCanvasEdges, useCanvasNodes } from "~/state/canvas";
+import { showErrorToast } from "~/utils/show-error-toast";
 
 /**
  * Returns an `onConnect` handler for the GameCanvas ReactFlow component.
@@ -98,8 +99,7 @@ export function useCanvasConnect(gameId: string) {
 				});
 			} catch (error) {
 				removeEdge(gameId, edgeId);
-				// const message = isApiError(error) ? error.error : "Unknown error";
-				toast.error("Unable to create link");
+				showErrorToast(error, "Unable to create link");
 			}
 		},
 		[gameId, addEdge, removeEdge, createLink],

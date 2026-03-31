@@ -17,6 +17,7 @@ import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { useUpdateLink } from "~/queries/utils";
 import type { EntityType } from "~/types";
+import { showErrorToast } from "~/utils/show-error-toast";
 import type { EntityLink } from "./types";
 
 interface UpdateLinkDialogProps {
@@ -63,8 +64,7 @@ export function UpdateLinkDialog({
 			setOpen(false);
 		},
 		(error) => {
-			toast.error("Failed to update link");
-			console.error(error);
+			showErrorToast(error, "Failed to update link");
 		},
 	);
 

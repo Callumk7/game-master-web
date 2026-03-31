@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { loginUser } from "~/api";
-import { parseApiErrors } from "~/utils/parse-errors";
+import { getErrorMessage } from "~/utils/api-errors";
 import { getAppSession } from "~/utils/session";
 import { Auth } from "./auth";
 
@@ -14,7 +14,7 @@ export const loginFn = createServerFn({ method: "POST" })
 		if (error) {
 			return {
 				error: true,
-				message: parseApiErrors(error),
+				message: getErrorMessage(error),
 			};
 		}
 

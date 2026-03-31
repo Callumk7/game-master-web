@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import { createFormHook } from "~/components/ui/form-tanstack";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
+import { showErrorToast } from "~/utils/show-error-toast";
 
 const { useAppForm } = createFormHook();
 
@@ -51,7 +52,7 @@ export function CreateGameForm() {
 					},
 				);
 			} catch (error) {
-				console.error("Failed to create game:", error);
+				showErrorToast(error, "Failed to create game");
 			}
 		},
 	});
